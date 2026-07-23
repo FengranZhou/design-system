@@ -1,0 +1,290 @@
+/* ======================================================================== */
+/* =========================== Tabs 样式覆盖 =============================== */
+/* ======================================================================== */
+
+/* ==================== Tabs 约定类名 ==================== */
+/* 使用方式：
+   页面级：  <el-tabs class="tabs-page">   — 18px/28px，高度 64px
+   模块级：  <el-tabs>                     — 16px/24px，高度 40px（默认）
+   子模块级：<el-tabs class="tabs-sub">    — 14px/20px，高度 32px
+*/
+.el-tabs__nav-prev,
+.el-tabs__nav-next {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: var(--iflyv-radius-full);
+  &:hover {
+    background-color: var(--iflyv-bg-inset);
+    .el-icon::after { background-color: var(--iflyv-icon-2); }
+  }
+}
+.el-tabs__nav-prev .el-icon,
+.el-tabs__nav-next .el-icon {
+  visibility: hidden;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  font-size: var(--iflyv-font-size-16);
+  &::after {
+    content: '';
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--iflyv-icon-3);
+  }
+}
+.el-tabs__nav-prev .el-icon::after {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+.el-tabs__nav-next .el-icon::after {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+.el-tabs__nav-wrap.is-scrollable { padding: 0 var(--iflyv-spacing-6); }
+.el-tabs__active-bar { display: none; }
+.el-tabs__nav-wrap::after { display: none; }
+.el-tabs__header { margin-bottom: 0; }
+.el-tabs__item {
+  color: var(--iflyv-text-3);
+  font-weight: var(--iflyv-font-weight-regular);
+  font-size: var(--iflyv-font-size-16);
+  line-height: var(--iflyv-line-height-24);
+  &:not(.is-disabled):not(.is-active):hover { color: var(--iflyv-text-2); }
+  &.is-active { font-weight: var(--iflyv-font-weight-semibold); color: var(--iflyv-text-1); }
+  &.is-disabled { color: var(--iflyv-text-4); cursor: not-allowed; }
+}
+/* nav：一行，子项按中线垂直居中对齐；高度由最高子项自然撑开（对齐 .tabs-page 机制） */
+.el-tabs:not(.tabs-page):not(.tabs-sub) .el-tabs__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-6);
+  height: auto;
+}
+/* 大模块级常规项：文字+线 垂直自适应布局，间距 2px，零 padding，宽度 hug（对齐 .tabs-page 机制）
+   字号仍走大模块级令牌「默认 Tab 项」（18/36 regular） */
+.el-tabs:not(.tabs-page):not(.tabs-sub) .el-tabs__item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: fit-content;
+  height: auto;
+  padding: 0 !important;
+  font: var(--iflyv-font-tab-default);
+  color: var(--iflyv-text-3);
+}
+/* 大模块级激活项：字号走令牌「模块级选中 Tab 项」（18/28 semibold），顶部 padding 4px（仅激活项） */
+.el-tabs:not(.tabs-page):not(.tabs-sub) .el-tabs__item.is-active {
+  padding-top: var(--iflyv-spacing-1) !important;
+  font: var(--iflyv-font-tab-active-sub);
+  color: var(--iflyv-text-1);
+}
+@keyframes tab-active-expand {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+/* 激活装饰：文字正下方 12×4 圆角短横，static 占流（间距由父容器 gap:2px 提供，对齐 .tabs-page 机制） */
+.el-tabs:not(.tabs-page):not(.tabs-sub) .el-tabs__item.is-active::after {
+  content: '';
+  position: static;
+  display: block;
+  width: 12px;
+  height: 4px;
+  border-radius: 1px;
+  background-color: var(--iflyv-brand-primary);
+  animation: tab-active-expand var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+.tabs-page {
+  --el-tabs-header-height: auto;   /* 高度由内容自适应撑开（设计稿 适应×适应） */
+  .el-tabs__header { margin-bottom: var(--iflyv-spacing-2); }
+
+  /* nav：一行，子项按中线垂直居中对齐；高度由最高子项（激活项）自然撑开 */
+  .el-tabs__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-6);
+    height: auto;
+  }
+
+  /* 每个 tab 项：文字+线 垂直自适应布局，间距 2px，零 padding，宽度 hug */
+  .el-tabs__item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--iflyv-spacing-0_5);
+    width: fit-content;
+    height: auto;
+    padding: 0 !important;
+    /* 常规项：18px / 400 / 描述灰（走 EP 默认色） */
+    font-size: var(--iflyv-font-size-18);
+    font-weight: var(--iflyv-font-weight-regular);
+    line-height: var(--iflyv-line-height-36);
+    /* 切换过渡：仅颜色/字重平滑，字号瞬切 */
+    transition:
+      font-weight var(--iflyv-duration-normal) var(--iflyv-ease-default),
+      color var(--iflyv-duration-normal) var(--iflyv-ease-default);
+  }
+
+  /* 激活项：26px / 阿里普惠 95 ExtraBold / 强调黑，顶部 padding 6px（仅激活项） */
+  /* 用拆分属性而非 font 简写：含空格字体名 "Alibaba PuHuiTi 3.0" 用在 font 简写里易整条解析失败回退默认字号 */
+  .el-tabs__item.is-active {
+    padding-top: 6px !important;
+    font-family: var(--iflyv-font-family-emphasis);
+    font-size: var(--iflyv-font-size-26);
+    font-weight: var(--iflyv-font-weight-extrabold);
+    line-height: var(--iflyv-line-height-36);
+    color: var(--iflyv-text-1);
+  }
+
+  /* 激活装饰：文字正下方 12×4 圆角短横（间距由父容器 gap:2px 提供） */
+  .el-tabs__item.is-active::after {
+    content: '';
+    position: static;
+    display: block;
+    width: 12px;
+    height: 4px;
+    border-radius: 1px;
+    background: var(--iflyv-brand-primary);
+    animation: tab-active-expand var(--iflyv-duration-normal) var(--iflyv-ease-default);
+  }
+}
+/* 使用方式：
+   <el-tab-pane>
+     <template #label>全部 <span class="tab-count">12</span></template>
+   </el-tab-pane>
+*/
+.tab-count {
+  font-weight: var(--iflyv-font-weight-regular);
+  font-size: var(--iflyv-font-size-14);
+  color: var(--iflyv-text-4);
+  margin-inline-start: var(--iflyv-spacing-1);
+}
+.el-tabs__item.is-active .tab-count { color: var(--iflyv-text-3); }
+
+/* RTL：nav-prev/nav-next 图标互换 */
+[dir="rtl"] .el-tabs__nav-prev .el-icon::after {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+[dir="rtl"] .el-tabs__nav-next .el-icon::after {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* RTL：clip-path 动画翻转方向（独立命名，避免覆盖 LTR 同名 keyframes） */
+@keyframes tab-active-expand-rtl {
+  from { clip-path: inset(0 0 0 100%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+[dir="rtl"] .el-tabs:not(.tabs-page):not(.tabs-sub) .el-tabs__item.is-active::after {
+  animation-name: tab-active-expand-rtl;
+}
+[dir="rtl"] .tabs-page .el-tabs__item.is-active::after {
+  animation-name: tab-active-expand-rtl;
+}
+[dir="rtl"] .tabs-sub .el-tabs__item.is-active::before {
+  animation-name: tab-active-expand-rtl;
+}
+
+.tabs-sub .el-tabs__header {
+  width: fit-content;
+  background-color: var(--iflyv-bg-inset);
+  border-radius: var(--iflyv-radius-sm);
+  padding: 3px;
+}
+
+.tabs-sub .el-tabs__nav-wrap { margin-bottom: 0; }
+
+.tabs-sub .el-tabs__item {
+  font-size: var(--iflyv-font-size-14);
+  line-height: var(--iflyv-line-height-20);
+  height: 26px;
+  padding: var(--iflyv-spacing-1) var(--iflyv-spacing-3) !important;
+  border-radius: var(--iflyv-radius-xs);
+  position: relative;
+
+  &.is-active {
+    background-color: transparent;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--iflyv-radius-xs);
+      background-color: var(--iflyv-bg-segment-active);
+      z-index: -1;
+      animation: tab-active-expand var(--iflyv-duration-normal) var(--iflyv-ease-default);
+    }
+  }
+}
+
+/* ==================== Badge + Tab 组合（约定类名 .badge-tabs）==================== */
+/* 使用方式：<el-tabs class="badge-tabs">，label 内放 <el-badge>
+   作用：让 badge 角标能溢出 tab 头显示（不被 nav 的 overflow 裁切），并统一 badge 字重。
+   这是"Badge 叠加在 Tab 项上"这一组合场景的标准写法，使用方只加此 class 即可，
+   不要在页面 scoped 里各自复刻 overflow/字重处理。 */
+.badge-tabs {
+  .el-tabs__header,
+  .el-tabs__nav-wrap,
+  .el-tabs__nav-scroll { overflow: visible; }
+  /* 去掉 nav-wrap 底部整条分隔线（badge 场景不需要） */
+  .el-tabs__nav-wrap::after { content: none; }
+  /* badge 数字/圆点统一常规字重，避免继承 tab 项字重被加粗 */
+  .el-badge__content { font-weight: var(--iflyv-font-weight-regular); }
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin/padding + 定位 */
+.el-tabs__item .is-icon-close { margin-left: unset; margin-inline-start: 5px; }
+.el-tabs--card > .el-tabs__header .el-tabs__item .is-icon-close { right: unset; inset-inline-end: -2px; }
+.el-tabs--top.el-tabs--border-card > .el-tabs__header .el-tabs__item:nth-child(2),
+.el-tabs--top.el-tabs--card > .el-tabs__header .el-tabs__item:nth-child(2),
+.el-tabs--bottom.el-tabs--border-card > .el-tabs__header .el-tabs__item:nth-child(2),
+.el-tabs--bottom.el-tabs--card > .el-tabs__header .el-tabs__item:nth-child(2) {
+  padding-left: unset; padding-inline-start: 20px;
+}
+.el-tabs--top.el-tabs--border-card > .el-tabs__header .el-tabs__item:last-child,
+.el-tabs--top.el-tabs--card > .el-tabs__header .el-tabs__item:last-child,
+.el-tabs--bottom.el-tabs--border-card > .el-tabs__header .el-tabs__item:last-child,
+.el-tabs--bottom.el-tabs--card > .el-tabs__header .el-tabs__item:last-child {
+  padding-right: unset; padding-inline-end: 20px;
+}
+.el-tabs--border-card > .el-tabs__header .el-tabs__item:first-child,
+.el-tabs--border-card > .el-tabs__header .el-tabs__item + .el-tabs__item {
+  margin-left: unset; margin-inline-start: -1px;
+}
+
+/* RTL：覆盖 EP 硬编码 float + border */
+.el-tabs__nav { float: inline-start; }
+.el-tabs--card > .el-tabs__header .el-tabs__item {
+  border-left: unset; border-inline-start: 1px solid var(--el-border-color-light);
+}
+
+/* RTL：竖向 tab 面板 text-align + border + margin */
+.el-tabs--left .el-tabs__item.is-left { text-align: end; }
+.el-tabs--left.el-tabs--card .el-tabs__item.is-left { text-align: start; }
+.el-tabs--left .el-tabs__header.is-left { margin-right: unset; margin-inline-end: 10px; }
+.el-tabs--left .el-tabs__nav-wrap.is-left { margin-right: unset; margin-inline-end: -1px; }
+.el-tabs--left.el-tabs--card .el-tabs__item.is-left,
+.el-tabs--left.el-tabs--card .el-tabs__item.is-left:first-child {
+  border-right: unset; border-inline-end: 1px solid var(--el-border-color-light);
+}
+.el-tabs--left.el-tabs--border-card .el-tabs__header.is-left {
+  border-right: unset; border-inline-end: 1px solid var(--el-border-color);
+}
+.el-tabs--right .el-tabs__header.is-right { margin-left: unset; margin-inline-start: 10px; }
+.el-tabs--right .el-tabs__nav-wrap.is-right { margin-left: unset; margin-inline-start: -1px; }
+.el-tabs--right.el-tabs--card .el-tabs__item.is-right {
+  border-left: unset; border-inline-start: 1px solid var(--el-border-color-light);
+}
+.el-tabs--right.el-tabs--border-card .el-tabs__header.is-right {
+  border-left: unset; border-inline-start: 1px solid var(--el-border-color);
+}

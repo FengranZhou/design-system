@@ -1,0 +1,34 @@
+/* ======================================================================== */
+/* ======================= Collapse 样式覆盖 =============================== */
+/* ======================================================================== */
+
+.el-collapse {
+  --el-collapse-header-font-size: var(--iflyv-font-size-14);
+  --el-collapse-content-font-size: var(--iflyv-font-size-14);
+}
+
+.el-collapse-item__content {
+  padding-bottom: 20px;
+}
+
+/* 折叠箭头 → Lucide ChevronRight */
+.el-collapse-item__arrow {
+  position: relative;
+  color: var(--iflyv-icon-3);
+
+  svg { visibility: hidden; }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / 16px 16px;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / 16px 16px;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+}
+
+/* RTL：覆盖 EP 硬编码 text-align + padding */
+.el-collapse-item__title { text-align: start; }
+.el-collapse-icon-position-right .el-collapse-item__header { padding-right: unset; padding-inline-end: 8px; }

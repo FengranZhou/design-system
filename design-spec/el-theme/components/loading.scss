@@ -1,0 +1,37 @@
+/* ======================================================================== */
+/* ======================== Loading 样式覆盖 ============================== */
+/* ======================================================================== */
+
+.el-loading-mask {
+  backdrop-filter: blur(var(--iflyv-mask-blur));
+}
+
+/* 修正垂直居中：EP 默认 margin-top 只算了 spinner 高度，未计入文字 */
+.el-loading-spinner {
+  margin-top: 0;
+  transform: translateY(-50%);
+}
+
+.el-loading-mask.is-fullscreen .el-loading-spinner {
+  margin-top: 0;
+  transform: translateY(-50%);
+
+  .path { stroke: rgba(255, 255, 255, 0.6); }
+  .el-loading-text { color: rgba(255, 255, 255, 0.6); }
+}
+
+.el-loading-spinner .el-loading-text {
+  color: var(--iflyv-text-3);
+  font-size: var(--iflyv-font-size-14);
+  margin: 0;
+}
+
+.el-loading-spinner .circular {
+  height: 32px;
+  width: 32px;
+}
+
+.el-loading-spinner .path {
+  stroke-width: 3;
+  stroke: var(--iflyv-icon-3);
+}

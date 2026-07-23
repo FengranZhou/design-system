@@ -1,0 +1,76 @@
+/* ======================================================================== */
+/* ======================== Timeline 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* 修正节点与内容垂直居中对齐 */
+/* EP 默认 wrapper top: -3px 偏移不准确 */
+/* 居中公式: -(line-height/2 - node-size/2) = -(22/2 - 12/2) = -5px */
+.el-timeline-item__wrapper {
+  top: -5px;
+}
+
+/* RTL：时间线轴线 border-left → border-inline-start */
+.el-timeline-item__tail {
+  border-left: unset;
+  border-inline-start: 2px solid var(--el-timeline-node-color);
+}
+
+/* RTL：start 模式（默认，轴线在起始侧） */
+.el-timeline.is-start {
+  padding-left: unset; padding-right: unset;
+  padding-inline-start: 40px; padding-inline-end: 0;
+}
+.el-timeline-item.is-start .el-timeline-item__wrapper {
+  padding-left: unset; padding-inline-start: 28px;
+}
+.el-timeline-item.is-start .el-timeline-item__tail {
+  left: unset; inset-inline-start: 4px;
+}
+.el-timeline-item.is-start .el-timeline-item__node--normal {
+  left: unset; inset-inline-start: -1px;
+}
+.el-timeline-item.is-start .el-timeline-item__node--large {
+  left: unset; inset-inline-start: -2px;
+}
+
+/* RTL：end 模式（轴线在结束侧） */
+.el-timeline.is-end {
+  padding-left: unset; padding-right: unset;
+  padding-inline-start: 0; padding-inline-end: 40px;
+}
+.el-timeline-item.is-end .el-timeline-item__wrapper {
+  text-align: end; padding-right: unset; padding-inline-end: 28px;
+}
+.el-timeline-item.is-end .el-timeline-item__tail {
+  right: unset; inset-inline-end: 4px;
+}
+.el-timeline-item.is-end .el-timeline-item__node--normal {
+  right: unset; inset-inline-end: -1px;
+}
+.el-timeline-item.is-end .el-timeline-item__node--large {
+  right: unset; inset-inline-end: -2px;
+}
+
+/* RTL：alternate 模式 */
+.el-timeline.is-alternate {
+  padding-left: unset; padding-right: unset; padding-inline: 20px;
+}
+.el-timeline.is-alternate .el-timeline-item:nth-child(odd) .el-timeline-item__wrapper {
+  left: unset; inset-inline-start: calc(50% - var(--el-timeline-node-size-large) / 2);
+  padding-left: unset; padding-inline-start: 28px;
+}
+.el-timeline.is-alternate .el-timeline-item:nth-child(2n) .el-timeline-item__wrapper {
+  text-align: end; padding-right: unset; padding-inline-end: 28px;
+}
+
+/* RTL：alternate-reverse 模式 */
+.el-timeline.is-alternate-reverse {
+  padding-left: unset; padding-right: unset; padding-inline: 20px;
+}
+.el-timeline.is-alternate-reverse .el-timeline-item:nth-child(odd) .el-timeline-item__wrapper {
+  text-align: end; padding-right: unset; padding-inline-end: 28px;
+}
+.el-timeline.is-alternate-reverse .el-timeline-item:nth-child(2n) .el-timeline-item__wrapper {
+  left: unset; inset-inline-start: calc(50% - var(--el-timeline-node-size-large) / 2);
+  padding-left: unset; padding-inline-start: 28px;
+}

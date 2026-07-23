@@ -1,0 +1,37 @@
+/* ======================================================================== */
+/* ========================= Result 样式覆盖 =============================== */
+/* ======================================================================== */
+
+/* Result 结果页 */
+.el-result { --el-result-title-font-size: var(--iflyv-font-size-18); --el-result-title-margin-top: 16px; --el-result-extra-margin-top: 16px; }
+.el-result__title p { font-size: var(--iflyv-font-size-18); }
+.el-result__subtitle { margin-top: 8px; }
+.el-result__subtitle p { color: var(--iflyv-text-3); }
+
+/* 圆角矩形底板 —— 纯 CSS 覆盖默认图标区 */
+.el-result__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--iflyv-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* 成功：绿色浅底 + 绿色图标 */
+  &:has(.icon-success) {
+    background: var(--iflyv-success-bg);
+    svg { fill: var(--iflyv-success-primary); }
+  }
+
+  /* 失败：红色浅底 + 红色图标 */
+  &:has(.icon-error) {
+    background: var(--iflyv-danger-bg);
+    svg { fill: var(--iflyv-danger-primary); }
+  }
+}

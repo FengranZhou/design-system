@@ -1,0 +1,14 @@
+/* fif-style-root - 基础CSS变量定义 */
+@use './css/font.scss';           /* 字体族 + 语义化字体变量 */
+@use './css/palette.scss';        /* 基础色板（Sass 变量 + CSS 变量） */
+@use './css/spacing.scss';        /* 间距 + 圆角 */
+@use './css/semantic.scss';       /* 亮色语义层 */
+@use './css/palette-dark.scss';   /* 暗色色板 */
+@use './css/semantic-dark.scss';  /* 暗色语义覆盖 */
+@use './css/brands.scss';         /* 品牌色 mixin */
+@use './css/animation.scss';      /* 动效变量 */
+
+body {
+  font: var(--iflyv-font-body-primary);
+  color: var(--iflyv-text-1);
+}

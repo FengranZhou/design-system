@@ -1,0 +1,261 @@
+@use 'palette' as *;
+
+/* ======================================================================== */
+/* ===================== 暗色色板：Dark Palette ============================ */
+/* ======================================================================== */
+/* 决策依据：prd/2026-03-22-dark-theme-decisions.md                         */
+/* 决策 A：品牌染色（灰阶染色曲线减半，与亮色共享品牌色）                      */
+/* 决策 B：功能色暗色色板（@ant-design/colors 暗色算法）+ hover/pressed 翻转  */
+/* ======================================================================== */
+
+/* ==================== 暗色中性灰基底 ==================== */
+/* OKLCh 均匀明度梯度（L: 0.13 → 0.94），方向与亮色一致：0=背景端 10=文本端 */
+$dark-gray-0:  #0F0F0F;  // L≈0.13 — surface-0 页面背景
+$dark-gray-1:  #1A1A1A;  // L≈0.17 — surface-1 卡片/面板
+$dark-gray-2:  #262626;  // L≈0.21 — surface-2 嵌套区域
+$dark-gray-3:  #333333;  // L≈0.27 — surface-3 悬浮态底色
+$dark-gray-4:  #444444;  // L≈0.34
+$dark-gray-5:  #666666;  // L≈0.47
+$dark-gray-6:  #888888;  // L≈0.60
+$dark-gray-7:  #AAAAAA;  // L≈0.72
+$dark-gray-8:  #C0C0C0;  // L≈0.79
+$dark-gray-9:  #D9D9D9;  // L≈0.87
+$dark-gray-10: #EDEDED;  // L≈0.94
+
+/* ==================== 暗色功能色板 ==================== */
+/* 由 @ant-design/colors generate(base, { theme:'dark', bg:'#1A1A1A' }) 生成 */
+
+/* geekblue (base: #3658FF, bg: #1A1A1A) */
+$dark-geekblue-1:  #191c31;
+$dark-geekblue-2:  #1c224a;
+$dark-geekblue-3:  #222d5f;
+$dark-geekblue-4:  #273681;
+$dark-geekblue-5:  #2c42af;
+$dark-geekblue-6:  #324fdd;
+$dark-geekblue-7:  #5774e8;
+$dark-geekblue-8:  #829cf4;
+$dark-geekblue-9:  #acc0f8;
+$dark-geekblue-10: #d5e0fa;
+
+/* green (base: #23B283, bg: #1A1A1A) */
+$dark-green-1:  #182522;
+$dark-green-2:  #19372e;
+$dark-green-3:  #1d483a;
+$dark-green-4:  #1e5e49;
+$dark-green-5:  #207d5e;
+$dark-green-6:  #229b73;
+$dark-green-7:  #41af86;
+$dark-green-8:  #66c39e;
+$dark-green-9:  #8fd3b6;
+$dark-green-10: #bee2d0;
+
+/* red (base: #F53B3B, bg: #1A1A1A) */
+$dark-red-1:  #2f1a1b;
+$dark-red-2:  #471d1f;
+$dark-red-3:  #5c2424;
+$dark-red-4:  #7d2929;
+$dark-red-5:  #a82f2f;
+$dark-red-6:  #d43636;
+$dark-red-7:  #e8635e;
+$dark-red-8:  #f49089;
+$dark-red-9:  #f8bab3;
+$dark-red-10: #fae0dc;
+
+/* orange (base: #FC7819, bg: #1A1A1A) */
+$dark-orange-1:  #311f16;
+$dark-orange-2:  #492a16;
+$dark-orange-3:  #5e361a;
+$dark-orange-4:  #80441a;
+$dark-orange-5:  #ad5719;
+$dark-orange-6:  #da6a19;
+$dark-orange-7:  #e88b3e;
+$dark-orange-8:  #f4ab67;
+$dark-orange-9:  #f8c690;
+$dark-orange-10: #faddba;
+
+/* blue (base: #0077FF, bg: #1A1A1A) */
+$dark-blue-1:  #162131;
+$dark-blue-2:  #142b4a;
+$dark-blue-3:  #12365f;
+$dark-blue-4:  #0e4481;
+$dark-blue-5:  #0956af;
+$dark-blue-6:  #0469dd;
+$dark-blue-7:  #2888e8;
+$dark-blue-8:  #4fa7f4;
+$dark-blue-9:  #77c1f8;
+$dark-blue-10: #a0d6fa;
+
+/* yellow (base: #FADB14, bg: #1A1A1A) */
+$dark-yellow-1:  #302b16;
+$dark-yellow-2:  #494015;
+$dark-yellow-3:  #5d5418;
+$dark-yellow-4:  #7f7117;
+$dark-yellow-5:  #ac9716;
+$dark-yellow-6:  #d8be15;
+$dark-yellow-7:  #e8d73a;
+$dark-yellow-8:  #f4ea62;
+$dark-yellow-9:  #f8f48b;
+$dark-yellow-10: #fafab5;
+
+/* cyan (base: #13C2C2, bg: #1A1A1A) */
+$dark-cyan-1:  #162628;
+$dark-cyan-2:  #16393b;
+$dark-cyan-3:  #184c4c;
+$dark-cyan-4:  #176666;
+$dark-cyan-5:  #158787;
+$dark-cyan-6:  #14a9a9;
+$dark-cyan-7:  #33bdb8;
+$dark-cyan-8:  #59d1ca;
+$dark-cyan-9:  #84e2d8;
+$dark-cyan-10: #b2f1e8;
+
+/* purple (base: #722ED1, bg: #1A1A1A) */
+$dark-purple-1:  #1f192a;
+$dark-purple-2:  #281b3e;
+$dark-purple-3:  #342051;
+$dark-purple-4:  #42236c;
+$dark-purple-5:  #532791;
+$dark-purple-6:  #652bb6;
+$dark-purple-7:  #864eca;
+$dark-purple-8:  #ab7ae1;
+$dark-purple-9:  #cda9f0;
+$dark-purple-10: #ebd7fa;
+
+/* magenta (base: #EB2F96, bg: #1A1A1A) */
+$dark-magenta-1:  #2e1926;
+$dark-magenta-2:  #451b33;
+$dark-magenta-3:  #59203f;
+$dark-magenta-4:  #782352;
+$dark-magenta-5:  #a2286b;
+$dark-magenta-6:  #cc2c83;
+$dark-magenta-7:  #e1539d;
+$dark-magenta-8:  #f480b8;
+$dark-magenta-9:  #f8a9cc;
+$dark-magenta-10: #fad2e3;
+
+/* ==================== 暗色阴影 ==================== */
+$dark-shadow-hover:       rgba(0, 0, 0, 0.24);
+$dark-shadow-related:     rgba(0, 0, 0, 0.36);
+$dark-shadow-independent: rgba(0, 0, 0, 0.48);
+
+/* ======================================================================== */
+/* ===================== html[data-theme="dark"] 色板覆盖 ================== */
+/* ======================================================================== */
+
+html[data-theme="dark"] {
+
+  /* ==================== 灰阶覆盖 ==================== */
+  --iflyv-gray-0: #{$dark-gray-0};
+  --iflyv-gray-1: #{$dark-gray-1};
+  --iflyv-gray-2: #{$dark-gray-2};
+  --iflyv-gray-3: #{$dark-gray-3};
+  --iflyv-gray-4: #{$dark-gray-4};
+  --iflyv-gray-5: #{$dark-gray-5};
+  --iflyv-gray-6: #{$dark-gray-6};
+  --iflyv-gray-7: #{$dark-gray-7};
+  --iflyv-gray-8: #{$dark-gray-8};
+  --iflyv-gray-9: #{$dark-gray-9};
+  --iflyv-gray-10: #{$dark-gray-10};
+
+  /* ==================== 功能色板覆盖 ==================== */
+  /* 暗色色板方向：step-1 = 近背景深色，step-6 = 主色，step-10 = 最亮 */
+
+  --iflyv-geekblue-1:  #{$dark-geekblue-1};
+  --iflyv-geekblue-2:  #{$dark-geekblue-2};
+  --iflyv-geekblue-3:  #{$dark-geekblue-3};
+  --iflyv-geekblue-4:  #{$dark-geekblue-4};
+  --iflyv-geekblue-5:  #{$dark-geekblue-5};
+  --iflyv-geekblue-6:  #{$dark-geekblue-6};
+  --iflyv-geekblue-7:  #{$dark-geekblue-7};
+  --iflyv-geekblue-8:  #{$dark-geekblue-8};
+  --iflyv-geekblue-9:  #{$dark-geekblue-9};
+  --iflyv-geekblue-10: #{$dark-geekblue-10};
+
+  --iflyv-green-1:  #{$dark-green-1};
+  --iflyv-green-2:  #{$dark-green-2};
+  --iflyv-green-3:  #{$dark-green-3};
+  --iflyv-green-4:  #{$dark-green-4};
+  --iflyv-green-5:  #{$dark-green-5};
+  --iflyv-green-6:  #{$dark-green-6};
+  --iflyv-green-7:  #{$dark-green-7};
+  --iflyv-green-8:  #{$dark-green-8};
+  --iflyv-green-9:  #{$dark-green-9};
+  --iflyv-green-10: #{$dark-green-10};
+
+  --iflyv-red-1:  #{$dark-red-1};
+  --iflyv-red-2:  #{$dark-red-2};
+  --iflyv-red-3:  #{$dark-red-3};
+  --iflyv-red-4:  #{$dark-red-4};
+  --iflyv-red-5:  #{$dark-red-5};
+  --iflyv-red-6:  #{$dark-red-6};
+  --iflyv-red-7:  #{$dark-red-7};
+  --iflyv-red-8:  #{$dark-red-8};
+  --iflyv-red-9:  #{$dark-red-9};
+  --iflyv-red-10: #{$dark-red-10};
+
+  --iflyv-orange-1:  #{$dark-orange-1};
+  --iflyv-orange-2:  #{$dark-orange-2};
+  --iflyv-orange-3:  #{$dark-orange-3};
+  --iflyv-orange-4:  #{$dark-orange-4};
+  --iflyv-orange-5:  #{$dark-orange-5};
+  --iflyv-orange-6:  #{$dark-orange-6};
+  --iflyv-orange-7:  #{$dark-orange-7};
+  --iflyv-orange-8:  #{$dark-orange-8};
+  --iflyv-orange-9:  #{$dark-orange-9};
+  --iflyv-orange-10: #{$dark-orange-10};
+
+  --iflyv-blue-1:  #{$dark-blue-1};
+  --iflyv-blue-2:  #{$dark-blue-2};
+  --iflyv-blue-3:  #{$dark-blue-3};
+  --iflyv-blue-4:  #{$dark-blue-4};
+  --iflyv-blue-5:  #{$dark-blue-5};
+  --iflyv-blue-6:  #{$dark-blue-6};
+  --iflyv-blue-7:  #{$dark-blue-7};
+  --iflyv-blue-8:  #{$dark-blue-8};
+  --iflyv-blue-9:  #{$dark-blue-9};
+  --iflyv-blue-10: #{$dark-blue-10};
+
+  --iflyv-yellow-1:  #{$dark-yellow-1};
+  --iflyv-yellow-2:  #{$dark-yellow-2};
+  --iflyv-yellow-3:  #{$dark-yellow-3};
+  --iflyv-yellow-4:  #{$dark-yellow-4};
+  --iflyv-yellow-5:  #{$dark-yellow-5};
+  --iflyv-yellow-6:  #{$dark-yellow-6};
+  --iflyv-yellow-7:  #{$dark-yellow-7};
+  --iflyv-yellow-8:  #{$dark-yellow-8};
+  --iflyv-yellow-9:  #{$dark-yellow-9};
+  --iflyv-yellow-10: #{$dark-yellow-10};
+
+  --iflyv-cyan-1:  #{$dark-cyan-1};
+  --iflyv-cyan-2:  #{$dark-cyan-2};
+  --iflyv-cyan-3:  #{$dark-cyan-3};
+  --iflyv-cyan-4:  #{$dark-cyan-4};
+  --iflyv-cyan-5:  #{$dark-cyan-5};
+  --iflyv-cyan-6:  #{$dark-cyan-6};
+  --iflyv-cyan-7:  #{$dark-cyan-7};
+  --iflyv-cyan-8:  #{$dark-cyan-8};
+  --iflyv-cyan-9:  #{$dark-cyan-9};
+  --iflyv-cyan-10: #{$dark-cyan-10};
+
+  --iflyv-purple-1:  #{$dark-purple-1};
+  --iflyv-purple-2:  #{$dark-purple-2};
+  --iflyv-purple-3:  #{$dark-purple-3};
+  --iflyv-purple-4:  #{$dark-purple-4};
+  --iflyv-purple-5:  #{$dark-purple-5};
+  --iflyv-purple-6:  #{$dark-purple-6};
+  --iflyv-purple-7:  #{$dark-purple-7};
+  --iflyv-purple-8:  #{$dark-purple-8};
+  --iflyv-purple-9:  #{$dark-purple-9};
+  --iflyv-purple-10: #{$dark-purple-10};
+
+  --iflyv-magenta-1:  #{$dark-magenta-1};
+  --iflyv-magenta-2:  #{$dark-magenta-2};
+  --iflyv-magenta-3:  #{$dark-magenta-3};
+  --iflyv-magenta-4:  #{$dark-magenta-4};
+  --iflyv-magenta-5:  #{$dark-magenta-5};
+  --iflyv-magenta-6:  #{$dark-magenta-6};
+  --iflyv-magenta-7:  #{$dark-magenta-7};
+  --iflyv-magenta-8:  #{$dark-magenta-8};
+  --iflyv-magenta-9:  #{$dark-magenta-9};
+  --iflyv-magenta-10: #{$dark-magenta-10};
+}

@@ -1,0 +1,482 @@
+@use '../../../design-spec/design-token/css/brands' as *;
+
+// demo 注册 school-red 品牌色（design-spec v1.2.0 起需由使用方显式注册）
+@include register-brand(
+  "school-red",
+  (#fff4f0, #ffdfd4, #ffbeab, #fa987f, #ed6d53, #e0432a, #ba2a1a, #94160d, #6e0804, #470202),
+  (#2c1918, #421e1a, #55261f, #732c21, #9b3524, #c23d28, #d8654d, #ef927a, #f8b9a7, #fadbd0)
+);
+
+// green 品牌色：主色 = 系统 Green-6 #23B283，亮/暗色板直接复用 palette.scss / palette-dark.scss 的 Green 阶梯
+@include register-brand(
+  "green",
+  (#EBF7F1, #C1E6D4, #93D9BB, #6ACCA5, #45BF92, #23B283, #158C68, #0A664E, #034032, #011A15),
+  (#182522, #19372e, #1d483a, #1e5e49, #207d5e, #229b73, #41af86, #66c39e, #8fd3b6, #bee2d0)
+);
+
+// ============ 布局骨架尺寸 ============
+// 非 4px 间距序列上的结构性尺寸，无对应 spacing token，
+// 统一提炼为局部变量单点维护（收敛裸 px，避免多处重复魔法值）
+$app-topbar-height: 64px;
+$app-sidebar-width: 280px;
+$app-logo-size: 32px;
+// 侧栏导航项内缩进（激活条宽 + 视觉留白，非标准间距序列，单点维护）
+$app-nav-item-indent: 28px;
+// 侧栏激活条 / 分组标签字间距（装饰性尺寸，无对应 token）
+$app-nav-active-bar: 3px;
+$app-nav-label-tracking: 0.5px;
+
+html {
+  scroll-behavior: smooth;
+  // 锚点跳转停靠时避开固定顶栏，额外留一档间距避免标题贴边
+  scroll-padding-top: calc(#{$app-topbar-height} + var(--iflyv-spacing-3));
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font: var(--iflyv-font-body-primary);
+  color: var(--iflyv-text-1);
+  background: var(--iflyv-bg-page);
+}
+
+// ============ Topbar ============
+.app-topbar {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  height: $app-topbar-height;
+  background: var(--iflyv-bg-panel);
+  border-bottom: 1px solid var(--iflyv-border-default);
+  display: flex;
+  align-items: stretch;
+  z-index: 20;
+
+  &__brand {
+    width: $app-sidebar-width;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-2);
+    padding: 0 var(--iflyv-spacing-5);
+    border-inline-end: 1px solid var(--iflyv-border-default);
+  }
+
+  &__logo {
+    width: $app-logo-size;
+    height: $app-logo-size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__title {
+    font: var(--iflyv-font-title-module);
+    line-height: var(--iflyv-line-height-28);
+    color: var(--iflyv-text-1);
+  }
+
+  &__subtitle {
+    font: var(--iflyv-font-body-min);
+    color: var(--iflyv-text-3);
+    margin-top: var(--iflyv-spacing-0_5);
+  }
+
+  // 顶栏 tab 复用设计系统「Tabs 大模块级」（裸 el-tabs，样式全在
+  // el-theme/components/tabs.scss 全局层）。此处仅做顶栏内定位：垂直居中 +
+  // 隐藏内容面板（顶栏 tab 只做导航，内容由主区 v-show 控制）
+  &__nav {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    padding-inline-start: var(--iflyv-spacing-6);
+
+    .el-tabs__content {
+      display: none;
+    }
+  }
+}
+
+// ============ Layout ============
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  padding-top: $app-topbar-height;
+}
+
+// ============ Sidebar ============
+.app-sidebar {
+  position: fixed;
+  top: $app-topbar-height;
+  inset-inline-start: 0;
+  width: $app-sidebar-width;
+  height: calc(100vh - #{$app-topbar-height});
+  background: var(--iflyv-bg-panel);
+  border-inline-end: 1px solid var(--iflyv-border-default);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+
+  // 自定义滚动条
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--iflyv-text-4);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &__header {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--iflyv-border-default);
+    flex-shrink: 0;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__logo {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__title {
+    font: var(--iflyv-font-title-module);
+    color: var(--iflyv-text-1);
+  }
+
+  &__subtitle {
+    font: var(--iflyv-font-body-min);
+    color: var(--iflyv-text-3);
+    margin-top: 2px;
+  }
+
+  // 主题切换按钮
+  .theme-toggle {
+    margin-inline-start: auto;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--iflyv-border-default);
+    border-radius: var(--iflyv-radius-sm);
+    background: var(--iflyv-bg-inset);
+    color: var(--iflyv-text-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      color: var(--iflyv-brand-primary);
+      border-color: var(--iflyv-brand-primary);
+    }
+  }
+
+  &__controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  // 品牌色切换
+  .brand-switcher {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .brand-dot {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    // dot 自带 data-brand 属性，命中 [data-brand] 色板作用域后 accent-6 即该品牌主色
+    background: var(--iflyv-accent-6);
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.15s ease;
+
+    // default 品牌无 [data-brand] 注册规则，需阻断从 html 继承当前品牌的 accent 覆盖
+    &[data-brand="default"] {
+      background: var(--iflyv-geekblue-6);
+    }
+
+    // 选中态：中心圆点
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--iflyv-text-on-dark);
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.15s ease;
+    }
+
+    &.is-active::after {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    &:hover:not(.is-active) {
+      opacity: 0.75;
+    }
+  }
+
+  // 字号档位切换
+  .font-size-switcher {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+    background: var(--iflyv-bg-inset);
+    border-radius: var(--iflyv-radius-sm);
+    padding: 2px;
+  }
+
+  .font-size-btn {
+    min-width: 28px;
+    height: 24px;
+    padding: 0 4px;
+    border: none;
+    border-radius: calc(var(--iflyv-radius-sm) - 2px);
+    background: transparent;
+    color: var(--iflyv-text-3);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+
+    &:hover:not(.is-active) {
+      color: var(--iflyv-text-2);
+    }
+
+    &.is-active {
+      background: var(--iflyv-bg-segment-active);
+      color: var(--iflyv-brand-text);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  // 语言/方向切换
+  .lang-switcher {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+    background: var(--iflyv-bg-inset);
+    border-radius: var(--iflyv-radius-sm);
+    padding: 2px;
+  }
+
+  .lang-btn {
+    min-width: 28px;
+    height: 24px;
+    padding: 0 4px;
+    border: none;
+    border-radius: calc(var(--iflyv-radius-sm) - 2px);
+    background: transparent;
+    color: var(--iflyv-text-3);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+
+    &:hover:not(.is-active) {
+      color: var(--iflyv-text-2);
+    }
+
+    &.is-active {
+      background: var(--iflyv-bg-segment-active);
+      color: var(--iflyv-brand-text);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  &__nav-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--iflyv-spacing-3) 0;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--iflyv-text-4);
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+
+  &__group-label {
+    padding: var(--iflyv-spacing-4) var(--iflyv-spacing-5) var(--iflyv-spacing-1_5);
+    font: var(--iflyv-font-label-primary);
+    color: var(--iflyv-text-4);
+    text-transform: uppercase;
+    letter-spacing: $app-nav-label-tracking;
+
+    &:first-child {
+      padding-top: var(--iflyv-spacing-1);
+    }
+  }
+
+  &__nav {
+    list-style: none;
+
+    li a {
+      display: block;
+      padding-block: var(--iflyv-spacing-3);
+      padding-inline: $app-nav-item-indent var(--iflyv-spacing-5);
+      color: var(--iflyv-text-2);
+      text-decoration: none;
+      font: var(--iflyv-font-body-primary);
+      transition: all 0.15s ease;
+      border-inline-start: $app-nav-active-bar solid transparent;
+
+      &:hover {
+        color: var(--iflyv-brand-text);
+        background: var(--iflyv-brand-bg);
+      }
+
+      &.is-active {
+        color: var(--iflyv-brand-text);
+        font-weight: var(--iflyv-font-weight-semibold);
+      }
+    }
+  }
+}
+
+// ============ Content ============
+.app-content {
+  margin-inline-start: $app-sidebar-width;
+  flex: 1;
+  padding: var(--iflyv-spacing-3);
+  max-width: calc(100vw - #{$app-sidebar-width});
+}
+
+// ============ Demo Sections ============
+.demo-section {
+  background: var(--iflyv-bg-panel);
+  border-radius: var(--iflyv-radius-lg);
+  padding: 28px 32px;
+  margin-bottom: var(--iflyv-spacing-3);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__title {
+    font-family: var(--iflyv-font-family-emphasis);
+    font-weight: var(--iflyv-font-weight-extrabold);
+    font-size: var(--iflyv-font-size-26);
+    line-height: var(--iflyv-line-height-48);
+    color: var(--iflyv-text-1);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--iflyv-border-default);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--iflyv-brand-primary);
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// sub-section 包裹：label + row
+.demo-block {
+  margin-bottom: 48px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.demo-label {
+  font: var(--iflyv-font-body-sub);
+  color: var(--iflyv-text-3);
+  margin-bottom: 10px;
+}
+
+.demo-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// ============ 内容区滚动条 ============
+.app-content {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--iflyv-text-4);
+    border-radius: 4px;
+  }
+}
+
+// ============ 辅助样式 ============
+
+// 全宽块（如 Tabs、Steps、Alert 列表等）
+.demo-full-width {
+  width: 100%;
+}
+
+// 修正 Transfer 组件在 flex 容器里的对齐
+.el-transfer {
+  display: inline-flex;
+}
+
+// 修正 Pagination 宽度
+.demo-section .el-pagination {
+  flex-wrap: wrap;
+}

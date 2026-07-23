@@ -1,0 +1,45 @@
+/* Marker 指示条颜色与选中文字统一 */
+.el-anchor {
+  --el-anchor-marker-bg-color: var(--iflyv-brand-text);
+  --el-anchor-padding-indent: 0.875rem;
+  --el-anchor-font-size: var(--iflyv-font-size-12);
+}
+
+.el-anchor .el-anchor__link {
+  font-size: var(--iflyv-font-size-16) !important;
+  line-height: 24px !important;
+  padding: 4px 0 5px !important;
+  color: var(--iflyv-text-1) !important;
+
+  &.is-active {
+    color: var(--iflyv-brand-text) !important;
+  }
+}
+
+.el-anchor--horizontal .el-anchor__list {
+  padding-bottom: 3px !important;
+}
+
+.el-anchor--horizontal .el-anchor__marker {
+  height: 3px !important;
+  // EP JS 动态设置 left 和 width 为链接的位置和宽度
+  // 通过 clip-path 裁剪出居中的 16px 条形
+  clip-path: inset(0 calc(50% - 8px) round 1px);
+}
+
+/* RTL：覆盖 EP 硬编码 padding-left / left */
+.el-anchor.el-anchor--vertical .el-anchor__list {
+  padding-left: unset; padding-inline-start: var(--el-anchor-padding-indent);
+}
+.el-anchor.el-anchor--vertical .el-anchor__marker {
+  left: unset; inset-inline-start: 0;
+}
+.el-anchor.el-anchor--vertical.el-anchor--underline::before {
+  left: unset; inset-inline-start: 0;
+}
+.el-anchor.el-anchor--horizontal .el-anchor__list .el-anchor__item {
+  padding-left: unset; padding-inline-start: 16px;
+}
+.el-anchor.el-anchor--horizontal .el-anchor__list .el-anchor__item:first-child {
+  padding-left: unset; padding-inline-start: 0;
+}

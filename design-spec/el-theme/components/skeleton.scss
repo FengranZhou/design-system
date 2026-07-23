@@ -1,0 +1,30 @@
+/* ======================================================================== */
+/* ======================= Skeleton 样式覆盖 =============================== */
+/* ======================================================================== */
+
+.el-skeleton {
+  --el-skeleton-to-color: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] .el-skeleton {
+  --el-skeleton-to-color: var(--iflyv-gray-2);
+}
+
+.el-skeleton__item {
+  border-radius: var(--iflyv-radius-xs);
+  height: 1.25rem;
+}
+.el-skeleton__paragraph { height: 1rem; }
+
+.el-skeleton__paragraph {
+  margin-top: 12px;
+}
+
+/* RTL：扫光方向翻转（从左向右扫） */
+[dir="rtl"] .el-skeleton.is-animated .el-skeleton__item {
+  animation-name: el-skeleton-loading-rtl;
+}
+@keyframes el-skeleton-loading-rtl {
+  0%   { background-position: 0; }
+  100% { background-position: 100%; }
+}

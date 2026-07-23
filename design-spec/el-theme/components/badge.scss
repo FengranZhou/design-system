@@ -1,0 +1,22 @@
+/* ======================================================================== */
+/* ========================== Badge 样式覆盖 =============================== */
+/* ======================================================================== */
+
+/* 组件级变量覆盖（EP 在 .el-badge 作用域声明，:root 级覆盖无效） */
+.el-badge { --el-badge-font-size: var(--iflyv-font-size-12); }
+
+/* RTL：徽标从右上角翻转到左上角 */
+/* EP 用 right + translate(100%) 定位，transform 不受 direction 影响，需同时翻转 */
+[dir="rtl"] .el-badge__content.is-fixed {
+  right: auto;
+  left: calc(1px + var(--el-badge-size) / 2);
+  transform: translateY(-50%) translate(-100%);
+}
+[dir="rtl"] .el-badge__content.is-fixed.is-dot {
+  right: auto;
+  left: 5px;
+}
+[dir="rtl"] .el-badge__content.is-dot {
+  right: auto;
+  left: 0;
+}

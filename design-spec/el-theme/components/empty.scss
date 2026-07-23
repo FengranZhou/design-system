@@ -1,0 +1,28 @@
+/* ======================================================================== */
+/* ========================= Empty 样式覆盖 ================================ */
+/* ======================================================================== */
+
+/* Empty 空状态 */
+.el-empty__description { margin-top: 12px; }
+.el-empty__bottom { margin-top: 12px; }
+.el-empty__image { display: flex; justify-content: center; }
+
+/* 圆角矩形底板 + Lucide Icon —— 配合 el-empty #image 插槽使用 */
+.empty-icon-plate {
+  width: 48px;
+  height: 48px;
+  background: var(--iflyv-bg-inset);
+  border-radius: var(--iflyv-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--iflyv-icon-2);
+
+  /* 覆盖 EP 默认的 .el-empty__image svg 样式 */
+  svg {
+    color: inherit;
+    fill: none;
+    width: auto;
+    height: auto;
+  }
+}

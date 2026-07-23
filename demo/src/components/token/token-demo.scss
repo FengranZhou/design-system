@@ -1,0 +1,309 @@
+/* ========================================================================
+   Token 演示组件共享样式
+   —— 由 SemanticColorDemo / RadiusDemo / SpacingDemo / FontBaseDemo /
+      FontSemanticDemo / ShadowDemo / MotionDemo 共同引用。
+   命名空间：.token-* 为本套 demo 私有前缀，独特不与外部撞名。
+   （从原 TokenDemo.vue 的 scoped 样式平移，样式规则未变）
+   ======================================================================== */
+
+.token-group {
+  margin-bottom: var(--iflyv-spacing-4);
+  &:last-child { margin-bottom: 0; }
+
+  &__label {
+    font-size: var(--iflyv-font-size-12);
+    font-weight: var(--iflyv-font-weight-semibold);
+    color: var(--iflyv-text-3);
+    margin-bottom: var(--iflyv-spacing-1_5);
+  }
+}
+
+.token-name {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: var(--iflyv-font-size-12);
+  color: var(--iflyv-text-1);
+}
+
+.token-value {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+  color: var(--iflyv-text-3);
+}
+
+.token-desc {
+  font-size: 11px;
+  color: var(--iflyv-text-4);
+}
+
+.token-source {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 10px;
+  color: var(--iflyv-text-3);
+  background: var(--iflyv-bg-inset);
+  padding: 0 var(--iflyv-spacing-1);
+  border-radius: var(--iflyv-radius-xs);
+}
+
+/* —— 语义色 —— */
+.token-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: var(--iflyv-spacing-1_5);
+}
+
+.token-color-item {
+  display: flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-2);
+  padding: var(--iflyv-spacing-1_5) var(--iflyv-spacing-2);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-xs);
+  cursor: pointer;
+  transition: border-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+  &:hover { border-color: var(--iflyv-border-strong); }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    .token-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+}
+
+.token-swatch {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--iflyv-radius-xs);
+  border: 1px solid var(--iflyv-border-subtle);
+  /* 棋盘格底：透明色可见 */
+  background-image:
+    linear-gradient(45deg, rgba(128,128,128,0.18) 25%, transparent 25%, transparent 75%, rgba(128,128,128,0.18) 75%),
+    linear-gradient(45deg, rgba(128,128,128,0.18) 25%, transparent 25%, transparent 75%, rgba(128,128,128,0.18) 75%);
+  background-size: 12px 12px;
+  background-position: 0 0, 6px 6px;
+}
+
+/* —— 阴影 —— */
+.token-shadow-row {
+  display: flex;
+  gap: var(--iflyv-spacing-8);
+  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-2) var(--iflyv-spacing-6);
+}
+
+.token-shadow-card {
+  flex: 1;
+  height: 88px;
+  background: var(--iflyv-bg-panel);
+  border-radius: var(--iflyv-radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--iflyv-spacing-1);
+  cursor: pointer;
+}
+
+/* —— 圆角 —— */
+.token-radius-row {
+  display: flex;
+  gap: var(--iflyv-spacing-4);
+  flex-wrap: wrap;
+}
+
+.token-radius-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--iflyv-spacing-0_5);
+  cursor: pointer;
+}
+
+.token-radius-box {
+  width: 72px;
+  height: 56px;
+  background: var(--iflyv-accent-2);
+  border: 1px solid var(--iflyv-accent-4);
+  margin-bottom: var(--iflyv-spacing-1);
+}
+
+/* —— 间距 —— */
+.token-spacing-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iflyv-spacing-3);   /* 不同间距值之间拉开区分度 */
+}
+
+/* 每行 = 一张卡片：上段基本信息 + 下段应用场景 */
+.token-spacing-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iflyv-spacing-2);
+  cursor: pointer;
+  padding: var(--iflyv-spacing-3);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-sm);
+  transition: border-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+  &:hover { border-color: var(--iflyv-border-strong); }
+}
+
+/* 上段：token 名 / 数值 / 条形示意 */
+.token-spacing-row__head {
+  display: grid;
+  grid-template-columns: 130px 44px 1fr;
+  align-items: center;
+  gap: var(--iflyv-spacing-3);
+}
+
+.token-spacing-bar {
+  height: 14px;
+  background: var(--iflyv-accent-4);
+  border-radius: 2px;
+}
+
+/* 下段：灰底块，「应用场景」标题 + 场景标签，自动换行 */
+.token-scenes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--iflyv-spacing-1_5) var(--iflyv-spacing-2);
+  padding: var(--iflyv-spacing-2) 10px;
+  background: var(--iflyv-bg-inset);
+  border-radius: var(--iflyv-radius-xs);
+}
+
+.token-scenes__label {
+  font-size: 11px;
+  color: var(--iflyv-text-3);
+  margin-right: var(--iflyv-spacing-0_5);
+}
+
+.token-scene-chip {
+  font-size: var(--iflyv-font-size-12);
+  line-height: var(--iflyv-line-height-20);
+  color: var(--iflyv-text-2);
+  background: var(--iflyv-bg-panel);
+  padding: 0 10px;
+  border-radius: var(--iflyv-radius-xs);
+  white-space: nowrap;
+}
+
+/* —— 字体 —— */
+.token-font-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 字重行：数值列含"（xxx专用）"备注，固定加宽第二列并禁止换行——
+   固定宽度保证各行第三列（样例）左缘对齐 */
+.token-font-row[class="token-font-row"] {
+  grid-template-columns: 190px 200px 1fr;
+
+  .token-value { white-space: nowrap; }
+}
+
+.token-font-row {
+  display: grid;
+  grid-template-columns: 190px 60px 1fr;
+  align-items: center;
+  gap: var(--iflyv-spacing-3);
+  padding: var(--iflyv-spacing-1_5) var(--iflyv-spacing-1);
+  border-bottom: 1px dashed var(--iflyv-border-subtle);
+  cursor: pointer;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: var(--iflyv-bg-inset); }
+}
+
+.token-font-row--semantic {
+  grid-template-columns: 300px 1fr;
+
+  .token-font-row__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--iflyv-spacing-0_5);
+  }
+}
+
+/* 字号行：name / 数值 / 行高档 / 示例 */
+.token-font-row--size {
+  grid-template-columns: 190px 60px 200px 1fr;
+}
+
+.token-lineheights {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--iflyv-spacing-1) var(--iflyv-spacing-1_5);
+}
+
+.token-lineheights__label {
+  font-size: 11px;
+  color: var(--iflyv-text-3);
+  margin-right: var(--iflyv-spacing-0_5);
+}
+
+.token-lh-chip {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+  line-height: var(--iflyv-line-height-18);
+  color: var(--iflyv-text-2);
+  background: var(--iflyv-bg-inset);
+  padding: 0 7px;
+  border-radius: var(--iflyv-radius-xs);
+}
+
+.token-font-sample {
+  color: var(--iflyv-text-1);
+  line-height: 1.4;   /* 大字号也留足垂直空间，避免相邻行重叠 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* —— 动效 —— */
+.token-motion-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iflyv-spacing-2);
+}
+
+.token-motion-row {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  align-items: center;
+  gap: var(--iflyv-spacing-4);
+}
+
+.token-motion-row__head {
+  display: grid;
+  grid-template-columns: 190px 200px 1fr;
+  align-items: center;
+  gap: var(--iflyv-spacing-3);
+  cursor: pointer;
+  padding: var(--iflyv-spacing-1);
+  border-radius: var(--iflyv-radius-xs);
+
+  &:hover { background: var(--iflyv-bg-inset); }
+}
+
+.token-motion-track {
+  position: relative;
+  height: 16px;
+  background: var(--iflyv-bg-inset);
+  border-radius: var(--iflyv-radius-full);
+}
+
+.token-motion-ball {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--iflyv-brand-primary);
+  transition-property: transform;
+}

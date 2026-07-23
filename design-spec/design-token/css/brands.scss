@@ -1,0 +1,31 @@
+@use 'sass:list';
+@use 'palette' as *;
+
+/* ======================================================================== */
+/* ==================== 品牌色注册 Mixin ==================================== */
+/* ======================================================================== */
+/* 使用步骤：
+   1. 用 @ant-design/colors generate(base) 生成 10 级亮色色板
+   2. 用 generate(base, { theme:'dark', backgroundColor:'#1A1A1A' }) 生成暗色色板
+   3. 调用 register-brand mixin：
+
+   @include register-brand(
+     "school-red",
+     (#fff4f0, #ffdfd4, #ffbeab, #fa987f, #ed6d53, #e0432a, #ba2a1a, #94160d, #6e0804, #470202),
+     (#2c1918, #421e1a, #55261f, #732c21, #9b3524, #c23d28, #d8654d, #ef927a, #f8b9a7, #fadbd0)
+   );
+*/
+
+@mixin register-brand($name, $palette-light, $palette-dark) {
+  [data-brand="#{$name}"] {
+    @for $i from 1 through 10 {
+      --iflyv-accent-#{$i}: #{list.nth($palette-light, $i)};
+    }
+  }
+
+  html[data-theme="dark"][data-brand="#{$name}"] {
+    @for $i from 1 through 10 {
+      --iflyv-accent-#{$i}: #{list.nth($palette-dark, $i)};
+    }
+  }
+}

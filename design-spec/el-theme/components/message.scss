@@ -1,0 +1,95 @@
+/* ======================================================================== */
+/* ========================= Message 样式覆盖 ============================= */
+/* ======================================================================== */
+
+.el-message {
+  min-width: 320px;
+  max-width: 480px;
+  padding-block: 10px;
+  padding-inline: 16px 12px;
+  border-radius: var(--iflyv-radius-sm);
+  box-shadow: var(--iflyv-shadow-related);
+  border-width: 1px;
+  border-style: solid;
+
+  /* 文本统一黑色 */
+  .el-message__content {
+    color: var(--iflyv-text-1);
+    font: var(--iflyv-font-body-sub);
+  }
+
+  /* 关闭按钮：始终可见，靠右，Lucide X 图标替换 */
+  .el-message__closeBtn {
+    position: absolute;
+    inset-inline-end: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--iflyv-font-size-14);
+    color: var(--iflyv-icon-3);
+    opacity: 1;
+
+    svg { display: none; }
+    &::after {
+      content: '';
+      display: block;
+      width: 14px;
+      height: 14px;
+      background-color: currentColor;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+    }
+
+    &:hover {
+      color: var(--iflyv-icon-2);
+    }
+  }
+
+  /* ==================== 语义类型样式 ==================== */
+
+  /* 成功 */
+  &--success {
+    background-color: var(--iflyv-success-bg);
+    border-color: var(--iflyv-message-border-success);
+
+    .el-message__icon {
+      color: var(--iflyv-success-primary);
+    }
+  }
+
+  /* 危险/错误 */
+  &--error {
+    background-color: var(--iflyv-danger-bg);
+    border-color: var(--iflyv-message-border-danger);
+
+    .el-message__icon {
+      color: var(--iflyv-danger-primary);
+    }
+  }
+
+  /* 警告 */
+  &--warning {
+    background-color: var(--iflyv-warning-bg);
+    border-color: var(--iflyv-message-border-warning);
+
+    .el-message__icon {
+      color: var(--iflyv-warning-primary);
+    }
+  }
+
+  /* 信息 */
+  &--info {
+    background-color: var(--iflyv-info-bg);
+    border-color: var(--iflyv-message-border-info);
+
+    .el-message__icon {
+      color: var(--iflyv-info-primary);
+    }
+  }
+}
+
+/* RTL：MessageBox text-align + show-close padding */
+.el-message-box { text-align: start; }
+.el-message-box__header.show-close {
+  padding-right: unset;
+  padding-inline-end: calc(var(--el-messagebox-padding-primary) + var(--el-message-close-size, 16px));
+}

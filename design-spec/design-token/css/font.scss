@@ -1,0 +1,184 @@
+/* ==================== 字体定义 Font Face ==================== */
+@font-face {
+  font-family: "douyinNum";
+  src: url("../font/douyin_num.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Alibaba PuHuiTi 3.0";
+  src: url("../font/AlibabaPuHuiTi-3-95-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ======================================================================== */
+/* ========================= 字体系统 Font System ========================= */
+/* ======================================================================== */
+
+/* ==================== 第一层：基础字体规范 ==================== */
+
+/* 字体家族 Font Family */
+$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',
+sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+'Noto Color Emoji';
+$font-family-number: "douyinNum";
+/* 字体名 "Alibaba PuHuiTi 3.0" 必须用插值 #{'"..."'} 强制保留引号输出——
+   否则 Sass 会剥掉引号、并把 3.0 数字化成 3，得到无效字体名 `Alibaba PuHuiTi 3` 导致回退系统字体 */
+$font-family-emphasis: #{'"Alibaba PuHuiTi 3.0"'}, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif;   /* 强调/页面标题：阿里普惠 95 ExtraBold */
+
+/* 字体大小 Font Size */
+$font-size-12: 12px;
+$font-size-14: 14px;
+$font-size-16: 16px;
+$font-size-18: 18px;
+$font-size-22: 22px;
+$font-size-26: 26px;
+$font-size-40: 40px;
+
+/* 行高 Line Height
+   策略：递减倍率 + 偶数圆整
+   正文区(12-16px) ≈1.43~1.50×  标题区(18-28px) ≈1.29~1.56×  Display(32-72px) ≈1.11~1.25× */
+$line-height-18: 18px;
+$line-height-20: 20px;
+$line-height-22: 22px;
+$line-height-24: 24px;
+$line-height-28: 28px;
+$line-height-32: 32px;
+$line-height-34: 34px;
+$line-height-36: 36px;
+$line-height-40: 40px;
+$line-height-44: 44px;
+$line-height-48: 48px;
+$line-height-52: 52px;
+$line-height-60: 60px;
+$line-height-80: 80px;
+
+/* 字重 Font Weight */
+$font-weight-regular: 400;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;   /* 阿里普惠 95 ExtraBold / 页面标题强调 */
+
+/* ==================== 第二层：语义化字体应用 ==================== */
+
+:root {
+  /* 字体家族 Font Family */
+  --iflyv-font-family-base: #{$font-family-base};
+  --iflyv-font-family-number: #{$font-family-number};
+  --iflyv-font-family-emphasis: #{$font-family-emphasis};
+
+  /* 字体大小 Font Size */
+  --iflyv-font-size-12: 0.75rem;    /* 12px */
+  --iflyv-font-size-14: 0.875rem;   /* 14px */
+  --iflyv-font-size-16: 1rem;       /* 16px */
+  --iflyv-font-size-18: 1.125rem;   /* 18px */
+  --iflyv-font-size-22: 1.375rem;   /* 22px */
+  --iflyv-font-size-26: 1.625rem;   /* 26px */
+  --iflyv-font-size-40: 2.5rem;     /* 40px */
+
+  /* 行高 Line Height */
+  --iflyv-line-height-18: 1.125rem;  /* 18px — 12px×1.50 */
+  --iflyv-line-height-20: 1.25rem;   /* 20px — 14px×1.43 */
+  --iflyv-line-height-22: 1.375rem;  /* 22px */
+  --iflyv-line-height-24: 1.5rem;    /* 24px — 16px×1.50 */
+  --iflyv-line-height-28: 1.75rem;   /* 28px — 18px×1.56, 20px×1.40 */
+  --iflyv-line-height-32: 2rem;      /* 32px — 16px×2.00, 22px×1.45 */
+  --iflyv-line-height-34: 2.125rem;  /* 34px — 22px×1.5(向上取双) */
+  --iflyv-line-height-36: 2.25rem;   /* 36px — 18px×2.00, 24px×1.5 */
+  --iflyv-line-height-40: 2.5rem;    /* 40px — 26px×1.5(向上取双) */
+  --iflyv-line-height-44: 2.75rem;   /* 44px — 22px×2.00 */
+  --iflyv-line-height-48: 3rem;      /* 48px — 24px×2.00 */
+  --iflyv-line-height-52: 3.25rem;   /* 52px — 26px×2.00 */
+  --iflyv-line-height-60: 3.75rem;   /* 60px — 40px×1.5 */
+  --iflyv-line-height-80: 5rem;      /* 80px — 40px×2.00 */
+
+  /* 字重 Font Weight */
+  --iflyv-font-weight-regular: #{$font-weight-regular};
+  --iflyv-font-weight-semibold: #{$font-weight-semibold};
+  --iflyv-font-weight-bold: #{$font-weight-bold};
+  --iflyv-font-weight-extrabold: #{$font-weight-extrabold};
+
+  /* 语义比例行高 Leading
+     用于快速开发场景，按字号段选择合适的比例值。
+     需要精确像素对齐时使用上方固定 rem 行高 token。 */
+  --iflyv-leading-none:    1;      /* 紧贴 — 装饰性大字、单行 Display */
+  --iflyv-leading-tight:   1.15;   /* Display 大字 32px+ */
+  --iflyv-leading-snug:    1.3;    /* 标题 18-28px */
+  --iflyv-leading-normal:  1.5;    /* 正文 14-16px */
+  --iflyv-leading-relaxed: 1.75;   /* 多行正文、长文阅读 */
+  --iflyv-leading-loose:   2;      /* 超松 — 特殊排版场景 */
+
+  /* 标题类型 Title */
+
+  /* 页面标题 - Title-Page - 页面级主标题（阿里普惠 95 ExtraBold） */
+  --iflyv-font-title-page: #{$font-weight-extrabold} 1.625rem / 3rem #{$font-family-emphasis};              /* 26px/48px */
+  --iflyv-font-title-page-multiline: #{$font-weight-extrabold} 1.625rem / 3.25rem #{$font-family-emphasis}; /* 26px/52px */
+
+  /* 页面级选中 Tab 项 - Tab-Active - 页面级 Tabs 激活项（阿里普惠 95 ExtraBold） */
+  --iflyv-font-tab-active: #{$font-weight-extrabold} 1.625rem / 2.25rem #{$font-family-emphasis};           /* 26px/36px */
+
+  /* 模块标题 - Title-Module - 模块级标题 */
+  --iflyv-font-title-module: #{$font-weight-semibold} 1.125rem / 2.25rem #{$font-family-base};              /* 18px/36px */
+
+  /* 模块级选中 Tab 项 - Tab-Active-Sub - 模块级 Tabs 激活项 */
+  --iflyv-font-tab-active-sub: #{$font-weight-semibold} 1.125rem / 1.75rem #{$font-family-base};
+  --iflyv-font-tab-active-sub-multiline: #{$font-weight-semibold} 1.125rem / 2.25rem #{$font-family-base};
+
+  /* 默认 Tab 项 - Tab-Default - Tabs 常规（未选中）项 */
+  --iflyv-font-tab-default: #{$font-weight-regular} 1.125rem / 2.25rem #{$font-family-base};  /* 18px/36px */
+
+  /* 组件标题 - Title-Component - 组件级标题 */
+  --iflyv-font-title-component: #{$font-weight-semibold} 0.875rem / 1.25rem #{$font-family-base};  /* 14px/20px */
+
+  /* 正文类型 Body */
+
+  /* 常规正文 - Body-Primary - 绝大多数主要文本信息 */
+  --iflyv-font-body-primary: #{$font-weight-regular} 1rem / 1.5rem #{$font-family-base};
+  --iflyv-font-body-primary-multiline: #{$font-weight-regular} 1rem / 2rem #{$font-family-base};
+
+  /* 次要正文 - Body-Sub - 次要正文或文字按钮 */
+  --iflyv-font-body-sub: #{$font-weight-regular} 0.875rem / 1.25rem #{$font-family-base};
+  --iflyv-font-body-sub-multiline: #{$font-weight-regular} 0.875rem / 1.75rem #{$font-family-base};
+
+  /* 辅助信息 - Body-Min - 最小可识别字号 */
+  --iflyv-font-body-min: #{$font-weight-regular} 0.75rem / 1.125rem #{$font-family-base};
+  --iflyv-font-body-min-multiline: #{$font-weight-regular} 0.75rem / 1.5rem #{$font-family-base};
+
+  /* 标签类型 Label */
+
+  /* 常规标签 - Label-Primary - 绝大多数标签内的文字 */
+  --iflyv-font-label-primary: #{$font-weight-regular} 0.75rem / 1.125rem #{$font-family-base};
+  --iflyv-font-label-primary-multiline: #{$font-weight-regular} 0.75rem / 1.5rem #{$font-family-base};
+
+  /* 数字展示类型 Number Display */
+
+  /* 展示型数字 - Number-Display - 使用抖音美好体 */
+  --iflyv-font-number-display: #{$font-weight-bold} 1.625rem / 2.5rem #{$font-family-number};    /* 26px/40px */
+  --iflyv-font-number-display-sm: #{$font-weight-bold} 1.375rem / 2.125rem #{$font-family-number}; /* 22px/34px */
+}
+
+/* ==================== 字号档位 Font Size Levels ==================== */
+/* 通过 html font-size 控制全局 rem 缩放，间距/圆角/组件尺寸保持 px 不变 */
+/* 数值来源：demos/font-size-levels-compare.html remRootSizes */
+
+html {
+  font-size: 16px; /* m 默认值，显式声明确保一致 */
+}
+
+html[data-font-size="s"] {
+  font-size: 14.5px;
+}
+
+/* m = 16px（默认），无需额外规则 */
+
+html[data-font-size="l"] {
+  font-size: 19px;
+}
+
+html[data-font-size="xl"] {
+  font-size: 22px;
+}

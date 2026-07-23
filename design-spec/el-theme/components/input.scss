@@ -1,0 +1,156 @@
+/* ======================================================================== */
+/* ============= Input / Textarea / 输入家族 样式覆盖 ===================== */
+/* ======================================================================== */
+
+/* 输入框/选择器回显文本色 */
+.el-input,
+.el-textarea,
+.el-autocomplete,
+.el-date-editor {
+  --el-input-text-color: var(--iflyv-text-1);
+}
+.el-select__wrapper {
+  --el-select-input-color: var(--iflyv-text-1);
+}
+/* EP 新版单选回显文字节点同时挂 .el-select__placeholder class，有值态(无 is-transparent)
+   会被 EP .el-select__placeholder{color:regular(text-2)} 命中而偏浅；--el-select-input-color
+   新版已不被读取，故显式钉有值回显为 text-1（禁用态除外，保留 EP 禁用色）。 */
+.el-select__wrapper:not(.is-disabled) .el-select__selected-item:not(.is-transparent) {
+  color: var(--iflyv-text-1);
+}
+.el-date-editor .el-range-input {
+  color: var(--iflyv-text-1);
+}
+
+/* 组件高度修正 + 聚焦描边统一深灰 */
+.el-cascader {
+  height: var(--el-component-size);
+  line-height: var(--el-component-size);
+  .el-input.is-focus .el-input__wrapper {
+    box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
+  }
+}
+.el-select__wrapper {
+  min-height: var(--el-component-size);
+  &.is-focused,
+  &.is-disabled.is-focus {
+    box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
+  }
+  .el-select__selection.is-near { margin-inline-start: -4px; }
+  .el-select__selection .el-tag {
+    color: var(--iflyv-text-2);
+    background-color: var(--iflyv-bg-inset);
+    border: none;
+  }
+}
+.el-select--large .el-select__wrapper { min-height: var(--el-component-size-large); }
+.el-select--small .el-select__wrapper { min-height: var(--el-component-size-small); }
+.el-input-tag { --el-input-tag-font-size: var(--iflyv-font-size-14); }
+.el-input-tag--large { --el-input-tag-font-size: var(--iflyv-font-size-14); }
+.el-input-tag--small { --el-input-tag-font-size: var(--iflyv-font-size-12); }
+.el-input-tag.is-focused,
+.el-input-tag.is-disabled.is-focus {
+  box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
+}
+.el-color-picker.is-focused .el-color-picker__trigger {
+  border-color: var(--iflyv-brand-primary);
+  outline: 1px solid var(--iflyv-input-focus-ring);
+}
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
+}
+.el-textarea__inner {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+.el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
+}
+.el-date-editor.is-focus .el-input__wrapper {
+  box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
+}
+.el-range-editor.is-active,
+.el-range-editor.is-active:hover {
+  box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
+}
+
+/* 字数提示 show-word-limit */
+.el-input__wrapper .el-input__count,
+.el-textarea .el-input__count {
+  color: var(--iflyv-text-4);
+  font-size: var(--iflyv-font-size-12);
+  line-height: var(--iflyv-line-height-18);
+}
+
+/* 清除图标 → CircleCloseFilled */
+/* 注意：EP 用 .el-input .el-input__clear 设 14px，需匹配 (0,2,0) 优先级 */
+.el-input .el-input__clear,
+.el-textarea .el-textarea__clear,
+.el-select__caret.is-show-close,
+.el-select .el-select__clear,
+.el-cascader .icon-circle-close,
+.el-date-editor .el-icon.clear-icon,
+.el-date-editor .el-icon.el-range__close-icon:not(.el-range__close-icon--hidden) {
+  position: relative;
+  font-size: var(--iflyv-font-size-14);
+  cursor: pointer;
+  color: var(--el-input-icon-color);
+  &:hover { color: var(--el-input-clear-hover-color); }
+  svg { visibility: hidden; }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Cpath d='M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896m0 393.664L407.936 353.6a38.4 38.4 0 1 0-54.336 54.336L457.664 512 353.6 616.064a38.4 38.4 0 1 0 54.336 54.336L512 566.336 616.064 670.4a38.4 38.4 0 1 0 54.336-54.336L566.336 512 670.4 407.936a38.4 38.4 0 1 0-54.336-54.336z'/%3E%3C/svg%3E") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Cpath d='M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896m0 393.664L407.936 353.6a38.4 38.4 0 1 0-54.336 54.336L457.664 512 353.6 616.064a38.4 38.4 0 1 0 54.336 54.336L512 566.336 616.064 670.4a38.4 38.4 0 1 0 54.336-54.336L566.336 512 670.4 407.936a38.4 38.4 0 1 0-54.336-54.336z'/%3E%3C/svg%3E") no-repeat center / contain;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+}
+
+/* ==================== 字号 rem 化：覆盖 EP 尺寸变体 baked-in px ==================== */
+.el-input { font-size: var(--iflyv-font-size-14); }
+.el-input--large { font-size: var(--iflyv-font-size-14); }
+.el-input--small { font-size: var(--iflyv-font-size-12); }
+.el-input__inner { font-size: inherit; }
+.el-input .el-input__password { font-size: var(--iflyv-font-size-14); }
+.el-input-tag--large { font-size: var(--iflyv-font-size-14); }
+.el-input-tag--small { font-size: var(--iflyv-font-size-12); }
+.el-input-number__decrease,
+.el-input-number__increase { font-size: var(--iflyv-font-size-14); }
+.el-input-number--small .el-input-number__decrease,
+.el-input-number--small .el-input-number__increase { font-size: var(--iflyv-font-size-12); }
+
+/* 输入框前后缀 Lucide 图标尺寸：rem 化，随字号档位缩放 */
+/* Lucide 通过 #prefix/#suffix slot 渲染，SVG 是 prefix-inner/suffix-inner 的直接子元素 */
+/* SVG 属性 width/height 被 CSS 覆盖（CSS 优先级 > 表现属性） */
+.el-input__prefix-inner > svg,
+.el-input__suffix-inner > svg {
+  width: 1rem;
+  height: 1rem;
+}
+.el-input--small .el-input__prefix-inner > svg,
+.el-input--small .el-input__suffix-inner > svg {
+  width: var(--iflyv-font-size-14);
+  height: var(--iflyv-font-size-14);
+}
+
+/* ==================== RTL：覆盖 EP 硬编码物理 margin/padding/position ==================== */
+/* 策略：用 [dir="rtl"] 提升优先级(0,3,0)，直接翻转物理属性 */
+/* 通用 .el-input__icon 翻转（放最前，后续更具体规则可覆盖） */
+[dir="rtl"] .el-input .el-input__icon { margin-left: 0; margin-right: 8px; }
+/* prefix：:last-child 间距朝向 input 文字（RTL 下在左侧） */
+[dir="rtl"] .el-input__prefix-inner > :last-child { margin-right: 0; margin-left: 8px; }
+/* prefix：多图标时 :first-child 无前导间距（:not(:last-child) 避免覆盖单图标场景） */
+[dir="rtl"] .el-input__prefix-inner > :first-child:not(:last-child) { margin-right: 0; margin-left: 0; }
+/* suffix：:first-child 间距朝向 input 文字（RTL 下在右侧） */
+[dir="rtl"] .el-input__suffix-inner > :first-child { margin-left: 0; margin-right: 8px; }
+/* 字数统计 padding 翻转 */
+[dir="rtl"] .el-input .el-input__count .el-input__count-inner { padding-left: 0; padding-right: 8px; }
+.el-input-tag__input-tag-list.is-near { margin-left: unset; margin-inline-start: -8px; }
+.el-textarea__clear { right: unset; inset-inline-end: 11px; }
+.el-textarea .el-input__count { right: unset; inset-inline-end: 10px; }
+
+/* 级联选择器下拉箭头 rem 化：覆盖 EP .el-cascader .el-input .icon-arrow-down 14px */
+.el-cascader .el-input .icon-arrow-down { font-size: var(--iflyv-font-size-14); }
+

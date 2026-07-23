@@ -1,0 +1,217 @@
+/* ======================================================================== */
+/* ========================== Table 样式覆盖 ============================== */
+/* ======================================================================== */
+/* 设计系统约定：表格**不使用 stripe（斑马纹）**，通过 hover 行高亮区分行。
+   @depends-on: L29-31 的 :hover 高亮规则提供视觉行区分。
+   @when-changed: 使用方写 <el-table stripe> 不会被禁，但视觉与设计系统不一致——
+                  详见 examples/table.examples.vue 反模式。 */
+
+.el-table {
+  background-color: var(--iflyv-bg-panel);
+  border-radius: var(--iflyv-radius-sm);
+  border: 1px solid var(--iflyv-border-default);
+  box-shadow: none;
+
+  /* ==================== 表头 Header ==================== */
+  .el-table__header-wrapper {
+    th.el-table__cell {
+      background-color: var(--iflyv-bg-inset);
+      font-size: var(--iflyv-font-size-14);
+      font-weight: var(--iflyv-font-weight-semibold);
+      color: var(--iflyv-text-1);
+    }
+  }
+
+  /* ==================== 行样式 Row ==================== */
+  .el-table__row {
+    td.el-table__cell {
+      border-bottom-color: var(--iflyv-border-default);
+      color: var(--iflyv-text-2);
+    }
+
+    &:hover > td.el-table__cell {
+      background-color: var(--iflyv-bg-inset);
+    }
+
+    /* 最后一行去掉 border-bottom，避免与表格整体外框（L9 border）重合产生双线。
+       @depends-on: 依赖 .el-table 的外层 border + border-radius 提供整体边框。
+       @when-changed: 若移除 .el-table 外框，本规则需同时删除（否则最后一行视觉上"开口"）。 */
+    &:last-child > td.el-table__cell {
+      border-bottom: none;
+    }
+  }
+
+  .cell {
+    padding: 0 16px;
+    line-height: var(--iflyv-line-height-24);
+  }
+
+  /* ==================== 选中行 Selected Row ==================== */
+  .el-table__body tr.current-row > td.el-table__cell {
+    background-color: var(--iflyv-bg-inset);
+  }
+
+  /* 统一外框处理：去除 EP 默认伪元素描边，改由 L9 的 border + radius-sm 提供圆角外框。
+     @depends-on: L8 border-radius + L9 border 提供完整外框；
+                  overflow: hidden 配合 border-radius 让圆角能裁剪内部内容（否则角会"漏"）。
+     @when-changed: 三件事强相关，缺一不可——border / border-radius / overflow 缺任意一个，
+                    表格视觉都会断裂。EP 升级时若伪元素结构变化，本组规则需重写。 */
+  &::before, &::after { display: none; }
+  .el-table__inner-wrapper::before,
+  .el-table__inner-wrapper::after { display: none; }
+  overflow: hidden;
+
+  /* border 模式：更高优先级覆盖 EP .el-table--border 伪元素 + 末列去重 */
+  &.el-table--border {
+    &::before, &::after { display: none; }
+    .el-table__inner-wrapper::after { display: none; }
+    .el-table__border-left-patch { display: none; }
+
+    th.el-table__cell:last-of-type,
+    td.el-table__cell:last-of-type {
+      border-inline-end: none;
+    }
+
+    /* RTL：首列（视觉最右侧）border-right 与外框重叠，去重 */
+    [dir="rtl"] & th.el-table__cell:first-of-type,
+    [dir="rtl"] & td.el-table__cell:first-of-type {
+      border-right: none;
+    }
+  }
+}
+
+/* ==================== 排序箭头：圆润化 ====================
+   EP 默认用 border 技巧画尖三角，本项目改用 SVG mask 画 Lucide 风格的圆角箭头。
+   @depends-on: 依赖 EP 的 .sort-caret 元素结构（仍保留 .ascending / .descending 类名）。
+                我们把 border 替换为 background-color + mask 实现。
+   @when-changed: 升级 EP 大版本时，若 EP 改了 .sort-caret 类名或结构，
+                  本组规则（mask URL 也含 viewBox 尺寸）需同步调整。 */
+.el-table .sort-caret {
+  border: none;
+  width: 10px;
+  height: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  &.ascending {
+    top: 0;
+    background-color: var(--iflyv-text-4);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' viewBox='0 0 10 5'%3E%3Cpath d='M4.134.5a1 1 0 0 1 1.732 0L8.5 4.25a.75.75 0 0 1-.65.75H2.15a.75.75 0 0 1-.65-.75Z' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' viewBox='0 0 10 5'%3E%3Cpath d='M4.134.5a1 1 0 0 1 1.732 0L8.5 4.25a.75.75 0 0 1-.65.75H2.15a.75.75 0 0 1-.65-.75Z' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+  }
+
+  &.descending {
+    bottom: 2px;
+    background-color: var(--iflyv-text-4);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' viewBox='0 0 10 5'%3E%3Cpath d='M5.866 4.5a1 1 0 0 1-1.732 0L1.5.75A.75.75 0 0 1 2.15 0h5.7a.75.75 0 0 1 .65.75Z' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' viewBox='0 0 10 5'%3E%3Cpath d='M5.866 4.5a1 1 0 0 1-1.732 0L1.5.75A.75.75 0 0 1 2.15 0h5.7a.75.75 0 0 1 .65.75Z' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+  }
+}
+
+/* 激活态：高亮为品牌色 */
+.el-table .ascending .sort-caret.ascending {
+  background-color: var(--iflyv-brand-primary);
+}
+
+.el-table .descending .sort-caret.descending {
+  background-color: var(--iflyv-brand-primary);
+}
+
+/* ==================== 操作列约定类名 ====================
+   使用方式：<el-button class="table-operation" link>编辑</el-button>
+
+   ⚠️ 设计系统例外：.table-operation 是 td 内 inline 文字按钮的明示例外——
+                    与 button.scss「按钮组间距由父容器 flex+gap 提供」原则**不冲突**：
+                    td 不是 flex 容器，inline 排版传统就是「操作1 | 操作2 | 操作3」，
+                    强行套 flex+gap 父容器反而违反表格习惯。
+
+   @depends-on: 必须用 <el-button class="table-operation" link>（保留按钮 a11y），
+                禁止用 <span class="table-operation">（失去键盘可达性）。
+                间距由 `& + .table-operation` 相邻选择器提供 spacing-3（12px）。
+   @when-changed: 不要把 .table-operation 兄弟塞进 flex+gap 父容器（会与相邻选择器叠加）；
+                  也不要在使用方覆盖此处的 margin-inline-start。
+   @see: examples/table.examples.vue 「操作列」section 的标准用法 + 反模式。
+   @see: references/component-interaction.md「按钮间距」例外清单。 */
+
+.table-operation {
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-body-sub);
+  padding: 0;
+  height: auto;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  & + .table-operation {
+    margin-inline-start: var(--iflyv-spacing-3);
+  }
+
+  &:hover {
+    color: var(--iflyv-brand-primary);
+  }
+}
+
+/* "更多"下拉：与其他 .table-operation（el-button link）垂直对齐
+   @depends-on: 兄弟 .table-operation 必须是 el-button link（默认 vertical-align: middle）。
+                el-dropdown 自身默认 inline-block + vertical-align: baseline，
+                不显式设 middle 会与 el-button link 锚点不一致，视觉错位。
+   @when-changed: 兄弟改为 span（默认 baseline）时，本规则需改回 baseline——
+                  这是历史踩坑：之前用 span 时本规则是 baseline，
+                  改 el-button link 后必须同步改 middle，否则 dropdown 偏上。
+   @see: 方法论 raw/methodology-方法论/design-system分发-隐式耦合.md 类型 1 案例 A。 */
+.el-dropdown.table-operation {
+  vertical-align: middle;
+}
+
+.table-operation__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 危险操作：始终为危险色 */
+.table-operation--danger {
+  color: var(--iflyv-danger-primary);
+
+  &:hover {
+    color: var(--iflyv-danger-hover);
+  }
+}
+
+/* RTL：覆盖 EP 硬编码 text-align + 强制方向继承 */
+.el-table .el-table__cell { text-align: start; }
+.el-table .el-table__cell.is-right { text-align: end; }
+.el-table .el-table__cell.is-left { text-align: start; }
+/* RTL：body 单元格 flex 布局，利用 flex 在 RTL 下自动反转行内元素顺序 */
+/* 仅作用于 body-wrapper，不影响 header 排序图标 */
+[dir="rtl"] .el-table .el-table__body-wrapper .cell {
+  display: flex;
+  align-items: center;
+}
+
+/* RTL：固定列功能降级
+   @depends-on: EP JS 用物理 left/right inline style 设置 sticky 偏移，
+                CSS 无法翻转 inline style 的物理属性。
+   @when-changed: RTL 模式下取消 sticky（用 position: relative 覆盖），
+                  使表格正常滚动、列序正确——代价是 RTL 下失去固定列功能。
+                  使用方需提示业务：阿语等 RTL 场景的表格不支持固定列。 */
+[dir="rtl"] .el-table .el-table-fixed-column--left,
+[dir="rtl"] .el-table .el-table-fixed-column--right {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  z-index: auto !important;
+}
+/* 隐藏固定列阴影伪元素 */
+[dir="rtl"] .el-table .el-table-fixed-column--left.is-first-column::before,
+[dir="rtl"] .el-table .el-table-fixed-column--left.is-last-column::before,
+[dir="rtl"] .el-table .el-table-fixed-column--right.is-first-column::before,
+[dir="rtl"] .el-table .el-table-fixed-column--right.is-last-column::before {
+  display: none;
+}
+
+/* RTL：选择列 padding + 必填标记 margin */
+.el-table-column--selection .cell { padding-left: unset; padding-right: unset; padding-inline: 14px; }
+.el-table th.el-table__cell.required > div::before { margin-right: unset; margin-inline-end: 5px; }
+.el-table--fit .el-table__cell.gutter { border-right-width: 0; border-inline-end-width: 1px; }
+

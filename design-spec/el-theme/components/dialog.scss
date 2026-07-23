@@ -1,0 +1,165 @@
+/* ======================================================================== */
+/* ========================= Dialog 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* overlay 容器改为 flex 居中（覆盖 EP 默认顶部对齐 + margin auto 居中模式）。
+   @depends-on: 配合下方 .el-dialog 的 margin: 0 共同生效——外层 flex 居中后，
+                dialog 不需要再 margin auto。
+   @when-changed: 若改回 EP 默认的 top: 15vh 模式，需要把 .el-dialog 的 margin 改回。 */
+.el-overlay-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* dialog 容器：圆角 12px（radius-lg，与 drawer 一致）+ margin: 0 配合 overlay flex 居中。
+   @depends-on: margin: 0 依赖 .el-overlay-dialog 的 flex 居中（见上方）。
+                radius-lg(12px) 是设计系统对「弹窗类容器」的统一约定，drawer 也用此值。
+   @when-changed: 改 radius 需同步改 drawer.scss + foundations.md 圆角速查表，三处保持一致。
+   @history: 圆角档位曾重命名（原 radius-md=12px → 现 radius-lg=12px；radius-md 现为 10px）。 */
+.el-dialog {
+  --el-dialog-content-font-size: var(--iflyv-font-size-14);
+  margin: 0;
+  padding: 12px 24px 20px;
+  border-radius: var(--iflyv-radius-lg);
+
+  /* ==================== 标题栏 Header ====================
+     @depends-on: 移除 EP 默认的 header border-bottom（分割线），改用 padding-bottom + margin-bottom
+                  提供视觉间距，使弹窗整体更轻盈。
+     @when-changed: 若需要恢复分割线（特殊场景如多步骤弹窗），需在使用方 scoped 样式中加回。 */
+  .el-dialog__header {
+    padding: 0 0 12px;
+    margin-bottom: 8px;
+    margin-inline-end: 0;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .el-dialog__title {
+    font-size: var(--iflyv-font-size-16);
+    line-height: var(--iflyv-line-height-24);
+    font-weight: 600;
+    color: var(--iflyv-text-1);
+  }
+
+  /* 关闭按钮：用 SVG mask 替换 EP 默认的 X 图标，与 Lucide 风格统一。
+     @depends-on: 依赖 EP 的 .el-dialog__headerbtn 元素结构 + 内部 .el-dialog__close 图标元素
+                  （我们 visibility: hidden 它，::after 自己画 X）。
+     @when-changed: 升级 EP 大版本时，若结构变化（如 headerbtn 改名），mask 替换需要同步调整。 */
+  .el-dialog__headerbtn {
+    top: 12px;
+    right: unset; /* 清除 EP right: 0，由逻辑属性接管 */
+    inset-inline-end: 24px;
+    width: 24px;
+    height: 24px;
+    color: var(--iflyv-icon-3);
+    &:hover { color: var(--iflyv-icon-2); }
+    .el-dialog__close { visibility: hidden; }
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: currentColor;
+      pointer-events: none;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / 16px;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / 16px;
+    }
+  }
+
+  /* ==================== 内容区 Body ==================== */
+  .el-dialog__body {
+    padding: 0;
+    color: var(--iflyv-text-2);
+    font-size: var(--iflyv-font-size-14);
+  }
+
+  /* ==================== 底部栏 Footer ====================
+     @depends-on: 强制按钮右对齐（justify-content: flex-end）——这是设计系统约定：
+                  「确认按钮在右、取消按钮在左」（与 component-interaction.md:24 一致）。
+                  使用方写 footer 时按钮顺序应为：
+                    <el-button>取消</el-button> → <el-button type="primary">确认</el-button>
+                  （DOM 顺序左→右，flex-end 让它们整体右对齐）。
+     @when-changed: gap: 12px 提供按钮组间距 + 清零相邻 button margin 防叠加——
+                    与 button.scss 全局清零策略一致（双保险）。
+                    使用方禁止再写 .el-dialog__footer .el-button { margin-inline-start: ... }。
+     @see: examples/dialog.examples.vue 「确认对话框」section 的标准按钮顺序。 */
+  .el-dialog__footer {
+    padding: 20px 0 0;
+    border-top: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    .el-button + .el-button { margin-inline-start: 0; }
+  }
+}
+
+/* RTL：覆盖 EP 硬编码物理 padding */
+.el-dialog__header.show-close { padding-right: unset; padding-inline-end: calc(var(--el-dialog-padding-primary) + var(--el-message-close-size, 16px)); }
+
+.el-dialog__footer { text-align: end; }
+
+/* ==================== 语义化标题图标变体 ====================
+   使用方式：<el-dialog class="is-warning" title="...">  → 标题前自动加 20×20 圆形底板 + 白色 icon
+   4 个变体：is-warning / is-danger / is-success / is-info
+   适用场景：替代命令式 ElMessageBox（团队规范统一使用 Dialog），通过 class 提供语义图标。
+
+   设计：圆形彩色底板（语义色） + 内部白色 Lucide icon（统一无圆圈风格，避免与底板冗余）
+   - is-warning → 橙色圆底 + 感叹号「!」（基于 Lucide CircleAlert 内部部分，笔画拉长统一视觉跨度）
+   - is-danger  → 红色圆底 + 叉号「X」（Lucide 原生 X）
+   - is-success → 绿色圆底 + 勾「✓」（Lucide 原生 Check）
+   - is-info    → 蓝色圆底 + 字母「i」（基于 Lucide Info 内部部分，与「!」镜像对称）
+
+   @depends-on: 依赖 EP .el-dialog__title 元素结构。图标通过 background-color（语义色底板）
+                + background-image (白色 SVG icon) 双层叠加实现——白色 icon 颜色硬编码在 SVG 内，
+                因为「彩色底板 + 白色 icon」组合在亮/暗模式都成立。
+   @when-changed: 升级 EP 大版本若改了 .el-dialog__title 结构需要同步调整。
+                  调整图标尺寸：底板 20×20 + 内部 icon 14×14（在 background-size 控制）。
+   @see: examples/dialog.examples.vue 「语义化标题」section。 */
+
+.el-dialog.is-warning .el-dialog__title,
+.el-dialog.is-danger .el-dialog__title,
+.el-dialog.is-success .el-dialog__title,
+.el-dialog.is-info .el-dialog__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.el-dialog.is-warning .el-dialog__title::before,
+.el-dialog.is-danger .el-dialog__title::before,
+.el-dialog.is-success .el-dialog__title::before,
+.el-dialog.is-info .el-dialog__title::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px 14px;
+}
+
+/* 感叹号「!」（基于 Lucide CircleAlert 内部 ! 部分，但笔画拉长到 7px 以匹配 X/Check 的视觉跨度） */
+.el-dialog.is-warning .el-dialog__title::before {
+  background-color: var(--iflyv-warning-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 6v7'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+}
+
+/* X: 叉号（无圈） */
+.el-dialog.is-danger .el-dialog__title::before {
+  background-color: var(--iflyv-danger-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E");
+}
+
+/* Check: 勾（无圈） */
+.el-dialog.is-success .el-dialog__title::before {
+  background-color: var(--iflyv-success-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+
+/* i 字母（基于 Lucide Info 内部 i 部分，笔画拉长到 7px 与 ! 镜像对称） */
+.el-dialog.is-info .el-dialog__title::before {
+  background-color: var(--iflyv-info-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 18v-7'/%3E%3Cpath d='M12 7h.01'/%3E%3C/svg%3E");
+}

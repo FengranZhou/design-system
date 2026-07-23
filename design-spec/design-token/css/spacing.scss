@@ -1,0 +1,38 @@
+/* ======================================================================== */
+/* ========================= 间距与圆角 Spacing & Radius ================== */
+/* ======================================================================== */
+
+:root {
+  /* ==================== 圆角 Corner Radius ==================== */
+  --iflyv-radius-xs: 4px;     /* Tag、Checkbox、Select item、Dropdown item */
+  --iflyv-radius-sm: 8px;     /* Button、Input、小卡片、Table、大多数组件默认 */
+  --iflyv-radius-md: 10px;    /* 大卡片 */
+  --iflyv-radius-lg: 12px;    /* 页面级容器、Dialog、Drawer */
+  --iflyv-radius-full: 999px; /* 胶囊按钮、全圆角 Tag */
+
+  /* ==================== 间距 Spacing ==================== */
+  /* 命名规则：序号 × 4 = px 值 */
+
+  /* — 微间距（紧凑元素内部） — */
+  --iflyv-spacing-0_5: 2px;
+  --iflyv-spacing-1: 4px;
+  --iflyv-spacing-1_5: 6px;
+  --iflyv-spacing-2: 8px;
+
+  /* — 组件间 / 组件 padding（按钮组、卡片内边距） — */
+  --iflyv-spacing-3: 12px;
+  --iflyv-spacing-4: 16px;
+
+  /* — 模块内部（表单项、卡片区块分隔） — */
+  --iflyv-spacing-5: 20px;
+  --iflyv-spacing-6: 24px;
+
+  /* — 模块间（卡片与卡片、面板分隔） — */
+  --iflyv-spacing-8: 32px;
+
+  /* — 区块 / 页面级（Section 间距、Hero 留白） — */
+  --iflyv-spacing-10: 40px;
+
+  /* ==================== 遮罩模糊 Mask Blur ==================== */
+  --iflyv-mask-blur: 4px;
+}

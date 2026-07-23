@@ -1,0 +1,23 @@
+/* ======================================================================== */
+/* ========================= Slider 样式覆盖 ============================== */
+/* ======================================================================== */
+
+.el-slider {
+  /* 未填充轨道背景统一为 bg-inset */
+  --el-slider-runway-bg-color: var(--iflyv-bg-inset);
+}
+
+.el-slider__button {
+  width: 14px;
+  height: 14px;
+}
+
+/* RTL：滑块保持 LTR 方向（数值范围无文字方向性，EP JS 拖拽不支持 RTL） */
+
+/* RTL：带输入框时 margin 方向 */
+.el-slider__runway.show-input { margin-right: unset; margin-inline-end: 30px; }
+
+/* RTL：竖向滑块按钮/刻度的横向定位 */
+.el-slider.is-vertical .el-slider__button-wrapper { left: unset; inset-inline-start: var(--el-slider-button-wrapper-offset); }
+.el-slider__marks { left: unset; inset-inline-start: 12px; }
+.el-slider.is-vertical .el-slider__marks-text { left: unset; inset-inline-start: 15px; }

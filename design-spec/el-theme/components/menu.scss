@@ -1,0 +1,21 @@
+/* ======================================================================== */
+/* ========================= Menu 样式覆盖 ================================ */
+/* ======================================================================== */
+
+/* RTL：覆盖 EP 硬编码 border + margin + padding + position */
+.el-menu { border-right: unset; border-inline-end: solid 1px var(--el-menu-border-color); }
+.el-menu-item [class^=el-icon] { margin-right: unset; margin-inline-end: 5px; }
+.el-sub-menu .el-icon { margin-right: unset; margin-inline-end: 5px; }
+.el-sub-menu .el-sub-menu__icon-arrow { right: unset; inset-inline-end: var(--el-menu-base-level-padding); }
+.el-menu--vertical:not(.el-menu--collapse):not(.el-menu--popup-container) .el-menu-item,
+.el-menu--vertical:not(.el-menu--collapse):not(.el-menu--popup-container) .el-sub-menu__title,
+.el-menu--vertical:not(.el-menu--collapse):not(.el-menu--popup-container) .el-menu-item-group__title {
+  padding-left: unset;
+  padding-inline-start: calc(var(--el-menu-base-level-padding) + var(--el-menu-level) * var(--el-menu-level-padding));
+}
+.el-menu:not(.el-menu--collapse) .el-sub-menu__title {
+  padding-right: unset;
+  padding-inline-end: calc(var(--el-menu-base-level-padding) + var(--el-menu-icon-width));
+}
+.el-menu--horizontal .el-menu .el-sub-menu__title { padding-right: unset; padding-inline-end: 40px; }
+.el-sub-menu.el-sub-menu__hide-arrow .el-sub-menu__title { padding-right: unset; padding-inline-end: var(--el-menu-base-level-padding); }

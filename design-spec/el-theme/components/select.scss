@@ -1,0 +1,68 @@
+/* ======================================================================== */
+/* ========================= Select 样式覆盖 =============================== */
+/* ======================================================================== */
+
+/* Select / Cascader 下拉箭头：替换 EP 默认箭头为 Lucide ChevronDown 风格。
+   @depends-on: 依赖 EP .el-select__caret 和 .el-cascader .icon-arrow-down 元素结构
+                （内部含 svg），通过 svg visibility:hidden + ::after 注入 SVG mask 重绘。
+                排除 .is-show-close 和 .el-select__clear（清除按钮用另外的图标）。
+   @when-changed: 升级 EP 大版本时若改了箭头 DOM 结构（如 caret 改名或 svg 不再嵌套），
+                  本组规则需要同步重写。 */
+.el-select__caret:not(.is-show-close):not(.el-select__clear),
+.el-cascader .icon-arrow-down {
+  position: relative;
+  color: var(--iflyv-icon-3);
+  svg { visibility: hidden; }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat center / 0.875rem;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat center / 0.875rem;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+}
+.el-select__wrapper.is-disabled .el-select__caret:not(.is-show-close) { color: var(--el-disabled-text-color); }
+.el-cascader.is-disabled .icon-arrow-down { color: var(--el-disabled-text-color); }
+
+/* 下拉菜单选项样式：列表容器加 spacing-1 内边距，选项独立圆角，避免选项贴顶/贴边。
+   @depends-on: 依赖 EP .el-select-dropdown__list 容器 + .el-select-dropdown__item 选项结构。
+                选项 height: 36px 比 input 高度 32 略大——下拉项需要更宽松的点击热区。 */
+.el-select-dropdown__list { padding: var(--iflyv-spacing-1); }
+.el-select-dropdown__item {
+  border-radius: var(--iflyv-radius-xs);
+  height: 36px;
+  line-height: 36px;
+  color: var(--iflyv-text-1);
+  &.is-selected { font-weight: 400; color: var(--iflyv-brand-text); }
+}
+.el-select-group__title { color: var(--iflyv-text-3); line-height: 20px; padding: 12px 20px 8px; }
+
+/* 字号 rem 化：覆盖 EP 尺寸变体 baked-in px。
+   @depends-on: EP 内部用 scoped 变量 --el-select-input-font-size 和 --font-size 控制字号，
+                直接覆盖 :root 上的 --el-* 变量无效，必须在各尺寸变体的选择器上显式声明。
+   @when-changed: 升级 EP 大版本时若 EP 改了 scoped 变量名或选择器结构，本组规则需调整。
+                  注：与 form.scss 的字号覆盖同样模式（同一个 EP 隐式耦合）。 */
+.el-select { --el-select-input-font-size: var(--iflyv-font-size-14); font-size: var(--iflyv-font-size-14); }
+.el-select__wrapper { font-size: var(--iflyv-font-size-14); }
+.el-select--large .el-select__wrapper { font-size: var(--iflyv-font-size-14); }
+.el-select--small .el-select__wrapper { font-size: var(--iflyv-font-size-12); }
+.el-select-group__title { font-size: var(--iflyv-font-size-12); }
+
+/* 多选对勾：替换 EP 默认对勾为 Lucide Check 风格。
+   @depends-on: 依赖 .el-select-dropdown.is-multiple + .is-selected 双类组合触发，
+                EP 自带的 ::after 已有定位（right），mask 替换其形状即可。
+   @when-changed: 升级 EP 若改了 .is-multiple/.is-selected 类名命名，本规则失效。 */
+.el-select-dropdown.is-multiple .el-select-dropdown__item.is-selected::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") no-repeat center / contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin/padding + 定位 */
+.el-select--large .el-select__selection.is-near { margin-left: unset; margin-inline-start: -8px; }
+.el-select--small .el-select__selection.is-near { margin-left: unset; margin-inline-start: -6px; }
+.el-select-group .el-select-dropdown__item { padding-left: unset; padding-inline-start: 20px; }
+.el-select-dropdown.is-multiple .el-select-dropdown__item.is-selected::after { right: unset; inset-inline-end: 20px; }
+
+.el-select__wrapper { text-align: start; }

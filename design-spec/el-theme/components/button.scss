@@ -1,0 +1,370 @@
+/* ======================================================================== */
+/* ========================= Button 样式覆盖 ============================== */
+/* ======================================================================== */
+
+.el-button {
+  border-radius: var(--iflyv-radius-sm);
+  font: var(--iflyv-font-body-sub);
+  height: var(--el-component-size);
+  --el-button-text-color: var(--iflyv-text-1);
+
+  /* 状态切换过渡 */
+  transition: background-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              border-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              transform var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+  &:active:not(.is-disabled) {
+    transform: translateY(1px);
+  }
+
+  /* 禁用态与加载态统一显示禁止光标（覆盖 EP 默认 cursor: pointer）
+     加 :hover 提升优先级，确保覆盖 EP 的状态选择器 */
+  &.is-disabled,
+  &.is-disabled:hover,
+  &.is-loading,
+  &.is-loading:hover {
+    cursor: not-allowed !important;
+    /* 测试规则：如果这个生效了，按钮会变成红色边框 */
+    border: 3px solid red !important;
+
+    /* 强制子元素（loading 图标、文字）继承禁止光标，避免 EP 在子元素上设的 cursor 覆盖 */
+    * {
+      cursor: not-allowed !important;
+    }
+  }
+
+  /* 鼠标点击不显示外框；键盘 Tab 聚焦显示外框
+     @depends-on: 以下两条规则配套使用才能实现「鼠标无框 + 键盘有框」的 a11y 体验。
+     @when-changed: 删除任一条都会破坏可访问性——
+       - 删 :focus 那条 → 鼠标点击后框留着不消失
+       - 删 :focus-visible 那条 → 键盘 Tab 聚焦无框，无障碍用户失去聚焦反馈
+     @see: 仅靠 outline 不构成完整 a11y——还需配合 disabled 状态的 aria-disabled、
+           loading 状态的 aria-busy 等 ARIA 属性（由使用方在模板上声明）。 */
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--iflyv-brand-primary);
+    outline-offset: 1px;
+  }
+  &--danger:focus-visible {
+    outline-color: var(--iflyv-danger-primary);
+  }
+
+  /* 下拉/箭头按钮尾部的 ChevronDown（文字之后）：与文字保持一致小间距。
+     用法：<el-button>文字 <ChevronDown class="btn-caret" /></el-button> */
+  .btn-caret {
+    margin-inline-start: var(--iflyv-spacing-1);
+  }
+
+  /* 图标尺寸与间距
+     @depends-on: 必须用 `<template #icon>` 插槽传 Lucide 图标——
+                  EP 会自动用 .el-icon 容器包裹，本规则才能生效。
+     @when-changed: 使用方若把 <svg> 直接塞 button default slot（裸 svg 不是 .el-icon），
+                    6px 间距规则不触发，icon 会贴着文字。
+     @see: examples/button.examples.vue 「图标 + 文字」section 的反模式 #1。 */
+  .el-icon {
+    font-size: var(--iflyv-font-size-16);
+
+    & + span {
+      margin-left: 0; /* 清除 EP [class*=el-icon]+span { margin-left: 6px }，防止 RTL 残留 */
+      margin-inline-start: 6px;
+    }
+  }
+
+  /* ==================== 默认按钮交互态 ==================== */
+  /* hover：文字色不变（text-1），填充灰底 gray-1，常规描边 */
+  --el-button-hover-text-color: var(--iflyv-text-1);
+  --el-button-hover-bg-color: var(--iflyv-bg-inset);
+  --el-button-hover-border-color: var(--iflyv-border-default);
+  /* active：文字+边框统一深一级 */
+  --el-button-active-text-color: var(--iflyv-brand-pressed);
+  --el-button-active-bg-color: var(--iflyv-bg-panel);
+  --el-button-active-border-color: var(--iflyv-brand-pressed);
+
+  /* ==================== 默认按钮禁用/加载态 ==================== */
+  /* EP 默认按钮无 --default 类名，规则写在基类上，由 Primary/Danger 覆盖 */
+  &.is-disabled,
+  &.is-disabled:hover,
+  &.is-loading,
+  &.is-loading:hover {
+    --el-button-disabled-text-color: var(--iflyv-text-4);
+    --el-button-disabled-bg-color: var(--iflyv-bg-panel);
+    --el-button-disabled-border-color: var(--iflyv-border-default);
+  }
+  /* 仅【默认按钮】loading 态：不带 is-disabled，EP 不会把文字切到 disabled-text-color，
+     文字仍是常态 text-1（比禁用态深）——显式设 color 使其与默认按钮禁用态一致用禁用色。
+     必须用 :not([class*="--"]) 排除 primary/danger/text/link，否则会把它们的白色文字
+     和 loading 图标（currentColor）一起染成浅灰。
+     @when-changed: 删掉这条，默认按钮加载态文字回到 text-1，与禁用态深浅不一致。 */
+  &.is-loading:not(.is-disabled):not([class*="--"]) {
+    color: var(--iflyv-text-4);
+  }
+
+  /* ==================== 主按钮 Primary ==================== */
+  &--primary {
+    background-color: var(--iflyv-brand-primary);
+    border-color: var(--iflyv-brand-primary);
+    color: var(--iflyv-text-on-dark);
+
+    &:not(.is-text):not(.is-link):focus:not(:hover) {
+      background-color: var(--iflyv-brand-primary);
+      border-color: var(--iflyv-brand-primary);
+      color: var(--iflyv-text-on-dark);
+    }
+
+    &:hover {
+      background-color: var(--iflyv-brand-hover);
+      border-color: var(--iflyv-brand-hover);
+      color: var(--iflyv-text-on-dark);
+    }
+
+    &:active {
+      background-color: var(--iflyv-brand-pressed);
+      border-color: var(--iflyv-brand-pressed);
+    }
+
+    &.is-disabled,
+    &.is-disabled:hover,
+    &.is-loading,
+    &.is-loading:hover {
+      --el-button-disabled-text-color: var(--iflyv-text-on-dark);
+      --el-button-disabled-bg-color: var(--iflyv-brand-disabled);
+      --el-button-disabled-border-color: var(--iflyv-brand-disabled);
+    }
+    /* loading 态不带 is-disabled，EP 不读 disabled-bg 变量，故直接设浅色底，
+       使加载态与禁用态一致地"变淡"，表达不可点。 */
+    &.is-loading:not(.is-disabled) {
+      background-color: var(--iflyv-brand-disabled);
+      border-color: var(--iflyv-brand-disabled);
+    }
+  }
+
+  /* ==================== 危险按钮 Danger ==================== */
+  &--danger {
+    background-color: var(--iflyv-danger-primary);
+    border-color: var(--iflyv-danger-primary);
+    color: var(--iflyv-text-on-dark);
+
+    &:not(.is-text):not(.is-link):focus:not(:hover) {
+      background-color: var(--iflyv-danger-primary);
+      border-color: var(--iflyv-danger-primary);
+      color: var(--iflyv-text-on-dark);
+    }
+
+    &:hover {
+      background-color: var(--iflyv-danger-hover);
+      border-color: var(--iflyv-danger-hover);
+      color: var(--iflyv-text-on-dark);
+    }
+
+    &:active {
+      background-color: var(--iflyv-danger-pressed);
+      border-color: var(--iflyv-danger-pressed);
+    }
+
+    &.is-disabled,
+    &.is-disabled:hover,
+    &.is-loading,
+    &.is-loading:hover {
+      --el-button-disabled-text-color: var(--iflyv-text-on-dark);
+      --el-button-disabled-bg-color: var(--iflyv-danger-disabled);
+      --el-button-disabled-border-color: var(--iflyv-danger-disabled);
+    }
+    /* loading 态不带 is-disabled，EP 不读 disabled-bg 变量，故直接设浅色底，
+       使加载态与禁用态一致地"变淡"，表达不可点。 */
+    &.is-loading:not(.is-disabled) {
+      background-color: var(--iflyv-danger-disabled);
+      border-color: var(--iflyv-danger-disabled);
+    }
+  }
+
+  /* ==================== 文字按钮 Text ====================
+     设计取向：无背景底、hover/active 仅文字变色（区别于 EP 默认 text 的浮底效果）——
+     语义是"通用轻量按钮"，外观最干净。 */
+  /* 覆盖 EP text 按钮的默认浮底：EP 用 `.is-text:not(.is-disabled):hover{background:var(--el-fill-color-light)}`
+     直接写死背景（不读 hover-bg 变量），故必须用同等优先级的 :hover/:active 选择器直接压成透明。
+     @when-changed: 只设 --el-button-hover-bg-color 无效——EP 那两条不读该变量。 */
+  &.is-text:not(.is-disabled),
+  &.is-text:not(.is-disabled):hover,
+  &.is-text:not(.is-disabled):active {
+    background-color: transparent;
+  }
+  /* text 按钮：无底纯文字，去掉继承自 EP 基类的 8px 15px 内边距。
+     min-width/height 也一并解除，使按钮尺寸紧贴文案（视觉上等同"仅文案"，
+     内层 span 无内边距撑开后与 button 重合，不占额外空间）。 */
+  &.is-text {
+    padding: 0;
+    min-width: 0;
+    height: auto;
+  }
+  &.is-text:not(.is-disabled) {
+    &:not([class*="--"]) {
+      &:hover, &:active { --el-button-text-color: var(--iflyv-brand-text); color: var(--iflyv-brand-text); }
+    }
+
+    &.el-button--primary {
+      --el-button-text-color: var(--iflyv-brand-text);
+      color: var(--iflyv-brand-text);
+      &:hover, &:active { color: var(--iflyv-brand-hover); }
+    }
+
+    &.el-button--danger {
+      color: var(--iflyv-danger-primary);
+      &:hover, &:active { color: var(--iflyv-danger-hover); }
+    }
+  }
+
+  /* 文字按钮加载态：无底，靠文字变淡（disabled 色）表达"处理中不可点"，与实心 loading 一致。
+     loading 不带 is-disabled，须显式设 color。 */
+  &.is-text.is-loading:not(.is-disabled) {
+    color: var(--iflyv-text-4);
+    &.el-button--primary { color: var(--iflyv-brand-disabled); }
+    &.el-button--danger { color: var(--iflyv-danger-disabled); }
+  }
+
+  /* 文字按钮禁用态：直接用语义禁用色，不叠 opacity */
+  &.is-text.is-disabled,
+  &.is-text.is-disabled:hover {
+    color: var(--iflyv-text-4);
+  }
+  &--primary.is-text.is-disabled,
+  &--primary.is-text.is-disabled:hover {
+    color: var(--iflyv-brand-disabled);
+  }
+  &--danger.is-text.is-disabled,
+  &--danger.is-text.is-disabled:hover {
+    color: var(--iflyv-danger-disabled);
+  }
+
+  /* ==================== 链接按钮 Link ====================
+     @depends-on: .el-button.is-link 继承 EP 基类的 vertical-align: middle（inline 对齐锚点）。
+     @when-changed: 当 link 按钮与其他 inline 元素（el-dropdown / span 等）在同一行排版时，
+                    兄弟元素必须也用 vertical-align: middle 才能基线对齐，
+                    锚点不一致会出现一上一下的视觉错位。
+     @see: el-theme/components/table.scss 中 .el-dropdown.table-operation 的显式 middle 声明。 */
+  /* ⏸ link 链接按钮暂停启用：其"无底+文字变色"能力已由上面改造后的 text 承担，
+     且 link 语义偏"跳转导航"较狭隘，现阶段统一用 text。需要时放开下面两段注释即可恢复。 */
+  /* &.is-link:not(.is-disabled) {
+    &:not([class*="--"]) {
+      &:hover, &:active { --el-button-text-color: var(--iflyv-brand-text); color: var(--iflyv-brand-text); }
+    }
+
+    &.el-button--primary {
+      --el-button-text-color: var(--iflyv-brand-text);
+      color: var(--iflyv-brand-text);
+      &:hover, &:active { color: var(--iflyv-brand-hover); }
+    }
+
+    &.el-button--danger {
+      color: var(--iflyv-danger-primary);
+      &:hover, &:active { color: var(--iflyv-danger-hover); }
+    }
+  } */
+
+  /* 链接按钮禁用态：直接用语义禁用色，不叠 opacity（随 link 一起暂停启用） */
+  /* &.is-link.is-disabled,
+  &.is-link.is-disabled:hover {
+    color: var(--iflyv-text-4);
+  }
+  &--primary.is-link.is-disabled,
+  &--primary.is-link.is-disabled:hover {
+    color: var(--iflyv-brand-disabled);
+  }
+  &--danger.is-link.is-disabled,
+  &--danger.is-link.is-disabled:hover {
+    color: var(--iflyv-danger-disabled);
+  } */
+
+  /* ==================== 加载态遮罩移除（已用 opacity 替代） ==================== */
+  &.is-loading::before {
+    display: none;
+  }
+
+  /* ==================== 加载图标替换 Loading ====================
+     @depends-on: 使用方必须用 `<template #icon>` 插槽传图标（EP 包 .el-icon）。
+                  ::after 是相对 .el-icon 容器定位的。
+     @when-changed: 若使用方裸 <svg> 塞 default slot，加载图标无法替换，
+                    loading 时会同时显示原图标 + 没有 spinner。
+     @see: examples/button.examples.vue 「加载态」section 中 aria-busy 的配套用法。 */
+  &.is-loading .el-icon {
+    svg {
+      visibility: hidden;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3E%3C/svg%3E") no-repeat center / contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3E%3C/svg%3E") no-repeat center / contain;
+      background-color: currentColor;
+      pointer-events: none;
+    }
+  }
+
+}
+
+/* ==================== 图标方形按钮 Icon-only Square ====================
+   ⏸ 暂停启用（现阶段不用，且避免干扰 CC 从组件库选组件）。需要时放开本段注释，
+      并把下方 min-width 选择器里的 `:not(.btn-icon-square)` 豁免一并恢复。
+   使用方式：<el-button class="btn-icon-square">，禁止使用 circle 属性。
+   @depends-on: 本工具类必须配合下方 min-width 排除规则才能生效——
+                `:not(.btn-icon-square)` 把本类从 80px 强制宽度中豁免，
+                使纯图标按钮能保持等宽等高方形。
+   @when-changed: 两段规则强相关，维护时必须连读，不要单独删一段。
+   @see: examples/button.examples.vue 「纯图标按钮」section。 */
+/* .btn-icon-square {
+  width: var(--el-component-size);
+  height: var(--el-component-size);
+  padding: 0;
+  border-radius: var(--iflyv-radius-sm);
+} */
+
+/* ⏸ large/small 尺寸档暂停启用（现阶段只用默认档 36px，避免干扰 CC 选组件）。
+   需要恢复三档时：放开下面两行 + min-width 块里的 large/small 两行 + var-mapping 里的两个尺寸令牌。 */
+/* .el-button--large { --el-button-size: var(--el-component-size-large); height: var(--el-button-size); }
+.el-button--small { --el-button-size: var(--el-component-size-small); height: var(--el-button-size); } */
+
+/* 强制最小宽度：所有按钮（除豁免类型）至少 80px——保持视觉节奏一致，避免短文案按钮"瘦不忍睹"。
+   豁免类型：is-circle / is-link / is-text（新版 EP text 属性类）/ --text（旧写法）/ el-transfer__button。
+   （btn-icon-square 已暂停启用，其 `:not(.btn-icon-square)` 豁免同步移除；恢复时一并加回。）
+   @when-changed: 恢复 btn-icon-square 时若忘记加回 `:not(.btn-icon-square)`，
+                  纯图标按钮会被撑成 80×36 长方形——分发场景使用方最常见踩坑点。
+   @when-changed: text 按钮的类是 .is-text（非 .el-button--text），漏掉它会导致无底文字按钮
+                  被强制撑成 80px 宽——务必保留 :not(.is-text)。 */
+.el-button:not(.is-circle):not(.is-link):not(.is-text):not(.el-button--text):not(.el-transfer__button) {
+  min-width: 80px;
+  /* large/small 档暂停启用，恢复三档时放开：
+  &.el-button--large { min-width: 88px; }
+  &.el-button--small { min-width: 72px; } */
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+
+/* 相邻按钮间距清零（覆盖 EP 原生 margin-left: 12px）。
+   @depends-on: 使用方按钮组间距必须由父容器 `display: flex; gap: <token>` 提供——
+                推荐 gap: var(--iflyv-spacing-3)（12px），紧凑场景 var(--iflyv-spacing-2)（8px）。
+   @when-changed: 使用方若再写 .el-button + .el-button { margin: ... }，
+                  因为是同选择器、加载更晚，会**覆盖**本规则——
+                  人话翻译：使用方写的 CSS 比 design-spec 后加载，会盖掉我们的清零设置，
+                  最终与父容器 gap 叠加成双倍间距。所以禁止使用方覆盖此规则。
+   @see: references/component-interaction.md「按钮间距」章节的完整约定与例外清单。
+   例外：.el-button-group 内部按 -1px 重叠（见下方）；
+         .table-operation 用相邻选择器（见 table.scss，td 内 inline 排版的合理特例）。 */
+.el-button + .el-button { margin-left: 0; margin-inline-start: 0; }
+
+/* large/small icon-文字间距覆盖。
+   @depends-on: 使用方必须用 `<template #icon>` 插槽（EP 包 .el-icon）。
+   @when-changed: 裸 svg 不会匹配 [class*=el-icon] 选择器，间距规则不生效，
+                  large/small 按钮的 icon 与文字会贴住。 */
+.el-button--large [class*=el-icon] + span { margin-left: unset; margin-inline-start: 8px; }
+.el-button--small [class*=el-icon] + span { margin-left: unset; margin-inline-start: 4px; }
+
+.el-button__text--expand { margin-right: unset; margin-inline-end: -.3em; }
+.el-button__link--expand { margin-right: unset; margin-inline-end: -.3em; }
+
+/* el-button-group：边框 -1px 重叠（设计系统例外，不要为它包 flex+gap 父容器）。 */
+.el-button-group--horizontal > .el-button:not(:last-child) { margin-right: unset; margin-inline-end: -1px; }
+.el-button-group--horizontal > .el-button { float: inline-start; }

@@ -1,0 +1,196 @@
+/* Element Plus 主题变量映射（--iflyv-* → --el-*） */
+/* 加载顺序：EP CSS → design-token → 本文件，通过 CSS 变量覆盖，不侵入源码 */
+
+:root {
+  /* 品牌色 Primary */
+  --el-color-primary: var(--iflyv-brand-primary);
+  --el-color-primary-light-1: var(--iflyv-accent-5);
+  --el-color-primary-light-2: var(--iflyv-accent-5);
+  --el-color-primary-light-3: var(--iflyv-brand-hover);
+  --el-color-primary-light-4: var(--iflyv-accent-4);
+  --el-color-primary-light-5: var(--iflyv-accent-3);
+  --el-color-primary-light-6: var(--iflyv-accent-3);
+  --el-color-primary-light-7: var(--iflyv-accent-2);
+  --el-color-primary-light-8: var(--iflyv-accent-2);
+  --el-color-primary-light-9: var(--iflyv-brand-bg);
+  --el-color-primary-dark-2: var(--iflyv-brand-pressed);
+
+  /* 成功色 Success */
+  --el-color-success: var(--iflyv-success-primary);
+  --el-color-success-light-1: var(--iflyv-green-5);
+  --el-color-success-light-2: var(--iflyv-green-5);
+  --el-color-success-light-3: var(--iflyv-success-hover);
+  --el-color-success-light-4: var(--iflyv-green-4);
+  --el-color-success-light-5: var(--iflyv-green-3);
+  --el-color-success-light-6: var(--iflyv-green-3);
+  --el-color-success-light-7: var(--iflyv-green-2);
+  --el-color-success-light-8: var(--iflyv-green-2);
+  --el-color-success-light-9: var(--iflyv-success-bg);
+  --el-color-success-dark-2: var(--iflyv-success-pressed);
+
+  /* 警告色 Warning */
+  --el-color-warning: var(--iflyv-warning-primary);
+  --el-color-warning-light-1: var(--iflyv-orange-5);
+  --el-color-warning-light-2: var(--iflyv-orange-5);
+  --el-color-warning-light-3: var(--iflyv-warning-hover);
+  --el-color-warning-light-4: var(--iflyv-orange-4);
+  --el-color-warning-light-5: var(--iflyv-orange-3);
+  --el-color-warning-light-6: var(--iflyv-orange-3);
+  --el-color-warning-light-7: var(--iflyv-orange-2);
+  --el-color-warning-light-8: var(--iflyv-orange-2);
+  --el-color-warning-light-9: var(--iflyv-warning-bg);
+  --el-color-warning-dark-2: var(--iflyv-warning-pressed);
+
+  /* 危险色 Danger */
+  --el-color-danger: var(--iflyv-danger-primary);
+  --el-color-danger-light-1: var(--iflyv-red-5);
+  --el-color-danger-light-2: var(--iflyv-red-5);
+  --el-color-danger-light-3: var(--iflyv-danger-hover);
+  --el-color-danger-light-4: var(--iflyv-red-4);
+  --el-color-danger-light-5: var(--iflyv-red-3);
+  --el-color-danger-light-6: var(--iflyv-red-3);
+  --el-color-danger-light-7: var(--iflyv-red-2);
+  --el-color-danger-light-8: var(--iflyv-red-2);
+  --el-color-danger-light-9: var(--iflyv-danger-bg);
+  --el-color-danger-dark-2: var(--iflyv-danger-pressed);
+
+  /* 错误色 Error（同 Danger） */
+  --el-color-error: var(--iflyv-danger-primary);
+  --el-color-error-light-1: var(--iflyv-red-5);
+  --el-color-error-light-2: var(--iflyv-red-5);
+  --el-color-error-light-3: var(--iflyv-danger-hover);
+  --el-color-error-light-4: var(--iflyv-red-4);
+  --el-color-error-light-5: var(--iflyv-red-3);
+  --el-color-error-light-6: var(--iflyv-red-3);
+  --el-color-error-light-7: var(--iflyv-red-2);
+  --el-color-error-light-8: var(--iflyv-red-2);
+  --el-color-error-light-9: var(--iflyv-danger-bg);
+  --el-color-error-dark-2: var(--iflyv-danger-pressed);
+
+  /* 信息色 Info */
+  --el-color-info: var(--iflyv-info-primary);
+  --el-color-info-light-1: var(--iflyv-blue-5);
+  --el-color-info-light-2: var(--iflyv-blue-5);
+  --el-color-info-light-3: var(--iflyv-info-hover);
+  --el-color-info-light-4: var(--iflyv-blue-4);
+  --el-color-info-light-5: var(--iflyv-blue-3);
+  --el-color-info-light-6: var(--iflyv-blue-3);
+  --el-color-info-light-7: var(--iflyv-blue-2);
+  --el-color-info-light-8: var(--iflyv-blue-2);
+  --el-color-info-light-9: var(--iflyv-info-bg);
+  --el-color-info-dark-2: var(--iflyv-info-pressed);
+
+  /* 文本色 */
+  --el-text-color-primary: var(--iflyv-text-1);
+  --el-text-color-regular: var(--iflyv-text-2);
+  --el-text-color-secondary: var(--iflyv-text-3);
+  --el-text-color-placeholder: var(--iflyv-text-4);
+  --el-text-color-disabled: var(--iflyv-text-4);
+
+  /* 背景色 */
+  --el-bg-color: var(--iflyv-bg-panel);
+  --el-bg-color-page: var(--iflyv-bg-page);
+  --el-bg-color-overlay: var(--iflyv-bg-panel);
+
+  /* 描边（3 档：subtle / default / strong） */
+  --el-border-color: var(--iflyv-border-default);
+  --el-border-color-light: var(--iflyv-border-default);
+  --el-border-color-lighter: var(--iflyv-border-subtle);
+  --el-border-color-extra-light: var(--iflyv-border-subtle);
+  --el-border-color-dark: var(--iflyv-border-strong);
+  --el-border-color-darker: var(--iflyv-border-strong);
+  --el-border-color-hover: var(--iflyv-border-strong);
+
+  /* 输入框聚焦描边：柔和品牌色；hover 描边：gray-2 */
+  --el-input-focus-border-color: var(--iflyv-brand-primary);
+  --el-input-hover-border-color: var(--iflyv-input-hover-border);
+  --el-select-input-focus-border-color: var(--iflyv-brand-primary);
+  --el-select-border-color-hover: var(--iflyv-input-hover-border);
+
+  /* 填充色 */
+  --el-fill-color: var(--iflyv-bg-inset);
+  --el-fill-color-light: var(--iflyv-bg-inset);
+  --el-fill-color-lighter: var(--iflyv-bg-inset);
+  --el-fill-color-blank: var(--iflyv-bg-panel);
+  --el-fill-color-extra-light: var(--iflyv-bg-inset);
+
+  /* 圆角 */
+  --el-border-radius-base: var(--iflyv-radius-sm);
+  --el-border-radius-small: var(--iflyv-radius-xs);
+  --el-border-radius-round: var(--iflyv-radius-full);
+  --el-border-radius-circle: 100%;
+
+  /* 阴影 */
+  --el-box-shadow: var(--iflyv-shadow-independent);
+  --el-box-shadow-light: var(--iflyv-shadow-related);
+  --el-box-shadow-lighter: var(--iflyv-shadow-hover);
+  --el-box-shadow-dark: var(--iflyv-shadow-independent);
+
+  /* 遮罩 */
+  --el-overlay-color: var(--iflyv-mask-primary);
+  --el-overlay-color-light: rgba(0, 0, 0, 0.7);
+  --el-overlay-color-lighter: rgba(0, 0, 0, 0.5);
+  --el-mask-color: rgba(255, 255, 255, 0.9);
+
+  /* 字体 */
+  --el-font-family: var(--iflyv-font-family-base);
+  --el-font-size-extra-large: var(--iflyv-font-size-22);
+  --el-font-size-large: var(--iflyv-font-size-18);
+  --el-font-size-medium: var(--iflyv-font-size-16);
+  --el-font-size-base: var(--iflyv-font-size-14);
+  --el-font-size-small: var(--iflyv-font-size-12);
+  --el-font-size-extra-small: var(--iflyv-font-size-12);
+  --el-font-line-height-primary: var(--iflyv-line-height-24);
+
+  /* 组件级字号 — rem 化 */
+  /* 注意：EP 在组件选择器上硬编码 px 的变量已迁移到 components/*.scss，     */
+  /* 此处仅保留 EP 使用 var(--el-font-size-*) 引用链的条目（:root 有效）     */
+  --el-select-font-size: var(--iflyv-font-size-14);
+  --el-cascader-menu-font-size: var(--iflyv-font-size-14);
+  --el-form-label-font-size: var(--iflyv-font-size-14);
+  --el-dialog-title-font-size: var(--iflyv-font-size-16);
+  --el-notification-content-font-size: var(--iflyv-font-size-14);
+  --el-popover-font-size: var(--iflyv-font-size-14);
+  --el-link-font-size: var(--iflyv-font-size-14);
+  --el-menu-item-font-size: var(--iflyv-font-size-14);
+  --el-messagebox-font-size: var(--iflyv-font-size-16);
+  --el-messagebox-content-font-size: var(--iflyv-font-size-14);
+  --el-mention-font-size: var(--iflyv-font-size-14);
+  --el-text-font-size: var(--iflyv-font-size-14);
+  --el-statistic-title-font-size: var(--iflyv-font-size-14);
+  --el-statistic-content-font-size: var(--iflyv-font-size-18);
+
+  /* 组件尺寸（rem 化，跟随字号档位缩放） */
+  --el-component-size: 2.25rem;      /* 36px @md —— 当前唯一在用的档位（medium） */
+  /* small/large 两档：按钮已暂停启用（见 button.scss 注释），但令牌保留——
+     其它组件（如 input.scss 的 .el-select--large/--small）仍引用它们，不可删。 */
+  --el-component-size-small: 1.5rem; /* 24px @md */
+  --el-component-size-large: 2.5rem; /* 40px @md */
+
+  /* 禁用 */
+  --el-disabled-bg-color: var(--iflyv-bg-inset);
+  --el-disabled-text-color: var(--iflyv-text-4);
+  --el-disabled-border-color: var(--iflyv-border-default);
+}
+
+/* ======================================================================== */
+/* ===================== 暗色主题 EP 变量映射 =============================== */
+/* ======================================================================== */
+/* 功能色板已在 palette-dark.scss 中覆盖为暗色变体，                          */
+/* EP 色阶变量通过 --iflyv-* 引用自动级联，无需手动映射                       */
+
+[data-theme="dark"] {
+  /* 遮罩 — 暗色下更深 */
+  --el-overlay-color: var(--iflyv-mask-primary);
+  --el-overlay-color-light: rgba(0, 0, 0, 0.75);
+  --el-overlay-color-lighter: rgba(0, 0, 0, 0.55);
+  --el-mask-color: rgba(0, 0, 0, 0.85);
+
+  /* 填充色 — 跟随 surface 层级 */
+  --el-fill-color-dark: var(--iflyv-gray-3);
+}
+
+/* 遮罩背景模糊：Dialog / Drawer / ImageViewer 等共用 */
+.el-overlay {
+  backdrop-filter: blur(var(--iflyv-mask-blur));
+}

@@ -1,0 +1,282 @@
+// @use './font.scss';
+
+/* ======================================================================== */
+/* ========================= 基础色板 Palette ============================= */
+/* ======================================================================== */
+
+/* ==================== Sass 色板变量 ==================== */
+
+/* — 中性色 Gray — */
+$gray-0: #FFFFFF;
+$gray-1: #F2F5F7;
+$gray-2: #C2C7CC;
+$gray-3: #A9B0B8;
+$gray-4: #959DA6;
+$gray-5: #7B838C;
+$gray-6: #626A73;
+$gray-7: #4B535C;
+$gray-8: #3D444D;
+$gray-9: #272C33;
+$gray-10: #12151A;
+
+/* — 功能色 Green — */
+$green-1: #EBF7F1;
+$green-2: #C1E6D4;
+$green-3: #93D9BB;
+$green-4: #6ACCA5;
+$green-5: #45BF92;
+$green-6: #23B283;
+$green-7: #158C68;
+$green-8: #0A664E;
+$green-9: #034032;
+$green-10: #011A15;
+
+/* — 功能色 Red — */
+$red-1: #FFF2F0;
+$red-2: #FFE4E0;
+$red-3: #FFBFB8;
+$red-4: #FF968F;
+$red-5: #FF6B66;
+$red-6: #F53B3B;
+$red-7: #CF272D;
+$red-8: #A81821;
+$red-9: #820C18;
+$red-10: #5C0713;
+
+/* — 功能色 Orange — */
+$orange-1: #FFF4E6;
+$orange-2: #FFE1BD;
+$orange-3: #FFCB94;
+$orange-4: #FFB36B;
+$orange-5: #FF9742;
+$orange-6: #FC7819;
+$orange-7: #D6590B;
+$orange-8: #B03E00;
+$orange-9: #8A2C00;
+$orange-10: #631C00;
+
+/* — 功能色 Blue — */
+$blue-1: #E6F6FF;
+$blue-2: #A3DAFF;
+$blue-3: #7AC6FF;
+$blue-4: #52AEFF;
+$blue-5: #2994FF;
+$blue-6: #0077FF;
+$blue-7: #005ED9;
+$blue-8: #0047B3;
+$blue-9: #00338C;
+$blue-10: #002266;
+
+/* — 功能色 GeekBlue — */
+$geekblue-1: #F0F5FF;
+$geekblue-2: #D9E4FF;
+$geekblue-3: #B0C5FF;
+$geekblue-4: #87A3FF;
+$geekblue-5: #5E7EFF;
+$geekblue-6: #3658FF;
+$geekblue-7: #233BD9;
+$geekblue-8: #1424B3;
+$geekblue-9: #08118C;
+$geekblue-10: #050866;
+
+/* — 功能色 Yellow — */
+$yellow-1: #FEFFE6;
+$yellow-2: #FFFFB8;
+$yellow-3: #FFFB8F;
+$yellow-4: #FFF566;
+$yellow-5: #FFEC3D;
+$yellow-6: #FADB14;
+$yellow-7: #D4B106;
+$yellow-8: #AD8B00;
+$yellow-9: #876800;
+$yellow-10: #614700;
+
+/* — 功能色 Cyan — */
+$cyan-1: #E6FFFB;
+$cyan-2: #B5F5EC;
+$cyan-3: #87E8DE;
+$cyan-4: #5CDBD3;
+$cyan-5: #36CFC9;
+$cyan-6: #13C2C2;
+$cyan-7: #08979C;
+$cyan-8: #006D75;
+$cyan-9: #00474F;
+$cyan-10: #002329;
+
+/* — 功能色 Purple — */
+$purple-1: #F9F0FF;
+$purple-2: #EFDBFF;
+$purple-3: #D3ADF7;
+$purple-4: #B37FEB;
+$purple-5: #9254DE;
+$purple-6: #722ED1;
+$purple-7: #531DAB;
+$purple-8: #391085;
+$purple-9: #22075E;
+$purple-10: #120338;
+
+/* — 功能色 Magenta — */
+$magenta-1: #FFF0F6;
+$magenta-2: #FFD6E7;
+$magenta-3: #FFADD2;
+$magenta-4: #FF85C0;
+$magenta-5: #F759AB;
+$magenta-6: #EB2F96;
+$magenta-7: #C41D7F;
+$magenta-8: #9E1068;
+$magenta-9: #780650;
+$magenta-10: #520339;
+
+/* ==================== 其他基础 Sass 变量 ==================== */
+
+$bg-card-gradient-end: #FAFAFA;
+$border-default-fallback: rgba(21, 21, 21, 0.1);
+$border-on-dark-fallback: rgba(255, 255, 255, 0.1);
+$mask-primary-fallback: rgba(21, 21, 21, 0.6);
+$mask-on-dark-fallback: rgba(255, 255, 255, 0.6);
+$scroller-primary-fallback: rgba(21, 21, 21, 0.1);
+$scroller-hover-fallback: rgba(21, 21, 21, 0.3);
+$shadow-hover-color: rgba(21, 21, 21, 0.06);
+$shadow-related-color: rgba(21, 21, 21, 0.08);
+$shadow-independent-color: rgba(21, 21, 21, 0.1);
+$loading-path: '/frontend-static/static/localization/public/loading.svg';
+
+/* ======================================================================== */
+/* ========================= CSS 色板变量 ================================= */
+/* ======================================================================== */
+
+:root {
+  /* ==================== 中性色 Gray ==================== */
+  --iflyv-gray-0: #{$gray-0};
+  --iflyv-gray-1: #{$gray-1};
+  --iflyv-gray-2: #{$gray-2};
+  --iflyv-gray-3: #{$gray-3};
+  --iflyv-gray-4: #{$gray-4};
+  --iflyv-gray-5: #{$gray-5};
+  --iflyv-gray-6: #{$gray-6};
+  --iflyv-gray-7: #{$gray-7};
+  --iflyv-gray-8: #{$gray-8};
+  --iflyv-gray-9: #{$gray-9};
+  --iflyv-gray-10: #{$gray-10};
+
+  /* ==================== 功能色 Green ==================== */
+  --iflyv-green-1: #{$green-1};
+  --iflyv-green-2: #{$green-2};
+  --iflyv-green-3: #{$green-3};
+  --iflyv-green-4: #{$green-4};
+  --iflyv-green-5: #{$green-5};
+  --iflyv-green-6: #{$green-6};
+  --iflyv-green-7: #{$green-7};
+  --iflyv-green-8: #{$green-8};
+  --iflyv-green-9: #{$green-9};
+  --iflyv-green-10: #{$green-10};
+
+  /* ==================== 功能色 Red ==================== */
+  --iflyv-red-1: #{$red-1};
+  --iflyv-red-2: #{$red-2};
+  --iflyv-red-3: #{$red-3};
+  --iflyv-red-4: #{$red-4};
+  --iflyv-red-5: #{$red-5};
+  --iflyv-red-6: #{$red-6};
+  --iflyv-red-7: #{$red-7};
+  --iflyv-red-8: #{$red-8};
+  --iflyv-red-9: #{$red-9};
+  --iflyv-red-10: #{$red-10};
+
+  /* ==================== 功能色 Orange ==================== */
+  --iflyv-orange-1: #{$orange-1};
+  --iflyv-orange-2: #{$orange-2};
+  --iflyv-orange-3: #{$orange-3};
+  --iflyv-orange-4: #{$orange-4};
+  --iflyv-orange-5: #{$orange-5};
+  --iflyv-orange-6: #{$orange-6};
+  --iflyv-orange-7: #{$orange-7};
+  --iflyv-orange-8: #{$orange-8};
+  --iflyv-orange-9: #{$orange-9};
+  --iflyv-orange-10: #{$orange-10};
+
+  /* ==================== 功能色 Blue ==================== */
+  --iflyv-blue-1: #{$blue-1};
+  --iflyv-blue-2: #{$blue-2};
+  --iflyv-blue-3: #{$blue-3};
+  --iflyv-blue-4: #{$blue-4};
+  --iflyv-blue-5: #{$blue-5};
+  --iflyv-blue-6: #{$blue-6};
+  --iflyv-blue-7: #{$blue-7};
+  --iflyv-blue-8: #{$blue-8};
+  --iflyv-blue-9: #{$blue-9};
+  --iflyv-blue-10: #{$blue-10};
+
+  /* ==================== 功能色 GeekBlue ==================== */
+  --iflyv-geekblue-1: #{$geekblue-1};
+  --iflyv-geekblue-2: #{$geekblue-2};
+  --iflyv-geekblue-3: #{$geekblue-3};
+  --iflyv-geekblue-4: #{$geekblue-4};
+  --iflyv-geekblue-5: #{$geekblue-5};
+  --iflyv-geekblue-6: #{$geekblue-6};
+  --iflyv-geekblue-7: #{$geekblue-7};
+  --iflyv-geekblue-8: #{$geekblue-8};
+  --iflyv-geekblue-9: #{$geekblue-9};
+  --iflyv-geekblue-10: #{$geekblue-10};
+
+  /* ==================== 功能色 Yellow ==================== */
+  --iflyv-yellow-1: #{$yellow-1};
+  --iflyv-yellow-2: #{$yellow-2};
+  --iflyv-yellow-3: #{$yellow-3};
+  --iflyv-yellow-4: #{$yellow-4};
+  --iflyv-yellow-5: #{$yellow-5};
+  --iflyv-yellow-6: #{$yellow-6};
+  --iflyv-yellow-7: #{$yellow-7};
+  --iflyv-yellow-8: #{$yellow-8};
+  --iflyv-yellow-9: #{$yellow-9};
+  --iflyv-yellow-10: #{$yellow-10};
+
+  /* ==================== 功能色 Cyan ==================== */
+  --iflyv-cyan-1: #{$cyan-1};
+  --iflyv-cyan-2: #{$cyan-2};
+  --iflyv-cyan-3: #{$cyan-3};
+  --iflyv-cyan-4: #{$cyan-4};
+  --iflyv-cyan-5: #{$cyan-5};
+  --iflyv-cyan-6: #{$cyan-6};
+  --iflyv-cyan-7: #{$cyan-7};
+  --iflyv-cyan-8: #{$cyan-8};
+  --iflyv-cyan-9: #{$cyan-9};
+  --iflyv-cyan-10: #{$cyan-10};
+
+  /* ==================== 功能色 Purple ==================== */
+  --iflyv-purple-1: #{$purple-1};
+  --iflyv-purple-2: #{$purple-2};
+  --iflyv-purple-3: #{$purple-3};
+  --iflyv-purple-4: #{$purple-4};
+  --iflyv-purple-5: #{$purple-5};
+  --iflyv-purple-6: #{$purple-6};
+  --iflyv-purple-7: #{$purple-7};
+  --iflyv-purple-8: #{$purple-8};
+  --iflyv-purple-9: #{$purple-9};
+  --iflyv-purple-10: #{$purple-10};
+
+  /* ==================== 功能色 Magenta ==================== */
+  --iflyv-magenta-1: #{$magenta-1};
+  --iflyv-magenta-2: #{$magenta-2};
+  --iflyv-magenta-3: #{$magenta-3};
+  --iflyv-magenta-4: #{$magenta-4};
+  --iflyv-magenta-5: #{$magenta-5};
+  --iflyv-magenta-6: #{$magenta-6};
+  --iflyv-magenta-7: #{$magenta-7};
+  --iflyv-magenta-8: #{$magenta-8};
+  --iflyv-magenta-9: #{$magenta-9};
+  --iflyv-magenta-10: #{$magenta-10};
+
+  /* ==================== 主题强调色别名 Accent ==================== */
+  /* 默认品牌色：GeekBlue。通过 var() fallback 保证无 data-brand 时也有值 */
+  --iflyv-accent-1: var(--iflyv-brand-1, var(--iflyv-geekblue-1));
+  --iflyv-accent-2: var(--iflyv-brand-2, var(--iflyv-geekblue-2));
+  --iflyv-accent-3: var(--iflyv-brand-3, var(--iflyv-geekblue-3));
+  --iflyv-accent-4: var(--iflyv-brand-4, var(--iflyv-geekblue-4));
+  --iflyv-accent-5: var(--iflyv-brand-5, var(--iflyv-geekblue-5));
+  --iflyv-accent-6: var(--iflyv-brand-6, var(--iflyv-geekblue-6));
+  --iflyv-accent-7: var(--iflyv-brand-7, var(--iflyv-geekblue-7));
+  --iflyv-accent-8: var(--iflyv-brand-8, var(--iflyv-geekblue-8));
+  --iflyv-accent-9: var(--iflyv-brand-9, var(--iflyv-geekblue-9));
+  --iflyv-accent-10: var(--iflyv-brand-10, var(--iflyv-geekblue-10));
+}

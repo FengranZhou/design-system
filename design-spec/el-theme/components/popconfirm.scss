@@ -1,0 +1,44 @@
+/* ======================================================================== */
+/* ======================= Popconfirm 样式覆盖 ============================ */
+/* ======================================================================== */
+
+/* Popconfirm 使用 el-popover 作为容器 */
+.el-popover.el-popper {
+  &:has(.el-popconfirm) {
+    min-width: 240px;
+    padding: 20px 16px 16px;
+    border-radius: var(--iflyv-radius-sm);
+    box-shadow: var(--iflyv-shadow-related);
+    border: none;
+
+    .el-popper__arrow { display: none; }
+
+    &[data-popper-placement^="bottom"] { margin-top: -8px; }
+    &[data-popper-placement^="top"] { margin-bottom: -8px; }
+  }
+}
+
+.el-popconfirm {
+  padding: 0;
+}
+
+.el-popconfirm__main {
+  padding: 0 0 12px 0;
+  color: var(--iflyv-text-1);
+
+  .el-popconfirm__icon {
+    font-size: var(--iflyv-font-size-16);
+  }
+}
+
+.el-popconfirm__action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  .el-button + .el-button { margin-inline-start: 0; }
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+.el-popconfirm__icon { margin-right: unset; margin-inline-end: 5px; }
+
+.el-popconfirm__action { text-align: end; }

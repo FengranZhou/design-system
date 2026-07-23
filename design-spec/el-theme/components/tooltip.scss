@@ -1,0 +1,25 @@
+/* Tooltip：统一 light 与 dark 为白底风格（设计决策：项目不使用暗色 Tooltip） */
+/* 字号 + 行高 rem 化 */
+.el-popper { font-size: var(--iflyv-font-size-12); line-height: var(--iflyv-line-height-20); }
+
+.el-popper.is-light,
+.el-popper.is-dark {
+  --el-popper-border-radius: var(--iflyv-radius-sm);
+  background: var(--iflyv-bg-panel) !important;
+  border: 1px solid var(--iflyv-border-default) !important;
+  color: var(--iflyv-text-2) !important;
+  box-shadow: var(--iflyv-shadow-related);
+
+  .el-popper__arrow { display: none; }
+  &[data-popper-placement^="bottom"] { margin-top: -8px; }
+  &[data-popper-placement^="top"] { margin-bottom: -8px; }
+  &[data-popper-placement^="left"] { margin-right: -8px; }
+  &[data-popper-placement^="right"] { margin-left: -8px; }
+}
+.el-popover.el-popper {
+  --el-popover-border-radius: var(--iflyv-radius-sm);
+  --el-popover-padding: 8px 12px;
+  .el-popper__arrow { display: none; }
+  &[data-popper-placement^="bottom"] { margin-top: -8px; }
+  &[data-popper-placement^="top"] { margin-bottom: -8px; }
+}

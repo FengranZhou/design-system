@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout 10 npm run dev)",
+      "Bash(pkill -f \"vite\")",
+      "Bash(lsof -iTCP:5173 -sTCP:LISTEN)",
+      "Bash(lsof -iTCP:5174 -sTCP:LISTEN)"
+    ]
+  }
+}

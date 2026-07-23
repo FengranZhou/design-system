@@ -1,0 +1,21 @@
+/* ======================================================================== */
+/* ======================== Dropdown 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* Dropdown 下拉菜单选项样式 */
+.el-dropdown-menu { padding: var(--iflyv-spacing-1); min-width: 120px; }
+.el-dropdown-menu__item {
+  border-radius: var(--iflyv-radius-xs);
+  height: 36px;
+  line-height: 36px;
+  color: var(--iflyv-text-1);
+  &:not(.is-disabled):hover { background-color: var(--iflyv-bg-inset); color: var(--iflyv-text-1); }
+  &--divided { margin: 4px 0; }
+}
+
+/* 行高 rem 化：覆盖 EP 尺寸变体 baked-in px */
+.el-dropdown-menu--large .el-dropdown-menu__item { line-height: var(--iflyv-line-height-22); }
+.el-dropdown-menu--small .el-dropdown-menu__item { line-height: var(--iflyv-line-height-20); }
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+.el-dropdown-menu__item i { margin-right: unset; margin-inline-end: 5px; }

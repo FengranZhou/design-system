@@ -1,0 +1,10 @@
+/* ======================================================================== */
+/* ======================== Statistic 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* 行高 rem 化 */
+.el-statistic__head { line-height: var(--iflyv-line-height-20); }
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+.el-statistic__prefix { margin-right: unset; margin-inline-end: 4px; }
+.el-statistic__suffix { margin-left: unset; margin-inline-start: 4px; }

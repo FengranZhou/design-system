@@ -1,0 +1,88 @@
+/* ======================================================================== */
+/* ======================== Transfer 样式覆盖 ============================== */
+/* ======================================================================== */
+
+.el-transfer__buttons .el-button .el-icon {
+  svg {
+    visibility: hidden;
+  }
+
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+}
+
+/* 向左箭头：chevron-left */
+.el-transfer__buttons .el-button:first-child .el-icon::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* 向右箭头：chevron-right */
+.el-transfer__buttons .el-button:last-child .el-icon::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* Transfer 内 checkbox 文字色：EP 默认用 text-color-regular(text-2)，统一为 text-1 */
+.el-transfer-panel .el-checkbox {
+  color: var(--iflyv-text-1);
+}
+
+/* Transfer 穿梭框 */
+.el-transfer-panel__header-title { font-size: var(--iflyv-font-size-14); }
+.el-transfer { display: flex; align-items: center; }
+.el-transfer-panel { flex-shrink: 0; }
+.el-transfer__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: 1;
+  min-width: 0;
+  gap: var(--iflyv-spacing-2);
+  align-items: center;
+  justify-content: center;
+}
+.el-transfer__button:nth-child(2) { margin: 0; }
+.el-transfer-panel__body { display: flex; flex-direction: column; }
+.el-transfer-panel__list { padding: var(--iflyv-spacing-2) 0; }
+/* 字号 rem 化 */
+.el-transfer-panel__header-count { font-size: var(--iflyv-font-size-12); }
+
+.el-transfer-panel .el-transfer-panel__empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  padding: 0;
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin/padding */
+.el-transfer-panel__item { padding-left: unset; padding-inline-start: 15px; }
+.el-transfer-panel__item.el-checkbox { margin-right: unset; margin-inline-end: 30px; }
+.el-transfer-panel__item.el-checkbox .el-checkbox__label { padding-left: unset; padding-inline-start: 22px; }
+.el-transfer-panel .el-transfer-panel__header { padding-left: unset; padding-inline-start: 15px; }
+.el-transfer-panel .el-transfer-panel__header-count {
+  margin-left: unset; margin-right: unset;
+  margin-inline-start: 8px; margin-inline-end: 15px;
+}
+.el-transfer-panel .el-transfer-panel__footer .el-checkbox { padding-left: unset; padding-inline-start: 20px; }
+.el-transfer-panel .el-checkbox__label { padding-left: unset; padding-inline-start: 8px; }
+
+.el-transfer-panel { text-align: start; }
+
+/* RTL：穿梭框 Lucide 箭头方向互换（ChevronLeft ↔ ChevronRight） */
+[dir="rtl"] .el-transfer__buttons .el-button:first-child .el-icon::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+[dir="rtl"] .el-transfer__buttons .el-button:last-child .el-icon::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}

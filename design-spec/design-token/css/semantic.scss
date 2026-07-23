@@ -1,0 +1,110 @@
+@use 'palette' as *;
+
+/* ======================================================================== */
+/* ===================== 第二层：语义化主题色 ============================= */
+/* ======================================================================== */
+
+:root, html[data-theme="light"] {
+  /* ==================== 组件桥接变量 ==================== */
+  --iflyv-input-focus-ring: var(--iflyv-gray-1);
+  --iflyv-input-hover-border: var(--iflyv-gray-2);
+  --iflyv-avatar-default-bg: var(--iflyv-accent-3);
+
+  /* ==================== 主题色 Brand ==================== */
+  --iflyv-brand-primary: var(--iflyv-accent-6);
+  --iflyv-brand-text: var(--iflyv-brand-primary);
+  --iflyv-brand-hover: var(--iflyv-accent-5);
+  --iflyv-brand-pressed: var(--iflyv-accent-7);
+  --iflyv-brand-disabled: var(--iflyv-accent-4);
+  --iflyv-brand-bg: var(--iflyv-accent-1);
+
+  /* ==================== 成功色 Success ==================== */
+  --iflyv-success-primary: var(--iflyv-green-6);
+  --iflyv-success-hover: var(--iflyv-green-5);
+  --iflyv-success-pressed: var(--iflyv-green-7);
+  --iflyv-success-disabled: var(--iflyv-green-4);
+  --iflyv-success-bg: var(--iflyv-green-1);
+
+  /* ==================== 危险色 Danger ==================== */
+  --iflyv-danger-primary: var(--iflyv-red-6);
+  --iflyv-danger-hover: var(--iflyv-red-5);
+  --iflyv-danger-pressed: var(--iflyv-red-7);
+  --iflyv-danger-disabled: var(--iflyv-red-4);
+  --iflyv-danger-bg: var(--iflyv-red-1);
+
+  /* ==================== 警告色 Warning ==================== */
+  --iflyv-warning-primary: var(--iflyv-orange-6);
+  --iflyv-warning-hover: var(--iflyv-orange-5);
+  --iflyv-warning-pressed: var(--iflyv-orange-7);
+  --iflyv-warning-disabled: var(--iflyv-orange-4);
+  --iflyv-warning-bg: var(--iflyv-orange-1);
+
+  /* ==================== 信息色 Info ==================== */
+  --iflyv-info-primary: var(--iflyv-blue-6);
+  --iflyv-info-hover: var(--iflyv-blue-5);
+  --iflyv-info-pressed: var(--iflyv-blue-7);
+  --iflyv-info-disabled: var(--iflyv-blue-4);
+  --iflyv-info-bg: var(--iflyv-blue-1);
+
+  /* ==================== 背景色 Background ==================== */
+  --iflyv-bg-page: var(--iflyv-gray-1);
+  --iflyv-bg-page-white: var(--iflyv-gray-0);
+  --iflyv-bg-panel: var(--iflyv-gray-0);
+  --iflyv-bg-inset: var(--iflyv-gray-1);
+  --iflyv-bg-segment-active: var(--iflyv-gray-0);
+  --iflyv-bg-card: linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%);
+
+  /* ==================== 文本色 Text ==================== */
+  --iflyv-text-1: var(--iflyv-gray-10);
+  --iflyv-text-2: var(--iflyv-gray-7);
+  --iflyv-text-3: var(--iflyv-gray-5);
+  --iflyv-text-4: var(--iflyv-gray-3);
+  --iflyv-text-on-dark: var(--iflyv-gray-0);
+
+  /* ==================== 图标色 Icon ==================== */
+  --iflyv-icon-1: var(--iflyv-gray-10);
+  --iflyv-icon-2: var(--iflyv-gray-7);
+  --iflyv-icon-3: var(--iflyv-gray-5);
+  --iflyv-icon-4: var(--iflyv-gray-3);
+  --iflyv-icon-on-dark: var(--iflyv-gray-0);
+
+  /* ==================== 描边色 Border ==================== */
+  /* 轻量 - 基于 gray-10 0.06，用于组件内部分割 */
+  --iflyv-border-subtle: rgba(21, 21, 21, 0.06);
+  --iflyv-border-subtle: color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent);
+  /* 常规 - 基于 gray-10 0.1 */
+  --iflyv-border-default: #{$border-default-fallback};
+  --iflyv-border-default: color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent);
+  /* 加重 - 基于 gray-10 0.2，用于 hover、强调边框 */
+  --iflyv-border-strong: rgba(21, 21, 21, 0.2);
+  --iflyv-border-strong: color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent);
+  /* 用于深色背景区块 */
+  --iflyv-border-on-dark: #{$border-on-dark-fallback};
+  --iflyv-border-on-dark: color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent);
+
+  /* ==================== 遮罩色 Mask ==================== */
+  --iflyv-mask-primary: #{$mask-primary-fallback};
+  --iflyv-mask-primary: color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent);
+  --iflyv-mask-on-dark: #{$mask-on-dark-fallback};
+  --iflyv-mask-on-dark: color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent);
+
+  /* ==================== 滚动条色 Scroller ==================== */
+  --iflyv-scroller-primary: #{$scroller-primary-fallback};
+  --iflyv-scroller-primary: color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent);
+  --iflyv-scroller-hover: #{$scroller-hover-fallback};
+  --iflyv-scroller-hover: color-mix(in srgb, var(--iflyv-gray-10) 30%, transparent);
+
+  /* ==================== Message 描边色 ==================== */
+  --iflyv-message-border-success: var(--iflyv-green-3);
+  --iflyv-message-border-danger: var(--iflyv-red-3);
+  --iflyv-message-border-warning: var(--iflyv-orange-3);
+  --iflyv-message-border-info: var(--iflyv-blue-3);
+
+  /* ==================== 阴影 Shadow ==================== */
+  --iflyv-shadow-hover: 0px 6px 8px 0px #{$shadow-hover-color};
+  --iflyv-shadow-related: 0px 6px 32px 4px #{$shadow-related-color};
+  --iflyv-shadow-independent: 0px 12px 48px 8px #{$shadow-independent-color};
+
+  /* ==================== 资源路径 Resource Paths ==================== */
+  --iflyv-loading-path: '#{$loading-path}';
+}

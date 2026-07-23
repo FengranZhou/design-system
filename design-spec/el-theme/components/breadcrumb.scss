@@ -1,0 +1,29 @@
+/* ======================================================================== */
+/* ======================== Breadcrumb 样式覆盖 ============================ */
+/* ======================================================================== */
+
+/* Breadcrumb */
+.el-breadcrumb { font-size: var(--iflyv-font-size-14); line-height: 36px; }
+.el-breadcrumb__inner { color: var(--iflyv-text-3) !important; }
+.el-breadcrumb__inner.is-link:hover { color: var(--iflyv-text-2) !important; }
+.el-breadcrumb__inner.is-link { font-weight: 400; }
+.el-breadcrumb__item:last-child .el-breadcrumb__inner { color: var(--iflyv-text-1) !important; }
+.el-breadcrumb__separator {
+  font-size: 0;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin: 0 4px;
+  background-color: var(--iflyv-icon-3);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+/* RTL：覆盖 EP 硬编码 float */
+.el-breadcrumb__item { float: inline-start; }
+
+/* RTL：分隔箭头翻转（ChevronRight → ChevronLeft） */
+[dir="rtl"] .el-breadcrumb__separator {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+}

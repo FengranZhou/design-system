@@ -1,0 +1,46 @@
+// Alert 灰色中性变体（约定类名 .alert-neutral）
+.el-alert.alert-neutral {
+  background-color: var(--iflyv-bg-inset);
+  color: var(--iflyv-text-2);
+
+  .el-alert__icon {
+    color: var(--iflyv-icon-3);
+  }
+
+  .el-alert__description {
+    color: var(--iflyv-text-3);
+  }
+}
+
+/* 组件级变量覆盖（EP 在 .el-alert 作用域声明，:root 级覆盖无效） */
+.el-alert {
+  --el-alert-title-font-size: var(--iflyv-font-size-14);
+  --el-alert-description-font-size: var(--iflyv-font-size-14);
+  --el-alert-close-font-size: var(--iflyv-font-size-16);
+  --el-alert-close-customed-font-size: var(--iflyv-font-size-14);
+  --el-alert-title-with-description-font-size: var(--iflyv-font-size-16);
+  font-size: var(--iflyv-font-size-14);
+}
+.el-alert__title { line-height: var(--iflyv-line-height-24); }
+.el-alert .el-alert__close-btn.is-customed { line-height: var(--iflyv-line-height-24); }
+
+/* Alert */
+.el-alert__content { gap: 0; }
+/* Alert 关闭按钮 → Lucide X */
+.el-alert .el-alert__close-btn {
+  svg { display: none; }
+  &::after {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-color: var(--iflyv-icon-3);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+  }
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin + 定位 */
+.el-alert .el-alert__icon { margin-right: unset; margin-inline-end: 8px; }
+.el-alert .el-alert__icon.is-big { margin-right: unset; margin-inline-end: 12px; }
+.el-alert .el-alert__close-btn { right: unset; inset-inline-end: 16px; }

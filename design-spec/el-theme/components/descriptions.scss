@@ -1,0 +1,34 @@
+/* ======================================================================== */
+/* ====================== Descriptions 样式覆盖 ============================ */
+/* ======================================================================== */
+
+/* Descriptions 描述列表 */
+.el-descriptions__body {
+  border: var(--el-descriptions-table-border);
+  border-radius: var(--iflyv-radius-sm);
+  overflow: hidden;
+}
+.el-descriptions__label.el-descriptions__cell.is-bordered-label { font-weight: 400; }
+/* 字号 + 行高 rem 化：覆盖 EP 尺寸变体 baked-in px（匹配 EP 选择器特异性） */
+.el-descriptions__body .el-descriptions__table .el-descriptions__cell { font-size: var(--iflyv-font-size-14); line-height: var(--iflyv-line-height-24); }
+.el-descriptions__header .el-descriptions__title { font-size: var(--iflyv-font-size-16); }
+.el-descriptions--small { font-size: var(--iflyv-font-size-12); }
+.el-descriptions--small .el-descriptions__body .el-descriptions__table .el-descriptions__cell { font-size: var(--iflyv-font-size-12); }
+.el-descriptions--small .el-descriptions__header .el-descriptions__title { font-size: var(--iflyv-font-size-14); }
+.el-descriptions--large { font-size: var(--iflyv-font-size-14); }
+.el-descriptions--large .el-descriptions__body .el-descriptions__table .el-descriptions__cell { font-size: var(--iflyv-font-size-14); }
+.el-descriptions--large .el-descriptions__header .el-descriptions__title { font-size: var(--iflyv-font-size-16); }
+
+.el-descriptions__body .el-descriptions__table.is-bordered {
+  tr:first-child .el-descriptions__cell { border-top: none; }
+  tr:last-child .el-descriptions__cell { border-bottom: none; }
+  tr .el-descriptions__cell:first-child { border-inline-start: none; }
+  tr .el-descriptions__cell:last-child { border-inline-end: none; }
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+.el-descriptions__label:not(.is-bordered-label) { margin-right: unset; margin-inline-end: 16px; }
+.el-descriptions--large .el-descriptions__label:not(.is-bordered-label) { margin-right: unset; margin-inline-end: 16px; }
+.el-descriptions--small .el-descriptions__label:not(.is-bordered-label) { margin-right: unset; margin-inline-end: 12px; }
+
+.el-descriptions__body .el-descriptions__table .el-descriptions__cell { text-align: start; }

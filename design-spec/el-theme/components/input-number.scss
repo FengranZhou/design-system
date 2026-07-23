@@ -1,0 +1,85 @@
+/* ======================================================================== */
+/* ===================== InputNumber 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* InputNumber → Lucide Minus / Plus */
+.el-input-number__decrease,
+.el-input-number__increase {
+  .el-icon { visibility: hidden; }
+  &:hover ~ .el-input:not(.is-disabled) .el-input__wrapper {
+    box-shadow: 0 0 0 1px var(--iflyv-input-hover-border) inset;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+}
+.el-input-number__decrease::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E") no-repeat center / 14px;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E") no-repeat center / 14px;
+}
+.el-input-number__increase::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M12 5v14'/%3E%3C/svg%3E") no-repeat center / 14px;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M12 5v14'/%3E%3C/svg%3E") no-repeat center / 14px;
+}
+
+/* RTL：覆盖 EP 硬编码物理 padding/border/position */
+/* 默认模式：decrease 在左 → inline-start，increase 在右 → inline-end */
+.el-input-number .el-input__wrapper {
+  padding-left: unset; padding-inline-start: 42px;
+  padding-right: unset; padding-inline-end: 42px;
+}
+/* 圆角：EP 用物理 shorthand，改为逻辑属性自动翻转 */
+.el-input-number__decrease {
+  left: unset; inset-inline-start: 1px;
+  border-right: unset; border-inline-end: var(--el-border);
+  border-radius: 0;
+  border-start-start-radius: var(--el-border-radius-base);
+  border-end-start-radius: var(--el-border-radius-base);
+}
+.el-input-number__increase {
+  right: unset; inset-inline-end: 1px;
+  border-left: unset; border-inline-start: var(--el-border);
+  border-radius: 0;
+  border-start-end-radius: var(--el-border-radius-base);
+  border-end-end-radius: var(--el-border-radius-base);
+}
+.el-input-number.is-left .el-input__inner { text-align: start; }
+.el-input-number.is-right .el-input__inner { text-align: end; }
+
+/* controls-right 变体 */
+.el-input-number.is-controls-right .el-input__wrapper {
+  padding-left: unset; padding-inline-start: 15px;
+  padding-right: unset; padding-inline-end: 42px;
+}
+.el-input-number.is-controls-right .el-input-number__increase {
+  border-left: unset; border-inline-start: none;
+  right: unset; inset-inline-end: 1px;
+  border-radius: 0;
+  border-start-end-radius: var(--el-border-radius-base);
+}
+.el-input-number.is-controls-right .el-input-number__decrease {
+  left: unset; right: unset;
+  inset-inline-end: 1px;
+  border-right: unset; border-left: unset;
+  border-inline-start: var(--el-border);
+  border-radius: 0;
+  border-end-end-radius: var(--el-border-radius-base);
+}
+
+/* 尺寸变体 */
+.el-input-number--large .el-input--large .el-input__wrapper {
+  padding-left: unset; padding-inline-start: 47px;
+  padding-right: unset; padding-inline-end: 47px;
+}
+.el-input-number--small .el-input--small .el-input__wrapper {
+  padding-left: unset; padding-inline-start: 31px;
+  padding-right: unset; padding-inline-end: 31px;
+}
+.el-input-number.is-without-controls .el-input__wrapper {
+  padding-left: unset; padding-inline-start: 15px;
+  padding-right: unset; padding-inline-end: 15px;
+}

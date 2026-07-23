@@ -1,0 +1,79 @@
+// Checkbox 选中态：用 Lucide Check SVG 替换默认对勾
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  &::after {
+    display: none !important;
+  }
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-size: 10px 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+// Checkbox 禁用选中态：勾统一到 icon-4（mask 画勾，颜色随主题走变量）
+.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+  background-image: none;
+
+  &::after {
+    display: block !important;
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    border: none;
+    transform: none;
+    background-color: var(--iflyv-icon-4);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+  }
+}
+
+// Checkbox 半选态：用 Lucide Minus SVG 替换默认横线
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  &::before {
+    display: none !important;
+  }
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+  background-size: 10px 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.el-checkbox {
+  --el-checkbox-font-size: var(--iflyv-font-size-14);
+  height: var(--el-component-size);
+  font-weight: 400;
+  color: var(--iflyv-text-1);
+  --el-checkbox-checked-text-color: var(--iflyv-text-1);
+  /* 选中禁用态方框背景统一为 bg-inset */
+  --el-checkbox-disabled-checked-input-fill: var(--iflyv-bg-inset);
+}
+
+/* 字号 rem 化：覆盖 EP 尺寸变体 baked-in px（匹配 EP 选择器特异性） */
+.el-checkbox__label { font-size: var(--iflyv-font-size-14); }
+.el-checkbox.el-checkbox--small .el-checkbox__label { font-size: var(--iflyv-font-size-12); }
+.el-checkbox.el-checkbox--large .el-checkbox__label { font-size: var(--iflyv-font-size-16); }
+.el-checkbox-button__inner { font-size: var(--iflyv-font-size-14); }
+.el-checkbox-button--small .el-checkbox-button__inner { font-size: var(--iflyv-font-size-12); }
+
+/* RTL：覆盖 EP 硬编码物理 margin/padding */
+.el-checkbox { margin-right: unset; margin-inline-end: 30px; }
+.el-checkbox:last-of-type { margin-right: unset; margin-inline-end: 0; }
+.el-checkbox__label { padding-left: unset; padding-inline-start: 8px; }
+.el-checkbox-button__inner [class*=el-icon-] + span { margin-left: unset; margin-inline-start: 5px; }
+
+/* RTL：CheckboxButton 圆角翻转（EP first-child/last-child 用物理圆角） */
+.el-checkbox-button:first-child .el-checkbox-button__inner {
+  border-top-left-radius: unset;
+  border-bottom-left-radius: unset;
+  border-start-start-radius: var(--el-border-radius-base);
+  border-end-start-radius: var(--el-border-radius-base);
+}
+.el-checkbox-button:last-child .el-checkbox-button__inner {
+  border-top-right-radius: unset;
+  border-bottom-right-radius: unset;
+  border-start-end-radius: var(--el-border-radius-base);
+  border-end-end-radius: var(--el-border-radius-base);
+}

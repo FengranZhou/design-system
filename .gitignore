@@ -1,0 +1,19 @@
+# 依赖
+node_modules/
+demo/node_modules/
+
+# 构建产物（Vercel 会自己构建，不需要提交）
+demo/dist/
+dist/
+
+# 系统 / 编辑器
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# d2c2 中间产物
+.d2c2/
+
+# Vercel 本地文件
+.vercel

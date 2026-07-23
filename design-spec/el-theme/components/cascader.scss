@@ -1,0 +1,80 @@
+/* ======================================================================== */
+/* ======================== Cascader 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* 文字色：覆盖 EP --el-cascader-menu-text-color (默认 text-regular = text-2) → text-1 */
+.el-cascader,
+.el-cascader-panel,
+.el-cascader__dropdown {
+  --el-cascader-menu-text-color: var(--iflyv-text-1);
+  --el-cascader-menu-selected-text-color: var(--iflyv-brand-text);
+}
+
+/* 级联选择器：箭头 → ChevronRight，对勾 → Check */
+.el-cascader-menu__list { padding: var(--iflyv-spacing-1); }
+.el-cascader-node {
+  border-radius: var(--iflyv-radius-xs);
+  height: 36px;
+  line-height: 36px;
+  color: var(--iflyv-text-1);
+  &.in-active-path, &.is-active { font-weight: 400; }
+
+  .arrow-right.el-cascader-node__postfix {
+    position: absolute;
+    inset-inline-end: 10px;
+    width: 14px;
+    height: 14px;
+    svg { visibility: hidden; }
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+      background-color: currentColor;
+      pointer-events: none;
+    }
+  }
+
+  .el-icon.el-cascader-node__prefix {
+    position: absolute;
+    inset-inline-start: 10px;
+    width: 14px;
+    height: 14px;
+    svg { visibility: hidden; }
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") no-repeat center / contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") no-repeat center / contain;
+      background-color: currentColor;
+      pointer-events: none;
+    }
+  }
+}
+
+/* RTL：ChevronRight 箭头水平翻转 */
+[dir="rtl"] .el-cascader-node .arrow-right.el-cascader-node__postfix::after {
+  transform: scaleX(-1);
+}
+
+/* 字号 rem 化：覆盖 EP 尺寸变体 baked-in px */
+.el-cascader--large { font-size: var(--iflyv-font-size-14); }
+.el-cascader--small { font-size: var(--iflyv-font-size-12); }
+
+/* RTL：覆盖 EP 硬编码物理 margin/padding + 定位 */
+.el-cascader__search-input { margin-left: unset; margin-inline-start: 7px; }
+.el-cascader--large .el-cascader__search-input { margin-left: unset; margin-inline-start: 7px; }
+.el-cascader--small .el-cascader__search-input { margin-left: unset; margin-inline-start: 5px; }
+.el-cascader__suggestion-item > span { margin-right: unset; margin-inline-end: 10px; }
+.el-cascader-menu:last-child .el-cascader-node { padding-right: unset; padding-inline-end: 20px; }
+.el-cascader-menu__empty-text .is-loading { margin-right: unset; margin-inline-end: 2px; }
+.el-cascader__tags { right: unset; inset-inline-end: 30px; }
+.el-cascader__tags.is-validate { right: unset; inset-inline-end: 55px; }
+/* RTL：覆盖 EP 硬编码 text-align + border */
+.el-cascader-node__label { text-align: start; }
+.el-cascader__tags { text-align: start; }
+.el-cascader__suggestion-item { text-align: start; }
+.el-cascader-menu { border-right: unset; border-inline-end: var(--el-cascader-menu-border); }
+

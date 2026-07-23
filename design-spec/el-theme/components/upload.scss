@@ -1,0 +1,63 @@
+/* ======================================================================== */
+/* ========================= Upload 样式覆盖 =============================== */
+/* ======================================================================== */
+
+/* Upload */
+.el-upload.is-drag .el-upload-dragger {
+  border-radius: var(--iflyv-radius-sm);
+  font-size: var(--iflyv-font-size-14);
+}
+.el-upload-list__item {
+  height: 26px;
+  display: flex;
+  align-items: center;
+}
+.el-upload-list__item .el-icon--close {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  opacity: 0;
+  transition: opacity var(--el-transition-duration);
+  svg { visibility: hidden; }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+}
+.el-upload-list__item:hover .el-icon--close,
+.el-upload-list__item:focus-within .el-icon--close {
+  opacity: 1;
+}
+.el-upload-list__item-name .el-icon {
+  position: relative;
+  svg { visibility: hidden; }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E") no-repeat center / contain;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin + 定位 */
+.el-upload-list__item .el-upload-list__item-info { margin-left: unset; margin-inline-start: 4px; }
+.el-upload-list__item-name .el-icon { margin-right: unset; margin-inline-end: 6px; }
+.el-upload-list__item .el-icon--close { right: unset; inset-inline-end: 5px; }
+.el-upload-list__item .el-icon--close-tip { right: unset; inset-inline-end: 5px; }
+.el-upload-list__item:hover .el-icon--close-tip,
+.el-upload-list__item:focus-within .el-icon--close-tip { right: unset; inset-inline-end: 24px; }
+.el-upload-list__item-status-label { right: unset; inset-inline-end: 5px; }
+.el-upload-list--picture-card .el-upload-list__item-actions span + span { margin-left: unset; margin-inline-start: 16px; }
+.el-upload-list--picture-card .el-upload-list__item-status-label { right: unset; inset-inline-end: -15px; }
+.el-upload-list--picture .el-upload-list__item-status-label { right: unset; inset-inline-end: -17px; }
+
+.el-upload-cover__title { text-align: start; }

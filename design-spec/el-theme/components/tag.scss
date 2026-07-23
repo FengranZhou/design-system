@@ -1,0 +1,105 @@
+/* ======================================================================== */
+/* =========================== Tag 样式覆盖 =============================== */
+/* ======================================================================== */
+
+.el-tag {
+  --el-tag-font-size: var(--iflyv-font-size-12);
+  border-radius: var(--iflyv-radius-xs);
+
+  &.is-round {
+    border-radius: var(--iflyv-radius-full);
+  }
+  font-size: var(--iflyv-font-size-12);
+  border: none;
+
+  /* 统一尺寸 20px */
+  height: 20px;
+  padding: 0 6px;
+
+  .el-tag__close {
+    margin-left: 0; /* 清除 EP .el-tag .el-tag__close { margin-left: 6px }，防止 RTL 残留 */
+    margin-inline-start: 2px;
+    position: relative;
+    color: var(--iflyv-icon-3);
+
+    svg {
+      visibility: hidden;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+      background-color: currentColor;
+      pointer-events: none;
+    }
+
+    width: 12px !important;
+    height: 12px !important;
+
+    &:hover {
+      background-color: transparent;
+      color: var(--iflyv-brand-primary);
+    }
+  }
+
+  /* ==================== 语义类型 ==================== */
+
+  /* 主题/品牌 */
+  &--primary,
+  &:not([class*="--"]) {
+    color: var(--iflyv-brand-text);
+    background-color: var(--iflyv-brand-bg);
+  }
+
+  /* 成功 */
+  &--success {
+    color: var(--iflyv-success-primary);
+    background-color: var(--iflyv-success-bg);
+  }
+
+  /* 警告 */
+  &--warning {
+    color: var(--iflyv-warning-primary);
+    background-color: var(--iflyv-warning-bg);
+  }
+
+  /* 危险 */
+  &--danger {
+    color: var(--iflyv-danger-primary);
+    background-color: var(--iflyv-danger-bg);
+  }
+
+  /* 信息 */
+  &--info {
+    color: var(--iflyv-info-primary);
+    background-color: var(--iflyv-info-bg);
+  }
+
+
+  /* 灰色 */
+  &--gray {
+    color: var(--iflyv-text-2);
+    background-color: var(--iflyv-bg-inset);
+  }
+}
+
+/* Select 多选内的 tag 统一样式（含 tooltip 浮层内） */
+.el-select .el-tag,
+.el-tag.in-tooltip {
+  height: 20px !important;
+  line-height: 18px !important;
+  padding: 1px 8px !important;
+  color: var(--iflyv-text-2) !important;
+  background-color: var(--iflyv-bg-inset) !important;
+  border: none !important;
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin/padding（尺寸变体） */
+.el-tag.is-closable { padding-right: unset; padding-inline-end: 5px; }
+.el-tag--large .el-tag__close { margin-left: unset; margin-inline-start: 8px; }
+.el-tag--large.is-closable { padding-right: unset; padding-inline-end: 7px; }
+.el-tag--small .el-tag__close { margin-left: unset; margin-inline-start: 4px; }
+.el-tag--small.is-closable { padding-right: unset; padding-inline-end: 3px; }
