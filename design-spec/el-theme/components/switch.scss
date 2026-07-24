@@ -4,20 +4,23 @@
 
 .el-switch {
   height: calc(var(--el-component-size) - 12px);
-  .el-switch__label { font-weight: 400; margin: 0 var(--iflyv-spacing-2); }
+  /* ⏸ active-text/inactive-text 文字标签暂停启用（现阶段不用带文字的开关）。
+     需要恢复带文字标签时，放开本文件所有 .el-switch__label 相关注释即可。 */
+  /* .el-switch__label { font-weight: 400; margin: 0 var(--iflyv-spacing-2); } */
 }
 
 /* Switch 激活标签文字色：brand-text（暗色下提亮一级） */
-.el-switch__label.is-active { color: var(--iflyv-brand-text); }
+/* .el-switch__label.is-active { color: var(--iflyv-brand-text); } */
 
 /* 字号 rem 化：覆盖 EP 尺寸变体 baked-in px */
 .el-switch { font-size: var(--iflyv-font-size-14); }
 .el-switch--small { font-size: var(--iflyv-font-size-12); }
+/* label 字号 rem 化（随文字标签一起暂停启用）：
 .el-switch__label { font-size: var(--iflyv-font-size-14); }
 .el-switch__label * { font-size: var(--iflyv-font-size-14); }
 .el-switch--large .el-switch__label * { font-size: var(--iflyv-font-size-14); }
 .el-switch--small .el-switch__label { font-size: var(--iflyv-font-size-12); }
-.el-switch--small .el-switch__label * { font-size: var(--iflyv-font-size-12); }
+.el-switch--small .el-switch__label * { font-size: var(--iflyv-font-size-12); } */
 .el-switch__inner-wrapper { font-size: var(--iflyv-font-size-12); }
 
 /* Switch 开启态：背景保持 brand-primary，不跟随 brand-text 提亮 */
@@ -26,11 +29,12 @@
 }
 
 /* RTL：覆盖 EP 硬编码物理 margin/position */
+/* label RTL（随文字标签一起暂停启用）：
 .el-switch__label--left { margin-right: unset; margin-inline-end: 10px; }
-.el-switch__label--right { margin-left: unset; margin-inline-start: 10px; }
+.el-switch__label--right { margin-left: unset; margin-inline-start: 10px; } */
 .el-switch__core .el-switch__action { left: unset; inset-inline-start: 1px; }
 .el-switch.is-checked .el-switch__core .el-switch__action { left: unset; inset-inline-start: calc(100% - 17px); }
 .el-switch--large.is-checked .el-switch__core .el-switch__action { left: unset; inset-inline-start: calc(100% - 21px); }
 .el-switch--small.is-checked .el-switch__core .el-switch__action { left: unset; inset-inline-start: calc(100% - 13px); }
-.el-switch--wide .el-switch__label.el-switch__label--left span { left: unset; inset-inline-start: 10px; }
-.el-switch--wide .el-switch__label.el-switch__label--right span { right: unset; inset-inline-end: 10px; }
+/* .el-switch--wide .el-switch__label.el-switch__label--left span { left: unset; inset-inline-start: 10px; }
+.el-switch--wide .el-switch__label.el-switch__label--right span { right: unset; inset-inline-end: 10px; } */

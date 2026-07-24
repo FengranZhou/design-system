@@ -51,6 +51,12 @@
   --el-checkbox-disabled-checked-input-fill: var(--iflyv-bg-inset);
 }
 
+/* 复选框尺寸：16×16（EP 默认 14） */
+.el-checkbox__inner {
+  width: 16px !important;
+  height: 16px !important;
+}
+
 /* 字号 rem 化：覆盖 EP 尺寸变体 baked-in px（匹配 EP 选择器特异性） */
 .el-checkbox__label { font-size: var(--iflyv-font-size-14); }
 .el-checkbox.el-checkbox--small .el-checkbox__label { font-size: var(--iflyv-font-size-12); }
@@ -59,7 +65,7 @@
 .el-checkbox-button--small .el-checkbox-button__inner { font-size: var(--iflyv-font-size-12); }
 
 /* RTL：覆盖 EP 硬编码物理 margin/padding */
-.el-checkbox { margin-right: unset; margin-inline-end: 30px; }
+.el-checkbox { margin-right: unset; margin-inline-end: var(--iflyv-spacing-4); }
 .el-checkbox:last-of-type { margin-right: unset; margin-inline-end: 0; }
 .el-checkbox__label { padding-left: unset; padding-inline-start: 8px; }
 .el-checkbox-button__inner [class*=el-icon-] + span { margin-left: unset; margin-inline-start: 5px; }

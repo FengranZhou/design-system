@@ -3,26 +3,24 @@
 /* ======================================================================== */
 
 /* Empty 空状态 */
-.el-empty__description { margin-top: 12px; }
-.el-empty__bottom { margin-top: 12px; }
+.el-empty__description { margin-top: var(--iflyv-spacing-3); }  /* 图↔描述文字 间距 12 */
+.el-empty__bottom { margin-top: var(--iflyv-spacing-3); }       /* 描述↔按钮 间距 12 */
 .el-empty__image { display: flex; justify-content: center; }
 
-/* 圆角矩形底板 + Lucide Icon —— 配合 el-empty #image 插槽使用 */
-.empty-icon-plate {
-  width: 48px;
-  height: 48px;
-  background: var(--iflyv-bg-inset);
-  border-radius: var(--iflyv-radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--iflyv-icon-2);
+/* ┌─ 接入方速查：承载容器两档，直接加约定 class ─────────────────────────┐
+   页面级（整页空态，插图大、留白多）：<el-empty class="empty-page" :image="图URL" description="无数据" />
+   模块级（卡片/区块内空态，插图小、留白少）：<el-empty class="empty-block" :image="图URL" description="无数据" />
+   带按钮：把 <el-button> 放进 el-empty 默认插槽即可（正交配置，可叠加）。
+   └────────────────────────────────────────────────────────────────────┘ */
 
-  /* 覆盖 EP 默认的 .el-empty__image svg 样式 */
-  svg {
-    color: inherit;
-    fill: none;
-    width: auto;
-    height: auto;
-  }
+/* 页面级：插图 120，上下留白大 */
+.el-empty.empty-page {
+  padding: var(--iflyv-spacing-10) 0;
+  .el-empty__image { width: 120px; }
+}
+
+/* 模块级：插图 80，上下留白小 */
+.el-empty.empty-block {
+  padding: var(--iflyv-spacing-8) 0;
+  .el-empty__image { width: 80px; }
 }

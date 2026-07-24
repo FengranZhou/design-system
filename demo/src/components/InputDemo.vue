@@ -2,41 +2,62 @@
   <section id="input" class="demo-section">
     <h2 class="demo-section__title">Input 输入框</h2>
 
-    <div class="demo-block">
-      <p class="demo-label">Input 尺寸对比</p>
-      <div class="demo-row">
-        <el-input placeholder="Default" style="width: 200px" />
+    <!-- 左列（标题+示例）+ 右列配置卡；两列均从块顶开始 → 配置卡顶与标题顶齐平。 -->
+    <div class="demo-block input-showcase">
+      <div class="input-showcase__main">
+        <p class="demo-label">基础输入框</p>
+        <div class="demo-row">
+          <el-input
+            v-model="basicValue"
+            placeholder="请输入内容"
+            :clearable="clearable"
+            :maxlength="showWordLimit ? 50 : undefined"
+            :show-word-limit="showWordLimit"
+            style="width: 240px"
+          />
+          <el-input placeholder="禁用状态" disabled style="width: 240px" />
+        </div>
       </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="configForm" label-width="auto">
+          <el-form-item label="可清除">
+            <el-switch v-model="clearable" />
+          </el-form-item>
+          <el-form-item label="字数提示">
+            <el-switch v-model="showWordLimit" />
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">InputNumber 尺寸对比</p>
-      <div class="demo-row">
-        <el-input-number :model-value="1" />
+    <!-- 搜索框（业务组件 SearchMini）：基础形式 ↔ 收起态由「默认收起」开关切换，
+         二者是同一物料的一个 prop 差异（collapsed）。组件源头在 design-spec/components/SearchMini。 -->
+    <div class="demo-block input-showcase">
+      <div class="input-showcase__main">
+        <p class="demo-label">搜索框</p>
+        <p class="demo-desc">默认实时搜索，若因技术限制，则点击图标 / Enter 触发搜索动作</p>
+        <div class="demo-row">
+          <!-- collapsed 切换：关 = 基础形式（常驻展开）；开 = 收起态（点图标展开、失焦收起） -->
+          <SearchMini v-model="searchValue" :collapsed="searchCollapsed" placeholder="搜索" />
+        </div>
       </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="searchConfigForm" label-width="auto">
+          <el-form-item label="默认收起">
+            <el-switch v-model="searchCollapsed" />
+          </el-form-item>
+        </el-form>
+        <!-- 选型指引：随开关状态变化，供下游调用该搜索框时判断用哪种形态 -->
+        <p class="config-card__hint">{{ searchCollapsedHint }}</p>
+      </aside>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">基础输入框</p>
-      <div class="demo-row">
-        <el-input v-model="basicValue" placeholder="请输入内容" style="width: 240px" />
-        <el-input placeholder="禁用状态" disabled style="width: 240px" />
-      </div>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">可清除</p>
-      <div class="demo-row">
-        <el-input v-model="clearableValue" placeholder="可清除输入框" clearable style="width: 240px" />
-      </div>
-    </div>
-
+    <!-- ⏸ 暂停启用：带图标（prefix/suffix slot）图标样例演示。暂时用不到，保留代码，需要时放开。
     <div class="demo-block">
       <p class="demo-label">带图标（Lucide · prefix / suffix slot）</p>
       <div class="demo-row">
-        <el-input v-model="searchValue" placeholder="搜索" style="width: 240px">
-          <template #prefix><Search :size="16" :stroke-width="2" /></template>
-        </el-input>
         <el-input v-model="usernameValue" placeholder="用户名" style="width: 240px">
           <template #prefix><User :size="16" :stroke-width="2" /></template>
         </el-input>
@@ -55,58 +76,132 @@
           <template #prefix><Phone :size="16" :stroke-width="2" /></template>
         </el-input>
       </div>
-      <p class="demo-label" style="margin-top: 16px;">带图标 · 尺寸变体</p>
-      <div class="demo-row">
-        <el-input size="large" placeholder="Large 搜索" style="width: 200px">
-          <template #prefix><Search :size="16" :stroke-width="2" /></template>
-        </el-input>
-        <el-input placeholder="Default 搜索" style="width: 200px">
-          <template #prefix><Search :size="16" :stroke-width="2" /></template>
-        </el-input>
-        <el-input size="small" placeholder="Small 搜索" style="width: 200px">
-          <template #prefix><Search :size="14" :stroke-width="2" /></template>
-        </el-input>
-      </div>
     </div>
+    -->
 
     <div class="demo-block">
       <p class="demo-label">数字输入框</p>
       <div class="demo-row">
-        <el-input-number v-model="numberValue" :min="1" :max="100" />
+        <el-input-number v-model="numberValue" :min="1" :max="100" placeholder="请输入" />
       </div>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">字数提示</p>
-      <div class="demo-row">
-        <el-input v-model="limitValue" maxlength="50" show-word-limit placeholder="最多 50 字" style="width: 240px" />
-        <el-input v-model="limitTextarea" type="textarea" maxlength="200" show-word-limit :rows="3" placeholder="最多 200 字" style="width: 400px" />
+    <div class="demo-block input-showcase">
+      <div class="input-showcase__main">
+        <p class="demo-label">文本域</p>
+        <div class="demo-row">
+          <el-input
+            v-model="textareaValue"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入多行文本"
+            :maxlength="textareaWordLimit ? 200 : undefined"
+            :show-word-limit="textareaWordLimit"
+            style="width: 400px"
+          />
+        </div>
       </div>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">文本域</p>
-      <div class="demo-row">
-        <el-input v-model="textareaValue" type="textarea" :rows="3" placeholder="请输入多行文本" style="width: 400px" />
-      </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="textareaConfigForm" label-width="auto">
+          <el-form-item label="字数提示">
+            <el-switch v-model="textareaWordLimit" />
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Search, User, Lock, Mail, Link, Phone } from 'lucide-vue-next'
+import { ref, reactive, computed } from 'vue'
+import { SearchMini } from '../../../design-spec/components'
+// ⏸ 放开「带图标」注释块时，一并放开下面这行 import：
+// import { User, Lock, Mail, Link, Phone } from 'lucide-vue-next'
 
 const basicValue = ref('')
-const clearableValue = ref('')
+// 基础输入框配置项：可清除 clearable + 字数提示 showWordLimit 开关（el-form 需要 model 对象）
+const clearable = ref(false)
+const showWordLimit = ref(false)
+const configForm = reactive({ clearable, showWordLimit })
+// 搜索框配置项：默认收起 collapsed 开关，切换 SearchMini 基础形式 ↔ 收起态
 const searchValue = ref('')
-const usernameValue = ref('')
-const passwordValue = ref('')
-const emailValue = ref('')
-const linkValue = ref('')
-const phoneValue = ref('')
-const limitValue = ref('')
-const limitTextarea = ref('')
+const searchCollapsed = ref(false)
+const searchConfigForm = reactive({ searchCollapsed })
+// 选型指引：关闭（常驻展开）= 核心功能；开启（收起态）= 非核心功能
+const searchCollapsedHint = computed(() =>
+  searchCollapsed.value ? '应用场景中非核心功能' : '应用场景中为核心功能'
+)
+// ⏸ 放开「带图标」注释块时，一并放开下面这些变量：
+// const usernameValue = ref('')
+// const passwordValue = ref('')
+// const emailValue = ref('')
+// const linkValue = ref('')
+// const phoneValue = ref('')
+// 文本域配置项：字数提示 textareaWordLimit 开关
 const textareaValue = ref('')
+const textareaWordLimit = ref(false)
+const textareaConfigForm = reactive({ textareaWordLimit })
 const numberValue = ref(1)
 </script>
+
+<style scoped>
+/* 纯本页排版：基础输入框左示例 + 右配置卡片横向布局。不含组件外观规则。
+   与 Button / Empty 配置式范式一致。 */
+
+/* 每个 demo 块用 bg-card 大卡片做区分（本页排版，走令牌）。
+   卡间垂直间距统一 24（spacing-6）；覆盖全局 .demo-block 自带的 48px margin，避免叠加。 */
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+}
+.demo-section .demo-block + .demo-block {
+  margin-top: var(--iflyv-spacing-6);
+}
+
+/* 块内说明文字：标题下、控件上，浅色小字，不与标题抢视觉 */
+.demo-desc {
+  margin: 0 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+
+/* 块卡内左右两列：左列（标题+示例）+ 右列配置卡，均从块顶开始 → 配置卡顶与标题顶齐平 */
+.input-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48：spacing-8 32 + spacing-4 16 */
+}
+.input-showcase__main { flex: 1; min-width: 0; }
+.input-showcase .demo-row { flex-wrap: wrap; }
+/* 左列内标题下与示例的间距（标题原 margin-bottom 保留即可） */
+
+@media (max-width: 1100px) {
+  .input-showcase { flex-direction: column; }
+  .config-card { width: 100%; }
+}
+
+/* 配置卡在块卡（bg-card）内部，改用白底 + 细边框区分层次，避免同色套同色 */
+.config-card {
+  flex: 0 1 auto;
+  width: 220px;
+  align-self: flex-start;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-md);
+}
+.config-card__title {
+  margin: 0 0 var(--iflyv-spacing-4);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
+}
+/* 选型指引说明：开关下方浅色小字 */
+.config-card__hint {
+  margin: var(--iflyv-spacing-2) 0 0;
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+</style>

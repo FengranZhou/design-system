@@ -3,24 +3,6 @@
     <h2 class="demo-section__title">DatePicker 日期选择器</h2>
 
     <div class="demo-block">
-      <p class="demo-label">DatePicker 尺寸对比</p>
-      <div class="demo-row">
-        <el-date-picker size="large" placeholder="Large" style="width: 220px" />
-        <el-date-picker placeholder="Default" style="width: 220px" />
-        <el-date-picker size="small" placeholder="Small" style="width: 220px" />
-      </div>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">TimePicker 尺寸对比</p>
-      <div class="demo-row">
-        <el-time-picker size="large" placeholder="Large" style="width: 200px" />
-        <el-time-picker placeholder="Default" style="width: 200px" />
-        <el-time-picker size="small" placeholder="Small" style="width: 200px" />
-      </div>
-    </div>
-
-    <div class="demo-block">
       <p class="demo-label">日期选择</p>
       <div class="demo-row">
         <el-date-picker v-model="dateValue" type="date" placeholder="选择日期" style="width: 240px" />

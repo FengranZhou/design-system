@@ -49,8 +49,6 @@
           <!-- <li><a href="#select-examples" :class="{ 'is-active': activeSection === 'select-examples' }" style="color: var(--iflyv-brand-primary);">📋 Select Examples（临时预览）</a></li> -->
           <li><a href="#form-control" :class="{ 'is-active': activeSection === 'form-control' }">FormControl 表单控件</a></li>
           <li><a href="#date-picker" :class="{ 'is-active': activeSection === 'date-picker' }">DatePicker 日期选择器</a></li>
-          <li><a href="#form" :class="{ 'is-active': activeSection === 'form' }">Form 表单</a></li>
-          <!-- <li><a href="#form-examples" :class="{ 'is-active': activeSection === 'form-examples' }" style="color: var(--iflyv-brand-primary);">📋 Form Examples（临时预览）</a></li> -->
           <li><a href="#upload-transfer" :class="{ 'is-active': activeSection === 'upload-transfer' }">Upload 上传与穿梭框</a></li>
         </ul>
 
@@ -88,6 +86,18 @@
         <template v-if="currentTopTab === 'business'">
         <!-- 业务组件层导航：随组件逐个加入（如 AiPanel 等） -->
         </template>
+
+        <template v-if="currentTopTab === 'pattern'">
+        <ul class="app-sidebar__nav">
+          <li><a href="#pattern-form" :class="{ 'is-active': activeSection === 'pattern-form' }">Form Layout 表单布局</a></li>
+        </ul>
+        </template>
+
+        <template v-if="currentTopTab === 'copywriting'">
+        <ul class="app-sidebar__nav">
+          <li><a href="#copywriting-time" :class="{ 'is-active': activeSection === 'copywriting-time' }">Time 通用时间</a></li>
+        </ul>
+        </template>
       </div>
     </aside>
 
@@ -123,14 +133,6 @@
       </section> -->
       <FormControlDemo />
       <DatePickerDemo />
-      <FormDemo />
-      <!-- <section id="form-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
-        <h2 class="demo-section__title">📋 Form Examples（design-spec/examples/ 临时预览）</h2>
-        <p style="color: var(--iflyv-text-3); margin-bottom: 16px; font-size: 13px;">
-          design-spec/examples/form.examples.vue 的渲染效果。反模式仅在源码注释中。
-        </p>
-        <FormExamples />
-      </section> -->
       <UploadTransferDemo />
       <TagDemo />
       <TableDemo />
@@ -162,13 +164,19 @@
       <div v-show="currentTopTab === 'business'">
       <!-- 业务组件层：先空着，基础组件优化完成后逐个造入（引用 design-spec/components/） -->
       </div>
+      <div v-show="currentTopTab === 'pattern'">
+      <PatternFormDemo />
+      </div>
+      <div v-show="currentTopTab === 'copywriting'">
+      <CopywritingTimeDemo />
+      </div>
     </main>
   </div>
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
@@ -202,7 +210,6 @@ import InputDemo from './components/InputDemo.vue'
 import SelectDemo from './components/SelectDemo.vue'
 import FormControlDemo from './components/FormControlDemo.vue'
 import DatePickerDemo from './components/DatePickerDemo.vue'
-import FormDemo from './components/FormDemo.vue'
 import UploadTransferDemo from './components/UploadTransferDemo.vue'
 import TagDemo from './components/TagDemo.vue'
 import TableDemo from './components/TableDemo.vue'
@@ -216,6 +223,8 @@ import FeedbackDemo from './components/FeedbackDemo.vue'
 import LoadingDemo from './components/LoadingDemo.vue'
 import EmptyDemo from './components/EmptyDemo.vue'
 import OtherDemo from './components/OtherDemo.vue'
+import PatternFormDemo from './components/pattern/PatternFormDemo.vue'
+import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
 // 临时预览 examples 的 import（已注释挂载，需要时取消注释）：
 // import ButtonExamples from '../../design-spec/examples/button.examples.vue'
 // import FormExamples from '../../design-spec/examples/form.examples.vue'
@@ -229,11 +238,37 @@ const activeSection = ref('palette')
 const sectionIds = [
   'palette', 'token-color', 'token-font-base', 'token-font-semantic', 'token-spacing', 'token-radius', 'token-shadow', 'token-motion',
   'button', 'input', 'select', 'form-control', 'date-picker',
-  'form', 'upload-transfer', 'tag', 'table', 'avatar', 'data-display',
+  'upload-transfer', 'tag', 'table', 'avatar', 'data-display',
   'navigation', 'dialog', 'message', 'popconfirm', 'feedback', 'loading', 'empty', 'other',
+  'pattern-form',
+  'copywriting-time',
 ]
 
+// 每个顶部 tab 对应它的首个 section id，切 tab 时先兜底高亮该项，
+// 避免某些 tab（如「设计模式」只有单个长 section）滚动观察器未触发导致导航不高亮。
+const firstSectionByTab: Record<string, string> = {
+  token: 'palette',
+  component: 'button',
+  pattern: 'pattern-form',
+  copywriting: 'copywriting-time',
+}
+
+watch(currentTopTab, (tab) => {
+  const first = firstSectionByTab[tab]
+  if (first) activeSection.value = first
+  // 切 tab 后 DOM 中可见 section 变化，重挂观察器让滚动高亮继续生效
+  nextTick(observeSections)
+})
+
 let observer: IntersectionObserver | null = null
+
+function observeSections() {
+  observer?.disconnect()
+  sectionIds.forEach((id) => {
+    const el = document.getElementById(id)
+    if (el) observer!.observe(el)
+  })
+}
 
 onMounted(() => {
   observer = new IntersectionObserver(
@@ -247,10 +282,10 @@ onMounted(() => {
     { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
   )
 
-  sectionIds.forEach((id) => {
-    const el = document.getElementById(id)
-    if (el) observer!.observe(el)
-  })
+  // 初始 tab 也先兜底高亮其首个 section，再挂观察器
+  const first = firstSectionByTab[currentTopTab.value]
+  if (first) activeSection.value = first
+  observeSections()
 })
 
 onBeforeUnmount(() => {

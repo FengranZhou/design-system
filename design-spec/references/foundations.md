@@ -196,7 +196,7 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 |------|---------|-----|
 | 紧凑元素内间距（Tag、Badge） | `spacing-1` ~ `spacing-2` | 4~8px |
 | 列表项内部子元素之间（如标题与描述、图标与文字） | `spacing-1` ~ `spacing-2` | 4~8px |
-| 表单项之间（label + input 为一组，组与组的间距） | `spacing-4` | 16px |
+| 表单项之间（label + input 为一组，组与组的间距） | `spacing-6` | 24px |
 | 工具栏内元素之间（按钮组、筛选项、搜索框） | `spacing-3` ~ `spacing-4` | 12~16px |
 | 卡片/面板内边距 | `spacing-3` ~ `spacing-5` | 12~20px |
 | 同级模块之间（卡片与卡片、区块与区块） | `spacing-5` ~ `spacing-6` | 20~24px |
