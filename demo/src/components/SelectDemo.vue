@@ -92,8 +92,10 @@ const multiSelect = ref([])
 const groupSelect = ref('')
 const cascaderValue = ref([])
 
-const options = [
-  { value: 'all', label: '全部部门' },
+// 首项为默认语义项：不可清除时叫「全部部门」（有明确语义、清空会丢义）；
+// 可清除时叫「全部」（更简洁，空 = 未选择，清空语义完整）。
+const options = computed(() => [
+  { value: 'all', label: clearable.value ? '全部' : '全部部门' },
   { value: '1', label: '设计部' },
   { value: '2', label: '研发部' },
   { value: '3', label: '产品部' },
@@ -102,7 +104,7 @@ const options = [
   { value: '6', label: '财务部' },
   { value: '7', label: '人事部' },
   { value: '8', label: '客服部' },
-]
+])
 
 const groupOptions = [
   {
