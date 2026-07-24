@@ -46,7 +46,7 @@
       <p class="demo-label">多选</p>
       <div class="demo-row">
         <el-select v-model="multiSelect" multiple collapse-tags collapse-tags-tooltip :max-collapse-tags="2" placeholder="多选模式" style="width: 240px">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in departments" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
     </div>
@@ -92,10 +92,8 @@ const multiSelect = ref([])
 const groupSelect = ref('')
 const cascaderValue = ref([])
 
-// 首项为默认语义项：不可清除时叫「全部部门」（有明确语义、清空会丢义）；
-// 可清除时叫「全部」（更简洁，空 = 未选择，清空语义完整）。
-const options = computed(() => [
-  { value: 'all', label: clearable.value ? '全部' : '全部部门' },
+// 部门列表：多选等场景直接用这份纯列表（不含语义默认项）
+const departments = [
   { value: '1', label: '设计部' },
   { value: '2', label: '研发部' },
   { value: '3', label: '产品部' },
@@ -104,6 +102,13 @@ const options = computed(() => [
   { value: '6', label: '财务部' },
   { value: '7', label: '人事部' },
   { value: '8', label: '客服部' },
+]
+
+// 基础选择器：首项为默认语义项，不可清除时叫「全部部门」（有明确语义、清空会丢义）、
+// 可清除时叫「全部」（更简洁，空 = 未选择，清空语义完整）。多选不需要该语义项。
+const options = computed(() => [
+  { value: 'all', label: clearable.value ? '全部' : '全部部门' },
+  ...departments,
 ])
 
 const groupOptions = [
