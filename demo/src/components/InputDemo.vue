@@ -45,12 +45,18 @@
       <aside class="config-card">
         <p class="config-card__title">配置项</p>
         <el-form :model="searchConfigForm" label-width="auto">
+          <!-- 默认收起开关 + 选型指引是一个整体字段单元：hint 放在同一 el-form-item 的 content 内，
+               与 SelectDemo「可清除」配置布局一致。 -->
           <el-form-item label="默认收起">
-            <el-switch v-model="searchCollapsed" />
+            <div class="config-field">
+              <!-- switch 套与 label 等高（component-size）的居中行，使其与 label 垂直居中对齐 -->
+              <div class="config-field__row">
+                <el-switch v-model="searchCollapsed" />
+              </div>
+              <p class="config-card__hint">{{ searchCollapsedHint }}</p>
+            </div>
           </el-form-item>
         </el-form>
-        <!-- 选型指引：随开关状态变化，供下游调用该搜索框时判断用哪种形态 -->
-        <p class="config-card__hint">{{ searchCollapsedHint }}</p>
       </aside>
     </div>
 
@@ -198,9 +204,21 @@ const numberValue = ref(1)
   color: var(--iflyv-text-1);
   font: var(--iflyv-font-title-component);
 }
-/* 选型指引说明：开关下方浅色小字 */
+/* 默认收起字段单元：开关 + hint 竖排为一个整体（与 SelectDemo「可清除」布局一致）。 */
+.config-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+/* switch 行：与 label 等高（组件统一高度）并垂直居中，使 switch 与 label 中线对齐 */
+.config-field__row {
+  display: flex;
+  align-items: center;
+  height: var(--el-component-size);
+}
+/* 选型指引说明：浅色小字，紧跟开关下方（上距 4px） */
 .config-card__hint {
-  margin: var(--iflyv-spacing-2) 0 0;
+  margin: var(--iflyv-spacing-1) 0 0;
   color: var(--iflyv-text-3);
   font: var(--iflyv-font-body-sub);
 }
