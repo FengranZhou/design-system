@@ -24,11 +24,17 @@
       <aside class="config-card">
         <p class="config-card__title">配置项</p>
         <el-form :model="configForm" label-width="auto">
+          <!-- 可清除开关 + 选型指引是一个整体字段单元：hint 放在同一 el-form-item 的 content 内，
+               整体与「可搜索」之间保持表单模式标准字段间距 24px（form.scss 源头定义，不覆盖）。 -->
           <el-form-item label="可清除">
-            <el-switch v-model="clearable" />
+            <div class="config-field">
+              <!-- switch 套与 label 等高（component-size）的居中行，使其与 label 垂直居中对齐 -->
+              <div class="config-field__row">
+                <el-switch v-model="clearable" />
+              </div>
+              <p class="config-card__hint">{{ clearableHint }}</p>
+            </div>
           </el-form-item>
-          <!-- 选型指引：可清除与否取决于「空状态是否合法」，随开关给出适用场景 -->
-          <p class="config-card__hint">{{ clearableHint }}</p>
           <el-form-item label="可搜索">
             <el-switch v-model="filterable" />
           </el-form-item>
@@ -39,7 +45,7 @@
     <div class="demo-block">
       <p class="demo-label">多选</p>
       <div class="demo-row">
-        <el-select v-model="multiSelect" multiple collapse-tags collapse-tags-tooltip :max-collapse-tags="2" placeholder="多选模式" style="width: 360px">
+        <el-select v-model="multiSelect" multiple collapse-tags collapse-tags-tooltip :max-collapse-tags="2" placeholder="多选模式" style="width: 240px">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
@@ -59,20 +65,23 @@
     <div class="demo-block">
       <p class="demo-label">级联选择器</p>
       <div class="demo-row">
-        <el-cascader v-model="cascaderValue" :options="cascaderOptions" placeholder="请选择" style="width: 300px" />
+        <el-cascader v-model="cascaderValue" :options="cascaderOptions" placeholder="请选择" style="width: 240px" />
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 
-const selectValue = ref('')
 // 基础选择器配置项：可清除 clearable + 可搜索 filterable 正交开关（el-form 需要 model 对象）
 const clearable = ref(false)
 const filterable = ref(false)
 const configForm = reactive({ clearable, filterable })
+// 不可清除时默认选中「全部部门」语义项（呼应 hint：有默认语义项时清空会丢语义，故不可清除）；
+// 可清除时置空为「未选择」。随开关切换同步默认值，让示例与选型指引一致。
+const selectValue = ref('all')
+watch(clearable, (v) => { selectValue.value = v ? '' : 'all' }, { immediate: true })
 // 可清除选型指引：可清除与否取决于「空状态是否是合法有语义的状态」
 const clearableHint = computed(() =>
   clearable.value
@@ -84,6 +93,7 @@ const groupSelect = ref('')
 const cascaderValue = ref([])
 
 const options = [
+  { value: 'all', label: '全部部门' },
   { value: '1', label: '设计部' },
   { value: '2', label: '研发部' },
   { value: '3', label: '产品部' },
@@ -167,9 +177,22 @@ const cascaderOptions = [
   color: var(--iflyv-text-1);
   font: var(--iflyv-font-title-component);
 }
-/* 选型指引说明：开关下方浅色小字（与搜索框 hint 一致） */
+/* 可清除字段单元：开关 + hint 竖排为一个整体，整体与「可搜索」的间距
+   由 form-item 源头 24px 承担（不覆盖 form-item margin，避免局部私货）。 */
+.config-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+/* switch 行：与 label 等高（组件统一高度）并垂直居中，使 switch 与「可清除」label 中线对齐 */
+.config-field__row {
+  display: flex;
+  align-items: center;
+  height: var(--el-component-size);
+}
+/* 选型指引说明：浅色小字，紧跟开关下方（上距 4px） */
 .config-card__hint {
-  margin: 0 0 var(--iflyv-spacing-4);
+  margin: var(--iflyv-spacing-1) 0 0;
   color: var(--iflyv-text-3);
   font: var(--iflyv-font-body-sub);
 }
