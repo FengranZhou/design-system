@@ -2,6 +2,22 @@
 /* ========================= Button 样式覆盖 ============================== */
 /* ======================================================================== */
 
+/* ┌─ 接入方速查：按钮能力全在下面，直接复制即可，无需读实现 ─────────────┐
+   类型（互斥选一）：
+     次按钮   <el-button>文字</el-button>
+     主按钮   <el-button type="primary">文字</el-button>
+     危险按钮 <el-button type="danger">文字</el-button>
+     文本款   在以上任意基础上加 text：<el-button text>…</el-button>（无底、hover 文字变色）
+   状态（互斥）：
+     禁用 <el-button disabled>   加载 <el-button loading>
+   配置项（可自由叠加在任意类型/状态上，正交）：
+     带图标   <el-button><template #icon><LucideIcon/></template>文字</el-button>
+     带下拉箭头 <el-button>文字 <ChevronDown class="btn-caret"/></el-button>
+              （箭头间距/hover 旋转/禁用不转 已由本文件统一处理，接入方只写这一行）
+   → 任意组合（如 主按钮+禁用+图标+箭头）都已支持，无需在接入方写任何样式。
+     改任何按钮外观 = 改本文件，所有接入项目自动同步。
+   └────────────────────────────────────────────────────────────────────┘ */
+
 .el-button {
   border-radius: var(--iflyv-radius-sm);
   font: var(--iflyv-font-body-sub);
@@ -16,22 +32,6 @@
 
   &:active:not(.is-disabled) {
     transform: translateY(1px);
-  }
-
-  /* 禁用态与加载态统一显示禁止光标（覆盖 EP 默认 cursor: pointer）
-     加 :hover 提升优先级，确保覆盖 EP 的状态选择器 */
-  &.is-disabled,
-  &.is-disabled:hover,
-  &.is-loading,
-  &.is-loading:hover {
-    cursor: not-allowed !important;
-    /* 测试规则：如果这个生效了，按钮会变成红色边框 */
-    border: 3px solid red !important;
-
-    /* 强制子元素（loading 图标、文字）继承禁止光标，避免 EP 在子元素上设的 cursor 覆盖 */
-    * {
-      cursor: not-allowed !important;
-    }
   }
 
   /* 鼠标点击不显示外框；键盘 Tab 聚焦显示外框
@@ -53,9 +53,18 @@
   }
 
   /* 下拉/箭头按钮尾部的 ChevronDown（文字之后）：与文字保持一致小间距。
+     hover 按钮时箭头旋转 180°（向上翻，暗示可展开），带过渡。
+     vertical-align:middle 保证「前置图标 + 文字 + 后置箭头」三者同排时垂直居中对齐
+     （图标与箭头是可自由叠加的配置项，此规则确保二者共存时不错位）。
      用法：<el-button>文字 <ChevronDown class="btn-caret" /></el-button> */
   .btn-caret {
     margin-inline-start: var(--iflyv-spacing-1);
+    vertical-align: middle;
+    transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+  }
+  /* 仅可交互按钮 hover 才转箭头；禁用/加载态不可交互，箭头保持不动。 */
+  &:hover:not(.is-disabled):not(.is-loading) .btn-caret {
+    transform: rotate(180deg);
   }
 
   /* 图标尺寸与间距
@@ -78,10 +87,10 @@
   --el-button-hover-text-color: var(--iflyv-text-1);
   --el-button-hover-bg-color: var(--iflyv-bg-inset);
   --el-button-hover-border-color: var(--iflyv-border-default);
-  /* active：文字+边框统一深一级 */
-  --el-button-active-text-color: var(--iflyv-brand-pressed);
-  --el-button-active-bg-color: var(--iflyv-bg-panel);
-  --el-button-active-border-color: var(--iflyv-brand-pressed);
+  /* active：与 hover 一致（gray-1），按下反馈通过 transform: translateY(1px) 体现 */
+  --el-button-active-text-color: var(--iflyv-text-1);
+  --el-button-active-bg-color: var(--iflyv-bg-inset);
+  --el-button-active-border-color: var(--iflyv-border-default);
 
   /* ==================== 默认按钮禁用/加载态 ==================== */
   /* EP 默认按钮无 --default 类名，规则写在基类上，由 Primary/Danger 覆盖 */

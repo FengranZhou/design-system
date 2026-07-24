@@ -3,33 +3,6 @@
     <h2 class="demo-section__title">Table 表格</h2>
 
     <div class="demo-block">
-      <p class="demo-label">Table 尺寸对比 — Large</p>
-      <el-table :data="sizeData" size="large" border style="width: 100%">
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="value" label="数值" />
-        <el-table-column prop="status" label="状态" />
-      </el-table>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">Table 尺寸对比 — Default</p>
-      <el-table :data="sizeData" border style="width: 100%">
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="value" label="数值" />
-        <el-table-column prop="status" label="状态" />
-      </el-table>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">Table 尺寸对比 — Small</p>
-      <el-table :data="sizeData" size="small" border style="width: 100%">
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="value" label="数值" />
-        <el-table-column prop="status" label="状态" />
-      </el-table>
-    </div>
-
-    <div class="demo-block">
       <p class="demo-label">数据表格（点击行查看选中效果，hover 查看操作列变色）</p>
       <el-table :data="tableData" highlight-current-row style="width: 100%">
       <el-table-column prop="name" label="姓名" width="120" />
@@ -88,14 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
-
-const sizeData = ref([
-  { name: '项目 A', value: 128, status: '进行中' },
-  { name: '项目 B', value: 256, status: '已完成' },
-  { name: '项目 C', value: 64, status: '待处理' },
-])
 
 const tableData = [
   { name: '张三', status: '进行中', statusType: 'primary', date: '2026-03-10', amount: 1200, department: '技术部', position: '前端工程师', remark: '项目进展顺利' },

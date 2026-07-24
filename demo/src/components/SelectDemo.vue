@@ -2,55 +2,38 @@
   <section id="select" class="demo-section">
     <h2 class="demo-section__title">Select 选择器</h2>
 
-    <div class="demo-block">
-      <p class="demo-label">Select 尺寸对比</p>
-      <div class="demo-row">
-        <el-select size="large" placeholder="Large" style="width: 200px">
-          <el-option label="选项一" value="1" />
-          <el-option label="选项二" value="2" />
-        </el-select>
-        <el-select placeholder="Default" style="width: 200px">
-          <el-option label="选项一" value="1" />
-          <el-option label="选项二" value="2" />
-        </el-select>
-        <el-select size="small" placeholder="Small" style="width: 200px">
-          <el-option label="选项一" value="1" />
-          <el-option label="选项二" value="2" />
-        </el-select>
+    <!-- 基础选择器：可清除 / 可搜索作为正交配置项（右侧开关），与 Input 一致 -->
+    <div class="demo-block input-showcase">
+      <div class="input-showcase__main">
+        <p class="demo-label">基础选择器</p>
+        <div class="demo-row">
+          <el-select
+            v-model="selectValue"
+            :clearable="clearable"
+            :filterable="filterable"
+            placeholder="请选择"
+            style="width: 240px"
+          >
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+          <el-select placeholder="禁用状态" disabled style="width: 240px">
+            <el-option label="选项一" value="1" />
+          </el-select>
+        </div>
       </div>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">Cascader 尺寸对比</p>
-      <div class="demo-row">
-        <el-cascader size="large" placeholder="Large" :options="cascaderOptions" style="width: 220px" />
-        <el-cascader placeholder="Default" :options="cascaderOptions" style="width: 220px" />
-        <el-cascader size="small" placeholder="Small" :options="cascaderOptions" style="width: 220px" />
-      </div>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">基础选择器</p>
-      <div class="demo-row">
-        <el-select v-model="selectValue" placeholder="请选择" style="width: 240px">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <el-select placeholder="禁用状态" disabled style="width: 240px">
-          <el-option label="选项一" value="1" />
-        </el-select>
-      </div>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">可清除 / 可搜索</p>
-      <div class="demo-row">
-        <el-select v-model="clearableSelect" clearable placeholder="可清除" style="width: 240px">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <el-select v-model="filterableSelect" filterable placeholder="可搜索" style="width: 240px">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="configForm" label-width="auto">
+          <el-form-item label="可清除">
+            <el-switch v-model="clearable" />
+          </el-form-item>
+          <!-- 选型指引：可清除与否取决于「空状态是否合法」，随开关给出适用场景 -->
+          <p class="config-card__hint">{{ clearableHint }}</p>
+          <el-form-item label="可搜索">
+            <el-switch v-model="filterable" />
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
 
     <div class="demo-block">
@@ -83,11 +66,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
 
 const selectValue = ref('')
-const clearableSelect = ref('')
-const filterableSelect = ref('')
+// 基础选择器配置项：可清除 clearable + 可搜索 filterable 正交开关（el-form 需要 model 对象）
+const clearable = ref(false)
+const filterable = ref(false)
+const configForm = reactive({ clearable, filterable })
+// 可清除选型指引：可清除与否取决于「空状态是否是合法有语义的状态」
+const clearableHint = computed(() =>
+  clearable.value
+    ? '无默认值、靠外部标签说明时用：空 = 未选择，清空语义完整'
+    : '有默认语义项（如「全部类型」）时用：清空会丢失语义，故不可清除'
+)
 const multiSelect = ref([])
 const groupSelect = ref('')
 const cascaderValue = ref([])
@@ -133,3 +124,53 @@ const cascaderOptions = [
   ]},
 ]
 </script>
+
+<style scoped>
+/* 每个 demo 块用 bg-card 大卡片做区分（与 Input 一致，本页排版走令牌）。
+   卡间垂直间距统一 24（spacing-6）；覆盖全局 .demo-block 自带的 48px margin，避免叠加。 */
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+}
+.demo-section .demo-block + .demo-block {
+  margin-top: var(--iflyv-spacing-6);
+}
+
+/* 基础选择器块：左示例 + 右配置卡横向布局（与 Input 一致，纯排版不含组件外观） */
+.input-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
+}
+.input-showcase__main { flex: 1; min-width: 0; }
+.input-showcase .demo-row { flex-wrap: wrap; }
+
+@media (max-width: 1100px) {
+  .input-showcase { flex-direction: column; }
+  .config-card { width: 100%; }
+}
+
+/* 配置卡：白底 + 细边框，与示例区分层次 */
+.config-card {
+  flex: 0 1 auto;
+  width: 220px;
+  align-self: flex-start;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-md);
+}
+.config-card__title {
+  margin: 0 0 var(--iflyv-spacing-4);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
+}
+/* 选型指引说明：开关下方浅色小字（与搜索框 hint 一致） */
+.config-card__hint {
+  margin: 0 0 var(--iflyv-spacing-4);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+</style>

@@ -16,7 +16,7 @@
 
     <!-- ==================== 字号与行高 ==================== -->
     <div class="demo-block">
-      <p class="demo-label">字号 Font Size — rem 实现，随左上角字号档位（S/M/L/XL）整体缩放</p>
+      <p class="demo-label">字号 Font Size</p>
       <div class="token-font-list">
         <div v-for="t in fontSizeTokens" :key="t.name" class="token-font-row token-font-row--size" @click="copyToken(t.name)" :title="`点击复制 var(${t.name})`">
           <span class="token-name">{{ t.name.replace('--iflyv-', '') }}</span>

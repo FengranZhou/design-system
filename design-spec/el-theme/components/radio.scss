@@ -1,3 +1,10 @@
+/* 单选框尺寸：16×16（EP 默认 14） */
+.el-radio__inner {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Radio 选中态中心圆点：保持 6×6（原有规则），与外框 16px 匹配 */
 .el-radio__inner::after {
   width: 6px !important;
   height: 6px !important;
@@ -24,8 +31,13 @@
 .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
   background-color: var(--iflyv-icon-4);
 }
+/* RadioButton 高度统一到 --el-component-size(36px)，与 input/select/datepicker 等表单控件对齐；
+   高度由 height 决定，垂直改用 flex 居中，padding 只保留左右。 */
 .el-radio-button__inner {
-  padding: 8px 15px;
+  height: var(--el-component-size);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 15px;
   font-weight: 400;
 }
 
@@ -48,7 +60,7 @@
 }
 
 /* RTL：覆盖 EP 硬编码物理 margin/padding */
-.el-radio { margin-right: unset; margin-inline-end: 30px; }
+.el-radio { margin-right: unset; margin-inline-end: var(--iflyv-spacing-4); }
 .el-radio:last-child { margin-right: unset; margin-inline-end: 0; }
 .el-radio__label { padding-left: unset; padding-inline-start: 8px; }
 .el-radio-button__inner [class*=el-icon-] + span { margin-left: unset; margin-inline-start: 5px; }

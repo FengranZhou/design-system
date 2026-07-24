@@ -364,7 +364,7 @@ body {
       display: block;
       padding-block: var(--iflyv-spacing-3);
       padding-inline: $app-nav-item-indent var(--iflyv-spacing-5);
-      color: var(--iflyv-text-2);
+      color: var(--iflyv-text-1);
       text-decoration: none;
       font: var(--iflyv-font-body-primary);
       transition: all 0.15s ease;
@@ -395,7 +395,8 @@ body {
 .demo-section {
   background: var(--iflyv-bg-panel);
   border-radius: var(--iflyv-radius-lg);
-  padding: 28px 32px;
+  /* 上 16(spacing-4) / 左右 32(spacing-8) / 下 28(无对应梯度 token，保留裸值) */
+  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-8) 28px;
   margin-bottom: var(--iflyv-spacing-3);
 
   &:last-child {
@@ -436,9 +437,9 @@ body {
 }
 
 .demo-label {
-  font: var(--iflyv-font-body-sub);
-  color: var(--iflyv-text-3);
-  margin-bottom: 10px;
+  font: var(--iflyv-font-title-component);
+  color: var(--iflyv-text-1);
+  margin-bottom: var(--iflyv-spacing-3);
 }
 
 .demo-row {

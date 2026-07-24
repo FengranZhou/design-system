@@ -15,9 +15,16 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    // baseUrl 让 design-spec（demo 之外）引用的业务组件也从 demo/node_modules 解析依赖类型
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      // design-spec 业务组件在 demo 之外，其裸包导入映射到 demo/node_modules，供 vue-tsc 解析
+      "vue": ["./node_modules/vue"],
+      "element-plus": ["./node_modules/element-plus"],
+      "lucide-vue-next": ["./node_modules/lucide-vue-next"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+  // 纳入 design-spec 业务组件源头，使其 <script setup> 宏被正确识别、依赖类型可解析
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "../design-spec/components/**/*.vue", "../design-spec/components/**/*.ts"]
 }

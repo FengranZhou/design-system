@@ -2,19 +2,19 @@
 /* ========================== Form 样式覆盖 =============================== */
 /* ======================================================================== */
 
-/* label-position="top" 时 label 与 input 之间的垂直间距。
-   @depends-on: 仅在 form 配置 label-position="top" 时生效。
-   @when-changed: 改 6px 会影响所有 top 模式表单的密度。 */
-.el-form-item--label-top .el-form-item__label {
+/* ⏸ label-position="top" 顶部标签表单暂停启用（现阶段只用「标签在左」）。
+   需要恢复顶部标签时，放开本文件所有 --label-top 相关注释即可。
+   label-position="top" 时 label 与 input 之间的垂直间距。 */
+/* .el-form-item--label-top .el-form-item__label {
   margin-bottom: 6px;
   line-height: var(--iflyv-line-height-22);
-}
+} */
 
-/* 表单项默认间距：spacing-4（16px）。
+/* 表单项默认间距：spacing-6（24px）。
    @depends-on: 与 references/foundations.md 间距速查表「表单项之间」一致。
    @when-changed: 改此值需同步更新 foundations.md，否则规范-代码再次不一致。
    @see: examples/form.examples.vue 「label-position」section 的标准间距示例。 */
-.el-form-item { margin-bottom: var(--iflyv-spacing-4); &:last-child { margin-bottom: 0; } }
+.el-form-item { margin-bottom: var(--iflyv-spacing-6); &:last-child { margin-bottom: 0; } }
 
 /* label 高度 = 组件统一高度。
    @depends-on: 与 input/select/datepicker 等表单控件统一使用 --el-component-size，
@@ -44,10 +44,11 @@
 /* RTL：覆盖 EP 硬编码物理 padding/margin/text-align */
 /* label 间距：EP padding: 0 12px 0 0 → 逻辑属性 */
 .el-form-item__label { padding: 0; padding-inline-end: 12px; }
-.el-form-item--label-top .el-form-item__label { padding-inline-end: 0; }
 .el-form-item--label-left .el-form-item__label { text-align: start; justify-content: flex-start; }
 .el-form-item--label-right .el-form-item__label { text-align: end; justify-content: flex-end; }
-.el-form-item--label-top .el-form-item__label { text-align: start; }
+/* label-top 暂停启用（随顶部标签表单一起）：
+.el-form-item--label-top .el-form-item__label { padding-inline-end: 0; }
+.el-form-item--label-top .el-form-item__label { text-align: start; } */
 
 /* inline 表单：form 容器改为 flex 布局，让所有 form-item 在同一基线对齐。
    @depends-on: EP 默认 inline 表单的 form-item 是 inline-flex + vertical-align: middle，
