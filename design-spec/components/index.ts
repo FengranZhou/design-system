@@ -7,3 +7,5 @@
  *   import { SearchMini } from '<path>/design-spec/components'
  */
 export { SearchMini } from './SearchMini'
+export { UserAvatar, AVATAR_MAP, AVATAR_LABEL, type AvatarRole } from './UserAvatar'
+export { DataTable, type DataTableColumn, type DataTableAction, type ColumnKind } from './DataTable'

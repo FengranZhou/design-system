@@ -49,13 +49,16 @@
           <!-- <li><a href="#select-examples" :class="{ 'is-active': activeSection === 'select-examples' }" style="color: var(--iflyv-brand-primary);">📋 Select Examples（临时预览）</a></li> -->
           <li><a href="#form-control" :class="{ 'is-active': activeSection === 'form-control' }">FormControl 表单控件</a></li>
           <li><a href="#date-picker" :class="{ 'is-active': activeSection === 'date-picker' }">DatePicker 日期选择器</a></li>
-          <li><a href="#upload-transfer" :class="{ 'is-active': activeSection === 'upload-transfer' }">Upload 上传与穿梭框</a></li>
+          <!-- Upload 上传：暂时用不到，先注释保留，需要时放开 -->
+          <!-- <li><a href="#upload" :class="{ 'is-active': activeSection === 'upload' }">Upload 上传</a></li> -->
+          <!-- Transfer 穿梭框：暂时用不到，先注释保留，需要时放开 -->
+          <!-- <li><a href="#transfer" :class="{ 'is-active': activeSection === 'transfer' }">Transfer 穿梭框</a></li> -->
         </ul>
 
         <div class="app-sidebar__group-label">数据展示</div>
         <ul class="app-sidebar__nav">
           <li><a href="#tag" :class="{ 'is-active': activeSection === 'tag' }">Tag 标签</a></li>
-          <li><a href="#table" :class="{ 'is-active': activeSection === 'table' }">Table 表格</a></li>
+          <li><a href="#table" :class="{ 'is-active': activeSection === 'table' }">Cell 单元格</a></li>
           <!-- <li><a href="#table-examples" :class="{ 'is-active': activeSection === 'table-examples' }" style="color: var(--iflyv-brand-primary);">📋 Table Examples（临时预览）</a></li> -->
           <li><a href="#avatar" :class="{ 'is-active': activeSection === 'avatar' }">Avatar 头像</a></li>
           <li><a href="#data-display" :class="{ 'is-active': activeSection === 'data-display' }">DataDisplay 数据展示</a></li>
@@ -90,6 +93,7 @@
         <template v-if="currentTopTab === 'pattern'">
         <ul class="app-sidebar__nav">
           <li><a href="#pattern-form" :class="{ 'is-active': activeSection === 'pattern-form' }">Form Layout 表单布局</a></li>
+          <li><a href="#pattern-list-item" :class="{ 'is-active': activeSection === 'pattern-list-item' }">List Item 列表条目</a></li>
         </ul>
         </template>
 
@@ -133,7 +137,10 @@
       </section> -->
       <FormControlDemo />
       <DatePickerDemo />
-      <UploadTransferDemo />
+      <!-- Upload 上传：暂时用不到，先注释保留，需要时放开 -->
+      <!-- <UploadDemo /> -->
+      <!-- Transfer 穿梭框：暂时用不到，先注释保留，需要时放开 -->
+      <!-- <TransferDemo /> -->
       <TagDemo />
       <TableDemo />
       <!-- <section id="table-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
@@ -166,6 +173,7 @@
       </div>
       <div v-show="currentTopTab === 'pattern'">
       <PatternFormDemo />
+      <PatternListItemDemo />
       </div>
       <div v-show="currentTopTab === 'copywriting'">
       <CopywritingTimeDemo />
@@ -210,7 +218,9 @@ import InputDemo from './components/InputDemo.vue'
 import SelectDemo from './components/SelectDemo.vue'
 import FormControlDemo from './components/FormControlDemo.vue'
 import DatePickerDemo from './components/DatePickerDemo.vue'
-import UploadTransferDemo from './components/UploadTransferDemo.vue'
+// import UploadDemo from './components/UploadDemo.vue'  // ⏸ 暂停启用，需要时放开
+// Transfer 穿梭框：暂时用不到，先注释保留，需要时放开
+// import TransferDemo from './components/TransferDemo.vue'
 import TagDemo from './components/TagDemo.vue'
 import TableDemo from './components/TableDemo.vue'
 import NavigationDemo from './components/NavigationDemo.vue'
@@ -224,6 +234,7 @@ import LoadingDemo from './components/LoadingDemo.vue'
 import EmptyDemo from './components/EmptyDemo.vue'
 import OtherDemo from './components/OtherDemo.vue'
 import PatternFormDemo from './components/pattern/PatternFormDemo.vue'
+import PatternListItemDemo from './components/pattern/PatternListItemDemo.vue'
 import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
 // 临时预览 examples 的 import（已注释挂载，需要时取消注释）：
 // import ButtonExamples from '../../design-spec/examples/button.examples.vue'
@@ -238,9 +249,9 @@ const activeSection = ref('palette')
 const sectionIds = [
   'palette', 'token-color', 'token-font-base', 'token-font-semantic', 'token-spacing', 'token-radius', 'token-shadow', 'token-motion',
   'button', 'input', 'select', 'form-control', 'date-picker',
-  'upload-transfer', 'tag', 'table', 'avatar', 'data-display',
+  'tag', 'table', 'avatar', 'data-display',
   'navigation', 'dialog', 'message', 'popconfirm', 'feedback', 'loading', 'empty', 'other',
-  'pattern-form',
+  'pattern-form', 'pattern-list-item',
   'copywriting-time',
 ]
 

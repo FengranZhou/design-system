@@ -93,7 +93,7 @@ updated: 2026-04-12
 | 当任务是… | 动手前必须先 Read | 说明 |
 |---|---|---|
 | 做**表单** / 录入界面 / 一组「标签+控件」的信息组织 | `references/patterns/form-pattern.md` | 表单布局范式 |
-| 做**表格** / 列表数据展示（行高/对齐/操作列/空态…） | `references/patterns/table-pattern.md` | 表格设计模式（待建） |
+| 做**表格** / **列表** / **信息流**（一行=一条记录：表头/单元格类型、状态列、操作列、卡片条目…） | `references/patterns/list-item-pattern.md` | 列表条目模式：一条记录=四区拼装（全局功能/主题/关键信息/操作）+ 每类元素用哪个组件 |
 | 加**搜索框** / 搜索入口 / 列表筛选检索 | `references/patterns/search-pattern.md` | 搜索框选型（核心→展开 / 非核心→收起）+ SearchMini 用法 |
 | 加**下拉选择器** / 筛选下拉 / 类型选择 | `references/patterns/select-pattern.md` | 可清除选型（有默认语义项→不可清 / 无默认值→可清）+ 可搜索 |
 

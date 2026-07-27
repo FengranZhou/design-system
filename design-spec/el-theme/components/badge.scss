@@ -2,8 +2,29 @@
 /* ========================== Badge 样式覆盖 =============================== */
 /* ======================================================================== */
 
+/* 使用约定：徽标（Badge）一律使用默认红色，不做 success / warning / primary 等多彩区分。
+   徽标语义单一（提示「有未读 / 有新增」），红色最醒目也最符合直觉；
+   引用方请勿传 type，直接用默认红即可。 */
+
 /* 组件级变量覆盖（EP 在 .el-badge 作用域声明，:root 级覆盖无效） */
 .el-badge { --el-badge-font-size: var(--iflyv-font-size-12); }
+
+/* ==================== .tab-badge：徽标挂在 Tab 项上的约定 ==================== */
+/* 为什么需要这个约定：头像/按钮/图标是「固定尺寸的规整盒子」，el-badge 默认贴右上角即正确、
+   引用方无需处理。但 Tab 项的宿主是「文字 + 有选中放大态」——大模块级选中项加了
+   padding-top:4px（tabs.scss L87），会把挂在 label 上的 badge 一起往下推 4px（"下沉"）。
+   引用方若各自手写 offset，既不一致、又躲不过这个选中态偏移。故把「挂 tab 上的 badge」
+   固化为约定：引用方用 <el-badge class="tab-badge">文字</el-badge> 即可，位置与选中态补偿统一在此。
+   仅此「文字宿主 + 选中放大」组合需要固化——头像/按钮/图标 + badge 用 EP 原生即可，无需 .tab-badge。 */
+/* 只做垂直补偿，水平定位保持 EP 原生（贴文字右上角），不覆盖 right/top——
+   覆盖 right 会让 badge 随选中态文字变宽而水平漂移。 */
+/* 选中态补偿：抵消大模块级选中项的 padding-top:4px（tabs.scss L87），让选中 tab 的
+   badge 与未选中 tab 的 badge 垂直齐平、不下沉。@depends-on: tabs.scss L86-88 选中项 padding-top:spacing-1。 */
+.el-tabs__item.is-active .tab-badge .el-badge__content.is-fixed {
+  /* 保留 EP 原生水平位移 translate(100%)（把 badge 推到文字右侧外），仅叠加垂直 -4px 补偿。
+     漏掉 translate(100%) 会让 badge 水平缩回文字上。 */
+  transform: translateY(-50%) translate(100%) translateY(calc(-1 * var(--iflyv-spacing-1)));
+}
 
 /* RTL：徽标从右上角翻转到左上角 */
 /* EP 用 right + translate(100%) 定位，transform 不受 direction 影响，需同时翻转 */

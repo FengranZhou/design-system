@@ -42,31 +42,121 @@
       </aside>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">多选</p>
-      <div class="demo-row">
-        <el-select v-model="multiSelect" multiple collapse-tags collapse-tags-tooltip :max-collapse-tags="2" placeholder="多选模式" style="width: 240px">
-          <el-option v-for="item in departments" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
+    <div class="demo-block input-showcase">
+      <div class="input-showcase__main">
+        <p class="demo-label">多选</p>
+        <div class="demo-row">
+          <el-select v-model="multiSelect" multiple :clearable="multiClearable" :filterable="multiFilterable" collapse-tags collapse-tags-tooltip :max-collapse-tags="2" placeholder="多选模式" style="width: 240px">
+            <el-option v-for="item in departments" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+          <el-select multiple placeholder="禁用状态" disabled style="width: 240px">
+            <el-option label="选项一" value="1" />
+          </el-select>
+        </div>
       </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="multiConfigForm" label-width="auto">
+          <el-form-item label="可清除">
+            <el-switch v-model="multiClearable" />
+          </el-form-item>
+          <el-form-item label="可搜索">
+            <el-switch v-model="multiFilterable" />
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">分组选择</p>
-      <div class="demo-row">
-        <el-select v-model="groupSelect" placeholder="请选择" style="width: 240px">
-          <el-option-group v-for="group in groupOptions" :key="group.label" :label="group.label">
-            <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value" />
-          </el-option-group>
-        </el-select>
+    <div class="demo-block input-showcase">
+      <div class="input-showcase__main">
+        <p class="demo-label">分组选择</p>
+        <div class="demo-row">
+          <el-select v-model="groupSelect" :multiple="groupMultiple" :clearable="groupClearable" :filterable="groupFilterable" collapse-tags collapse-tags-tooltip placeholder="请选择" style="width: 240px">
+            <el-option-group v-for="group in groupOptions" :key="group.label" :label="group.label">
+              <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-option-group>
+          </el-select>
+          <el-select placeholder="禁用状态" disabled style="width: 240px">
+            <el-option label="选项一" value="1" />
+          </el-select>
+        </div>
       </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="groupConfigForm" label-width="auto">
+          <el-form-item label="多选">
+            <el-switch v-model="groupMultiple" />
+          </el-form-item>
+          <el-form-item label="可清除">
+            <el-switch v-model="groupClearable" />
+          </el-form-item>
+          <el-form-item label="可搜索">
+            <el-switch v-model="groupFilterable" />
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">级联选择器</p>
-      <div class="demo-row">
-        <el-cascader v-model="cascaderValue" :options="cascaderOptions" placeholder="请选择" style="width: 240px" />
+    <div class="demo-block input-showcase">
+      <div class="input-showcase__main">
+        <p class="demo-label">树形选择器</p>
+        <p class="demo-desc">选项组织成树形层级的下拉选择，支持单选 / 多选</p>
+        <div class="demo-row">
+          <el-tree-select
+            v-model="treeSelectValue"
+            :data="treeSelectData"
+            :clearable="treeClearable"
+            :filterable="treeFilterable"
+            :multiple="treeMultiple"
+            :placeholder="treeMultiple ? '多选树形选择' : '单选树形选择'"
+            check-strictly
+            collapse-tags
+            collapse-tags-tooltip
+            style="width: 240px"
+          />
+          <el-tree-select :data="treeSelectData" placeholder="禁用状态" disabled style="width: 240px" />
+        </div>
       </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="treeConfigForm" label-width="auto">
+          <el-form-item label="多选">
+            <el-switch v-model="treeMultiple" />
+          </el-form-item>
+          <el-form-item label="可清除">
+            <el-switch v-model="treeClearable" />
+          </el-form-item>
+          <el-form-item label="可搜索">
+            <el-switch v-model="treeFilterable" />
+          </el-form-item>
+        </el-form>
+      </aside>
+    </div>
+
+    <div class="demo-block input-showcase">
+      <div class="input-showcase__main">
+        <p class="demo-label">级联选择器</p>
+        <div class="demo-row">
+          <!-- 级联的「可搜索」也叫 filterable（EP 原生，可跨级搜索叶子节点）；多选通过 props.multiple -->
+          <!-- :key 随 multiple 变化强制重建：EP 级联仅初始化时读一次 props.multiple，动态切换需重建组件 -->
+          <el-cascader :key="cascaderMultiple ? 'multi' : 'single'" v-model="cascaderValue" :options="cascaderOptions" :props="{ multiple: cascaderMultiple }" :clearable="cascaderClearable" :filterable="cascaderFilterable" collapse-tags collapse-tags-tooltip :max-collapse-tags="1" placeholder="请选择" style="width: 280px" />
+          <el-cascader :options="cascaderOptions" placeholder="禁用状态" disabled style="width: 280px" />
+        </div>
+      </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="cascaderConfigForm" label-width="auto">
+          <el-form-item label="多选">
+            <el-switch v-model="cascaderMultiple" />
+          </el-form-item>
+          <el-form-item label="可清除">
+            <el-switch v-model="cascaderClearable" />
+          </el-form-item>
+          <el-form-item label="可搜索">
+            <el-switch v-model="cascaderFilterable" />
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
   </section>
 </template>
@@ -89,8 +179,33 @@ const clearableHint = computed(() =>
     : '有默认语义项（如「全部类型」）时用：清空会丢失语义，故不可清除'
 )
 const multiSelect = ref([])
-const groupSelect = ref('')
-const cascaderValue = ref([])
+
+// 多选 / 分组 / 级联各自的可清除 clearable + 可搜索 filterable 正交开关（均为 EP 原生能力）
+const multiClearable = ref(false)
+const multiFilterable = ref(false)
+const multiConfigForm = reactive({ multiClearable, multiFilterable })
+// 分组：多选开关 + 可清除 / 可搜索，单选/多选时值类型切换
+const groupSelect = ref<string | string[]>('')
+const groupMultiple = ref(false)
+const groupClearable = ref(false)
+const groupFilterable = ref(false)
+watch(groupMultiple, (v) => { groupSelect.value = v ? [] : '' })
+const groupConfigForm = reactive({ groupMultiple, groupClearable, groupFilterable })
+// 级联：多选开关 + 可清除 / 可搜索，单选/多选时值类型切换
+const cascaderValue = ref<string | string[]>([])
+const cascaderMultiple = ref(false)
+const cascaderClearable = ref(false)
+const cascaderFilterable = ref(false)
+watch(cascaderMultiple, (v) => { cascaderValue.value = v ? [] : '' })
+const cascaderConfigForm = reactive({ cascaderMultiple, cascaderClearable, cascaderFilterable })
+// 树形选择器：多选开关 + 可清除 / 可搜索，单选/多选时值类型切换（string | string[]）
+const treeSelectValue = ref<string | string[]>('')
+const treeMultiple = ref(false)
+const treeClearable = ref(false)
+const treeFilterable = ref(false)
+// 多选开关切换时清空值，避免单选 string 和多选 string[] 类型冲突
+watch(treeMultiple, (v) => { treeSelectValue.value = v ? [] : '' })
+const treeConfigForm = reactive({ treeMultiple, treeClearable, treeFilterable })
 
 // 部门列表：多选等场景直接用这份纯列表（不含语义默认项）
 const departments = [
@@ -139,6 +254,26 @@ const cascaderOptions = [
     { value: 'java', label: 'Java' },
     { value: 'python', label: 'Python' },
   ]},
+]
+
+const treeSelectData = [
+  {
+    value: 'dev',
+    label: '研发中心',
+    children: [
+      { value: 'fe', label: '前端组' },
+      { value: 'be', label: '后端组' },
+      { value: 'qa', label: '测试组' },
+    ],
+  },
+  {
+    value: 'design',
+    label: '设计中心',
+    children: [
+      { value: 'ui', label: 'UI 组' },
+      { value: 'ux', label: 'UX 组' },
+    ],
+  },
 ]
 </script>
 

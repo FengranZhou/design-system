@@ -16,7 +16,7 @@
   .el-table__header-wrapper {
     th.el-table__cell {
       background-color: var(--iflyv-bg-inset);
-      font-size: var(--iflyv-font-size-14);
+      font-size: var(--iflyv-font-size-16);
       font-weight: var(--iflyv-font-weight-semibold);
       color: var(--iflyv-text-1);
     }
@@ -26,7 +26,8 @@
   .el-table__row {
     td.el-table__cell {
       border-bottom-color: var(--iflyv-border-default);
-      color: var(--iflyv-text-2);
+      font-size: var(--iflyv-font-size-16);
+      color: var(--iflyv-text-1);
     }
 
     &:hover > td.el-table__cell {
@@ -118,26 +119,31 @@
 }
 
 /* ==================== 操作列约定类名 ====================
-   使用方式：<el-button class="table-operation" link>编辑</el-button>
+   使用方式：<el-button class="table-operation">编辑</el-button>
+   —— 一个 class 全包：无底、紧贴文案、相邻间距 12、hover 绿。使用方无需再加 text/link 等属性。
 
    ⚠️ 设计系统例外：.table-operation 是 td 内 inline 文字按钮的明示例外——
                     与 button.scss「按钮组间距由父容器 flex+gap 提供」原则**不冲突**：
                     td 不是 flex 容器，inline 排版传统就是「操作1 | 操作2 | 操作3」，
                     强行套 flex+gap 父容器反而违反表格习惯。
 
-   @depends-on: 必须用 <el-button class="table-operation" link>（保留按钮 a11y），
+   @depends-on: 必须用 <el-button class="table-operation">（保留按钮 a11y），
                 禁止用 <span class="table-operation">（失去键盘可达性）。
                 间距由 `& + .table-operation` 相邻选择器提供 spacing-3（12px）。
    @when-changed: 不要把 .table-operation 兄弟塞进 flex+gap 父容器（会与相邻选择器叠加）；
-                  也不要在使用方覆盖此处的 margin-inline-start。
+                  也不要在使用方覆盖此处的 margin-inline-start / 再叠 text/link 属性。
    @see: examples/table.examples.vue 「操作列」section 的标准用法 + 反模式。
    @see: references/component-interaction.md「按钮间距」例外清单。 */
 
-.table-operation {
+/* 用 .el-button.table-operation 提升特异性，压过 EP 默认按钮的 padding/min-width/底色/边框，
+   使「一个 class」即可把默认 el-button 变成紧贴文案的无底操作按钮，无需再配 text/link。 */
+.el-button.table-operation {
   color: var(--iflyv-text-1);
-  font: var(--iflyv-font-body-sub);
+  /* 与表格内容文字一致：body-primary = 16px / 行高 24（原 body-sub 14/20 偏小） */
+  font: var(--iflyv-font-body-primary);
   padding: 0;
   height: auto;
+  min-width: 0;             /* 解除 EP 默认按钮最小宽度，按钮紧贴文案 */
   border: none;
   background: transparent;
   cursor: pointer;
@@ -146,8 +152,12 @@
     margin-inline-start: var(--iflyv-spacing-3);
   }
 
-  &:hover {
+  /* hover：无底、仅文字变品牌绿（压掉 EP 默认按钮 hover 的灰底/描边） */
+  &:hover,
+  &:focus {
     color: var(--iflyv-brand-primary);
+    background: transparent;
+    border-color: transparent;
   }
 }
 
@@ -161,12 +171,25 @@
    @see: 方法论 raw/methodology-方法论/design-system分发-隐式耦合.md 类型 1 案例 A。 */
 .el-dropdown.table-operation {
   vertical-align: middle;
+  /* 与「编辑/查看」（.el-button.table-operation）视觉统一：16px/行高24 + 默认深色，hover 才变绿。
+     触发器文字通过继承拿到，避免业务组件各自把「更多」染成另一种色/字号（不同步）。 */
+  font: var(--iflyv-font-body-primary);
+  color: var(--iflyv-text-1);
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: var(--iflyv-brand-primary);
+  }
 }
 
+/* 「更多」触发器：源头约定的触发器容器（排版：图标↔文字对齐 + 间距），颜色/字号继承上方统一规则 */
 .table-operation__more {
   display: inline-flex;
   align-items: center;
   gap: 2px;
+  color: inherit;
+  font: inherit;
 }
 
 /* 危险操作：始终为危险色 */

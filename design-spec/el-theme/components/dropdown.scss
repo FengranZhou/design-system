@@ -19,3 +19,25 @@
 
 /* RTL：覆盖 EP 硬编码物理 margin */
 .el-dropdown-menu__item i { margin-right: unset; margin-inline-end: 5px; }
+
+/* ==================== 下拉触发器箭头约定 .dropdown-caret ====================
+   下拉触发器尾部的 ChevronDown：与文字小间距 + 垂直居中 + 展开时翻转 180°（自然过渡）。
+
+   ⚠️ 与按钮的 .btn-caret 区别：.btn-caret 是「hover 按钮时」转（button.scss，纯 CSS）；
+      本 .dropdown-caret 是「下拉展开时」转——EP el-dropdown 展开态无稳定纯 CSS 钩子，
+      故展开态 class .is-expanded 需由使用方用 @visible-change 绑定：
+
+        <el-dropdown @visible-change="open = $event">
+          <span>更多 <ChevronDown class="dropdown-caret" :class="{ 'is-expanded': open }" /></span>
+          <template #dropdown>…</template>
+        </el-dropdown>
+
+   翻转规则/过渡在此源头统一；使用方只负责传 .is-expanded（展开真值）。 */
+.dropdown-caret {
+  margin-inline-start: var(--iflyv-spacing-1);
+  vertical-align: middle;
+  transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+}
+.dropdown-caret.is-expanded {
+  transform: rotate(180deg);
+}

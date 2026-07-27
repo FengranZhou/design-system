@@ -387,6 +387,9 @@ body {
 .app-content {
   margin-inline-start: $app-sidebar-width;
   flex: 1;
+  /* flex 子项默认 min-width:auto，会被内部不可压缩的宽内容（如 Transfer）顶破容器 →
+     显式 min-width:0 让容器正确约束宽度，内部该换行/收缩的正常收缩，消除横向滚动条。 */
+  min-width: 0;
   padding: var(--iflyv-spacing-3);
   max-width: calc(100vw - #{$app-sidebar-width});
 }
@@ -442,6 +445,13 @@ body {
   margin-bottom: var(--iflyv-spacing-3);
 }
 
+// 块内说明文字：标题下、控件上，浅色小字，不与标题抢视觉
+.demo-desc {
+  margin: 0 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+
 .demo-row {
   display: flex;
   align-items: center;
@@ -470,11 +480,6 @@ body {
 // 全宽块（如 Tabs、Steps、Alert 列表等）
 .demo-full-width {
   width: 100%;
-}
-
-// 修正 Transfer 组件在 flex 容器里的对齐
-.el-transfer {
-  display: inline-flex;
 }
 
 // 修正 Pagination 宽度

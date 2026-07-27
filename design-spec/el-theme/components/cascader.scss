@@ -78,3 +78,12 @@
 .el-cascader__suggestion-item { text-align: start; }
 .el-cascader-menu { border-right: unset; border-inline-end: var(--el-cascader-menu-border); }
 
+/* filterable 无匹配空态（「无匹配数据」）：EP 无结果时面板塌缩成窄条（min-width 180px）。
+   用 :has 命中「只含空态列表」的面板容器，撑到 280px（≈触发框宽），空态更舒展。
+   空态文案 EP 已用 absolute+translate 居中，无需再干预对齐。
+   注意：min-width 只作用于空态面板——若给所有 .el-cascader-menu 设值，多级面板会各自
+   ≥ 该值、叠加后超出 popper 宽度被裁切，导致末级面板节点高亮右缘“贴边不可见”。 */
+.el-cascader__dropdown .el-cascader-menu:has(.el-cascader-menu__list.is-empty) {
+  min-width: 280px;
+}
+

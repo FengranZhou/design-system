@@ -29,6 +29,13 @@
   .el-input.is-focus .el-input__wrapper {
     box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
   }
+  /* 多选标签统一为灰底灰字（与 Select 多选一致）：EP 级联多选标签在 .el-cascader__tags 容器内，
+     命不中 .el-select__wrapper .el-tag 那条，会走 EP 默认品牌蓝，此处显式对齐。 */
+  .el-cascader__tags .el-tag {
+    color: var(--iflyv-text-2);
+    background-color: var(--iflyv-bg-inset);
+    border: none;
+  }
 }
 .el-select__wrapper {
   min-height: var(--el-component-size);

@@ -10,6 +10,11 @@
   color: var(--iflyv-text-2) !important;
   box-shadow: var(--iflyv-shadow-related);
 
+  /* 尺寸自适应 + 最大宽高约束 + 超出滚动 */
+  max-width: 318px;
+  max-height: 240px;
+  overflow: auto;
+
   .el-popper__arrow { display: none; }
   &[data-popper-placement^="bottom"] { margin-top: -8px; }
   &[data-popper-placement^="top"] { margin-bottom: -8px; }

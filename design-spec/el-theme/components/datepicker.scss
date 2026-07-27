@@ -46,9 +46,30 @@
   border-end-start-radius: var(--iflyv-radius-sm);
   border-end-end-radius: var(--iflyv-radius-sm);
 }
+/* 底部「此刻 / 确定」按钮水平间距统一 12（spacing-3）：
+   footer 内两个按钮都是 .el-picker-panel__link-btn（各是一个 el-button），
+   相邻按钮补 12 间距，逻辑属性适配 RTL。 */
+.el-picker-panel__footer .el-picker-panel__link-btn + .el-picker-panel__link-btn {
+  margin-left: unset;
+  margin-inline-start: var(--iflyv-spacing-3);
+}
 .el-date-picker__time-header {
   border-start-start-radius: var(--iflyv-radius-sm);
   border-start-end-radius: var(--iflyv-radius-sm);
+}
+/* datetime 面板头部日期 / 时间两个 editor 输入框高度 → 32px。
+   同 pagination 先例：局部作用域重设组件尺寸变量（2rem = 32px），走 rem 化尺寸变量、不写裸值。
+   注意：EP 这两个 editor 用的是 small 尺寸（.el-input__wrapper 高度取 --el-component-size-small），
+   所以必须同时重设 -small 变量，否则会被绕过（改 --el-component-size 无效）。 */
+.el-date-picker__time-header .el-input {
+  --el-component-size: 2rem;
+  --el-component-size-small: 2rem;
+}
+/* datetimerange 面板头部四个 editor（开始/结束 各日期+时间）同样 → 32px。
+   range 头部容器是 .el-date-range-picker__time-header，编辑框在 __editors-wrap 内。 */
+.el-date-range-picker__time-header .el-input {
+  --el-component-size: 2rem;
+  --el-component-size-small: 2rem;
 }
 .el-date-table td.in-range .el-date-table-cell,
 .el-date-table td.in-range .el-date-table-cell:hover {

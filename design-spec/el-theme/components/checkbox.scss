@@ -41,6 +41,30 @@
   background-repeat: no-repeat;
 }
 
+// Checkbox 半选禁用态：横线统一到 icon-4（mask 画线，颜色随主题走变量，与「禁用选中态」的勾同处理）。
+// 用 ::after 通道（与禁用选中态勾一致），并关掉 EP 原生的 ::before 横线，避免特异性打架。
+.el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner {
+  background-image: none;
+
+  &::before {
+    display: none !important;
+  }
+
+  &::after {
+    display: block !important;
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    border: none;
+    transform: none;
+    background-color: var(--iflyv-icon-4);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+  }
+}
+
 .el-checkbox {
   --el-checkbox-font-size: var(--iflyv-font-size-14);
   height: var(--el-component-size);
