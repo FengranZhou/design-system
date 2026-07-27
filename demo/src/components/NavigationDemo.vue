@@ -2,90 +2,61 @@
   <section id="navigation" class="demo-section">
     <h2 class="demo-section__title">Navigation 导航组件</h2>
 
-    <div class="demo-block">
-      <p class="demo-label">Tabs 页面级（.tabs-page）</p>
-      <el-tabs v-model="activeTabLg" class="tabs-page">
-        <el-tab-pane label="选中项" name="overview">选中项内容</el-tab-pane>
-        <el-tab-pane label="未选中项" name="analysis">未选中项内容</el-tab-pane>
-        <el-tab-pane label="禁用项" name="trash" disabled>禁用项内容</el-tab-pane>
-      </el-tabs>
+    <!-- Tabs 三级（页面级 / 大模块级 / 小模块级）合并为一块，由「级别」分段切换 class。
+         级别是三选一具名类型 → 用 radio-button；页面级=.tabs-page、大模块级=默认、小模块级=.tabs-sub。 -->
+    <div class="demo-block control-showcase">
+      <div class="control-showcase__main">
+        <p class="demo-label">Tabs 标签页</p>
+        <el-tabs v-model="tabsActive" :class="tabsLevelClass">
+          <el-tab-pane
+            v-for="item in tabsItems"
+            :key="item.name"
+            :label="item.label"
+            :name="item.name"
+            :disabled="item.disabled"
+          />
+        </el-tabs>
+      </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="tabsConfigForm" label-width="auto">
+          <el-form-item label="级别">
+            <el-radio-group v-model="tabsLevel">
+              <el-radio value="page">页面级</el-radio>
+              <el-radio value="module">大模块级</el-radio>
+              <el-radio value="sub">小模块级</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">Tabs 大模块级（默认）</p>
-      <el-tabs v-model="activeTab">
-        <el-tab-pane label="选中项" name="all">选中项内容</el-tab-pane>
-        <el-tab-pane label="未选中项" name="active">未选中项内容</el-tab-pane>
-        <el-tab-pane label="禁用项" name="archived" disabled>禁用项内容</el-tab-pane>
-      </el-tabs>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">Tabs 小模块级（.tabs-sub）</p>
-      <el-tabs v-model="activeTabSm" class="tabs-sub">
-        <el-tab-pane label="基本信息" name="basic">基本信息内容</el-tab-pane>
-        <el-tab-pane label="权限配置" name="permission">权限配置内容</el-tab-pane>
-        <el-tab-pane label="操作日志" name="log">操作日志内容</el-tab-pane>
-        <el-tab-pane label="回收站" name="trash" disabled>回收站内容</el-tab-pane>
-      </el-tabs>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">Tabs 页面级 + 数字（.tabs-page + .tab-count）</p>
-      <el-tabs v-model="activeTabLgCount" class="tabs-page">
-        <el-tab-pane name="overview">
-          <template #label>概览 <span class="tab-count">5</span></template>
-          概览内容
-        </el-tab-pane>
-        <el-tab-pane name="analysis">
-          <template #label>数据分析 <span class="tab-count">12</span></template>
-          数据分析内容
-        </el-tab-pane>
-        <el-tab-pane name="settings">
-          <template #label>系统设置 <span class="tab-count">3</span></template>
-          系统设置内容
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">Tabs 大模块级 + 数字（.tab-count）</p>
-      <el-tabs v-model="activeTabCount">
-        <el-tab-pane name="all">
-          <template #label>全部 <span class="tab-count">128</span></template>
-          全部内容
-        </el-tab-pane>
-        <el-tab-pane name="active">
-          <template #label>进行中 <span class="tab-count">36</span></template>
-          进行中内容
-        </el-tab-pane>
-        <el-tab-pane name="done">
-          <template #label>已完成 <span class="tab-count">82</span></template>
-          已完成内容
-        </el-tab-pane>
-        <el-tab-pane name="archived" disabled>
-          <template #label>已归档 <span class="tab-count">10</span></template>
-          已归档内容
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">Tabs 小模块级 + 数字（.tabs-sub + .tab-count）</p>
-      <el-tabs v-model="activeTabSmCount" class="tabs-sub">
-        <el-tab-pane name="basic">
-          <template #label>基本信息 <span class="tab-count">8</span></template>
-          基本信息内容
-        </el-tab-pane>
-        <el-tab-pane name="permission">
-          <template #label>权限配置 <span class="tab-count">4</span></template>
-          权限配置内容
-        </el-tab-pane>
-        <el-tab-pane name="log">
-          <template #label>操作日志 <span class="tab-count">26</span></template>
-          操作日志内容
-        </el-tab-pane>
-      </el-tabs>
+    <!-- Tabs + 数字徽标：同样三级合并，由「级别」分段切换（.tab-count 数字徽标在各级都保留） -->
+    <div class="demo-block control-showcase">
+      <div class="control-showcase__main">
+        <p class="demo-label">Tabs 标签页 + 数字</p>
+        <el-tabs v-model="tabsCountActive" :class="tabsCountLevelClass">
+          <el-tab-pane
+            v-for="item in tabsCountItems"
+            :key="item.name"
+            :name="item.name"
+          >
+            <template #label><span class="tab-label-count">{{ item.label }}<span class="tab-count">{{ item.count }}</span></span></template>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="tabsCountConfigForm" label-width="auto">
+          <el-form-item label="级别">
+            <el-radio-group v-model="tabsCountLevel">
+              <el-radio value="page">页面级</el-radio>
+              <el-radio value="module">大模块级</el-radio>
+              <el-radio value="sub">小模块级</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
 
     <div class="demo-block">
@@ -101,12 +72,17 @@
 
     <div class="demo-block">
       <p class="demo-label">Dropdown 下拉菜单</p>
+      <p class="demo-desc">下拉面板本身（菜单项 / 分隔线 / 禁用项 / hover）。触发器形态多样（按钮见 Button 章节），此处用轻量文字触发。</p>
       <div class="demo-row">
-        <el-dropdown>
-          <el-button type="primary">
+        <el-dropdown @visible-change="dropdownVisible = $event">
+          <span class="dropdown-trigger">
             更多操作
-            <ChevronDown :size="14" :stroke-width="2" style="margin-left: 4px;" />
-          </el-button>
+            <ChevronDown
+              :size="14" :stroke-width="2"
+              class="dropdown-caret"
+              :class="{ 'is-expanded': dropdownVisible }"
+            />
+          </span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>编辑</el-dropdown-item>
@@ -211,23 +187,92 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 
-const activeTabLg = ref('overview')
-const activeTab = ref('all')
-const activeTabSm = ref('basic')
-const activeTabLgCount = ref('overview')
-const activeTabCount = ref('all')
-const activeTabSmCount = ref('basic')
+// —— Tabs 三级合并：级别 → class + tab 项集合的映射 ——
+// 级别 class：页面级 .tabs-page、大模块级 默认（无 class）、小模块级 .tabs-sub（外观归 el-theme 源头）
+const LEVEL_CLASS = { page: 'tabs-page', module: '', sub: 'tabs-sub' } as const
+// 三级共用同一套 tab 项：文案即状态名（选中项/未选中项/禁用项），级别只切外观不切项。
+const TABS_ITEMS = [
+  { label: '选中项', name: 'a' },
+  { label: '未选中项', name: 'b' },
+  { label: '禁用项', name: 'c', disabled: true },
+]
+// 带数字徽标版本：状态名 + 各自 count
+const TABS_COUNT_ITEMS = [
+  { label: '选中项', name: 'a', count: 5 },
+  { label: '未选中项', name: 'b', count: 12 },
+  { label: '禁用项', name: 'c', count: 3, disabled: true },
+]
+
+// 无数字块：级别切 class（tab 项固定为状态名三项）
+const tabsItems = TABS_ITEMS
+const tabsLevel = ref<'page' | 'module' | 'sub'>('page')
+const tabsConfigForm = reactive({ tabsLevel })
+const tabsLevelClass = computed(() => LEVEL_CLASS[tabsLevel.value])
+const tabsActive = ref('a')
+
+// 带数字块：级别切 class（tab 项固定为状态名三项 + 数字徽标）
+const tabsCountItems = TABS_COUNT_ITEMS
+const tabsCountLevel = ref<'page' | 'module' | 'sub'>('page')
+const tabsCountConfigForm = reactive({ tabsCountLevel })
+const tabsCountLevelClass = computed(() => LEVEL_CLASS[tabsCountLevel.value])
+const tabsCountActive = ref('a')
+
+// Dropdown 展开态：驱动触发器箭头翻转
+const dropdownVisible = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(20)
 const currentPageSm = ref(1)
 </script>
 
 <style scoped>
+/* Dropdown 轻量文字触发器（纯本页装扮：本 demo 的触发器排版，走令牌；面板外观归 el-theme 源头） */
+.dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-1);
+  color: var(--iflyv-text-1);
+  cursor: pointer;
+}
+.dropdown-trigger:hover {
+  color: var(--iflyv-brand-primary);
+}
+/* 箭头翻转（展开时 180°+ 过渡）已归源头约定 .dropdown-caret（dropdown.scss），
+   demo 只传展开真值 .is-expanded，不在此重复定义。 */
+
 /* 纯 demo 布局：补 tab 头与内容区间距（不改组件外观，仅调本演示的排版留白） */
 .demo-block :deep(.el-tabs__header) {
   margin-bottom: var(--iflyv-spacing-4);
+}
+
+/* Tabs 块：左示例 + 右配置卡横向布局（与 Input / FormControl 配置式范式一致，纯本页排版，不含组件外观） */
+.control-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
+}
+.control-showcase__main { flex: 1; min-width: 0; }
+
+@media (max-width: 1100px) {
+  .control-showcase { flex-direction: column; }
+  .config-card { width: 100%; }
+}
+
+/* 配置卡：白底 + 细边框区分层次（与 Input 一致） */
+.config-card {
+  flex: 0 1 auto;
+  width: auto;
+  align-self: flex-start;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-md);
+}
+.config-card__title {
+  margin: 0 0 var(--iflyv-spacing-4);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
 }
 </style>

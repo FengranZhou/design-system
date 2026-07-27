@@ -2,6 +2,10 @@
 /* =========================== Tag 样式覆盖 =============================== */
 /* ======================================================================== */
 
+/* 使用约定：本系统品牌色为绿色，与 success（成功）语义绿撞色，易让普通标签被误读为「成功态」。
+   因此无语义含义的普通标签，优先使用 type="info"（蓝色）作为默认色，避免与 success 混淆；
+   仅在确需品牌强调时才用默认 / type="primary"（品牌绿）。 */
+
 .el-tag {
   --el-tag-font-size: var(--iflyv-font-size-12);
   border-radius: var(--iflyv-radius-xs);
@@ -10,6 +14,8 @@
     border-radius: var(--iflyv-radius-full);
   }
   font-size: var(--iflyv-font-size-12);
+  /* 标签内文字：字号 12 / 行高 18（.el-tag__content 继承，避免被撑高） */
+  line-height: var(--iflyv-line-height-18);
   border: none;
 
   /* 统一尺寸 20px */
@@ -83,6 +89,19 @@
   &--gray {
     color: var(--iflyv-text-2);
     background-color: var(--iflyv-bg-inset);
+  }
+
+  /* AI 标识：蓝→绿渐变底 + 渐变文字（走 AI 渐变语义令牌，源自设计稿 MasterGo AI 标签）。
+     底色渐变在本体、文字渐变在内层 .el-tag__content（背景裁剪到文字），两者分层避免 clip 冲突。 */
+  &--ai {
+    background: var(--iflyv-ai-gradient-bg);
+    .el-tag__content {
+      background: var(--iflyv-ai-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
   }
 }
 

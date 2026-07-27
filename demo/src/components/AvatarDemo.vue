@@ -2,54 +2,101 @@
   <section id="avatar" class="demo-section">
     <h2 class="demo-section__title">Avatar 头像</h2>
 
-    <div class="demo-block">
-      <p class="demo-label">内置角色 —— 教师 / 学生</p>
-      <div class="demo-row" style="gap: 40px;">
-        <div v-for="item in roles" :key="item.role" class="avatar-cell">
-          <UserAvatar :role="item.role" :size="56" />
-          <span class="avatar-cell__label">{{ item.label }}</span>
+    <div class="demo-block avatar-showcase">
+      <div class="avatar-showcase__main">
+        <p class="demo-label">内置角色</p>
+
+        <!-- 独立：四个内置角色各自展示，带角色名 -->
+        <div v-if="avatarMode === 'single'" class="demo-row" style="gap: 40px;">
+          <div v-for="item in roles" :key="item.role" class="avatar-cell">
+            <UserAvatar :role="item.role" :size="avatarSize" />
+            <span class="avatar-cell__label">{{ item.label }}</span>
+          </div>
+        </div>
+
+        <!-- 组合：头像组叠加 -->
+        <div v-else class="avatar-group" :style="{ '--avatar-overlap': `${Math.round(avatarSize * 0.3)}px` }">
+          <UserAvatar
+            v-for="item in roles"
+            :key="item.role"
+            :role="item.role"
+            :size="avatarSize"
+            class="avatar-group__item"
+          />
         </div>
       </div>
-    </div>
 
-    <div class="demo-block">
-      <p class="demo-label">尺寸 —— size</p>
-      <div class="demo-row" style="align-items: flex-end; gap: 40px;">
-        <div v-for="s in sizes" :key="s" class="avatar-cell">
-          <UserAvatar role="teacher-male" :size="s" />
-          <span class="avatar-cell__label">{{ s }}px</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">头像组 —— Avatar Group</p>
-      <div class="avatar-group">
-        <UserAvatar
-          v-for="item in roles"
-          :key="item.role"
-          :role="item.role"
-          :size="40"
-          class="avatar-group__item"
-        />
-      </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form label-width="auto">
+          <el-form-item label="展示">
+            <el-radio-group v-model="avatarMode">
+              <el-radio value="single">独立</el-radio>
+              <el-radio value="group">组合</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="尺寸">
+            <el-radio-group v-model="avatarSize">
+              <el-radio :value="40">40px</el-radio>
+              <el-radio :value="24">24px</el-radio>
+              <el-radio :value="20">20px</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import UserAvatar from './UserAvatar.vue'
-import { AVATAR_LABEL, type AvatarRole } from './avatar-roles'
+import { ref } from 'vue'
+import { UserAvatar, AVATAR_LABEL, type AvatarRole } from '../../../design-spec/components'
 
 const roles = (Object.keys(AVATAR_LABEL) as AvatarRole[]).map((role) => ({
   role,
   label: AVATAR_LABEL[role],
 }))
 
-const sizes = [20, 24, 40]
+// 配置项：展示方式（独立/组合）+ 尺寸
+const avatarMode = ref<'single' | 'group'>('single')
+const avatarSize = ref(40)
 </script>
 
 <style scoped>
+/* 头像块：左列（标题+示例）+ 右列配置卡，配置卡顶与标题顶齐平 */
+.avatar-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
+}
+.avatar-showcase__main { flex: 1; min-width: 0; }
+
+@media (max-width: 1100px) {
+  .avatar-showcase { flex-direction: column; }
+  .config-card { width: 100%; }
+}
+
+/* 配置卡在块卡（bg-card）内部，白底 + 细边框区分层次 */
+.config-card {
+  flex: 0 1 auto;
+  width: 220px;
+  align-self: flex-start;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-md);
+}
+.config-card__title {
+  margin: 0 0 var(--iflyv-spacing-4);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
+}
+.config-card :deep(.el-radio-group) {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--iflyv-spacing-2);
+}
+
 .avatar-cell {
   display: flex;
   flex-direction: column;
@@ -67,7 +114,8 @@ const sizes = [20, 24, 40]
 }
 
 .avatar-group__item:not(:first-child) {
-  margin-inline-start: -12px;
+  /* 重叠量随头像尺寸按比例缩放（约 30%），小尺寸不再显得过挤；默认 40px→12px */
+  margin-inline-start: calc(-1 * var(--avatar-overlap, 12px));
 }
 
 .avatar-group__item {

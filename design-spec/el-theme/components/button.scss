@@ -78,7 +78,7 @@
 
     & + span {
       margin-left: 0; /* 清除 EP [class*=el-icon]+span { margin-left: 6px }，防止 RTL 残留 */
-      margin-inline-start: 6px;
+      margin-inline-start: var(--iflyv-spacing-1); /* 图标↔文字间距 4px */
     }
   }
 
@@ -337,13 +337,16 @@
 .el-button--small { --el-button-size: var(--el-component-size-small); height: var(--el-button-size); } */
 
 /* 强制最小宽度：所有按钮（除豁免类型）至少 80px——保持视觉节奏一致，避免短文案按钮"瘦不忍睹"。
-   豁免类型：is-circle / is-link / is-text（新版 EP text 属性类）/ --text（旧写法）/ el-transfer__button。
+   豁免类型：is-circle / is-link / is-text（新版 EP text 属性类）/ --text（旧写法）/ el-transfer__button
+            / table-operation（表格操作列按钮，须紧贴文案、间距只由相邻 12 提供，见 table.scss）。
    （btn-icon-square 已暂停启用，其 `:not(.btn-icon-square)` 豁免同步移除；恢复时一并加回。）
    @when-changed: 恢复 btn-icon-square 时若忘记加回 `:not(.btn-icon-square)`，
                   纯图标按钮会被撑成 80×36 长方形——分发场景使用方最常见踩坑点。
    @when-changed: text 按钮的类是 .is-text（非 .el-button--text），漏掉它会导致无底文字按钮
-                  被强制撑成 80px 宽——务必保留 :not(.is-text)。 */
-.el-button:not(.is-circle):not(.is-link):not(.is-text):not(.el-button--text):not(.el-transfer__button) {
+                  被强制撑成 80px 宽——务必保留 :not(.is-text)。
+   @when-changed: .table-operation 是"一个 class 全包"的表格操作按钮（不带 text/link），
+                  漏掉 :not(.table-operation) 会被撑成 80px，两按钮间距远大于 12——务必保留。 */
+.el-button:not(.is-circle):not(.is-link):not(.is-text):not(.el-button--text):not(.el-transfer__button):not(.table-operation) {
   min-width: 80px;
   /* large/small 档暂停启用，恢复三档时放开：
   &.el-button--large { min-width: 88px; }

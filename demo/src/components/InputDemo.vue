@@ -167,13 +167,6 @@ const numberValue = ref(1)
   margin-top: var(--iflyv-spacing-6);
 }
 
-/* 块内说明文字：标题下、控件上，浅色小字，不与标题抢视觉 */
-.demo-desc {
-  margin: 0 0 var(--iflyv-spacing-3);
-  color: var(--iflyv-text-3);
-  font: var(--iflyv-font-body-sub);
-}
-
 /* 块卡内左右两列：左列（标题+示例）+ 右列配置卡，均从块顶开始 → 配置卡顶与标题顶齐平 */
 .input-showcase {
   display: flex;

@@ -10,7 +10,7 @@
 }
 .el-descriptions__label.el-descriptions__cell.is-bordered-label { font-weight: 400; }
 /* 字号 + 行高 rem 化：覆盖 EP 尺寸变体 baked-in px（匹配 EP 选择器特异性） */
-.el-descriptions__body .el-descriptions__table .el-descriptions__cell { font-size: var(--iflyv-font-size-14); line-height: var(--iflyv-line-height-24); }
+.el-descriptions__body .el-descriptions__table .el-descriptions__cell { font-size: var(--iflyv-font-size-16); line-height: var(--iflyv-line-height-24); }
 .el-descriptions__header .el-descriptions__title { font-size: var(--iflyv-font-size-16); }
 .el-descriptions--small { font-size: var(--iflyv-font-size-12); }
 .el-descriptions--small .el-descriptions__body .el-descriptions__table .el-descriptions__cell { font-size: var(--iflyv-font-size-12); }

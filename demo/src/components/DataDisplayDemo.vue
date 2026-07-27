@@ -2,74 +2,99 @@
   <section id="data-display" class="demo-section">
     <h2 class="demo-section__title">DataDisplay 数据展示</h2>
 
-    <div class="demo-block">
-      <p class="demo-label">Badge 徽标 + Avatar 头像</p>
-      <div class="demo-row">
-        <el-badge :value="12">
-          <UserAvatar :size="40" role="teacher-male" />
-        </el-badge>
-        <el-badge :value="3" type="primary">
-          <UserAvatar :size="40" role="teacher-female" />
-        </el-badge>
-        <el-badge value="new" type="success">
-          <UserAvatar :size="40" role="student-male" />
-        </el-badge>
-        <el-badge is-dot>
-          <UserAvatar :size="40" role="student-female" />
-        </el-badge>
-      </div>
-    </div>
+    <!-- 徽标：四类载体（头像/按钮/图标/Tab）通过配置项切换，每类固定四状态（点 / 数字 / 上限 99+ / 英文） -->
+    <div class="demo-block badge-showcase">
+      <div class="badge-showcase__main">
+        <p class="demo-label">徽标</p>
 
-    <div class="demo-block">
-      <p class="demo-label">Badge 徽标 + Button 按钮</p>
-      <div class="demo-row">
-        <el-badge :value="5">
-          <el-button>消息</el-button>
-        </el-badge>
-        <el-badge :value="12">
-          <el-button type="primary">待处理</el-button>
-        </el-badge>
-        <el-badge value="hot" type="warning">
-          <el-button>活动</el-button>
-        </el-badge>
-        <el-badge is-dot>
-          <el-button>通知</el-button>
-        </el-badge>
-      </div>
-    </div>
+        <!-- 头像 -->
+        <div v-if="badgeType === 'avatar'" class="demo-row" style="gap: 24px;">
+          <el-badge is-dot>
+            <UserAvatar :size="40" role="teacher-male" />
+          </el-badge>
+          <el-badge :value="12">
+            <UserAvatar :size="40" role="teacher-female" />
+          </el-badge>
+          <el-badge :value="100" :max="99">
+            <UserAvatar :size="40" role="student-male" />
+          </el-badge>
+          <el-badge value="new">
+            <UserAvatar :size="40" role="student-female" />
+          </el-badge>
+        </div>
 
-    <div class="demo-block">
-      <p class="demo-label">Badge 徽标 + Icon 图标</p>
-      <div class="demo-row" style="gap: 24px;">
-        <el-badge :value="8">
-          <Bell :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
-        </el-badge>
-        <el-badge is-dot>
-          <Mail :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
-        </el-badge>
-        <el-badge :value="99" :max="99">
-          <MessageSquare :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
-        </el-badge>
-      </div>
-    </div>
+        <!-- 按钮 -->
+        <div v-else-if="badgeType === 'button'" class="demo-row">
+          <el-badge is-dot>
+            <el-button>通知</el-button>
+          </el-badge>
+          <el-badge :value="5">
+            <el-button>消息</el-button>
+          </el-badge>
+          <el-badge :value="100" :max="99">
+            <el-button>待处理</el-button>
+          </el-badge>
+          <el-badge value="hot">
+            <el-button>活动</el-button>
+          </el-badge>
+        </div>
 
-    <div class="demo-block">
-      <p class="demo-label">Badge 徽标 + Tab 导航项</p>
-      <el-tabs class="badge-tabs">
-        <el-tab-pane>
-          <template #label>
-            <el-badge :value="3" :offset="[10, -2]">全部任务</el-badge>
+        <!-- 图标 -->
+        <div v-else-if="badgeType === 'icon'" class="demo-row" style="gap: 32px;">
+          <el-badge is-dot>
+            <Mail :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
+          </el-badge>
+          <el-badge :value="8">
+            <Bell :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
+          </el-badge>
+          <el-badge :value="100" :max="99">
+            <MessageSquare :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
+          </el-badge>
+          <el-badge value="new">
+            <Heart :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
+          </el-badge>
+        </div>
+
+        <!-- Tab 导航项：badge 挂 tab 用源头约定 .tab-badge（定位 + 选中态不下沉统一在源头，不手写 offset） -->
+        <el-tabs v-else class="badge-tabs">
+          <el-tab-pane>
+            <template #label>
+              <el-badge is-dot class="tab-badge">待审核</el-badge>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane>
+            <template #label>
+              <el-badge :value="3" class="tab-badge">全部任务</el-badge>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane>
+            <template #label>
+              <el-badge :value="100" :max="99" class="tab-badge">已完成</el-badge>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane>
+            <template #label>
+              <el-badge value="new" class="tab-badge">最新</el-badge>
           </template>
         </el-tab-pane>
-        <el-tab-pane>
-          <template #label>
-            <el-badge is-dot :offset="[6, -2]">待审核</el-badge>
-          </template>
-        </el-tab-pane>
-        <el-tab-pane label="已完成" />
-      </el-tabs>
+        </el-tabs>
+      </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form label-width="auto">
+          <el-form-item label="类型">
+            <el-radio-group v-model="badgeType">
+              <el-radio value="avatar">头像</el-radio>
+              <el-radio value="button">按钮</el-radio>
+              <el-radio value="icon">图标</el-radio>
+              <el-radio value="tab">tab 栏</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
 
+    <!-- ⏸ 暂停展示：Progress 进度条。暂时不要，保留代码，需要时放开。
     <div class="demo-block">
       <p class="demo-label">Progress 进度条</p>
       <div style="width: 400px;">
@@ -79,6 +104,7 @@
         <el-progress :percentage="80" status="exception" style="margin-top: 12px;" />
       </div>
     </div>
+    -->
 
     <div class="demo-block">
       <p class="demo-label">Descriptions 描述列表</p>
@@ -104,6 +130,7 @@
       </el-timeline>
     </div>
 
+    <!-- ⏸ 暂停展示：Tree 树形控件（基础树 / 可选择树 / 高亮当前节点）。暂时不用，保留代码 + script 里 treeData/treeDataDisabled，需要时一并放开。
     <div class="demo-block">
       <p class="demo-label">Tree 树形控件</p>
       <div class="demo-row" style="gap: 48px; align-items: flex-start;">
@@ -121,30 +148,9 @@
         </div>
       </div>
     </div>
+    -->
 
-    <div class="demo-block">
-      <p class="demo-label">TreeSelect 树形选择器</p>
-      <div class="demo-row">
-        <el-tree-select
-          v-model="treeSelectValue"
-          :data="treeSelectData"
-          placeholder="单选树形选择"
-          check-strictly
-          style="width: 240px;"
-        />
-        <el-tree-select
-          v-model="treeSelectMultiple"
-          :data="treeSelectData"
-          multiple
-          placeholder="多选树形选择"
-          check-strictly
-          collapse-tags
-          collapse-tags-tooltip
-          style="width: 300px;"
-        />
-      </div>
-    </div>
-
+    <!-- ⏸ 暂停展示：Collapse 折叠面板（默认模式 + 手风琴模式）。暂时不用，保留代码，需要时放开。
     <div class="demo-block">
       <p class="demo-label">Collapse 折叠面板</p>
       <div class="demo-row" style="gap: 48px; align-items: flex-start;">
@@ -178,19 +184,21 @@
         </div>
       </div>
     </div>
+    -->
 
     <div class="demo-block">
       <p class="demo-label">Skeleton 骨架屏</p>
-      <div class="demo-row" style="gap: 48px; align-items: flex-start;">
-        <div style="width: 300px;">
-          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">基础骨架屏</p>
-          <el-skeleton :rows="3" />
-        </div>
-        <div style="width: 300px;">
-          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">带动画加载</p>
-          <el-skeleton :rows="3" animated />
-        </div>
+      <!-- ⏸ 暂停展示：基础骨架屏（无动画）。暂时不用，保留代码，需要时放开。
+      <div style="width: 300px;">
+        <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">基础骨架屏</p>
+        <el-skeleton :rows="3" />
       </div>
+      -->
+      <!-- 白底衬底：骨架屏灰条铺在浅灰 bg-card 上对比弱，套一层 bg-panel 白底衬托 -->
+      <div class="skeleton-panel">
+        <el-skeleton :rows="3" animated />
+      </div>
+      <!-- ⏸ 暂停展示：切换加载状态（loading ↔ 内容）。暂时不用，保留代码 + script 里 skeletonLoading，需要时一并放开。
       <div style="margin-top: 24px;">
         <el-button @click="skeletonLoading = !skeletonLoading" style="margin-bottom: 12px;">
           切换加载状态
@@ -201,15 +209,18 @@
           </template>
         </el-skeleton>
       </div>
+      -->
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Bell, Mail, MessageSquare } from 'lucide-vue-next'
-import UserAvatar from './UserAvatar.vue'
+import { Bell, Mail, MessageSquare, Heart } from 'lucide-vue-next'
+import { UserAvatar } from '../../../design-spec/components'
 
+// ⏸ 随 Tree 树形控件块暂停（模板已注释），保留、需要时一并放开：
+/*
 const treeData = [
   {
     id: 1,
@@ -261,31 +272,72 @@ const treeDataDisabled = [
     ],
   },
 ]
+*/
 
-const treeSelectData = [
-  {
-    value: 'dev',
-    label: '研发中心',
-    children: [
-      { value: 'fe', label: '前端组' },
-      { value: 'be', label: '后端组' },
-      { value: 'qa', label: '测试组' },
-    ],
-  },
-  {
-    value: 'design',
-    label: '设计中心',
-    children: [
-      { value: 'ui', label: 'UI 组' },
-      { value: 'ux', label: 'UX 组' },
-    ],
-  },
-]
-const treeSelectValue = ref('')
-const treeSelectMultiple = ref([])
+// ⏸ 随 Collapse 折叠面板块暂停（模板已注释），保留、需要时一并放开：
+// const collapseActive = ref(['1'])
+// const collapseAccordion = ref('1')
 
-const collapseActive = ref(['1'])
-const collapseAccordion = ref('1')
+// ⏸ 随「切换加载状态」骨架屏（已移除）暂停，保留、需要时一并放开：
+// const skeletonLoading = ref(true)
 
-const skeletonLoading = ref(true)
+// 徽标载体类型：头像 / 按钮 / 图标 / tab 栏
+const badgeType = ref('avatar')
 </script>
+
+<style scoped>
+/* 每个 demo 块用 bg-card 大卡片做区分（与 Cell / Input / FormControl 配置式范式一致）。
+   卡间垂直间距统一 24（spacing-6）；覆盖全局 .demo-block 自带的 48px margin，避免叠加。 */
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+}
+.demo-section .demo-block + .demo-block {
+  margin-top: var(--iflyv-spacing-6);
+}
+
+/* 骨架屏白底衬底：灰条铺在浅灰 bg-card 上对比弱，套一层白底衬托（纯本页排版，走令牌） */
+.skeleton-panel {
+  width: 300px;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border-radius: var(--iflyv-radius-md);
+}
+
+/* 徽标块：左列（标题+示例）+ 右列配置卡，配置卡顶与标题顶齐平 */
+.badge-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
+}
+.badge-showcase__main { flex: 1; min-width: 0; }
+
+@media (max-width: 1100px) {
+  .badge-showcase { flex-direction: column; }
+  .config-card { width: 100%; }
+}
+
+/* 配置卡在块卡（bg-card）内部，白底 + 细边框区分层次，避免同色套同色 */
+.config-card {
+  flex: 0 1 auto;
+  width: 220px;
+  align-self: flex-start;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-md);
+}
+.config-card__title {
+  margin: 0 0 var(--iflyv-spacing-4);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
+}
+/* 配置项内单选纵向排列，占满配置卡宽度 */
+.config-card :deep(.el-radio-group) {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--iflyv-spacing-2);
+}
+</style>

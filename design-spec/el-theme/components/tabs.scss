@@ -162,7 +162,15 @@
      <template #label>全部 <span class="tab-count">12</span></template>
    </el-tab-pane>
 */
+/* tab 文字 + 数字：水平成一整体（数字在文字右侧），再与激活短横线竖排。
+   包一层 .tab-label-count 抵消 tab item 的 column 布局，让二者同行水平排列。 */
+.tab-label-count {
+  display: inline-flex;
+  align-items: center;   /* 数字与文字垂直居中 */
+}
+/* tab 后的数字：系统默认字体（非品牌/数字字体），与 tab 文字水平间距 4。 */
 .tab-count {
+  font-family: var(--iflyv-font-family-base);
   font-weight: var(--iflyv-font-weight-regular);
   font-size: var(--iflyv-font-size-14);
   color: var(--iflyv-text-4);
