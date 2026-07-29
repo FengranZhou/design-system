@@ -100,7 +100,6 @@
     <div class="demo-block input-showcase">
       <div class="input-showcase__main">
         <p class="demo-label">树形选择器</p>
-        <p class="demo-desc">选项组织成树形层级的下拉选择，支持单选 / 多选</p>
         <div class="demo-row">
           <el-tree-select
             v-model="treeSelectValue"

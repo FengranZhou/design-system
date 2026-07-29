@@ -14,6 +14,8 @@
 
 /* 组件级变量覆盖（EP 在 .el-alert 作用域声明，:root 级覆盖无效） */
 .el-alert {
+  /* 内边距：上下 8 / 左右 12（覆盖 EP 默认 8px 16px，左右收窄一档更紧凑） */
+  --el-alert-padding: var(--iflyv-spacing-2) var(--iflyv-spacing-3);
   --el-alert-title-font-size: var(--iflyv-font-size-14);
   --el-alert-description-font-size: var(--iflyv-font-size-14);
   --el-alert-close-font-size: var(--iflyv-font-size-16);

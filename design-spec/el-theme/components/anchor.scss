@@ -3,6 +3,8 @@
   --el-anchor-marker-bg-color: var(--iflyv-brand-text);
   --el-anchor-padding-indent: 0.875rem;
   --el-anchor-font-size: var(--iflyv-font-size-12);
+  /* 去掉 EP 默认白底填充：锚点作为纯导航文字栏，透明融入所在容器底色。 */
+  --el-anchor-bg-color: transparent;
 }
 
 .el-anchor .el-anchor__link {

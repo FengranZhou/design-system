@@ -2,7 +2,7 @@
   <section id="button" class="demo-section">
     <h2 class="demo-section__title">Button 按钮</h2>
 
-    <div class="button-showcase">
+    <div class="demo-block button-showcase">
       <!-- 左侧：6 类 × 3 状态网格；图标 / 箭头由右侧开关统一控制 -->
       <div class="button-grid">
         <template v-for="s in states" :key="s.key">
@@ -69,6 +69,14 @@ const states = [
 </script>
 
 <style scoped>
+/* demo 块用 bg-card 大卡片做区分（与 Select / Dialog / Navigation 一致，本页排版走令牌）。 */
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+}
+
 /* 纯本页排版：左侧网格 + 右侧配置卡片横向布局。不含组件外观规则。 */
 .button-showcase {
   display: flex;
@@ -100,13 +108,15 @@ const states = [
   .button-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* 右侧配置项卡片：bg-card 包裹，「配置项」标题 + el-form 表单布局 */
+/* 右侧配置项卡片：块卡（bg-card）内部用白底 + 细边框区分层次
+   （与 Input / Avatar 配置卡一致），「配置项」标题 + el-form 表单布局 */
 .config-card {
   flex: 0 1 auto;
   width: 220px;
   align-self: flex-start;
   padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-card);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
   border-radius: var(--iflyv-radius-md);
 }
 .config-card__title {

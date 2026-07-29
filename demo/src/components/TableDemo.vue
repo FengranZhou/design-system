@@ -11,12 +11,11 @@
       <p class="demo-desc">三类：复选框 / 纯文字 / 带排序</p>
       <!-- 只看表头行：空数据 + 空 empty-text，仅展示各类表头单元格。
            el-table 无 show-body 开关，只能喂空数据 → 会残留一块空占位区，用 header-only-table 类在本页 scoped 压掉其高度。
-           末列用 min-width 弹性列吸收剩余宽度（与「内容单元格」块的操作列对称，避免右侧留空白列）。 -->
+           末列（带排序）用 min-width 弹性列吸收剩余宽度，避免右侧留空白列。 -->
       <el-table :data="[]" empty-text=" " class="header-only-table" style="width: 100%">
         <el-table-column type="selection" width="60" />
         <el-table-column label="标题" width="200" />
-        <el-table-column label="标题" width="200" sortable />
-        <el-table-column label="操作" min-width="200" />
+        <el-table-column label="标题" min-width="200" sortable />
       </el-table>
     </div>
 
@@ -32,7 +31,8 @@
             <el-tag :type="row.statusType" round>{{ row.status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="date" width="180" />
+        <el-table-column width="180"
+          :formatter="(row: any) => formatTime(row.date)" />
         <el-table-column prop="amount" width="160" align="right"
           :formatter="(_r: any, _c: any, val: number) => `¥${val.toLocaleString()}`" />
         <el-table-column min-width="200">
@@ -69,9 +69,12 @@
 // 基础组件层只演示单元格「类型」本身——用真实 el-table 渲染（表头单元格只留表头行、
 // 内容单元格 show-header=false 只留内容行），排序/边框/hover 皆 el-table 原生，无私货。
 import { SquarePen, Eye, MoreHorizontal } from 'lucide-vue-next'
+// 日期列走文案规范唯一实现 formatTime（省本年年份 / 跨年带年 / 不带秒），不硬编码日期字符串。
+import { formatTime } from '../../../design-spec/utils/format-time'
 
 const contentRow = [
-  { name: '作业测练', status: '已完成', statusType: 'success', date: '2026-03-10', amount: 1200 },
+  // 原始时间带到分钟；formatTime 决定展示是否省略年份
+  { name: '作业测练', status: '已完成', statusType: 'success', date: '2026-03-10 13:00', amount: 1200 },
 ]
 </script>
 

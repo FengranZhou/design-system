@@ -3,7 +3,7 @@
     <h2 class="demo-section__title">Feedback 反馈组件</h2>
 
     <div class="demo-block">
-      <p class="demo-label">Alert 警告</p>
+      <p class="demo-label">警告</p>
       <div style="display: flex; flex-direction: column; gap: 12px;">
         <el-alert title="成功提示" type="success" show-icon />
         <el-alert title="警告提示" type="warning" show-icon />
@@ -15,7 +15,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Tooltip 文字提示</p>
+      <p class="demo-label">文字提示</p>
       <div class="demo-row">
         <el-tooltip content="上方提示" placement="top">
           <el-button>上方</el-button>
@@ -33,7 +33,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Popover 弹出框</p>
+      <p class="demo-label">弹出框</p>
       <div class="demo-row">
         <el-popover placement="bottom" :width="200" trigger="click">
           <template #reference>
@@ -51,7 +51,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Notification 通知</p>
+      <p class="demo-label">通知</p>
       <div class="demo-row">
         <el-button @click="showNotification('success')">成功通知</el-button>
         <el-button @click="showNotification('warning')">警告通知</el-button>
@@ -61,7 +61,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Drawer 抽屉</p>
+      <p class="demo-label">抽屉</p>
       <div class="demo-row">
         <el-button type="primary" @click="drawerVisible = true">打开抽屉</el-button>
       </div>
@@ -72,7 +72,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Drawer 抽屉（底部水平按钮）</p>
+      <p class="demo-label">抽屉（底部水平按钮）</p>
       <div class="demo-row">
         <el-button type="primary" @click="drawerFooterVisible = true">打开抽屉</el-button>
       </div>
@@ -87,7 +87,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Drawer 抽屉（底部垂直按钮）</p>
+      <p class="demo-label">抽屉（底部垂直按钮）</p>
       <div class="demo-row">
         <el-button type="primary" @click="drawerVerticalVisible = true">打开抽屉</el-button>
       </div>

@@ -4,7 +4,7 @@
 
     <!-- ⏸ 暂停启用：基础「Upload 上传」（点击选择文件）。暂时用不到，保留代码，需要时放开。
     <div class="demo-block">
-      <p class="demo-label">Upload 上传</p>
+      <p class="demo-label">上传</p>
       <div class="demo-row">
         <el-upload action="#" :auto-upload="false" :limit="3">
           <el-button type="primary">

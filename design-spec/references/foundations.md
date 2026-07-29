@@ -13,6 +13,7 @@ updated: 2026-05-10
 
 - ❌ 硬编码颜色值（如 `color: #23B283`），必须使用CSS 变量
 - ❌ 硬编码字号（如 `font-size: 16px`），必须使用字体令牌
+- ❌ 设置文字时只写 `font-size` 不设行高/字重（行高会塌回浏览器默认 `normal`，出现 16.5 这种魔法值）。设置文字要**整套用语义复合令牌 `font: var(--iflyv-font-*)`**；含空格字体名不能用简写时，**拆分属性但字号/行高/字重一个不漏**（详见「设置文字的铁律」）
 - ❌ 使用非规范间距（如 `margin: 10px`），必须使用间距令牌
 - ❌ 使用 `success`、`warning`、`info` 类型按钮（指 el-button 的 type 属性），仅允许 `default`、`primary`、`danger`
 - ❌ 使用 `circle` 属性做纯图标按钮，改用 `class="btn-icon-square"`
@@ -71,6 +72,21 @@ updated: 2026-05-10
 
 ---
 
+## ⭐ 语义信息沉淀通则（新增/扩展语义令牌用途时必守）
+
+> **语义令牌的"用途/语义"信息，不能只活在 demo 里——demo 展示对下游 CC 不可见。** 令牌的"值"在 `design-token/`（下游引 `var(--iflyv-*)` 自动拿到），但"这个令牌该用在什么场景"（如 `icon-4`=禁用、`body-sub`=次要正文、`bg-inset`=内嵌区域、`border-strong`=加重边框）——这层**用途语义必须写进本文件的对应「→ 用途」表**，下游 `@design-spec/CLAUDE.md` 接入后 CC 才能读到、才知道"该用哪个令牌"。
+
+**因此，后续任何时候新增 / 扩展语义令牌（新色阶、新字阶、新背景/描边档、新用途）时，必须两步都做**：
+
+1. **值** → 加进 `design-token/css/semantic.scss`（或对应 token 文件）；同步 demo 的可视化列表（`SemanticColorDemo.vue` / `FontSemanticDemo.vue`）便于设计师肉眼查。
+2. **用途** → **同步更新本文件对应的「→ 用途」表**（色阶用途 / 语义字阶用途 / 背景色用途 / 描边色用途…）。**这一步不能省**——省了，下游 CC 就只拿到一个值、不知道何时用它，语义沉淀失败。
+
+> 判据："我加的这个令牌，下游 CC 看到它的名字能立刻知道该用在哪吗？" 名字自解释（如 `title-page`）也仍要进表（补规格/边界）；名字不够自解释（如 `bg-inset` 的"内嵌"、`border-strong` 的"何时才加重"）更必须进表。**demo 加一行 ≠ 规则沉淀，进本文件的用途表才算。**
+
+（本通则与设计模式/文案规范的「触发指针 + 单一数据源」同源——见 `design-spec/CLAUDE.md` 各「任务→必读」指针。）
+
+---
+
 ## 配色原则
 
 ### 色彩比例
@@ -96,6 +112,43 @@ updated: 2026-05-10
 ### 功能色语义
 
 green / red / orange / blue 在语义场景中含义固定，不因页面类型改变。当功能色被选作辅助色时，其装饰性用法应与语义用法有明确视觉区分（如装饰仅用 step-1~2 浅底色，不触及 step-6 语义强调色）。
+
+### 文本 / 图标色阶 → 用途（层级语义，选色阶时照此对号入座）
+
+文本色 `--iflyv-text-N`、图标色 `--iflyv-icon-N` 按**信息层级**分四级 + 深底反白，**用途一一对应**——设文字/图标颜色时按用途选对应色阶，不要凭手感挑：
+
+| 层级 | 文本令牌 | 图标令牌 | 用途 | 色值 |
+|---|---|---|---|---|
+| 一级 | `--iflyv-text-1` | `--iflyv-icon-1` | 标题、主文字 / 主图标 | gray-10 `#12151A` |
+| 二级 | `--iflyv-text-2` | `--iflyv-icon-2` | 正文、常规内容 | gray-7 `#4B535C` |
+| 三级 | `--iflyv-text-3` | `--iflyv-icon-3` | 辅助说明、次要信息 | gray-5 `#7B838C` |
+| **四级** | `--iflyv-text-4` | `--iflyv-icon-4` | **禁用态 / placeholder 占位符**（仅此，见下方对比度豁免） | gray-3 `#A9B0B8` |
+| 反白 | `--iflyv-text-on-dark` | `--iflyv-icon-on-dark` | 深色底上的文字 / 图标 | gray-0 `#FFFFFF` |
+
+> **四级（text-4 / icon-4）是"禁用/占位"专用色**：它在亮色白底上对比度不足 3:1，**只允许**用于 placeholder 和禁用态（WCAG 豁免非活跃元素，见下方「对比度底线」）。**需长期展示、要读清的辅助文字用三级（text-3）**，不要拿四级当浅色正文用。文本与图标同级同值、同用途——禁用态图标就用 `icon-4`。
+
+### 背景色 → 用途（选背景令牌照此对号入座）
+
+| 令牌 | 用途 | 值 |
+|---|---|---|
+| `--iflyv-bg-page` | 页面最外层灰底（内容区大背景） | gray-1 `#F2F5F7` |
+| `--iflyv-bg-page-white` | 需要纯白页底的场景 | gray-0 `#FFFFFF` |
+| `--iflyv-bg-panel` | 面板 / 卡片 / 浮层的白底（浮在 page 灰底之上） | gray-0 `#FFFFFF` |
+| `--iflyv-bg-inset` | 内嵌区域底（输入框内、代码块、嵌套在面板里的凹陷区，比 panel 深一档） | gray-1 `#F2F5F7` |
+| `--iflyv-bg-segment-active` | 分段控件（segmented / radio-button）选中项的底 | gray-0 `#FFFFFF` |
+| `--iflyv-bg-card` | 卡片渐变底（demo 演示块、配置卡等需要轻微渐变层次的容器） | gray-1→浅渐变 |
+
+> 关系：`bg-page`（页面灰底）↑ `bg-panel`（白面板浮其上）↑ `bg-inset`（面板内更深的内嵌凹陷）——**明度层级 = 视觉纵深**，别混用（如把内嵌区用 panel 白，会和面板糊成一片、失去凹陷感）。
+
+### 描边色 → 用途（三档按"分隔强度"选）
+
+| 令牌 | 用途 | 值（gray-10 透明度） |
+|---|---|---|
+| `--iflyv-border-subtle` | 最轻分隔：列表行线、卡片内细分隔，几乎不打扰 | 6% |
+| `--iflyv-border-default` | 常规边框：输入框、卡片、面板的默认描边 | 10% |
+| `--iflyv-border-strong` | 加重边框：需要强调的分区、选中/聚焦态边框 | 20% |
+
+> 选强度：**能用越轻的越好**（本设计系统"线条为辅、层级为主"）。默认边框用 `default`；只在需要"更明显的分隔"时才升到 `strong`；行内细线用 `subtle`。不要用裸 `1px solid #ccc`——一律走这三档令牌。
 
 ### 扩展色板
 
@@ -150,9 +203,45 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 ---
 
 
+### 语义字阶 → 用途（选复合字体令牌照此对号入座）
+
+设文字时**先按用途选语义复合令牌 `--iflyv-font-*`**（一条搞定字号/行高/字重/字体族），不要自己拼字号。各字阶用途：
+
+| 令牌 | 用途 | 规格（字号/行高 · 字重/字体） |
+|---|---|---|
+| `--iflyv-font-title-page` | 页面标题（一个页面最顶层的大标题） | 26/48 · 阿里普惠 800 |
+| `--iflyv-font-title-module` | 模块标题（页面内一个大区块的标题） | 18/36 · semibold |
+| `--iflyv-font-title-component` | 组件标题（卡片/配置卡/小区块的标题） | 14/20 · semibold |
+| `--iflyv-font-body-primary` | 常规正文（主要阅读内容） | 16/24 |
+| `--iflyv-font-body-sub` | 次要正文（次要说明、tooltip、表格单元格等） | 14/20 |
+| `--iflyv-font-body-min` | 辅助信息（最小级说明、附注） | 12/18 |
+| `--iflyv-font-tab-active` | 页面级选中 Tab 项 | 26/36 · 阿里普惠 800 |
+| `--iflyv-font-tab-active-sub` | 模块级选中 Tab 项 | 18/28 · semibold |
+| `--iflyv-font-tab-default` | 默认（未选中）Tab 项 | 18/36 · regular |
+| `--iflyv-font-label-primary` | 常规标签（表单 label、字段名等） | 12/18 |
+| `--iflyv-font-number-display` | 展示数字（大号强调数字，如数据看板） | 26/40 · 抖音美好体 |
+| `--iflyv-font-number-display-sm` | 展示数字（小号） | 22/34 · 抖音美好体 |
+
+> 判断入口：先问"这段文字是什么角色？"——页面主标题→`title-page`、区块标题→`title-module`、卡片标题→`title-component`、正文→`body-primary`、次要说明→`body-sub`、最小附注→`body-min`、表单 label→`label-primary`、强调数字→`number-display`。选定后按下方「设置文字的铁律」落地（含空格字体名的拆分规则）。
+
+> ⚠️ **本表会持续扩展**：后续新增/新用途的语义字阶（如新的标题级、数字级、状态文字级等），**必须同步更新本表**，不能只在 demo 的 `FontSemanticDemo.vue` 里加一行——demo 展示对下游 CC 不可见，只有写进本文件，下游 `@` 接入后 CC 才能"知道该用哪个字阶"。（同「语义信息沉淀通则」，见下。）
+
+### 设置文字的铁律：优先用语义复合令牌，禁止只散设 font-size
+
+> 「设置一段文字」= 一次性定义 **字号 + 行高 + 字重 +（必要时）字体族** 这一整套，不是只改字号。**只写 `font-size` 是最典型的翻车**：行高会塌回浏览器默认 `line-height: normal`（≈字号×1.2，出现 16.5 这种非令牌魔法值），字重也可能不对。
+
+按优先级选用：
+
+1. **首选：语义复合令牌**（一条搞定整套）——`font: var(--iflyv-font-body-sub)` / `var(--iflyv-font-title-component)` 等。这层已把字号/行高/字重/字体族打包好，改一处处处同步，是设置文字的默认方式。
+   > ⚠️ **例外（含空格字体名不能用 `font:` 简写）**：当复合令牌的字体族含带空格的引号字体名（如 `'Segoe UI'`、阿里普惠），CSS 的 `font:` 简写会解析出错。此时**改为拆分属性**，逐条引用**单值令牌**：`font-size` + `line-height` + `font-weight`（+ `font-family`），见下方独立 token 用法。**拆分时行高、字重一个都不能漏**——漏了就是塌回默认。
+
+2. **次选：拆分单值令牌**（复合令牌不适用、或只需覆盖其中一两项时）——必须**成套设齐**：`font-size: var(--iflyv-font-size-14); line-height: var(--iflyv-line-height-20); font-weight: var(--iflyv-font-weight-regular);`。字号档位对应的行高**照下方配对表选**，绝不留空让它走 `normal`。
+
+3. **禁止**：`font-size: 16px`（硬编码，第 14 行）、`font-size: var(--iflyv-font-size-14)` 后不设行高（行高塌陷）、用 `font:` 简写套含空格字体名的令牌（解析出错）。
+
 ### 字号-行高推荐配对表
 
-使用独立 token 时，参照此表选择默认行高搭配：
+用独立 token（上文第 2 类）时，参照此表选择默认行高搭配——**每个字号都有对应行高，设字号必设行高**：
 
 | 字号 token | 默认配对行高 | 推荐语义比例 |
 |-----------|------------|------------|
@@ -181,14 +270,15 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 
 ### 圆角速查
 
-| 令牌 | 值 | 效率型 | 展示型 | 典型用途 |
-|------|-----|:---:|:---:|------|
-| `radius-xs` | 4px | ✓ | ✓ | Tag、Checkbox、Select item |
-| `radius-sm` | 8px | ✓ | ✓ | Button、Input、Card、Table |
-| `radius-md` | 12px | ✓ | ✓ | Drawer、Dialog、页面级容器 |
-| `radius-lg` | 16px | — | ✓ | 展示型内容卡片、图表容器、引述块 |
-| `radius-xl` | 24px | — | ✓ | Hero 区块、特征卡片（慎用） |
-| `radius-full` | 999px | ✓ | ✓ | 胶囊按钮、全圆角 Tag |
+| 令牌 | 值 | 典型用途 |
+|------|-----|------|
+| `radius-xs` | 4px | Tag、Checkbox、Select item、Dropdown item（下拉项） |
+| `radius-sm` | 8px | Button、Input、小卡片、Table、大多数组件默认 |
+| `radius-md` | 10px | 大卡片 |
+| `radius-lg` | 12px | 页面级容器、Dialog（弹窗）、Drawer（抽屉） |
+| `radius-full` | 999px | 胶囊按钮、全圆角 Tag（对高度为 h 的元素圆角自动收敛为 h/2） |
+
+> 只有这 5 档（与源头 `design-token/css/spacing.scss`、demo `RadiusDemo` 一致）；档位从小到大对应"元素越大圆角越大"：小控件 xs/sm、卡片 md、页面级容器/弹窗/抽屉 lg、需要胶囊/圆形用 full。**不要用裸 `border-radius: 6px` 这种非档位值**，一律走这 5 档令牌。
 
 ### 间距速查
 
@@ -202,6 +292,18 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 | 同级模块之间（卡片与卡片、区块与区块） | `spacing-5` ~ `spacing-6` | 20~24px |
 | 页面级 Section 之间 | `spacing-6` ~ `spacing-12` | 24~48px |
 | 展示型页面 Section 之间 | `spacing-12`+ | 48px+ |
+
+### 阴影速查（三档层级 = 元素"浮起"高度）
+
+阴影**只用于浮层**（卡片默认不加投影，见「禁止事项」），三档按元素"浮起"高度递进——层级越高、阴影越扩散：
+
+| 令牌 | 用途 | 值 |
+|---|---|---|
+| `--iflyv-shadow-hover` | **悬浮反馈**：卡片/可点元素 hover 时的轻微浮起 | `0 6px 8px` 轻 |
+| `--iflyv-shadow-related` | **关联浮层**：由某元素触发、依附于它的浮层（下拉菜单、气泡 Popover、Tooltip） | `0 6px 32px 4px` 中 |
+| `--iflyv-shadow-independent` | **独立浮层**：脱离触发点、独立存在的重浮层（Dialog 弹窗、Drawer 抽屉） | `0 12px 48px 8px` 重 |
+
+> 选档：跟随鼠标的轻反馈 → `hover`；挂在某个按钮/输入框上的下拉气泡 → `related`；盖住页面的弹窗抽屉 → `independent`。**不要给静态卡片加阴影**（本设计系统"UI 浮在背景上而非压在上面"，静态层次靠描边/底色，不靠投影）。
 
 ---
 

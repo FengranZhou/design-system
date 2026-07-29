@@ -98,10 +98,10 @@ const colorGroups = [
   {
     label: '图标色 Icon',
     tokens: [
-      { name: '--iflyv-icon-1', desc: '一级' },
-      { name: '--iflyv-icon-2', desc: '二级' },
-      { name: '--iflyv-icon-3', desc: '三级' },
-      { name: '--iflyv-icon-4', desc: '四级' },
+      { name: '--iflyv-icon-1', desc: '一级/主图标' },
+      { name: '--iflyv-icon-2', desc: '二级/常规' },
+      { name: '--iflyv-icon-3', desc: '三级/辅助' },
+      { name: '--iflyv-icon-4', desc: '四级/禁用' },
       { name: '--iflyv-icon-on-dark', desc: '深底图标' },
     ],
   },

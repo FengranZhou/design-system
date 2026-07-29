@@ -2,7 +2,7 @@
   <section id="empty" class="demo-section">
     <h2 class="demo-section__title">Empty 空状态</h2>
 
-    <div class="empty-showcase">
+    <div class="demo-block empty-showcase">
       <!-- 左侧：空状态预览，配置由右侧卡片控制 -->
       <div class="empty-preview">
         <el-empty
@@ -29,10 +29,10 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="带按钮">
+          <el-form-item label="按钮">
             <el-switch v-model="withButton" />
           </el-form-item>
-          <el-form-item label="承载容器">
+          <el-form-item label="级别">
             <el-radio-group v-model="container">
               <el-radio value="page">页面级</el-radio>
               <el-radio value="block">模块级</el-radio>
@@ -107,6 +107,14 @@ const current = computed(() => ({
 </script>
 
 <style scoped>
+/* demo 块用 bg-card 大卡片做区分（与 Avatar / Select / Dialog / Navigation 一致，本页排版走令牌）。 */
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+}
+
 /* 纯本页排版：左侧预览 + 右侧配置卡片 */
 .empty-showcase {
   display: flex;
@@ -120,12 +128,19 @@ const current = computed(() => ({
   justify-content: center;
 }
 
-/* 右侧配置卡片：bg-card 包裹，「配置项」标题 + el-form 表单布局 */
+@media (max-width: 1100px) {
+  .empty-showcase { flex-direction: column; }
+  .config-card { width: 100%; }
+}
+
+/* 配置卡在块卡（bg-card）内部，白底 + 细边框区分层次（与 Avatar 配置卡一致） */
 .config-card {
   flex: 0 0 auto;
   width: 280px;
+  align-self: flex-start;
   padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-card);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
   border-radius: var(--iflyv-radius-md);
 }
 .config-card__title {

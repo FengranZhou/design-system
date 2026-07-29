@@ -3,7 +3,7 @@
     <h2 class="demo-section__title">Other 其他组件</h2>
 
     <div class="demo-block">
-      <p class="demo-label">Link 链接</p>
+      <p class="demo-label">链接</p>
       <div class="demo-row">
         <el-link type="default">默认链接</el-link>
         <el-link type="primary">主要链接</el-link>
@@ -16,7 +16,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Divider 分割线</p>
+      <p class="demo-label">分割线</p>
       <div>
         <p style="color: var(--iflyv-text-2);">上方内容区域</p>
         <el-divider />
@@ -27,7 +27,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Result 结果页</p>
+      <p class="demo-label">结果页</p>
       <div class="demo-row" style="gap: 24px;">
         <el-result icon="success" title="提交成功" sub-title="审核结果将在 1-3 个工作日内通知">
           <template #extra>
@@ -43,7 +43,7 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Backtop 回到顶部</p>
+      <p class="demo-label">回到顶部</p>
       <div
         class="backtop-scroll-area"
         style="height: 200px; overflow-y: auto; border: 1px solid var(--el-border-color); border-radius: 4px; padding: 16px; position: relative;"

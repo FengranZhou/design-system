@@ -63,6 +63,14 @@ const avatarSize = ref(40)
 </script>
 
 <style scoped>
+/* demo 块用 bg-card 大卡片做区分（与 Select / Dialog / Navigation 一致，本页排版走令牌）。 */
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+}
+
 /* 头像块：左列（标题+示例）+ 右列配置卡，配置卡顶与标题顶齐平 */
 .avatar-showcase {
   display: flex;

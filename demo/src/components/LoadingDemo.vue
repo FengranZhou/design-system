@@ -27,19 +27,35 @@
 
 <script setup lang="ts">
 import { ElLoading } from 'element-plus'
+import { onBeforeUnmount } from 'vue'
+
+// 保存实例引用：组件卸载 / HMR 热替换时兜底关闭，避免全屏遮罩残留盖住页面（含顶部导航）。
+let fullscreenLoading: ReturnType<typeof ElLoading.service> | null = null
 
 const openFullscreen = () => {
-  const loading = ElLoading.service({
+  fullscreenLoading = ElLoading.service({
     lock: true,
     text: '加载中...',
     background: 'var(--iflyv-mask-primary)',
   })
-  setTimeout(() => loading.close(), 3000)
+  setTimeout(() => {
+    fullscreenLoading?.close()
+    fullscreenLoading = null
+  }, 3000)
 }
+
+// 兜底：本 demo 组件卸载前，若全屏 Loading 还开着就强制关掉
+onBeforeUnmount(() => {
+  fullscreenLoading?.close()
+  fullscreenLoading = null
+})
 </script>
 
 <style scoped lang="scss">
 .loading-area {
+  /* position:relative 让 v-loading 的 absolute 遮罩锁在本块内——
+     否则遮罩会向上找定位祖先、铺到大范围盖住顶部导航。 */
+  position: relative;
   height: 120px;
   border-radius: var(--iflyv-radius-sm);
   background-color: var(--iflyv-bg-inset);

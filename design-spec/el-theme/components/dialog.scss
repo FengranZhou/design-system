@@ -2,6 +2,14 @@
 /* ========================= Dialog 样式覆盖 ============================== */
 /* ======================================================================== */
 
+/* 结构约定 —— 弹窗内「提示信息条」：
+   当弹窗需要一句全局引导/说明（如操作前提、影响范围、填写须知）时，约定放在
+   content 区顶部（header 之下、主内容之上），用中性灰底 alert 承载：
+     <el-alert class="alert-neutral" type="info" :closable="false" title="提示信息" />
+   并与下方内容保持 20px（spacing-5）间距（由本文件下方规则统一控制，使用方无需再写间距）。
+   语义级别：一般引导用中性灰底（alert-neutral）；仅当提示本身是警告/危险语义时，
+   才改用对应 type。不要用品牌绿底承载普通提示（品牌色仅用于强调，见 tag.scss 同类约定）。 */
+
 /* overlay 容器改为 flex 居中（覆盖 EP 默认顶部对齐 + margin auto 居中模式）。
    @depends-on: 配合下方 .el-dialog 的 margin: 0 共同生效——外层 flex 居中后，
                 dialog 不需要再 margin auto。
@@ -23,11 +31,23 @@
   padding: 12px 24px 20px;
   border-radius: var(--iflyv-radius-lg);
 
+  /* ==================== 高度范围（源头统一约定，使用方无需再设） ====================
+     默认下限 240px（操作弹窗——装表单/操作，内容多，不至于过矮）、上限 calc(100vh - 120px)（上下各留 60px 视口边距，不顶满屏）。
+     提示弹窗（语义变体 is-warning/is-danger/is-success/is-info，内容轻）下限收到 160px，见下方变体区块。
+     配套：整体 flex column 纵向排布 → header/footer 固定不压缩（flex-shrink:0）、body 吃剩余高度并内部滚动，
+     确保内容超高时 footer 按钮始终可见可点（不被视口裁掉）。 */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 240px;
+  max-height: calc(100vh - 120px);
+
   /* ==================== 标题栏 Header ====================
      @depends-on: 移除 EP 默认的 header border-bottom（分割线），改用 padding-bottom + margin-bottom
                   提供视觉间距，使弹窗整体更轻盈。
      @when-changed: 若需要恢复分割线（特殊场景如多步骤弹窗），需在使用方 scoped 样式中加回。 */
   .el-dialog__header {
+    flex-shrink: 0; /* 限高滚动时头部固定不压缩 */
     padding: 0 0 12px;
     margin-bottom: 8px;
     margin-inline-end: 0;
@@ -36,11 +56,55 @@
     align-items: center;
   }
 
+  /* 当 body 顶部紧跟提示信息条（首元素为 el-alert）时，取消 header 的下边距：
+     提示条自身承接与内容的间距，header 无需再留 8px，避免间距叠加过大。
+     结构约定见本文件头部「弹窗内提示信息条」。 */
+  .el-dialog__header:has(+ .el-dialog__body > .el-alert:first-child) {
+    margin-bottom: 0;
+  }
+
+  /* 弹窗内提示信息条（body 顶部的首个 el-alert）与下方内容区的间距：统一 20px。
+     由源头控制，使用方只需把提示 alert 放在 body 首位，无需自行写间距。 */
+  .el-dialog__body > .el-alert:first-child {
+    margin-bottom: var(--iflyv-spacing-5);
+  }
+
   .el-dialog__title {
     font-size: var(--iflyv-font-size-16);
     line-height: var(--iflyv-line-height-24);
     font-weight: 600;
     color: var(--iflyv-text-1);
+  }
+
+  /* ==================== 多标题（可点击切换的头部标题组）====================
+     结构约定：通过 #header 具名插槽放一组标题，容器加 .dialog-titles，每个标题用 .dialog-title-item，
+     当前选中项加 .is-active。用于「一个弹窗内多视图切换」（如 标题一/标题二/标题三）。
+       <template #header>
+         <div class="dialog-titles">
+           <span class="dialog-title-item is-active">标题一</span>
+           <span class="dialog-title-item">标题二</span>
+         </div>
+       </template>
+     选中态 = 普通弹窗标题（600 / 16 / text-1）；未选中 = 400 / 16 / 24 / text-3；标题间距 20px。 */
+  .dialog-titles {
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-5);
+  }
+  .dialog-title-item {
+    font-size: var(--iflyv-font-size-16);
+    line-height: var(--iflyv-line-height-24);
+    font-weight: var(--iflyv-font-weight-regular);
+    color: var(--iflyv-text-3);
+    cursor: pointer;
+    transition: color 0.15s;
+
+    &:hover { color: var(--iflyv-text-2); }
+    &.is-active {
+      font-weight: 600;
+      color: var(--iflyv-text-1);
+      cursor: default;
+    }
   }
 
   /* 关闭按钮：用 SVG mask 替换 EP 默认的 X 图标，与 Lucide 风格统一。
@@ -69,6 +133,11 @@
 
   /* ==================== 内容区 Body ==================== */
   .el-dialog__body {
+    /* 限高滚动：body 吃掉 header/footer 之外的剩余高度，内容超出时仅 body 内部滚动，
+       header/footer 固定。min-height:0 是 flex 子项允许收缩滚动的必要条件（否则 flex 子项默认不小于内容高度，overflow 失效）。 */
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     padding: 0;
     color: var(--iflyv-text-2);
     font-size: var(--iflyv-font-size-14);
@@ -85,6 +154,7 @@
                     使用方禁止再写 .el-dialog__footer .el-button { margin-inline-start: ... }。
      @see: examples/dialog.examples.vue 「确认对话框」section 的标准按钮顺序。 */
   .el-dialog__footer {
+    flex-shrink: 0; /* 限高滚动时底部按钮固定不压缩、始终可见可点 */
     padding: 20px 0 0;
     border-top: none;
     display: flex;
@@ -116,6 +186,16 @@
    @when-changed: 升级 EP 大版本若改了 .el-dialog__title 结构需要同步调整。
                   调整图标尺寸：底板 20×20 + 内部 icon 14×14（在 background-size 控制）。
    @see: examples/dialog.examples.vue 「语义化标题」section。 */
+
+/* 提示弹窗高度下限：语义变体（警告/危险/成功/信息）是「提示」类，内容轻（一两行文案 + 按钮），
+   下限收到 160px（区别于基础对话框这类「操作」弹窗的 240px 下限，避免提示弹窗被撑出大片空白）。
+   上限仍沿用 .el-dialog 的 max-height: calc(100vh - 120px)。 */
+.el-dialog.is-warning,
+.el-dialog.is-danger,
+.el-dialog.is-success,
+.el-dialog.is-info {
+  min-height: 160px;
+}
 
 .el-dialog.is-warning .el-dialog__title,
 .el-dialog.is-danger .el-dialog__title,

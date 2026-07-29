@@ -6,7 +6,7 @@
 /* 使用方式：
    页面级：  <el-tabs class="tabs-page">   — 18px/28px，高度 64px
    模块级：  <el-tabs>                     — 16px/24px，高度 40px（默认）
-   子模块级：<el-tabs class="tabs-sub">    — 14px/20px，高度 32px
+   组件级：  <el-tabs class="tabs-sub">    — 14px/20px，高度 36px
 */
 .el-tabs__nav-prev,
 .el-tabs__nav-next {
@@ -69,8 +69,8 @@
   gap: var(--iflyv-spacing-6);
   height: auto;
 }
-/* 大模块级常规项：文字+线 垂直自适应布局，间距 2px，零 padding，宽度 hug（对齐 .tabs-page 机制）
-   字号仍走大模块级令牌「默认 Tab 项」（18/36 regular） */
+/* 模块级常规项：文字+线 垂直自适应布局，间距 2px，零 padding，宽度 hug（对齐 .tabs-page 机制）
+   字号仍走模块级令牌「默认 Tab 项」（18/36 regular） */
 .el-tabs:not(.tabs-page):not(.tabs-sub) .el-tabs__item {
   display: inline-flex;
   flex-direction: column;
@@ -82,7 +82,7 @@
   font: var(--iflyv-font-tab-default);
   color: var(--iflyv-text-3);
 }
-/* 大模块级激活项：字号走令牌「模块级选中 Tab 项」（18/28 semibold），顶部 padding 4px（仅激活项） */
+/* 模块级激活项：字号走令牌「模块级选中 Tab 项」（18/28 semibold），顶部 padding 4px（仅激活项） */
 .el-tabs:not(.tabs-page):not(.tabs-sub) .el-tabs__item.is-active {
   padding-top: var(--iflyv-spacing-1) !important;
   font: var(--iflyv-font-tab-active-sub);
@@ -207,7 +207,7 @@
   width: fit-content;
   background-color: var(--iflyv-bg-inset);
   border-radius: var(--iflyv-radius-sm);
-  padding: 3px;
+  padding: var(--iflyv-spacing-1);   /* 4px：header 总高 = item 28 + padding 4×2 = 36 */
 }
 
 .tabs-sub .el-tabs__nav-wrap { margin-bottom: 0; }
@@ -215,7 +215,7 @@
 .tabs-sub .el-tabs__item {
   font-size: var(--iflyv-font-size-14);
   line-height: var(--iflyv-line-height-20);
-  height: 26px;
+  height: 28px;
   padding: var(--iflyv-spacing-1) var(--iflyv-spacing-3) !important;
   border-radius: var(--iflyv-radius-xs);
   position: relative;
