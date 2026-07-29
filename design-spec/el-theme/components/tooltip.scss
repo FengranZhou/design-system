@@ -1,6 +1,30 @@
 /* Tooltip：统一 light 与 dark 为白底风格（设计决策：项目不使用暗色 Tooltip） */
-/* 字号 + 行高 rem 化 */
+/* 字号 + 行高 rem 化（.el-popper 是所有浮层基类，此处只给通用行高兜底） */
 .el-popper { font-size: var(--iflyv-font-size-12); line-height: var(--iflyv-line-height-20); }
+
+/* Tooltip 气泡文字用 body-sub 语义字阶（次要正文 14/20）：只针对「文字提示型」气泡（is-light/is-dark），
+   排除 popover（.el-popover）与内容型浮层（picker/select/cascader/autocomplete/dropdown），
+   它们各自的文字字号由自身组件规则决定，不受 tooltip 影响。
+   ⚠️ 字体族含空格字体名（'Segoe UI' 等），不能用 font: 简写复合令牌，必须拆分属性逐条设。 */
+.el-popper.is-light:not(.el-popover):not(.el-picker__popper):not(.el-select__popper):not(.el-cascader__dropdown):not(.el-autocomplete__popper):not(.el-dropdown__popper),
+.el-popper.is-dark:not(.el-popover):not(.el-picker__popper):not(.el-select__popper):not(.el-cascader__dropdown):not(.el-autocomplete__popper):not(.el-dropdown__popper) {
+  font-size: var(--iflyv-font-size-14);
+  line-height: var(--iflyv-line-height-20);
+  font-weight: var(--iflyv-font-weight-regular);
+  /* 高度：单行 ≈36（内容 line-height 20 + 上下 padding 8×2 = 36；加 EP 气泡 1px×2 边框实测约 38，
+     2px 边框肉眼难辨，优先保多行留白）、多行随内容撑高。
+     上下 padding 8（spacing-2）确保多行不贴边；左右 12（spacing-3）。
+     ⚠️ 单行垂直居中「不用 flex」：line-height 20 + 上下对称 padding 已让单行居中；
+     若用 display:flex + align-items:center，内容超过 max-height 触发滚动时会裁掉顶部（flex+overflow 经典冲突），
+     滚到顶第一行被切一半——故保持普通块级 + overflow:auto，滚动正常、上下 padding 作稳定留白。 */
+  box-sizing: border-box;
+  min-height: var(--el-component-size);
+  padding-block: var(--iflyv-spacing-2);
+  padding-inline: var(--iflyv-spacing-3);
+  /* 超长内容：中文/带空格文本到 318 宽自动换行、高度撑开（min-height 允许长高）；
+     无空格长串（长英文单词 / URL）用 overflow-wrap:anywhere 强制断行，避免溢出气泡边界。 */
+  overflow-wrap: anywhere;
+}
 
 .el-popper.is-light,
 .el-popper.is-dark {
@@ -10,16 +34,24 @@
   color: var(--iflyv-text-2) !important;
   box-shadow: var(--iflyv-shadow-related);
 
-  /* 尺寸自适应 + 最大宽高约束 + 超出滚动 */
-  max-width: 318px;
-  max-height: 240px;
-  overflow: auto;
-
   .el-popper__arrow { display: none; }
   &[data-popper-placement^="bottom"] { margin-top: -8px; }
   &[data-popper-placement^="top"] { margin-bottom: -8px; }
   &[data-popper-placement^="left"] { margin-right: -8px; }
   &[data-popper-placement^="right"] { margin-left: -8px; }
+}
+/* 限宽/限高 + 超出滚动：仅对「文字型」提示浮层（tooltip / popover）生效——文字过多时限宽 318 / 限高 240 + 滚动。
+   功能性内容浮层（date-picker / select / cascader / time-select / autocomplete / dropdown）
+   的宽、高、滚动全由 EP 精心设置（范围面板宽 ~760、时间列要 auto 滚、日期网格要 visible），
+   绝不能被这里的 max-width/max-height/overflow 覆盖——用 :not() 整体排除，尺寸交还 EP 原生
+   （否则：318 限宽会把范围面板挤爆右/下边框、240 限高会截断日期面板出多余滚动条）。 */
+.el-popper.is-light,
+.el-popper.is-dark {
+  &:not(.el-picker__popper):not(.el-select__popper):not(.el-cascader__dropdown):not(.el-autocomplete__popper):not(.el-time-panel):not(.el-dropdown__popper) {
+    max-width: 318px;
+    max-height: 240px;
+    overflow: auto;
+  }
 }
 .el-popover.el-popper {
   --el-popover-border-radius: var(--iflyv-radius-sm);

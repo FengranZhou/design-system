@@ -3,7 +3,7 @@
     <h2 class="demo-section__title">Transfer 穿梭框</h2>
 
     <div class="demo-block">
-      <p class="demo-label">Transfer 穿梭框</p>
+      <p class="demo-label">穿梭框</p>
       <div class="demo-row">
         <el-transfer v-model="transferValue" :data="transferData" :titles="['可选列表', '已选列表']" />
       </div>

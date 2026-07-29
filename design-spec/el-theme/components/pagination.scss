@@ -18,10 +18,24 @@
   --el-pagination-button-height-small: 1.5rem;
   --el-pagination-button-width-large: 2.5rem; /* 40px @md */
   --el-pagination-button-height-large: 2.5rem;
+  /* 页码 / 翻页按钮去掉白底填充：默认态透明，融入所在容器底色（灰底卡片 / 白底表格皆自适应）。
+     选中态由下方 .el-pager li.is-active 单独给品牌色，hover 态由 hover-color 处理，均不受此影响。 */
+  --el-pagination-button-bg-color: transparent;
+  --el-pagination-button-disabled-bg-color: transparent;
   height: var(--el-component-size);
 }
 .el-pagination .el-input { --el-component-size: 2rem; }
 .el-pagination .el-select { --el-component-size: 2rem; width: 120px; }
+
+/* 页码 / 翻页按钮去掉白底填充：非 is-background 模式下 EP 默认给页码与前后翻页按钮
+   白色底（var(--el-bg-color)），在灰底卡片上会显成白块。统一置透明，融入所在容器底色。
+   选中态由 .el-pager li.is-active 单独给品牌色，hover 由 hover-color 处理，均不受影响。
+   （is-background 模式的按钮底另由上方 --el-pagination-button-bg-color 变量置透明。） */
+.el-pager li,
+.el-pagination .btn-prev,
+.el-pagination .btn-next {
+  background: transparent;
+}
 /* Pagination 翻页图标 → Lucide ChevronLeft / ChevronRight */
 .el-pagination .btn-prev,
 .el-pagination .btn-next {

@@ -3,8 +3,8 @@
 /* ======================================================================== */
 
 .el-slider {
-  /* 未填充轨道背景统一为 bg-inset */
-  --el-slider-runway-bg-color: var(--iflyv-bg-inset);
+  /* 未填充轨道背景统一为纯白（gray-0），仅激活段呈品牌绿 */
+  --el-slider-runway-bg-color: var(--iflyv-bg-page-white);
 }
 
 .el-slider__button {

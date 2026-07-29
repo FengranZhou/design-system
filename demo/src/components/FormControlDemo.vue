@@ -5,7 +5,7 @@
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
         <p class="demo-label">基础单选</p>
-        <p class="demo-desc">与 select 相比，Radio 所有选项默认可见，方便用户在比较中选择，选项数需 ≤5</p>
+        <p class="demo-desc">与 select 相比，Radio 所有选项默认可见，方便用户在比较中选择；适合选项 ≤5 且需并排比较，选项 &gt;5 则改用 select 下拉</p>
         <!-- 两个 el-radio-group 是单选状态约束所需（一组正常单选、一组展示禁用/选中禁用）；
              用 radio-inline-row 让两组的四个 radio 视觉上连续等距排列，与 Checkbox 一致 -->
         <div class="demo-row radio-inline-row">
@@ -31,8 +31,8 @@
 
     <div class="demo-block">
       <p class="demo-label">单选按钮组</p>
-      <p class="demo-desc">以切换按钮形式呈现</p>
-      <div class="demo-row" style="gap: 30px">
+      <p class="demo-desc">以切换按钮形式呈现，一般不默认使用</p>
+      <div class="demo-row">
         <el-radio-group v-model="radioButtonValue">
           <el-radio-button value="left">左对齐</el-radio-button>
           <el-radio-button value="center">居中</el-radio-button>
@@ -48,20 +48,20 @@
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
-        <p class="demo-label">Checkbox 多选</p>
+        <p class="demo-label">多选</p>
         <!-- checkbox-inline-row：让 group 内两项与后面四个独立项在 flex 里成为平级等距子项
              （group 盒子 display:contents 透明化，与 radio-inline-row 同一手法，纯排版不碰组件外观） -->
         <div class="demo-row checkbox-inline-row">
-          <!-- 状态清单顺序：选中 / 未选 / 半选 / 禁用 / 选中禁用 / 半选禁用
+          <!-- 状态清单顺序：选中 / 未选 / 半选 / 选中禁用 / 未选禁用 / 半选禁用
                （三个常态在前、三个禁用态在后）。仅「选中」「未选」两个可交互项进 group 的 v-model；
-               半选、禁用、选中禁用、半选禁用均为纯状态展示（indeterminate / disabled 直接置位，不进 group）。 -->
+               半选、选中禁用、未选禁用、半选禁用均为纯状态展示（indeterminate / disabled 直接置位，不进 group）。 -->
           <el-checkbox-group v-model="checkboxValue">
             <el-checkbox :label="checkboxShowText ? '选中' : ''" value="vue" />
             <el-checkbox :label="checkboxShowText ? '未选' : ''" value="react" />
           </el-checkbox-group>
           <el-checkbox :indeterminate="true" :label="checkboxShowText ? '半选' : ''" />
-          <el-checkbox :model-value="false" disabled :label="checkboxShowText ? '禁用' : ''" />
           <el-checkbox :model-value="true" disabled :label="checkboxShowText ? '选中禁用' : ''" />
+          <el-checkbox :model-value="false" disabled :label="checkboxShowText ? '未选禁用' : ''" />
           <el-checkbox :indeterminate="true" disabled :label="checkboxShowText ? '半选禁用' : ''" />
         </div>
       </div>
@@ -77,7 +77,7 @@
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
-        <p class="demo-label">Switch 开关</p>
+        <p class="demo-label">开关</p>
         <!-- 文字开关切换 switch 右侧文字标签是否显示；关闭（默认）则只留开关本体。
              文字统一显示在开关右侧（active-text，EP 默认渲染在右），随开关状态取色（开=主色、禁用=灰）。
              文字内容为各自的状态名：开关 / 关闭禁用 / 开启禁用。 -->
@@ -107,14 +107,14 @@
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Slider 滑块</p>
+      <p class="demo-label">滑块</p>
       <div style="width: 400px">
         <el-slider v-model="sliderValue" />
       </div>
     </div>
 
     <div class="demo-block">
-      <p class="demo-label">Rate 评分</p>
+      <p class="demo-label">评分</p>
       <div class="demo-row">
         <el-rate v-model="rateValue" />
       </div>

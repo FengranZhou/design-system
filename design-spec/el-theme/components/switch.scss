@@ -22,6 +22,10 @@
 .el-switch.is-disabled { opacity: 1; }
 .el-switch.is-disabled .el-switch__core { opacity: 0.6; }
 
+/* 去掉轨道底板描边：EP 默认给 .el-switch__core 加 1px 边框，关闭态灰底下会露出一圈描边。
+   本设计里开关轨道为纯色底板、不要边框（开启态被绿底盖住，仅关闭态可见），统一抹掉。 */
+.el-switch__core { border-color: transparent; }
+
 /* 字号 rem 化：覆盖 EP 尺寸变体 baked-in px */
 .el-switch { font-size: var(--iflyv-font-size-14); }
 .el-switch--small { font-size: var(--iflyv-font-size-12); }

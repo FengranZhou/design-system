@@ -88,12 +88,16 @@
 
         <template v-if="currentTopTab === 'business'">
         <!-- 业务组件层导航：随组件逐个加入（如 AiPanel 等） -->
+        <ul class="app-sidebar__nav">
+          <li><a href="#step-bar" :class="{ 'is-active': activeSection === 'step-bar' }">StepBar 步骤条</a></li>
+        </ul>
         </template>
 
         <template v-if="currentTopTab === 'pattern'">
         <ul class="app-sidebar__nav">
           <li><a href="#pattern-form" :class="{ 'is-active': activeSection === 'pattern-form' }">Form Layout 表单布局</a></li>
           <li><a href="#pattern-list-item" :class="{ 'is-active': activeSection === 'pattern-list-item' }">List Item 列表条目</a></li>
+          <li><a href="#pattern-toolbar" :class="{ 'is-active': activeSection === 'pattern-toolbar' }">Toolbar 工具栏布局</a></li>
         </ul>
         </template>
 
@@ -169,11 +173,12 @@
       <OtherDemo />
       </div>
       <div v-show="currentTopTab === 'business'">
-      <!-- 业务组件层：先空着，基础组件优化完成后逐个造入（引用 design-spec/components/） -->
+      <StepBarDemo />
       </div>
       <div v-show="currentTopTab === 'pattern'">
       <PatternFormDemo />
       <PatternListItemDemo />
+      <PatternToolbarDemo />
       </div>
       <div v-show="currentTopTab === 'copywriting'">
       <CopywritingTimeDemo />
@@ -235,7 +240,10 @@ import EmptyDemo from './components/EmptyDemo.vue'
 import OtherDemo from './components/OtherDemo.vue'
 import PatternFormDemo from './components/pattern/PatternFormDemo.vue'
 import PatternListItemDemo from './components/pattern/PatternListItemDemo.vue'
+import PatternToolbarDemo from './components/pattern/PatternToolbarDemo.vue'
 import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
+// 业务组件层 demo（引用 design-spec/components/）
+import StepBarDemo from './components/biz/StepBarDemo.vue'
 // 临时预览 examples 的 import（已注释挂载，需要时取消注释）：
 // import ButtonExamples from '../../design-spec/examples/button.examples.vue'
 // import FormExamples from '../../design-spec/examples/form.examples.vue'
@@ -251,7 +259,7 @@ const sectionIds = [
   'button', 'input', 'select', 'form-control', 'date-picker',
   'tag', 'table', 'avatar', 'data-display',
   'navigation', 'dialog', 'message', 'popconfirm', 'feedback', 'loading', 'empty', 'other',
-  'pattern-form', 'pattern-list-item',
+  'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'copywriting-time',
 ]
 

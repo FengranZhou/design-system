@@ -25,7 +25,7 @@ const radiusTokens = [
   { name: '--iflyv-radius-sm', desc: '按钮 / 输入框 / 小卡片' },
   { name: '--iflyv-radius-md', desc: '大卡片' },
   { name: '--iflyv-radius-lg', desc: '页面 / 弹窗 / 抽屉' },
-  { name: '--iflyv-radius-full', desc: '胶囊' },
+  { name: '--iflyv-radius-full', desc: '全圆角' },
 ]
 
 const rootEl = ref<HTMLElement | null>(null)

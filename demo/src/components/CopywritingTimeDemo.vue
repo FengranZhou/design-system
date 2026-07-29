@@ -46,19 +46,8 @@
 </template>
 
 <script setup lang="ts">
-// 通用时间格式化：本年内省略年份，跨年展示完整年份，精确至分钟
-function formatTime(input: string | number | Date): string {
-  const d = new Date(input)
-  const pad = (n: number) => String(n).padStart(2, '0')
-  const month = pad(d.getMonth() + 1)
-  const day = pad(d.getDate())
-  const hour = pad(d.getHours())
-  const minute = pad(d.getMinutes())
-  const isThisYear = d.getFullYear() === new Date().getFullYear()
-  return isThisYear
-    ? `${month}-${day} ${hour}:${minute}`
-    : `${d.getFullYear()}-${month}-${day} ${hour}:${minute}`
-}
+// 通用时间格式化：引用源头唯一实现（design-spec/utils/format-time.ts），本 demo 只做展示，不重复定义规则
+import { formatTime } from '../../../design-spec/utils/format-time'
 
 // 演示样本：一个本年内、一个跨年
 const currentYear = new Date().getFullYear()

@@ -9,3 +9,5 @@
 export { SearchMini } from './SearchMini'
 export { UserAvatar, AVATAR_MAP, AVATAR_LABEL, type AvatarRole } from './UserAvatar'
 export { DataTable, type DataTableColumn, type DataTableAction, type ColumnKind } from './DataTable'
+export { Breadcrumb, type BreadcrumbItem } from './Breadcrumb'
+export { StepBar } from './StepBar'

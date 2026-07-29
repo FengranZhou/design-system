@@ -96,7 +96,7 @@
 
     <!-- ⏸ 暂停展示：Progress 进度条。暂时不要，保留代码，需要时放开。
     <div class="demo-block">
-      <p class="demo-label">Progress 进度条</p>
+      <p class="demo-label">进度条</p>
       <div style="width: 400px;">
         <el-progress :percentage="30" />
         <el-progress :percentage="70" status="success" style="margin-top: 12px;" />
@@ -107,7 +107,7 @@
     -->
 
     <div class="demo-block">
-      <p class="demo-label">Descriptions 描述列表</p>
+      <p class="demo-label">描述列表</p>
       <el-descriptions :column="3" border>
         <el-descriptions-item label="姓名">张三</el-descriptions-item>
         <el-descriptions-item label="部门">设计部</el-descriptions-item>
@@ -120,19 +120,24 @@
       </el-descriptions>
     </div>
 
+    <!-- ⏸ 暂停展示：Timeline 时间线。暂时不用，保留代码 + script 里 timelineItems / formatTime import，需要时一并放开。
+         时间戳按文案规范格式化：本年内省略年份（MM-DD HH:mm）、跨年展示完整年份，精确至分钟，走源头 formatTime。
     <div class="demo-block">
-      <p class="demo-label">Timeline 时间线</p>
+      <p class="demo-label">时间线</p>
       <el-timeline>
-        <el-timeline-item timestamp="2026-03-17" type="primary">提交需求文档</el-timeline-item>
-        <el-timeline-item timestamp="2026-03-15" type="success">完成设计评审</el-timeline-item>
-        <el-timeline-item timestamp="2026-03-10" type="warning">启动项目排期</el-timeline-item>
-        <el-timeline-item timestamp="2026-03-05">创建项目仓库</el-timeline-item>
+        <el-timeline-item
+          v-for="item in timelineItems"
+          :key="item.raw"
+          :timestamp="formatTime(item.raw)"
+          :type="item.type"
+        >{{ item.label }}</el-timeline-item>
       </el-timeline>
     </div>
+    -->
 
     <!-- ⏸ 暂停展示：Tree 树形控件（基础树 / 可选择树 / 高亮当前节点）。暂时不用，保留代码 + script 里 treeData/treeDataDisabled，需要时一并放开。
     <div class="demo-block">
-      <p class="demo-label">Tree 树形控件</p>
+      <p class="demo-label">树形控件</p>
       <div class="demo-row" style="gap: 48px; align-items: flex-start;">
         <div>
           <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">基础树</p>
@@ -152,7 +157,7 @@
 
     <!-- ⏸ 暂停展示：Collapse 折叠面板（默认模式 + 手风琴模式）。暂时不用，保留代码，需要时放开。
     <div class="demo-block">
-      <p class="demo-label">Collapse 折叠面板</p>
+      <p class="demo-label">折叠面板</p>
       <div class="demo-row" style="gap: 48px; align-items: flex-start;">
         <div style="width: 360px;">
           <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">默认模式</p>
@@ -187,7 +192,7 @@
     -->
 
     <div class="demo-block">
-      <p class="demo-label">Skeleton 骨架屏</p>
+      <p class="demo-label">骨架屏</p>
       <!-- ⏸ 暂停展示：基础骨架屏（无动画）。暂时不用，保留代码，需要时放开。
       <div style="width: 300px;">
         <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">基础骨架屏</p>
@@ -218,6 +223,20 @@
 import { ref } from 'vue'
 import { Bell, Mail, MessageSquare, Heart } from 'lucide-vue-next'
 import { UserAvatar } from '../../../design-spec/components'
+// ⏸ 随 Timeline 时间线块暂停（模板已注释），保留、需要时一并放开（含 formatTime import）：
+/*
+import { formatTime } from '../../../design-spec/utils/format-time'
+
+// Timeline 时间线数据：raw 为完整时间（精确至分钟），展示时经 formatTime 按文案规范格式化。
+// 用当前年，令「本年内省略年份」规则生效（显示 MM-DD HH:mm）。
+const nowYear = new Date().getFullYear()
+const timelineItems = [
+  { raw: `${nowYear}-03-17 09:30`, label: '提交需求文档', type: 'primary' as const },
+  { raw: `${nowYear}-03-15 14:00`, label: '完成设计评审', type: 'success' as const },
+  { raw: `${nowYear}-03-10 10:15`, label: '启动项目排期', type: 'warning' as const },
+  { raw: `${nowYear}-03-05 16:45`, label: '创建项目仓库', type: '' as const },
+]
+*/
 
 // ⏸ 随 Tree 树形控件块暂停（模板已注释），保留、需要时一并放开：
 /*

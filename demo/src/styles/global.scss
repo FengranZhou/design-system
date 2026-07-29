@@ -54,7 +54,8 @@ body {
   border-bottom: 1px solid var(--iflyv-border-default);
   display: flex;
   align-items: stretch;
-  z-index: 20;
+  // 固定导航需压过 EP 内容层浮层（v-loading 区域遮罩 z-index 2000+），否则会被盖住。
+  z-index: 2050;
 
   &__brand {
     width: $app-sidebar-width;
@@ -93,7 +94,7 @@ body {
     margin-top: var(--iflyv-spacing-0_5);
   }
 
-  // 顶栏 tab 复用设计系统「Tabs 大模块级」（裸 el-tabs，样式全在
+  // 顶栏 tab 复用设计系统「Tabs 模块级」（裸 el-tabs，样式全在
   // el-theme/components/tabs.scss 全局层）。此处仅做顶栏内定位：垂直居中 +
   // 隐藏内容面板（顶栏 tab 只做导航，内容由主区 v-show 控制）
   &__nav {
@@ -128,7 +129,8 @@ body {
   border-inline-end: 1px solid var(--iflyv-border-default);
   display: flex;
   flex-direction: column;
-  z-index: 10;
+  // 略低于顶栏（2050），仍压过内容层浮层
+  z-index: 2040;
 
   // 自定义滚动条
   &::-webkit-scrollbar {
@@ -334,15 +336,20 @@ body {
     padding: var(--iflyv-spacing-3) 0;
 
     &::-webkit-scrollbar {
-      width: 4px;
+      width: 6px;
     }
+    /* 默认隐藏（thumb 透明），hover 侧栏时才显示——不常显 */
     &::-webkit-scrollbar-thumb {
-      background: var(--iflyv-text-4);
+      background: transparent;
       border-radius: 4px;
+      transition: background var(--iflyv-duration-normal) var(--iflyv-ease-default);
     }
     &::-webkit-scrollbar-track {
       background: transparent;
     }
+  }
+  &:hover &__nav-wrap::-webkit-scrollbar-thumb {
+    background: var(--iflyv-text-4);
   }
 
   &__group-label {
@@ -456,7 +463,7 @@ body {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--iflyv-spacing-6);
   margin-bottom: 20px;
 
   &:last-child {
@@ -464,16 +471,6 @@ body {
   }
 }
 
-// ============ 内容区滚动条 ============
-.app-content {
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--iflyv-text-4);
-    border-radius: 4px;
-  }
-}
 
 // ============ 辅助样式 ============
 

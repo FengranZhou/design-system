@@ -34,7 +34,8 @@
 
    翻转规则/过渡在此源头统一；使用方只负责传 .is-expanded（展开真值）。 */
 .dropdown-caret {
-  margin-inline-start: var(--iflyv-spacing-1);
+  /* 不自带左间距：箭头与文字的间距由触发器父容器的 flex gap 统一提供（与本设计系统"间距归父容器 gap、
+     不在子元素上叠加"一致）。若在此再加 margin，会与父级 gap 叠加成双倍间距。 */
   vertical-align: middle;
   transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
 }
