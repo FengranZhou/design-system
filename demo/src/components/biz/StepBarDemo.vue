@@ -7,7 +7,7 @@
         <p class="demo-label">步骤条</p>
         <!-- 步骤条本体：透明底，这里给一个浅色承载区便于观察（纯本页排版） -->
         <div class="step-bar-stage">
-          <StepBar :steps="steps" :current="current" />
+          <StepBar :steps="steps" :current="current" :finished="finished" />
         </div>
       </div>
       <aside class="config-card">
@@ -22,9 +22,12 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="当前步">
-            <el-radio-group v-model="current">
+            <el-radio-group v-model="current" :disabled="finished">
               <el-radio v-for="n in stepCount" :key="n" :value="n">{{ n }}</el-radio>
             </el-radio-group>
+          </el-form-item>
+          <el-form-item label="全部完成">
+            <el-switch v-model="finished" />
           </el-form-item>
         </el-form>
       </aside>
@@ -41,6 +44,7 @@ const STEP_POOL = ['填写要求', '生成清单', '生成内容', '预览确认
 
 const stepCount = ref(3)
 const current = ref(1)
+const finished = ref(false)
 const steps = computed(() => STEP_POOL.slice(0, stepCount.value))
 
 // 步骤数变小时，把越界的「当前步」收回到末步
@@ -48,7 +52,11 @@ watch(stepCount, (n) => {
   if (current.value > n) current.value = n
 })
 
-const configForm = computed(() => ({ stepCount: stepCount.value, current: current.value }))
+const configForm = computed(() => ({
+  stepCount: stepCount.value,
+  current: current.value,
+  finished: finished.value,
+}))
 </script>
 
 <style scoped>
