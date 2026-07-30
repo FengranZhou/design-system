@@ -5,9 +5,12 @@
   引用：  import { StepBar } from '<path>/design-spec/components'
   用法：
     <StepBar :steps="['填写要求', '生成清单', '生成内容']" :current="2" />
+    <StepBar :steps="['填写要求', '生成清单', '生成内容']" :current="3" finished />  <!-- 全部完成 -->
   props：
-    steps   string[]  必填。步骤文案数组，长度即步骤数（2/3/4/5… 任意）。
-    current number    可选，默认 1。当前步（1-based）：< current 为已完成、= 为当前、> 为未开始。
+    steps    string[]  必填。步骤文案数组，长度即步骤数（2/3/4/5… 任意）。
+    current  number    可选，默认 1。当前步（1-based）：< current 为已完成、= 为当前、> 为未开始。
+    finished boolean   可选，默认 false。整条流程已全部完成：所有步骤（含最后一步）都转完成态打勾。
+                       用于流程走完、越过末步的终态；此时 current 仅影响接力动效的起点，不再有「进行中」步。
   外观/动效（全在本组件源头，接入方无需关心，也不要在使用方 scoped 覆盖）：
     大圆节点 + 补零两位序号（01/02）+ 三段拼接的渐变粗连接线（两端弧头不随宽度变形）
     + 完成态勾图标 + 前进/回退的分段链式过渡动效。全部走 --iflyv-* 令牌，随品牌色/主题同步。
@@ -22,15 +25,15 @@
       <div
         class="step-bar__item"
         :class="{
-          'is-active': current >= index + 1,
-          'is-completed': current > index + 1,
+          'is-active': finished || current >= index + 1,
+          'is-completed': finished || current > index + 1,
         }"
         :style="{ '--seg-delay': `${circleDelay(index)}s` }"
       >
         <div class="step-bar__circle">
           <!-- 已完成：勾图标；未完成：补零两位序号 -->
           <svg
-            v-if="current > index + 1"
+            v-if="finished || current > index + 1"
             class="step-bar__check"
             viewBox="0 0 24 24"
             width="20"
@@ -69,14 +72,17 @@ import lineMid from './assets/line-mid.png'
 
 /**
  * StepBar 步骤条（通用业务组件）
- * @prop steps   步骤文案数组，长度即步骤数（可配 3 / 4 / 5…）
- * @prop current 当前步（1-based）；< 的为已完成、= 的为当前、> 的为未开始
+ * @prop steps    步骤文案数组，长度即步骤数（可配 3 / 4 / 5…）
+ * @prop current  当前步（1-based）；< 的为已完成、= 的为当前、> 的为未开始
+ * @prop finished 整条流程已全部完成：所有步骤（含最后一步）都转完成态打勾（终态）
  */
 const props = withDefaults(defineProps<{
   steps: string[]
   current?: number
+  finished?: boolean
 }>(), {
   current: 1,
+  finished: false,
 })
 
 // 三张切图 URL 注入 CSS 变量（引号包裹兼容 data-uri）；scss 里用三层 mask 组合。
