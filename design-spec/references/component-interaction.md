@@ -168,7 +168,7 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 
 > **相关：表单控件（checkbox / radio）间距说明**
 >
-> `.el-checkbox` / `.el-radio` 在 `el-theme/components/{checkbox,radio}.scss` 中保留 EP 默认的 `margin-inline-end: 30px`——**这不是反模式**，与上述按钮间距规则不冲突。差异：表单控件有标准 group 容器（`<el-checkbox-group>` / `<el-radio-group>`），间距是 group 内部实现细节，使用方一律用 group 包装即可，**不需要也不应该再加 flex+gap**。30px 是行业默认值（EP / AntD / 飞书一致），避免相邻选项误点。
+> `.el-checkbox` / `.el-radio` 在 `el-theme/components/{checkbox,radio}.scss` 中把相邻项水平间距统一为 `margin-inline-end: var(--iflyv-spacing-4)`（16px，覆盖了 EP 原生的 30px）——**这不是反模式**，与上述按钮间距规则不冲突。差异：表单控件有标准 group 容器（`<el-checkbox-group>` / `<el-radio-group>`），间距是 group 内部实现细节，使用方一律用 group 包装即可，**不需要也不应该再加 flex+gap**。这 16px 是横排选项间距的单一数据源，使用方不覆盖。
 
 ### Breadcrumb 面包屑（带返回箭头）
 面包屑 = **前置返回箭头（可选）+ 路径导航**。**一律用业务组件 `Breadcrumb`**（源头 `design-spec/components/Breadcrumb/`），不要自己用 `el-breadcrumb` + 手写返回 `span` 拼装。
@@ -183,8 +183,10 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
   - `@back`：点返回箭头触发——**真实项目里通常接 `router.back()`**（或跳固定上级路由）。返回行为是业务才知道的事，由使用方在此提供。
   - `back-disabled`：无上一级时传 `true`，箭头自动切禁用态（`icon-4`、不可点、不 emit）。
   - `show-back="false"`：不需要返回箭头时隐藏（只留路径导航）。
-- **返回箭头外观**（图标 / 与首项 8px 间距 / 激活 `icon-2` / 禁用 `icon-4`）单一数据源在 `el-theme/components/breadcrumb.scss` 的约定 class `.breadcrumb-back`，`Breadcrumb` 组件内部引用它——**使用方不碰外观，只传 `items` + 接 `@back`**。
-- **反例**：用 `el-breadcrumb` 自己在前面塞一个 `<span>` 挂 `@click` 手拼返回箭头（脱离组件、间距/色态/禁用逻辑各处不一致、源头更新不同步）；把 `@back` 写成空函数让箭头点了没反应。
+  - `max-items`：**深层级折叠**。默认 `0`=不折叠（全量平铺）。层级很深时传 `≥2` 的值（如 `:max-items="4"`）：超过它时**保留首项 + 末项当前页**，中间超出的层级折进一个 `…` 项，**hover 弹下拉菜单**展开被折叠层级（每项可点跳转），可见项数即 `max-items`。做**下钻很深的路径**（如"首页 › 学院 › 课程 › 章节 › 小节 › 作业 › 提交详情"）时用，避免面包屑撑爆一行。
+  - `@item-click`：点击某一路径项（含 `…` 下拉里的项）触发，回调 `(item, index)`；真实项目按 `item.to` 走 `router.push`，或据 `index` 定位层级。
+- **返回箭头外观**（图标 / 与首项 8px 间距 / 激活 `icon-2` / 禁用 `icon-4`）单一数据源在 `el-theme/components/breadcrumb.scss` 的约定 class `.breadcrumb-back`，`Breadcrumb` 组件内部引用它——**使用方不碰外观，只传 `items` + 接 `@back`**。可点击项 hover 变品牌绿、`…` 折叠触发器同色，均在源头统一，使用方不覆盖。
+- **反例**：用 `el-breadcrumb` 自己在前面塞一个 `<span>` 挂 `@click` 手拼返回箭头（脱离组件、间距/色态/禁用逻辑各处不一致、源头更新不同步）；把 `@back` 写成空函数让箭头点了没反应；深层级路径**不传 `max-items` 硬让十几级全平铺**撑爆一行（应传 `max-items` 折叠）。
 
 ### 分页器默认用法
 ```vue
@@ -200,10 +202,59 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 - layout 顺序：`prev, pager, next, sizes, jumper`（不含 `total`）
 - **分页器区域布局**：外层容器使用 `flex` + `justify-content: space-between`，左侧放总数文本（如"共 128 条"），右侧放 `el-pagination`。总数不通过分页器的 `total` layout 项展示
 
+#### 尺寸选型：常规 vs 小型（二选一）
+
+分页器分两档尺寸，按**所在容器大小**选择，不要凭喜好混用：
+
+| 档位 | 何时用 | 属性 / layout |
+|---|---|---|
+| **常规**（默认） | 适用于**多数场景**，如整页列表、弹窗内列表等标准容器 | 不加 `small`；layout 用完整 `prev, pager, next, sizes, jumper`（可切每页条数、可跳页） |
+| **小型** | 适用于**较小的容器内部**，如内嵌子模块、卡片内列表、抽屉里的小列表等空间受限处 | 加 `small`；layout 精简为 `prev, pager, next`（只保留翻页，去掉 sizes/jumper 以省空间） |
+
+- **强制**：小型档必须同时做两件事——加 `:small` **和**精简 layout；只加 `small` 不精简 layout，会在窄容器里挤出换行/溢出。
+- **反例**：在整页大列表用小型档（翻页按钮过小、丢了切每页条数能力）；在窄卡片里塞常规档完整 layout（sizes/jumper 挤爆容器）。
+
 ### 空状态（Empty）
 - **图片区**：使用 `#image` 插槽替换 EP 默认 SVG，内容为圆角矩形底板（`.empty-icon-plate`，样式由 `el-theme/components/empty.scss` 全局提供）+ Lucide 图标
 - **图标选择**：根据场景使用语义化图标（如 `Inbox` 暂无数据、`FileSearch` 无搜索结果、`FolderOpen` 暂无文件、`AlertCircle` 加载失败）
 - **底部操作按钮**：使用**默认态**（`<el-button>`），不使用 `type="primary"`——空状态按钮属于辅助引导，遵循「主操作唯一」原则
+
+### Notification 通知（场景 / 常驻 / 操作按钮）
+
+- **应用场景**：适用于**较长时间的结果通知**——期间用户不必停留等待、可去做其他操作，完成后通知从右上角弹出告知。区别于 Message（一句即时轻反馈）与 Dialog（需当场打断处理）。
+
+通知一律用 `ElNotification`，能力按**正交配置项**建模，自由叠加，不穷举具名类型：
+
+| 配置项 | prop | 说明 |
+|---|---|---|
+| **场景**（语义色 + 图标） | `type: 'success' \| 'warning' \| 'error' \| 'info'` | 四类语义，决定左侧图标与色 |
+| **是否常驻** | `duration` | 常驻 = `0`（不自动关闭，需用户手动关或代码 `handle.close()`）；非常驻 = 默认 `4500`（毫秒后自动消失）。**取向**：通知**默认常驻**（结果类信息重要、用户可能不在场，让其自行确认关闭）；**非必要不设临时**（自动消失易被用户错过）。带操作按钮时必常驻 |
+| **操作按钮** | 无原生 prop —— 见下 | 通知内需要放操作按钮时的标准做法 |
+
+- **带操作按钮的通知（强制做法）**：`ElNotification` **没有 footer / 按钮 prop**，操作按钮**必须**用 `h()` 把「一段正文 + 一行按钮」渲染成 VNode 传给 `message`，**禁止**为此手撸浮层或改用别的组件。按钮行**必须**套约定 class **`.notify-actions`**（右对齐 + 间距全在源头 `notification.scss` 统一处理，下游只写这一个 class、不写行内布局 style）。按钮遵循「按钮个数」规范：**一退路（次按钮，如"忽略"）+ 一进路（主按钮，如"查看详情"）**。按钮 `onClick` 里调 `handle.close()` 关闭当前通知（`handle = ElNotification({...})` 的返回值）。
+  ```ts
+  let handle: NotificationHandle
+  handle = ElNotification({
+    title: '操作成功', type: 'success', duration: 0,   // 带操作按钮通常配常驻(0)，给用户决策时间
+    message: h('div', [
+      h('p', { style: 'margin: 0;' }, '数据已成功保存到系统中。'),
+      h('div', { class: 'notify-actions' }, [                                             // ← 约定 class，布局全在源头
+        h(ElButton, { size: 'small', onClick: () => handle?.close() }, () => '忽略'),          // 退路(次按钮)
+        h(ElButton, { size: 'small', type: 'primary', onClick: () => handle?.close() }, () => '查看详情'), // 进路(主按钮)
+      ]),
+    ]),
+  })
+  ```
+- **反例**：为"通知里加个按钮"另写一个绝对定位浮层 / 自造 Toast 组件；把操作按钮塞进 `title`；或用行内 `style` 手写按钮行布局（应走 `.notify-actions`）。
+
+### Popconfirm 气泡确认（轻量二次确认）
+
+删除、离开等**低风险**操作的二次确认，用 `el-popconfirm`（就地气泡，不打断全屏）；高风险 / 需要用户全神贯注的确认才升级到 `el-dialog`（见上方 Dialog 段）。
+
+- **气泡内按钮走 32px 小号规格（源头已定，下游不覆盖）**：本主题按钮默认 `default=36px`，但气泡是**轻量浮层**，36px 在小气泡里显大。源头 `popconfirm.scss` 在气泡按钮行**局部**把 `--el-component-size` / `--el-component-size-small` 覆写为 **32px**——**仅作用于气泡内**，不影响全局 default/small 档与别处按钮。
+  - **落地含义**：气泡内直接用 `<el-button>` 即可，会自动渲染成 32px；**不要**在使用方给气泡按钮硬写 `height` / `size="small"` 去凑小号（尺寸已由源头 EP 尺寸变量统一给定，硬写会脱离源头、切档时不同步）。
+  - 按钮个数遵循「一退路 + 一进路」（取消 + 确认），间距由源头 `.el-popconfirm__action` 统一提供，使用方不加 flex+gap。
+- **反例**：为"就地确认"手撸一个绝对定位小浮层；给气泡内按钮写 `style="height:32px"` 或 `size="small"` 凑小号（应让源头尺寸变量生效）；低风险操作也弹全屏 `el-dialog`（过重、打断感强）。
 
 ### Dialog 两类：操作弹窗 vs 提示弹窗（先分清是哪类）
 
@@ -284,3 +335,30 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 
 **实现细节见**：`el-theme/components/dialog.scss` 的「语义化标题图标变体」段。
 **示例代码见**：`design-spec/examples/dialog.examples.vue` 的「语义化标题」section。
+
+### Drawer 抽屉（何时用抽屉 vs 对话框）
+
+**使用判据**：当需要辅助信息展示或操作承载时，按以下四个维度判断该用抽屉（`el-drawer`）还是对话框（`el-dialog`）：
+
+| 维度 | 对话框（Dialog） | 抽屉（Drawer） |
+|---|---|---|
+| **承载信息量** | 更少（确认文案 / 简单表单） | **更多**（详细表单 / 多层信息 / 大量字段） |
+| **信息关联度** | 更高（一次任务的核心内容） | **更低**（辅助信息、补充说明、松散编辑项） |
+| **任务连贯性** | 更弱（打断用户完成当前任务） | **更强**（可边看主内容边操作抽屉里的内容） |
+| **页面遮挡** | 更多（居中遮挡主区域） | **更少**（从侧边滑出，主内容仍部分可见） |
+
+**判断入口**：先问"这块内容承载信息量大吗？用户边操作边看主页面的需求强吗？"——信息量大 + 任务需来回切换 → 抽屉；信息量少 + 需全神贯注 → 对话框。
+
+**强制做法**：
+- 抽屉从右侧滑出（`direction` 默认 `rtl`），宽度建议 `400px`（轻量表单）或 `600px`（详细信息）。
+- **底部按钮布局**：
+  - **默认无 footer** — 只读信息展示（如查看详情、历史记录），无需操作按钮。
+  - **有 footer 时**：按钮水平排列，次按钮（取消）在左、主按钮（确定）在右（与对话框顺序一致）。
+  - **窄抽屉（≤400px）时**：按钮可垂直排列（主按钮在上、次按钮在下），外层加 `.drawer-footer--vertical` class（见 `drawer.scss`）。
+- **抽屉 vs 对话框 vs 页面**：上表适用于"已判定需浮层"的场景。若操作是页面主线（如创建/编辑核心资源、需填完整多 section 表单），应走独立页面，不要用浮层塞；详见 `patterns/dialog-pattern.md` 四维判据。
+
+**反例**：
+- ❌ 用抽屉做删除确认、版本提示等轻量二次确认（信息量少 + 需聚焦 → 该用对话框）。
+- ❌ 用对话框承载复杂详情页、多 tab 切换内容（信息量大 + 关联度低 → 该用抽屉或独立页面）。
+- ❌ 抽屉 footer 按钮顺序与对话框相反（混淆用户习惯）。
+

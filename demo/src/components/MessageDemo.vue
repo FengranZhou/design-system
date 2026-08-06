@@ -32,3 +32,13 @@ const showMessage = (type: 'success' | 'warning' | 'error' | 'info') => {
   })
 }
 </script>
+
+<style scoped>
+/* demo 块用 bg-card 大卡片做区分（与 Dialog / Navigation 等一致，本页排版走令牌）。 */
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+}
+</style>

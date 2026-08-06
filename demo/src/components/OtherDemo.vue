@@ -2,6 +2,7 @@
   <section id="other" class="demo-section">
     <h2 class="demo-section__title">Other 其他组件</h2>
 
+    <!-- ⏸ 暂停展示：链接。暂时不用，保留代码，需要时放开。
     <div class="demo-block">
       <p class="demo-label">链接</p>
       <div class="demo-row">
@@ -14,7 +15,9 @@
         <el-link type="primary" disabled>禁用链接</el-link>
       </div>
     </div>
+    -->
 
+    <!-- ⏸ 暂停展示：分割线。暂时不用，保留代码，需要时放开。
     <div class="demo-block">
       <p class="demo-label">分割线</p>
       <div>
@@ -25,6 +28,7 @@
         <p style="color: var(--iflyv-text-2);">更多内容</p>
       </div>
     </div>
+    -->
 
     <div class="demo-block">
       <p class="demo-label">结果页</p>

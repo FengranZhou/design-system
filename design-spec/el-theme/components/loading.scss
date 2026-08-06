@@ -23,15 +23,45 @@
 .el-loading-spinner .el-loading-text {
   color: var(--iflyv-text-3);
   font-size: var(--iflyv-font-size-14);
-  margin: 0;
+  /* 与上方四圆点拉开 12px 间距（spacing-3），避免文字贴着圆点 */
+  margin: var(--iflyv-spacing-3) 0 0;
 }
 
+/* ==================== 四圆点加载动画（替换 EP 默认转圈 spinner）====================
+   观感：2×2 圆点网格，颜色跟随主题色 --iflyv-brand-primary，四点用不透明度阶梯区分
+   （对角由浅到深），整组顺时针匀速旋转形成加载感——始终保持四点的透明度差异。
+
+   实现：EP 内置 .circular 是单个 SVG circle，无法往里塞 4 个点 → 隐藏它，
+   在 .el-loading-spinner::before 上用「4 层 radial-gradient」画四点（每层 alpha 不同 = 透明度阶梯），
+   整个伪元素 rotate 动画旋转。纯装扮、不改 EP 行为，归源头单一数据源，v-loading / 全屏统一生效。 */
+
+/* 隐藏 EP 默认转圈 SVG */
 .el-loading-spinner .circular {
-  height: 32px;
-  width: 32px;
+  display: none;
 }
 
-.el-loading-spinner .path {
-  stroke-width: 3;
-  stroke: var(--iflyv-icon-3);
+/* 四圆点：2×2 网格，各点透明度阶梯（左上 1 / 右上 .45 / 左下 .7 / 右下 .3），整组旋转 */
+.el-loading-spinner::before {
+  content: "";
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  /* 透明度阶梯用 color-mix 混透明度：与主题色单一数据源，切品牌色时四点整体跟随。
+     左上 100% / 左下 70% / 右上 45% / 右下 30%，形成对角由深到浅。
+     每个点 = 一层 radial-gradient，实心到 6px 半径后透明；用 background-position + size 定位到 2×2 四角。 */
+  background-image:
+    radial-gradient(circle, var(--iflyv-brand-primary)                                      50%, transparent 55%),
+    radial-gradient(circle, color-mix(in srgb, var(--iflyv-brand-primary) 45%, transparent) 50%, transparent 55%),
+    radial-gradient(circle, color-mix(in srgb, var(--iflyv-brand-primary) 70%, transparent) 50%, transparent 55%),
+    radial-gradient(circle, color-mix(in srgb, var(--iflyv-brand-primary) 30%, transparent) 50%, transparent 55%);
+  background-repeat: no-repeat;
+  background-size: 12px 12px;                 /* 每层绘制框 12×12，circle 到 50% 半径=6px 实心，圆点直径 12 */
+  background-position: 2px 2px, 18px 2px, 2px 18px, 18px 18px;  /* 左上/右上/左下/右下 2×2，间距 16 */
+  animation: iflyv-loading-dots 1s linear infinite;
+}
+
+/* 整组顺时针匀速旋转：透明度阶梯随之转动，形成「加载中」的旋转观感 */
+@keyframes iflyv-loading-dots {
+  to { transform: rotate(360deg); }
 }

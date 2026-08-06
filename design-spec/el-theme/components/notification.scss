@@ -6,7 +6,17 @@
 .el-notification {
   --el-notification-title-font-size: var(--iflyv-font-size-16);
   --el-notification-close-font-size: var(--iflyv-font-size-16);
+  /* 内边距：上下 16、左 16、右 24（右侧给关闭图标留空间，左右不对称是有意的） */
+  --el-notification-padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6) var(--iflyv-spacing-4) var(--iflyv-spacing-4);
+  /* 图标与内容组间距收窄到 8 */
+  --el-notification-group-margin-left: var(--iflyv-spacing-2);
+  /* 内容组右侧不留额外 margin（EP 默认 8），让 group 右缘贴到通知右 padding 内缘，
+     标题/正文/操作按钮/关闭× 全部对齐同一 24px 右缩进线 */
+  --el-notification-group-margin-right: 0;
   font-size: var(--iflyv-font-size-14);
+  padding: var(--el-notification-padding);
+  /* 全局即时反馈，走 z-index 层叠契约最高档，永远浮于固定框架 / 弹窗 / 浮层之上 */
+  z-index: var(--iflyv-z-message);
 }
 .el-notification__title { font-size: var(--iflyv-font-size-16); }
 .el-notification__content { line-height: var(--iflyv-line-height-24); }
@@ -25,8 +35,19 @@
   }
 }
 
-/* RTL：覆盖 EP 硬编码物理定位（组件内部 close 按钮） */
-.el-notification .el-notification__closeBtn { right: unset; inset-inline-end: 15px; }
+/* 通知内操作按钮行（约定 class）：下游用 h('div',{class:'notify-actions'},[次按钮,主按钮]) 放进 message，
+   源头统一处理右对齐 + 上间距 + 按钮间距。× 定位已与通知右 padding 对齐到同一右缩进线（见下方 closeBtn），
+   故按钮行 justify-content:flex-end 天然与标题/正文/× 全部右对齐，无需补偿。 */
+.el-notification__content .notify-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--iflyv-spacing-3);
+  margin-top: var(--iflyv-spacing-4);
+}
+
+/* RTL：覆盖 EP 硬编码物理定位（组件内部 close 按钮）。
+   × 右缘对齐到通知右 padding 内缘（24px = spacing-6），与标题/正文/操作按钮同一右缩进线。 */
+.el-notification .el-notification__closeBtn { right: unset; inset-inline-end: var(--iflyv-spacing-6); }
 .el-notification__group {
   margin-left: unset; margin-right: unset; /* 物理 reset 必须在逻辑属性之前，避免 RTL 下交叉覆盖 */
   margin-inline-start: var(--el-notification-group-margin-left);

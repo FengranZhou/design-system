@@ -10,6 +10,8 @@
     border-radius: var(--iflyv-radius-sm);
     box-shadow: var(--iflyv-shadow-related);
     border: none;
+    /* 气泡是触发浮层，走 z-index 层叠契约的 popper 档，压过固定框架（sticky）等内容层。 */
+    z-index: var(--iflyv-z-popper);
 
     .el-popper__arrow { display: none; }
 
@@ -35,6 +37,11 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  /* 气泡是轻量浮层，内部操作按钮走小号规格：本主题 default=36px 偏大，此处气泡专属定 32px。
+     局部把组件尺寸变量覆写为 32px（仅作用于气泡内，不影响全局 small/default 档与别处按钮），
+     气泡内 el-button 的高度/内边距按此渲染，走 EP 尺寸变量、不硬写按钮 height。 */
+  --el-component-size: 32px;
+  --el-component-size-small: 32px;
   .el-button + .el-button { margin-inline-start: 0; }
 }
 

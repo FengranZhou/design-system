@@ -364,6 +364,21 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 
 ## 层级系统（z-index）
 
-- **浮层层级由 EP `PopupManager` 自动管理**（从 2000 起递增），包括 Dialog、Drawer、Popover、Select 下拉、Message 等，**不要手动设置 z-index**
-- 页面内层级（sticky 表头、固定导航等）保持在 **100 以内**，避免与 EP 浮层冲突
-- EP 内置变量：`--el-index-normal`（1）、`--el-index-top`（1000）、`--el-index-popper`（2000），如需自定义浮层可引用这些变量
+层叠先后是一份**全局契约**，统一由 z-index 令牌管理（源头 `design-token/css/z-index.scss`）。任何要设 z-index 的地方一律引用这些令牌，**禁止散写魔法数字**（999 / 2000 / 9999…），否则组件库浮层与下游固定框架会相互打架。
+
+### z-index 令牌 → 用途（选层级照此对号入座）
+
+| 令牌 | 值 | 用途 |
+|---|---|---|
+| `--iflyv-z-base` | 1 | 普通抬升——同层内需盖住兄弟的元素（卡片 hover 浮起等） |
+| `--iflyv-z-sticky` | 100 | **固定框架**——吸顶栏 / 固定侧边栏 / 吸顶工具条（下游自己的固定框架也用它） |
+| `--iflyv-z-popper` | 2000 | **触发浮层**——下拉 / tooltip / popover / popconfirm / select 面板等 |
+| `--iflyv-z-drawer` | 3000 | 抽屉 |
+| `--iflyv-z-dialog` | 4000 | 对话框 + 其遮罩 |
+| `--iflyv-z-message` | 5000 | **全局即时反馈**——message / notification（优先级最高，永远浮于最上） |
+
+> **核心原则：固定框架（sticky=100）远低于浮层（popper 及以上）。** 浮层（下拉、气泡、通知）是用户当前操作的即时焦点，必须压过固定导航等常驻框架；框架不该遮住临时浮层。
+>
+> **下游接入**：写自己的固定顶栏 / 侧边栏用 `z-index: var(--iflyv-z-sticky)`，即自然低于组件库的所有浮层，不会互相盖住。需要新浮层时按其性质选对应档（触发类→popper、抽屉→drawer、弹窗→dialog、全局提示→message）。
+>
+> 档间留了足够间隔（100→2000→3000…）便于必要时插档；EP 内置的 `--el-index-popper`(2000) 等仍可用，但本设计系统的浮层（如 popconfirm/notification/message）已在源头接上上表令牌，确保跨接入方层级一致。
