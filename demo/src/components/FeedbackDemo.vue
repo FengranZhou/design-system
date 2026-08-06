@@ -118,7 +118,7 @@
         <el-drawer v-model="drawerVisible" :title="drawerHasFooter ? '编辑信息' : '抽屉标题'" size="400px">
           <p style="color: var(--iflyv-text-2);">这是抽屉的内容区域。</p>
           <template v-if="drawerHasFooter" #footer>
-            <div v-if="drawerFooterVertical" class="drawer-footer--vertical">
+            <div v-if="drawerFooterLayout === 'vertical'" class="drawer-footer--vertical">
               <el-button type="primary" @click="drawerVisible = false">确定</el-button>
               <el-button @click="drawerVisible = false">取消</el-button>
             </div>
@@ -135,8 +135,11 @@
           <el-form-item label="底部按钮">
             <el-switch v-model="drawerHasFooter" />
           </el-form-item>
-          <el-form-item v-if="drawerHasFooter" label="按钮垂直">
-            <el-switch v-model="drawerFooterVertical" />
+          <el-form-item v-if="drawerHasFooter" label="按钮布局">
+            <el-radio-group v-model="drawerFooterLayout">
+              <el-radio value="horizontal">水平</el-radio>
+              <el-radio value="vertical">垂直</el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-form>
       </aside>
@@ -181,8 +184,8 @@ const tooltipConfigForm = reactive({ tooltipPlacement })
 // —— 抽屉（Drawer）：底部按钮有无 + 按钮布局（水平/垂直）作为配置项 ——
 const drawerVisible = ref(false)
 const drawerHasFooter = ref(false)          // 是否显示底部按钮
-const drawerFooterVertical = ref(false)     // 底部按钮是否垂直排列
-const drawerConfigForm = reactive({ drawerHasFooter, drawerFooterVertical })
+const drawerFooterLayout = ref<'horizontal' | 'vertical'>('horizontal')  // 底部按钮布局
+const drawerConfigForm = reactive({ drawerHasFooter, drawerFooterLayout })
 
 // —— 通知（Notification）：「场景」× 「是否常驻」× 「操作按钮」三个正交配置项自由叠加 ——
 type NotifyScene = {

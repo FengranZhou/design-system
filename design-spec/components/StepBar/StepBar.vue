@@ -145,7 +145,9 @@ function lineDelay(index: number): number {
 .step-bar {
   display: flex;
   align-items: flex-start;
-  padding: var(--iflyv-spacing-2) var(--iflyv-spacing-6) var(--iflyv-spacing-4);
+  /* 底部内边距 = 原 spacing-4 + 24px：标签已绝对定位脱离文档流（见 __label），
+     行内最高的是 48px 连接线，而标签底缘在 52+20=72px 处，超出 24px 需在此预留 */
+  padding: var(--iflyv-spacing-2) var(--iflyv-spacing-6) calc(var(--iflyv-spacing-4) + 24px);
   background: transparent;
   flex-shrink: 0;
 }
@@ -154,12 +156,11 @@ function lineDelay(index: number): number {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--iflyv-spacing-2);  /* 节点圆 → 文字 8px */
   flex-shrink: 0;
   /* 跨步接力延迟（行内 --seg-delay 覆盖，默认 0）：跨多步时按空间次序递增，逐段接力点亮 */
   --seg-delay: 0s;
-  /* 文字比圆宽会把步骤项撑宽，连接线用负 margin 钻入项内补空隙，
-     圆的不透明白底需盖在线头之上 → 抬高层级 */
+  /* 标签绝对定位后节点宽度恒为 40px 圆本身，与文字长短彻底解耦；
+     连接线负 margin 钻入圆下 → 圆的不透明白底需盖在线头之上，抬高层级 */
   position: relative;
   z-index: 1;
 }
@@ -220,8 +221,15 @@ function lineDelay(index: number): number {
   animation: step-bar-check-in 0.3s ease;
 }
 
-/* 文字标签：未开始 text-3；base transition 供颜色切换补间 */
+/* 文字标签：未开始 text-3；base transition 供颜色切换补间。
+   绝对定位脱离文档流：文字不参与节点宽度计算（圆是几何锚点、文字只是注释），
+   任意长短都不影响连接线与圆的衔接——top = 圆下移 4px + 圆 40px + 间隔 8px。 */
 .step-bar__label {
+  position: absolute;
+  top: calc(44px + var(--iflyv-spacing-2));
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
   font: var(--iflyv-font-body-sub);
   color: var(--iflyv-text-3);
   /* 回退熄灭基态：叠加接力延迟，从右向左依次还原 */
@@ -250,11 +258,15 @@ function lineDelay(index: number): number {
   flex: 1;
   height: 48px;
   position: relative;
+  /* z-index:0 建立自身层叠上下文，把 ::before/::after 收纳在内，
+     防止伪元素逃逸到与节点（z-index:1）同级竞争层叠 */
+  z-index: 0;
   background: var(--iflyv-border-default);
   /* 跨步接力延迟（行内 --seg-delay 覆盖，默认 0） */
   --seg-delay: 0s;
-  /* -12px：让两端弧头（12px 宽）钻入圆下贴合圆轮廓，弧口正好在圆边缘外露出 */
-  margin: 0 -12px;
+  /* -4px = 纯塞入量：标签已绝对定位、节点宽度恒为 40px 圆，线端钻入圆下 4px 保证无缝衔接，
+     12px 弧头露出 8px 贴合圆轮廓。勿改回合成魔法数字（旧 -12px 隐式依赖标签宽度，文字一长就断缝） */
+  margin: 0 -4px;
   /* 三层 mask 拼接：左弧头(贴左,固定12) + 右弧头(贴右,固定12) + 中段(填中间,弹性拉伸)。
      多层 mask 默认相加(add)组合，三段无缝拼成完整线形，任意线宽下弧头都不变形。 */
   mask-image: var(--step-cap-left), var(--step-cap-right), var(--step-line-mid);
