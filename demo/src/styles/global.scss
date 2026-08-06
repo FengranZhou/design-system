@@ -54,8 +54,8 @@ body {
   border-bottom: 1px solid var(--iflyv-border-default);
   display: flex;
   align-items: stretch;
-  // 固定导航需压过 EP 内容层浮层（v-loading 区域遮罩 z-index 2000+），否则会被盖住。
-  z-index: 2050;
+  // 固定框架层，走 z-index 契约的 sticky 档；浮层（下拉/气泡/通知，popper 及以上）应压过它。
+  z-index: var(--iflyv-z-sticky);
 
   &__brand {
     width: $app-sidebar-width;
@@ -129,8 +129,8 @@ body {
   border-inline-end: 1px solid var(--iflyv-border-default);
   display: flex;
   flex-direction: column;
-  // 略低于顶栏（2050），仍压过内容层浮层
-  z-index: 2040;
+  // 固定框架层，略低于顶栏（同 sticky 档 -1）；浮层同样应压过它
+  z-index: calc(var(--iflyv-z-sticky) - 1);
 
   // 自定义滚动条
   &::-webkit-scrollbar {

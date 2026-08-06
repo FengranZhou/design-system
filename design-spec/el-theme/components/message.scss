@@ -11,6 +11,8 @@
   box-shadow: var(--iflyv-shadow-related);
   border-width: 1px;
   border-style: solid;
+  /* 全局即时反馈，走 z-index 层叠契约最高档，永远浮于固定框架 / 弹窗 / 浮层之上 */
+  z-index: var(--iflyv-z-message);
 
   /* 文本统一黑色 */
   .el-message__content {

@@ -32,7 +32,7 @@
 /* 面包屑特殊字号：13px / 行高 18（比正文小一号，弱化为路径导航） */
 .el-breadcrumb { font-size: var(--iflyv-font-size-13); line-height: var(--iflyv-line-height-18); }
 .el-breadcrumb__inner { color: var(--iflyv-text-3) !important; }
-.el-breadcrumb__inner.is-link:hover { color: var(--iflyv-text-2) !important; }
+.el-breadcrumb__inner.is-link:hover { color: var(--iflyv-brand-primary) !important; }
 .el-breadcrumb__inner.is-link { font-weight: 400; }
 .el-breadcrumb__item:last-child .el-breadcrumb__inner { color: var(--iflyv-text-1) !important; }
 .el-breadcrumb__separator {

@@ -37,11 +37,36 @@
       </aside>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">面包屑</p>
-      <div class="demo-row">
-        <Breadcrumb :items="breadcrumbItems" :back-disabled="breadcrumbItems.length <= 1" @back="onBreadcrumbBack" />
+    <div class="demo-block control-showcase">
+      <div class="control-showcase__main">
+        <p class="demo-label">面包屑</p>
+        <!-- 一个带返回箭头 + 深层折叠的面包屑：8 级路径按「当前层级」截断到第 N 级，
+             超过 max-items 时中间折进 `…`（hover 展开）；每项带 to 可点击跳转（demo 里跳转打日志示意）。 -->
+        <div class="demo-row">
+          <Breadcrumb
+            :items="breadcrumbItems"
+            :max-items="4"
+            :back-disabled="breadcrumbItems.length <= 1"
+            @back="onBreadcrumbBack"
+            @item-click="onBreadcrumbItemClick"
+          />
+        </div>
       </div>
+      <aside class="config-card config-card--breadcrumb">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="breadcrumbConfigForm" label-width="auto">
+          <el-form-item label="当前层级">
+            <el-select v-model="breadcrumbCurrent" style="width: 100%">
+              <el-option
+                v-for="i in BREADCRUMB_FULL.length"
+                :key="i"
+                :label="`第 ${i} 级`"
+                :value="i"
+              />
+            </el-select>
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
 
     <div class="demo-block">
@@ -112,30 +137,37 @@
       </div>
     </div>
 
-    <div class="demo-block">
-      <p class="demo-label">分页</p>
-      <div class="demo-row">
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="80"
-          layout="prev, pager, next, sizes, jumper"
-        />
+    <!-- 分页：常规 / 小型 二选一，由右侧配置项切换（small 属性 + layout 精简）。
+         常规=页面/弹窗等多数场景（带 sizes/jumper 完整功能）；小型=内嵌子模块等较小容器（仅翻页）。 -->
+    <div class="demo-block control-showcase">
+      <div class="control-showcase__main">
+        <p class="demo-label">分页</p>
+        <div class="demo-row">
+          <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            :total="80"
+            :small="paginationSize === 'small'"
+            :layout="paginationSize === 'small' ? 'prev, pager, next' : 'prev, pager, next, sizes, jumper'"
+          />
+        </div>
       </div>
-    </div>
-
-    <div class="demo-block">
-      <p class="demo-label">分页（小型）</p>
-      <div class="demo-row">
-        <el-pagination
-          v-model:current-page="currentPageSm"
-          :page-size="10"
-          :total="80"
-          small
-          layout="prev, pager, next"
-        />
-      </div>
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form label-width="auto">
+          <el-form-item label="尺寸">
+            <!-- 控件 + 释义包进纵向 config-field，使释义落到单选下方（与 Select demo 一致，不覆盖 el-form-item__content 容器） -->
+            <div class="config-field">
+              <el-radio-group v-model="paginationSize">
+                <el-radio value="normal">常规</el-radio>
+                <el-radio value="small">小型</el-radio>
+              </el-radio-group>
+              <p class="config-card__hint">{{ paginationSizeHint }}</p>
+            </div>
+          </el-form-item>
+        </el-form>
+      </aside>
     </div>
   </section>
 </template>
@@ -145,15 +177,32 @@ import { ref, reactive, computed } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 import { Breadcrumb } from '../../../design-spec/components'
 
-// 面包屑：业务组件按 items 渲染。demo 里点返回 = 回退一级（弹掉最后一项），
-// 回退到只剩首页时箭头进入禁用态（icon-4，不可点）；真实项目里 @back 通常接 router.back()。
-const breadcrumbItems = ref([
-  { label: '首页' },
-  { label: '项目管理' },
-  { label: '项目详情' },
-])
+// 面包屑：8 级全量路径，每项带 to（可点击跳转；demo 里跳转仅打日志示意，真实项目走 vue-router）。
+// 「当前层级」配置项把路径截断到第 N 级（第 N 项即当前页、不可点）；超过 max-items(4) 时中间折进 `…`。
+const BREADCRUMB_FULL = [
+  { label: '首页', to: '/' },
+  { label: '计算机学院', to: '/college' },
+  { label: '数据结构', to: '/college/ds' },
+  { label: '第三章 树', to: '/college/ds/ch3' },
+  { label: '3.2 二叉树', to: '/college/ds/ch3/binary-tree' },
+  { label: '课后作业', to: '/college/ds/ch3/binary-tree/homework' },
+  { label: '学生提交列表', to: '/college/ds/ch3/binary-tree/homework/submissions' },
+  { label: '学生提交详情', to: '/college/ds/ch3/binary-tree/homework/submissions/detail' },
+]
+
+// 当前选中层级（1-based，默认末级=8）；面包屑按此截断到前 N 项
+const breadcrumbCurrent = ref(BREADCRUMB_FULL.length)
+const breadcrumbItems = computed(() => BREADCRUMB_FULL.slice(0, breadcrumbCurrent.value))
+const breadcrumbConfigForm = computed(() => ({ current: breadcrumbCurrent.value }))
+
+// 点返回 = 回退一级（当前层级 -1）；到只剩首页时箭头禁用。真实项目里 @back 通常接 router.back()。
 const onBreadcrumbBack = () => {
-  if (breadcrumbItems.value.length > 1) breadcrumbItems.value.pop()
+  if (breadcrumbCurrent.value > 1) breadcrumbCurrent.value -= 1
+}
+// 点击某一路径项（含 `…` 下拉里的项）：定位到该层级 = 把「当前层级」设为该项层级，面包屑随之截断。
+// 真实项目里会用 item.to 走 vue-router 跳转；此处 index 即该项在全量路径中的 0-based 下标。
+const onBreadcrumbItemClick = (_item: { label: string; to?: unknown }, index: number) => {
+  breadcrumbCurrent.value = index + 1
 }
 
 // —— Tabs 三级合并：级别 → class 映射 ——
@@ -176,7 +225,14 @@ const tabsActive = ref('a')
 const dropdownVisible = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(20)
-const currentPageSm = ref(1)
+// 分页尺寸：常规（多数场景，带 sizes/jumper）/ 小型（较小容器，仅翻页）
+const paginationSize = ref<'normal' | 'small'>('normal')
+// 随所选尺寸变化的释义（与 component-interaction.md 分页尺寸选型口径一致）
+const paginationSizeHint = computed(() =>
+  paginationSize.value === 'small'
+    ? '适用于较小的容器内部，如内嵌子模块等'
+    : '适用于多数场景，如页面、弹窗等'
+)
 </script>
 
 <style scoped>
@@ -244,5 +300,22 @@ const currentPageSm = ref(1)
   margin: 0 0 var(--iflyv-spacing-4);
   color: var(--iflyv-text-1);
   font: var(--iflyv-font-title-component);
+}
+/* 控件 + 释义纵向容器：使释义换行落到控件下方（与 Select demo 一致，避免覆盖 el-form-item__content） */
+.config-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+/* 释义说明：浅色小字，紧跟单选下方（上距 4px），随所选项变化（与 Select/Input demo 一致） */
+.config-card__hint {
+  margin: var(--iflyv-spacing-1) 0 0;
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+/* 面包屑配置卡内容窄（仅一个下拉），固定一档合理宽度，避免被内容撑得过窄 */
+.config-card--breadcrumb { width: 280px; }
+@media (max-width: 1100px) {
+  .config-card--breadcrumb { width: 100%; }
 }
 </style>
