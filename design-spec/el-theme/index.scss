@@ -10,7 +10,8 @@
 @use './components/alert.scss';
 @use './components/anchor.scss';
 @use './components/avatar.scss';
-@use './components/backtop.scss';
+/* ⏸ 暂停启用：回到顶部（demo 已同步暂停展示）。需要时放开注释，backtop.scss 文件保留未动。 */
+/* @use './components/backtop.scss'; */
 @use './components/badge.scss';
 @use './components/breadcrumb.scss';
 @use './components/button.scss';
