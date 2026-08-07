@@ -1,6 +1,6 @@
 <template>
-  <section id="token-font-semantic" class="demo-section" ref="rootEl">
-    <h2 class="demo-section__title">Semantic Font 语义字阶</h2>
+  <section id="token-font-semantic" class="demo-section demo-plain" ref="rootEl">
+    <h2 class="demo-section__title">Font 语义字阶</h2>
 
     <div class="demo-block">
       <p class="demo-label">语义字体 Composite Font — font 简写复合令牌（字重 + 字号 / 行高 + 字族），业务代码优先用这层</p>

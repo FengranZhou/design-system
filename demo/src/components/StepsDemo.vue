@@ -25,7 +25,7 @@
     -->
 
     <div class="demo-block">
-      <p class="demo-label">轻量步骤条</p>
+      <p class="demo-desc">引导用户按照流程完成任务的导航条，当任务复杂或者存在先后关系时，将其分解成一系列步骤，从而简化任务。</p>
       <el-steps :active="1" simple>
         <el-step title="提交申请" />
         <el-step title="审核中" />
@@ -37,16 +37,3 @@
 
 <script setup lang="ts">
 </script>
-
-<style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Select / Input 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block + .demo-block {
-  margin-top: var(--iflyv-spacing-6);
-}
-</style>

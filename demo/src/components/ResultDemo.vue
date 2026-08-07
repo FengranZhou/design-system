@@ -3,7 +3,7 @@
     <h2 class="demo-section__title">Result 结果页</h2>
 
     <div class="demo-block">
-      <p class="demo-label">结果页</p>
+      <p class="demo-desc">当有重要操作需告知用户处理结果，且反馈内容较为复杂/重要时使用。</p>
       <div class="result-showcase">
         <!-- 左侧：单个结果页，场景由右侧配置切换；描述与按钮由开关叠加 -->
         <div class="demo-row result-row">
@@ -57,13 +57,6 @@ const configForm = reactive({ scene, showSubtitle, showButton })
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Button / Select / Dialog 一致，本页排版走令牌） */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
 /* 纯本页排版：左侧结果展示 + 右侧配置卡片横向布局。不含组件外观规则。 */
 .result-showcase {
@@ -79,25 +72,8 @@ const configForm = reactive({ scene, showSubtitle, showButton })
   margin-bottom: 0;
 }
 
-/* 右侧配置项卡片：块卡（bg-card）内部用白底 + 细边框区分层次（与 Button 配置卡一致） */
-.config-card {
-  flex: 0 1 auto;
-  width: 220px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
-
 /* 窄屏时配置卡片下移换行，把整行宽度让给结果展示 */
 @media (max-width: 1100px) {
   .result-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
 }
 </style>

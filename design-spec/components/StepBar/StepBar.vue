@@ -5,7 +5,7 @@
   引用：  import { StepBar } from '<path>/design-spec/components'
   用法：
     <StepBar :steps="['填写要求', '生成清单', '生成内容']" :current="2" />
-    <StepBar :steps="['填写要求', '生成清单', '生成内容']" :current="3" finished />  <!-- 全部完成 -->
+    <StepBar :steps="['填写要求', '生成清单', '生成内容']" :current="3" finished />  ← 全部完成
   props：
     steps    string[]  必填。步骤文案数组，长度即步骤数（2/3/4/5… 任意）。
     current  number    可选，默认 1。当前步（1-based）：< current 为已完成、= 为当前、> 为未开始。

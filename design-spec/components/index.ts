@@ -11,3 +11,11 @@ export { UserAvatar, AVATAR_MAP, AVATAR_LABEL, type AvatarRole } from './UserAva
 export { DataTable, type DataTableColumn, type DataTableAction, type ColumnKind } from './DataTable'
 export { Breadcrumb, type BreadcrumbItem } from './Breadcrumb'
 export { StepBar } from './StepBar'
+export { AiButton } from './AiButton'
+export {
+  PageFrame,
+  type PageFrameMenuGroup,
+  type PageFrameMenuItem,
+  type PageFrameMenuChild,
+  type PageFrameCourse,
+} from './PageFrame'

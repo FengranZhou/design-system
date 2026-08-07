@@ -4,7 +4,6 @@
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
-        <p class="demo-label">面包屑</p>
         <!-- 一个带返回箭头 + 深层折叠的面包屑：8 级路径按「当前层级」截断到第 N 级，
              超过 max-items 时中间折进 `…`（hover 展开）；每项带 to 可点击跳转（demo 里跳转打日志示意）。 -->
         <div class="demo-row">
@@ -70,43 +69,12 @@ const onBreadcrumbItemClick = (_item: { label: string; to?: unknown }, index: nu
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Select / Input 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
-/* 左示例 + 右配置卡横向布局（与 Input 配置式范式一致，纯本页排版，不含组件外观） */
-.control-showcase {
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
-}
-.control-showcase__main { flex: 1; min-width: 0; }
-
-@media (max-width: 1100px) {
-  .control-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
-}
-
-/* 配置卡：白底 + 细边框区分层次（与 Input 一致） */
-.config-card {
+/* 面包屑配置卡仅一个下拉，固定一档合理宽度，避免被内容撑得过窄 */
+.config-card--breadcrumb {
   flex: 0 1 auto;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
+  width: 280px;
 }
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
-/* 面包屑配置卡内容窄（仅一个下拉），固定一档合理宽度，避免被内容撑得过窄 */
-.config-card--breadcrumb { width: 280px; }
 @media (max-width: 1100px) {
   .config-card--breadcrumb { width: 100%; }
 }

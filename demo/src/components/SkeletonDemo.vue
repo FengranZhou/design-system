@@ -3,7 +3,7 @@
     <h2 class="demo-section__title">Skeleton 骨架屏</h2>
 
     <div class="demo-block">
-      <p class="demo-label">骨架屏</p>
+      <p class="demo-desc">可以被「加载」完全代替，但是在可用的场景下可以比 Spin 提供更好的视觉效果和用户体验。</p>
       <!-- ⏸ 暂停展示：基础骨架屏（无动画）。暂时不用，保留代码，需要时放开。
       <div style="width: 300px;">
         <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">基础骨架屏</p>
@@ -36,16 +36,6 @@
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Loading / DataDisplay 一致，本页排版走令牌） */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block + .demo-block {
-  margin-top: var(--iflyv-spacing-6);
-}
 
 /* 骨架屏白底衬底：灰条铺在浅灰 bg-card 上对比弱，套一层白底衬托（纯本页排版，走令牌） */
 .skeleton-panel {

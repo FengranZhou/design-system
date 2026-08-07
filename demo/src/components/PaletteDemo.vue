@@ -1,5 +1,5 @@
 <template>
-  <section id="palette" class="demo-section">
+  <section id="palette" class="demo-section demo-plain">
     <h2 class="demo-section__title">Palette 基础色板</h2>
 
     <div class="demo-block">

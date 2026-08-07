@@ -1,5 +1,5 @@
 <template>
-  <section id="copywriting-time" class="demo-section">
+  <section id="copywriting-time" class="demo-section demo-plain">
     <h2 class="demo-section__title">Time 通用时间</h2>
 
     <div class="demo-block">

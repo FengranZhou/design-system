@@ -55,15 +55,3 @@
 <script setup lang="ts">
 </script>
 
-<style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Button / Select / Dialog 一致，本页排版走令牌），两卡间距 spacing-6 */
-.demo-section .demo-block {
-  margin-bottom: var(--iflyv-spacing-6);
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block:last-child {
-  margin-bottom: 0;
-}
-</style>

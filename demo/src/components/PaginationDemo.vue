@@ -6,7 +6,7 @@
          常规=页面/弹窗等多数场景（带 sizes/jumper 完整功能）；小型=内嵌子模块等较小容器（仅翻页）。 -->
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
-        <p class="demo-label">分页</p>
+        <p class="demo-desc">分页器用于分隔长列表，每次只加载一个页面。</p>
         <div class="demo-row">
           <el-pagination
             v-model:current-page="currentPage"
@@ -53,52 +53,21 @@ const paginationSizeHint = computed(() =>
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Select / Input 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
-/* 左示例 + 右配置卡横向布局（与 Input 配置式范式一致，纯本页排版，不含组件外观） */
-.control-showcase {
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
-}
-.control-showcase__main { flex: 1; min-width: 0; }
-
-@media (max-width: 1100px) {
-  .control-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
-}
-
-/* 配置卡：白底 + 细边框区分层次（与 Input 一致） */
+/* 本页配置卡内容宽度不定，宽度随内容自适应而非公共层的固定宽 */
 .config-card {
   flex: 0 1 auto;
   width: auto;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
 }
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
+
+@media (max-width: 1100px) {
+  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
+  .config-card { width: 100%; }
 }
 /* 控件 + 释义纵向容器：使释义换行落到控件下方（与 Select demo 一致，避免覆盖 el-form-item__content） */
 .config-field {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-}
-/* 释义说明：浅色小字，紧跟单选下方（上距 4px），随所选项变化（与 Select/Input demo 一致） */
-.config-card__hint {
-  margin: var(--iflyv-spacing-1) 0 0;
-  color: var(--iflyv-text-3);
-  font: var(--iflyv-font-body-sub);
 }
 </style>

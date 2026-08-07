@@ -69,13 +69,6 @@ const states = [
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Select / Dialog / Navigation 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
 /* 纯本页排版：左侧网格 + 右侧配置卡片横向布局。不含组件外观规则。 */
 .button-showcase {
@@ -99,9 +92,9 @@ const states = [
 /* 横向适配：窄屏时按 6→3→2 列递减，避免按钮被挤压变形。
    配置卡片在中屏就下移换行，把整行宽度让给网格，
    否则网格被右侧卡片挤窄、text 按钮文字会重叠。 */
+
 @media (max-width: 1100px) {
   .button-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
   .button-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
@@ -110,18 +103,4 @@ const states = [
 
 /* 右侧配置项卡片：块卡（bg-card）内部用白底 + 细边框区分层次
    （与 Input / Avatar 配置卡一致），「配置项」标题 + el-form 表单布局 */
-.config-card {
-  flex: 0 1 auto;
-  width: 220px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
 </style>

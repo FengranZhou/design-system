@@ -60,6 +60,16 @@
      - ai-gradient-bg：10% 透明度渐变，用于 AI 元素的浅底 */
   --iflyv-ai-gradient: linear-gradient(296deg, #{$ai-blue} 5%, #{$ai-green} 95%);
   --iflyv-ai-gradient-bg: linear-gradient(290deg, #{rgba($ai-blue, 0.1)} 3%, #{rgba($ai-green, 0.1)} 97%);
+  /* - ai-fill-gradient：薄荷青→绿实心底，用于 AI 实心按钮等强调块
+     - ai-border-gradient：彩色锥形渐变描边，与 fill 配套（border-box 层）或单独作 hover 描边 */
+  --iflyv-ai-fill-gradient: linear-gradient(90deg, #{$ai-mint-blue} 0%, #{$ai-mint-green} 100%);
+  --iflyv-ai-border-gradient: conic-gradient(
+    from 90deg at 50% 50%,
+    #{rgba($ai-conic-green, 0.6)} -20deg,
+    #{rgba($ai-conic-blue, 0.6)} 152deg,
+    #{rgba($ai-conic-green, 0.6)} 340deg,
+    #{rgba($ai-conic-blue, 0.6)} 512deg
+  );
 
   /* ==================== 文本色 Text ==================== */
   --iflyv-text-1: var(--iflyv-gray-10);

@@ -60,46 +60,7 @@ const radioConfigForm = reactive({ radioShowText })
 </script>
 
 <style scoped>
-/* 纯本页排版：左示例 + 右配置卡横向布局，与 Button / Empty / Input 配置式范式一致。 */
 
-/* 每个 demo 块用 bg-card 大卡片做区分（本页排版，走令牌）。
-   卡间垂直间距统一 24（spacing-6）；覆盖全局 .demo-block 自带的 48px margin，避免叠加。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block + .demo-block {
-  margin-top: var(--iflyv-spacing-6);
-}
-
-.control-showcase {
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
-}
-.control-showcase__main { flex: 1; min-width: 0; }
-
-@media (max-width: 1100px) {
-  .control-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
-}
-
-.config-card {
-  flex: 0 1 auto;
-  width: 220px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
 
 /* Radio 四项连续等距：两个 el-radio-group 盒子用 display:contents 透明化，
    四个 el-radio 直接成为 .demo-row(flex) 的子项，与 Checkbox 一行等距一致。

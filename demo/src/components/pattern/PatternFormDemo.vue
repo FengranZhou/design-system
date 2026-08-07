@@ -121,24 +121,6 @@ const rules: FormRules = {
 <style scoped>
 /* 纯本页排版，全部走令牌 */
 
-/* —— 设计模式统一：上下两块 bg-card 大卡片（模式规则 / 标准范例）—— */
-.pattern-card {
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.pattern-card + .pattern-card { margin-top: var(--iflyv-spacing-6); }
-.pattern-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
-.pattern-card__desc {
-  margin: 0 0 var(--iflyv-spacing-6);
-  color: var(--iflyv-text-3);
-  font: var(--iflyv-font-body-sub);
-}
-
 /* —— 结构示意图：上排「标签区+输入区」并排，下排「操作区」缩进对齐输入区起点 —— */
 .anatomy {
   --col-label: 120px;   /* 标签区宽度 */

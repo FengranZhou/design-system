@@ -5,21 +5,21 @@
     <!-- 徽标：四类载体（头像/按钮/图标/Tab）通过配置项切换，每类固定四状态（点 / 数字 / 上限 99+ / 英文） -->
     <div class="demo-block badge-showcase">
       <div class="badge-showcase__main">
-        <p class="demo-label">徽标</p>
+        <p class="demo-desc">用于显示需要处理的消息条数，通过醒目视觉形式吸引用户处理。</p>
 
         <!-- 头像 -->
         <div v-if="badgeType === 'avatar'" class="demo-row" style="gap: 24px;">
           <el-badge is-dot>
-            <UserAvatar :size="40" role="teacher-male" />
+            <UserAvatar :size="28" role="teacher-male" />
           </el-badge>
           <el-badge :value="12">
-            <UserAvatar :size="40" role="teacher-female" />
+            <UserAvatar :size="28" role="teacher-female" />
           </el-badge>
           <el-badge :value="100" :max="99">
-            <UserAvatar :size="40" role="student-male" />
+            <UserAvatar :size="28" role="student-male" />
           </el-badge>
           <el-badge value="new">
-            <UserAvatar :size="40" role="student-female" />
+            <UserAvatar :size="28" role="student-female" />
           </el-badge>
         </div>
 
@@ -42,16 +42,16 @@
         <!-- 图标 -->
         <div v-else-if="badgeType === 'icon'" class="demo-row" style="gap: 32px;">
           <el-badge is-dot>
-            <Mail :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
+            <Mail :size="20" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
           </el-badge>
           <el-badge :value="8">
-            <Bell :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
+            <Bell :size="20" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
           </el-badge>
           <el-badge :value="100" :max="99">
-            <MessageSquare :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
+            <MessageSquare :size="20" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
           </el-badge>
           <el-badge value="new">
-            <Heart :size="22" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
+            <Heart :size="20" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
           </el-badge>
         </div>
 
@@ -106,13 +106,6 @@ const badgeType = ref('avatar')
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Cell / Input / Radio 配置式范式一致，纯本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
 /* 徽标块：左列（标题+示例）+ 右列配置卡，配置卡顶与标题顶齐平 */
 .badge-showcase {
@@ -124,28 +117,18 @@ const badgeType = ref('avatar')
 
 @media (max-width: 1100px) {
   .badge-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
 }
 
-/* 配置卡在块卡（bg-card）内部，白底 + 细边框区分层次，避免同色套同色 */
-.config-card {
-  flex: 0 1 auto;
-  width: 220px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
 /* 配置项内单选纵向排列，占满配置卡宽度 */
 .config-card :deep(.el-radio-group) {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--iflyv-spacing-2);
+}
+
+/* 徽标气泡为绝对定位、会向上溢出宿主盒顶边约半个气泡高，默认 12px 间距会被视觉吃掉；
+   本页说明与示例行的间距放大到 spacing-5(20)。仅本页 scoped，不影响其他页的 .demo-desc。 */
+.badge-showcase .demo-desc {
+  margin-bottom: var(--iflyv-spacing-5);
 }
 </style>

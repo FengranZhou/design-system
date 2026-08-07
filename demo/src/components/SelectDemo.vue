@@ -277,17 +277,6 @@ const treeSelectData = [
 </script>
 
 <style scoped>
-/* 每个 demo 块用 bg-card 大卡片做区分（与 Input 一致，本页排版走令牌）。
-   卡间垂直间距统一 24（spacing-6）；覆盖全局 .demo-block 自带的 48px margin，避免叠加。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block + .demo-block {
-  margin-top: var(--iflyv-spacing-6);
-}
 
 /* 基础选择器块：左示例 + 右配置卡横向布局（与 Input 一致，纯排版不含组件外观） */
 .input-showcase {
@@ -300,24 +289,8 @@ const treeSelectData = [
 
 @media (max-width: 1100px) {
   .input-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
 }
 
-/* 配置卡：白底 + 细边框，与示例区分层次 */
-.config-card {
-  flex: 0 1 auto;
-  width: 220px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
 /* 可清除字段单元：开关 + hint 竖排为一个整体，整体与「可搜索」的间距
    由 form-item 源头 24px 承担（不覆盖 form-item margin，避免局部私货）。 */
 .config-field {
@@ -330,11 +303,5 @@ const treeSelectData = [
   display: flex;
   align-items: center;
   height: var(--el-component-size);
-}
-/* 选型指引说明：浅色小字，紧跟开关下方（上距 4px） */
-.config-card__hint {
-  margin: var(--iflyv-spacing-1) 0 0;
-  color: var(--iflyv-text-3);
-  font: var(--iflyv-font-body-sub);
 }
 </style>

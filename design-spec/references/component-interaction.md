@@ -136,14 +136,39 @@ updated: 2026-05-10
 ### Select 多选
 默认使用 `collapse-tags collapse-tags-tooltip :max-collapse-tags="2"`，显示 2 个 tag 后折叠，hover 展示全部
 
-### Tag 标签（数量克制）
-**尽量避免在同一处（同一行/同一区域）一次性并列出现 3 个以上标签**（即 ≤3 个为宜，4 个及以上应避免）。
+### Checkbox 多选框
+**何时用**：单独使用可以表示两种状态之间的切换，和 switch 类似。区别在于切换 switch 会直接触发状态改变，而 checkbox 一般用于状态标记，需要和提交操作配合。
+
+### Switch 开关
+**何时用**：需要表示开关状态/两种状态之间的切换时使用，和 checkbox 的区别是，切换 switch 会直接触发状态改变，而 checkbox 一般用于状态标记，需要和提交操作配合。
+
+### Slider 滑块
+**何时用**：当用户需要在数值区间/自定义区间内进行选择时，可为连续或离散值。
+
+### Tag 标签（选色 + 数量克制）
+
+**选色约定（源头 `tag.scss`）**：本系统品牌色是绿色，与 success 语义绿撞色，普通标签用品牌绿易被误读为「成功态」。因此：
+
+- **无语义含义的普通标签，优先 `type="info"`（蓝色）作为默认色**；仅确需品牌强调时才用默认 / `type="primary"`（品牌绿）。
+- 有状态语义的标签照常走语义色（success/warning/danger/info）。
+- 另有两个源头扩展类型：`el-tag--gray`（灰色中性标签，text-2 + inset 底）与 `el-tag--ai`（AI 标识：蓝→绿渐变底 + 渐变文字，走 AI 渐变令牌）——AI 相关标签一律用 `--ai`，不自拼渐变。
+
+**数量克制**：**尽量避免在同一处（同一行/同一区域）一次性并列出现 3 个以上标签**（即 ≤3 个为宜，4 个及以上应避免）。
 
 - **为什么**：标签是"轻量强调"，靠稀疏才有识别力；一排堆太多会让每个都失去焦点、色彩互相打架，退化成噪音（违背「装饰有度、主色克制」）。
 - **反例**：状态列 / 卡片头一次平铺 4~6 个彩色 Tag。
 - **例外**：demo / 规范展示页为了**枚举全部状态色板**（如本页一次列出「已完成/待审核/已驳回…」）不受此限——那是"展示所有可选项"，非真实业务里的单条记录并列。
 
+### Badge 徽标
+**何时用**：用于显示需要处理的消息条数，通过醒目视觉形式吸引用户处理。
+
+- **一律默认红色，引用方勿传 `type`**（源头 `badge.scss` 使用约定）：徽标语义单一（有未读/有新增），红色最醒目也最符合直觉，不做 success/warning/primary 等多彩区分。
+- **挂宿主的方式**：头像/按钮/图标是规整盒子，`el-badge` **直接包宿主**、EP 原生定位即正确（图标场景包**裸图标**——若图标外还有更大的点击热区容器，badge 包图标而不是包热区，否则角标锚到热区角上、飘离图标）。挂 **tab** 时用 `.badge-tabs` + `.tab-badge` 组合约定，见上方 Tabs 段。
+
 ### Dropdown 下拉菜单（面板 + 触发器）
+
+**何时用**：常与"触发器"（按钮、图标、下拉选择器等）组合使用，当页面上的操作命令过多时，用此组件可以收纳操作元素。
+
 `el-dropdown` 由**两部分**组成：**下拉面板本身**（菜单项 / 分隔线 / 禁用项 / hover，样式归 `el-theme` 源头）+ **触发器**（用户点/hover 后弹出面板的那个元素）。
 
 - **触发器不是固定形态**：`el-dropdown` **常与「触发器」组合使用**——触发器可以是**按钮、图标、下拉选择器、轻量文字**等多种形态，按场景选，不写死成某一种。
@@ -151,7 +176,17 @@ updated: 2026-05-10
   - **紧凑 / 操作列 / 工具栏** → 用**纯图标**触发（如 `MoreHorizontal` 更多，配 `.btn-icon-square`）。
   - **次要 / 行内轻量入口**（如"更多操作 ⌄"）→ 用**轻量文字 + 箭头**触发。
 - **强制做法**：触发器放在 `el-dropdown` 默认插槽、菜单放 `#dropdown` 插槽的 `<el-dropdown-menu>`；分隔用 `<el-dropdown-item divided>`；禁用项用 `disabled`；危险项文字走 `--iflyv-danger-primary`。
-- **反例**：手撸一个绝对定位的浮层当下拉；触发器和菜单不用 `el-dropdown` 组合而各写各的；把本该是按钮/图标的主入口硬做成裸文字（或反之）。
+- **触发器尾部箭头必须用约定 class `.dropdown-caret`**（源头 `dropdown.scss`：垂直居中 + 展开时翻转 180° 带过渡）。EP 的 `el-dropdown` 展开态没有稳定纯 CSS 钩子，**展开 class `.is-expanded` 需由使用方用 `@visible-change` 绑定**——这是唯一要使用方做的事，翻转规则/过渡全在源头：
+
+  ```vue
+  <el-dropdown @visible-change="open = $event">
+    <span>更多 <ChevronDown class="dropdown-caret" :class="{ 'is-expanded': open }" /></span>
+    <template #dropdown>…</template>
+  </el-dropdown>
+  ```
+
+  > 与按钮的 `.btn-caret` 区分：`.btn-caret` 是「hover 按钮时」转（纯 CSS，button.scss）；`.dropdown-caret` 是「下拉展开时」转。箭头与文字的间距由触发器父容器 flex gap 提供，不要在箭头上加 margin（会与 gap 叠加）。
+- **反例**：手撸一个绝对定位的浮层当下拉；触发器和菜单不用 `el-dropdown` 组合而各写各的；把本该是按钮/图标的主入口硬做成裸文字（或反之）；「文字 + 箭头」触发器的箭头不用 `.dropdown-caret` 而在页面 scoped 里自写旋转动效。
 
 ### 按钮间距
 design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-left: 12px }`（见 `el-theme/components/button.scss`）。
@@ -188,7 +223,48 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 - **返回箭头外观**（图标 / 与首项 8px 间距 / 激活 `icon-2` / 禁用 `icon-4`）单一数据源在 `el-theme/components/breadcrumb.scss` 的约定 class `.breadcrumb-back`，`Breadcrumb` 组件内部引用它——**使用方不碰外观，只传 `items` + 接 `@back`**。可点击项 hover 变品牌绿、`…` 折叠触发器同色，均在源头统一，使用方不覆盖。
 - **反例**：用 `el-breadcrumb` 自己在前面塞一个 `<span>` 挂 `@click` 手拼返回箭头（脱离组件、间距/色态/禁用逻辑各处不一致、源头更新不同步）；把 `@back` 写成空函数让箭头点了没反应；深层级路径**不传 `max-items` 硬让十几级全平铺**撑爆一行（应传 `max-items` 折叠）。
 
+### Tabs 标签页（三档选型 + 组合约定）
+**何时用**：提供平级的区域将大块内容进行收纳和展现，保持界面整洁。
+
+**三档选型（约定 class，源头 `el-theme/components/tabs.scss`）**——按 tab 所处层级选档，不要一律写裸 `el-tabs`：
+
+| 档位 | 写法 | 规格 | 何时用 |
+|---|---|---|---|
+| **页面级** | `<el-tabs class="tabs-page">` | 18px/28px，高 64px | 页面顶部一级内容切换（充当页面标题层） |
+| **模块级**（默认） | `<el-tabs>` | 16px/24px，高 40px | 页面内模块 / 卡片里的内容切换 |
+| **组件级** | `<el-tabs class="tabs-sub">` | 14px/20px，高 36px | 工具栏内等更小颗粒的切换（toolbar-pattern 的组件级 tab 即此档） |
+
+- **反例**：页面级 tab 写裸 `el-tabs`（拿到的是模块级观感、层级失真）；在使用方 scoped 里自调 tab 字号/高度凑档位（脱离源头）。
+
+**组合约定（全在源头，使用方只写约定 class，禁止在页面 scoped 里复刻 overflow/字重/offset）**：
+
+- **tab 带计数**（「全部 12 / 进行中 5」这类）：label 里包 `.tab-label-count`、数字用 `.tab-count`（数字色 text-4、选中变 text-3、与文字间距 4，均在源头）：
+
+  ```vue
+  <el-tab-pane name="all">
+    <template #label><span class="tab-label-count">全部<span class="tab-count">12</span></span></template>
+  </el-tab-pane>
+  ```
+
+- **tab 挂徽标**（角标数字/圆点/new）：`el-tabs` 加 `class="badge-tabs"`（让角标溢出 tab 头不被 nav 裁切 + 统一 badge 字重），徽标本体用 `<el-badge class="tab-badge">`（补偿模块级选中项 padding-top 导致的角标下沉，源头 `badge.scss`）：
+
+  ```vue
+  <el-tabs class="badge-tabs">
+    <el-tab-pane name="todo">
+      <template #label><el-badge :value="3" class="tab-badge">全部任务</el-badge></template>
+    </el-tab-pane>
+  </el-tabs>
+  ```
+
+- **反例**：角标被裁后在页面 scoped 写 `overflow: visible` 修补；给 tab 上的 badge 手写 offset 对齐选中态——这两类正是 `.badge-tabs` / `.tab-badge` 要防的局部私货。
+
+### Anchor 锚点
+**何时用**：需要展现当前页面上可供跳转的锚点链接，以及快速在锚点之间跳转。
+
 ### 分页器默认用法
+
+**何时用**：分页器用于分隔长列表，每次只加载一个页面。
+
 ```vue
 <el-pagination
   v-model:current-page="currentPage"
@@ -214,10 +290,60 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 - **强制**：小型档必须同时做两件事——加 `:small` **和**精简 layout；只加 `small` 不精简 layout，会在窄容器里挤出换行/溢出。
 - **反例**：在整页大列表用小型档（翻页按钮过小、丢了切每页条数能力）；在窄卡片里塞常规档完整 layout（sizes/jumper 挤爆容器）。
 
+### Steps 轻量步骤条（el-steps simple）
+
+**何时用**：引导用户按照流程完成任务的导航条，当任务复杂或者存在先后关系时，将其分解成一系列步骤，从而简化任务。
+
+```vue
+<el-steps :active="1" simple>
+  <el-step title="提交申请" />
+  <el-step title="审核中" />
+  <el-step title="审核通过" />
+</el-steps>
+```
+
+> 步数多时的左右内边距由源头 `steps.scss` 按步数自适应（≤3 步 12%、4~5 步 8%、≥6 步 4%），自动生效——**不要**在使用方手动调 padding 防挤。
+
 ### 空状态（Empty）
-- **图片区**：使用 `#image` 插槽替换 EP 默认 SVG，内容为圆角矩形底板（`.empty-icon-plate`，样式由 `el-theme/components/empty.scss` 全局提供）+ Lucide 图标
-- **图标选择**：根据场景使用语义化图标（如 `Inbox` 暂无数据、`FileSearch` 无搜索结果、`FolderOpen` 暂无文件、`AlertCircle` 加载失败）
-- **底部操作按钮**：使用**默认态**（`<el-button>`），不使用 `type="primary"`——空状态按钮属于辅助引导，遵循「主操作唯一」原则
+
+一律用 `el-empty`，且**必须同时传两样**——设计系统插画 + 承载档位 class。**缺任何一样都会落回 EP 默认纸盒插画（反例，等于没接设计系统）**：
+
+- **插画（`:image`）**：用 `el-theme/assets/empty/` 下的场景插画，import 后把 URL 传给 `:image`。按场景选图（8 种）：
+
+  | 场景 | 文件 |
+  |---|---|
+  | 无资源/无数据 | `no-data.png` |
+  | 无网络 | `no-network.png` |
+  | 无搜索结果 | `no-search-result.png` |
+  | 无课程 | `no-course.png` |
+  | 无用户 | `no-user.png` |
+  | 无图谱 | `no-graph.png` |
+  | 无回复 | `no-reply.png` |
+  | 无考试/作业/测验/笔记 | `no-exam.png` |
+
+  暗色主题用 `dark/` 目录下的同名变体。
+- **档位 class**：整页空态加 `class="empty-page"`（插图 120、留白大）；卡片/区块内空态加 `class="empty-block"`（插图 80、留白小）。尺寸与间距全在 `el-theme/components/empty.scss` 源头，下游不自行覆盖。
+- **底部操作按钮**：放默认插槽，使用**默认态**（`<el-button>`），不使用 `type="primary"`——空状态按钮属于辅助引导，遵循「主操作唯一」原则
+
+可照抄骨架：
+
+```vue
+<script setup lang="ts">
+import noData from '<path>/design-spec/el-theme/assets/empty/no-data.png'
+</script>
+
+<template>
+  <el-empty class="empty-page" :image="noData" description="暂无数据">
+    <el-button>立即创建</el-button>
+  </el-empty>
+</template>
+```
+
+### Message 消息提示
+**何时用**：希望不打断用户操作，并给予轻量提示。
+
+### Alert 警告
+**何时用**：当提示内容较重要，并需要吸引用户查看时使用。
 
 ### Notification 通知（场景 / 常驻 / 操作按钮）
 
@@ -247,7 +373,15 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
   ```
 - **反例**：为"通知里加个按钮"另写一个绝对定位浮层 / 自造 Toast 组件；把操作按钮塞进 `title`；或用行内 `style` 手写按钮行布局（应走 `.notify-actions`）。
 
+### Skeleton 骨架屏
+**何时用**：可以被「加载」完全代替，但是在可用的场景下可以比 Spin 提供更好的视觉效果和用户体验。
+
+### Result 结果页
+**何时用**：当有重要操作需告知用户处理结果，且反馈内容较为复杂/重要时使用。
+
 ### Popconfirm 气泡确认（轻量二次确认）
+
+**何时用**：目标元素的操作需要用户进一步完成交互形式更轻量的确认时使用。
 
 删除、离开等**低风险**操作的二次确认，用 `el-popconfirm`（就地气泡，不打断全屏）；高风险 / 需要用户全神贯注的确认才升级到 `el-dialog`（见上方 Dialog 段）。
 
@@ -335,6 +469,29 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 
 **实现细节见**：`el-theme/components/dialog.scss` 的「语义化标题图标变体」段。
 **示例代码见**：`design-spec/examples/dialog.examples.vue` 的「语义化标题」section。
+
+### Dialog 结构件：提示信息条 / 多标题切换（约定 class，源头 dialog.scss）
+
+- **弹窗内提示信息条**：弹窗需要一句全局引导/说明（操作前提、影响范围、填写须知）时，放在 **content 区顶部**（header 之下、主内容之上），用中性灰底 alert 承载；与下方内容的 20px 间距由源头统一给，使用方不再写间距：
+
+  ```vue
+  <el-alert class="alert-neutral" type="info" :closable="false" title="提示信息" />
+  ```
+
+  语义级别：一般引导用中性灰底（`.alert-neutral`）；仅当提示本身是警告/危险语义时才改用对应 `type`。**不要用品牌绿底承载普通提示**（品牌色仅用于强调，与 Tag 选色约定同理）。
+
+- **多标题切换头部**（一个弹窗内多视图切换，如「标题一/标题二」）：`#header` 具名插槽里放标题组，容器加 `.dialog-titles`、每个标题用 `.dialog-title-item`、当前项加 `.is-active`（选中态字重/色阶、标题间距 20px 全在源头）：
+
+  ```vue
+  <template #header>
+    <div class="dialog-titles">
+      <span class="dialog-title-item is-active">标题一</span>
+      <span class="dialog-title-item" @click="switchTo(2)">标题二</span>
+    </div>
+  </template>
+  ```
+
+- **反例**：提示条用裸 `div` + 自配底色；多标题用页面 scoped 自写字重/间距切换态——两者都是脱离源头的私货。
 
 ### Drawer 抽屉（何时用抽屉 vs 对话框）
 

@@ -79,17 +79,6 @@ const contentRow = [
 </script>
 
 <style scoped>
-/* 每个 demo 块用 bg-card 大卡片做区分（与 FormControl / Input 配置式范式一致）。
-   卡间垂直间距统一 24（spacing-6）；覆盖全局 .demo-block 自带的 48px margin，避免叠加。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block + .demo-block {
-  margin-top: var(--iflyv-spacing-6);
-}
 
 /* 本页演示专用：el-table 没有 show-body 开关，「只展示表头单元格」只能喂空数据实现，
    但空数据会残留一块 empty 占位区。仅对本块的 .header-only-table 压掉该占位高度——

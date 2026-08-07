@@ -151,17 +151,6 @@ const activeTip = computed(() => tipScenes.find(s => s.value === tipScene.value)
 </script>
 
 <style scoped>
-/* 每个 demo 块用 bg-card 大卡片做区分（与 Select / Input / Navigation 一致，本页排版走令牌）。
-   卡间垂直间距统一 24（spacing-6）；覆盖全局 .demo-block 自带的 48px margin，避免叠加。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block + .demo-block {
-  margin-top: var(--iflyv-spacing-6);
-}
 
 /* 提示信息条的下边距已归源头 dialog.scss（.el-dialog__body > .el-alert:first-child），此处不再定义。 */
 
@@ -188,32 +177,14 @@ const activeTip = computed(() => tipScenes.find(s => s.value === tipScene.value)
   font-weight: var(--iflyv-font-weight-regular);
 }
 
-/* 配置式布局：左示例 + 右配置卡横向（与 Input / Navigation 配置式范式一致，纯本页排版，不含组件外观） */
-.control-showcase {
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
-}
-.control-showcase__main { flex: 1; min-width: 0; }
-
-@media (max-width: 1100px) {
-  .control-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
-}
-
-/* 配置卡：白底 + 细边框区分层次（与其它 demo 一致） */
+/* 本页配置项多（多行表单/单选组），配置卡加宽一档 */
 .config-card {
   flex: 0 0 auto;
   width: 400px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
 }
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
+
+@media (max-width: 1100px) {
+  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
+  .config-card { width: 100%; }
 }
 </style>
