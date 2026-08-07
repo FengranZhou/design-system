@@ -1,6 +1,6 @@
 <template>
   <section id="date-picker" class="demo-section">
-    <h2 class="demo-section__title">DatePicker 日期选择器</h2>
+    <h2 class="demo-section__title">Picker 时间/日期选择器</h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
