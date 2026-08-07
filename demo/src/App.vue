@@ -42,13 +42,27 @@
           <!-- <li><a href="#button-examples" :class="{ 'is-active': activeSection === 'button-examples' }" style="color: var(--iflyv-brand-primary);">📋 Button Examples（临时预览）</a></li> -->
         </ul>
 
-        <div class="app-sidebar__group-label">表单</div>
+        <div class="app-sidebar__group-label">导航</div>
+        <ul class="app-sidebar__nav">
+          <li><a href="#breadcrumb" :class="{ 'is-active': activeSection === 'breadcrumb' }">Breadcrumb 面包屑</a></li>
+          <li><a href="#tabs" :class="{ 'is-active': activeSection === 'tabs' }">Tabs 标签页</a></li>
+          <li><a href="#pagination" :class="{ 'is-active': activeSection === 'pagination' }">Pagination 分页</a></li>
+          <li><a href="#anchor" :class="{ 'is-active': activeSection === 'anchor' }">Anchor 锚点</a></li>
+          <li><a href="#steps" :class="{ 'is-active': activeSection === 'steps' }">Steps 轻量步骤条</a></li>
+          <li><a href="#dropdown" :class="{ 'is-active': activeSection === 'dropdown' }">Dropdown 下拉菜单</a></li>
+        </ul>
+
+        <div class="app-sidebar__group-label">数据录入</div>
         <ul class="app-sidebar__nav">
           <li><a href="#input" :class="{ 'is-active': activeSection === 'input' }">Input 输入框</a></li>
           <li><a href="#select" :class="{ 'is-active': activeSection === 'select' }">Select 选择器</a></li>
           <!-- <li><a href="#select-examples" :class="{ 'is-active': activeSection === 'select-examples' }" style="color: var(--iflyv-brand-primary);">📋 Select Examples（临时预览）</a></li> -->
-          <li><a href="#form-control" :class="{ 'is-active': activeSection === 'form-control' }">FormControl 表单控件</a></li>
-          <li><a href="#date-picker" :class="{ 'is-active': activeSection === 'date-picker' }">DatePicker 日期选择器</a></li>
+          <li><a href="#date-picker" :class="{ 'is-active': activeSection === 'date-picker' }">Picker 时间/日期选择器</a></li>
+          <li><a href="#radio" :class="{ 'is-active': activeSection === 'radio' }">Radio 单选框</a></li>
+          <li><a href="#checkbox" :class="{ 'is-active': activeSection === 'checkbox' }">Checkbox 多选框</a></li>
+          <li><a href="#switch" :class="{ 'is-active': activeSection === 'switch' }">Switch 开关</a></li>
+          <li><a href="#slider" :class="{ 'is-active': activeSection === 'slider' }">Slider 滑块</a></li>
+          <li><a href="#rate" :class="{ 'is-active': activeSection === 'rate' }">Rate 评分</a></li>
           <!-- Upload 上传：暂时用不到，先注释保留，需要时放开 -->
           <!-- <li><a href="#upload" :class="{ 'is-active': activeSection === 'upload' }">Upload 上传</a></li> -->
           <!-- Transfer 穿梭框：暂时用不到，先注释保留，需要时放开 -->
@@ -60,30 +74,34 @@
           <li><a href="#tag" :class="{ 'is-active': activeSection === 'tag' }">Tag 标签</a></li>
           <li><a href="#table" :class="{ 'is-active': activeSection === 'table' }">Cell 单元格</a></li>
           <!-- <li><a href="#table-examples" :class="{ 'is-active': activeSection === 'table-examples' }" style="color: var(--iflyv-brand-primary);">📋 Table Examples（临时预览）</a></li> -->
+          <li><a href="#badge" :class="{ 'is-active': activeSection === 'badge' }">Badge 徽标</a></li>
+          <li><a href="#descriptions" :class="{ 'is-active': activeSection === 'descriptions' }">Descriptions 描述列表</a></li>
           <li><a href="#avatar" :class="{ 'is-active': activeSection === 'avatar' }">Avatar 头像</a></li>
-          <li><a href="#data-display" :class="{ 'is-active': activeSection === 'data-display' }">DataDisplay 数据展示</a></li>
-        </ul>
-
-        <div class="app-sidebar__group-label">导航</div>
-        <ul class="app-sidebar__nav">
-          <li><a href="#navigation" :class="{ 'is-active': activeSection === 'navigation' }">Navigation 导航组件</a></li>
+          <li><a href="#empty" :class="{ 'is-active': activeSection === 'empty' }">Empty 空状态</a></li>
+          <!-- DataDisplay 数据展示：徽标/描述列表已拆出、骨架屏已移入反馈组，页内暂无在展内容（仅存暂停块），先注释，需要时放开 -->
+          <!-- <li><a href="#data-display" :class="{ 'is-active': activeSection === 'data-display' }">DataDisplay 数据展示</a></li> -->
         </ul>
 
         <div class="app-sidebar__group-label">反馈</div>
         <ul class="app-sidebar__nav">
           <li><a href="#dialog" :class="{ 'is-active': activeSection === 'dialog' }">Dialog 对话框</a></li>
           <!-- <li><a href="#dialog-examples" :class="{ 'is-active': activeSection === 'dialog-examples' }" style="color: var(--iflyv-brand-primary);">📋 Dialog Examples（临时预览）</a></li> -->
+          <li><a href="#drawer" :class="{ 'is-active': activeSection === 'drawer' }">Drawer 抽屉</a></li>
           <li><a href="#message" :class="{ 'is-active': activeSection === 'message' }">Message 消息提示</a></li>
+          <li><a href="#alert" :class="{ 'is-active': activeSection === 'alert' }">Alert 警告</a></li>
+          <li><a href="#notification" :class="{ 'is-active': activeSection === 'notification' }">Notification 通知</a></li>
           <li><a href="#popconfirm" :class="{ 'is-active': activeSection === 'popconfirm' }">Popconfirm 气泡确认框</a></li>
-          <li><a href="#feedback" :class="{ 'is-active': activeSection === 'feedback' }">Feedback 反馈组件</a></li>
+          <li><a href="#tooltip" :class="{ 'is-active': activeSection === 'tooltip' }">Tooltip 文字提示</a></li>
           <li><a href="#loading" :class="{ 'is-active': activeSection === 'loading' }">Loading 加载</a></li>
+          <li><a href="#skeleton" :class="{ 'is-active': activeSection === 'skeleton' }">Skeleton 骨架屏</a></li>
+          <li><a href="#result" :class="{ 'is-active': activeSection === 'result' }">Result 结果页</a></li>
         </ul>
 
-        <div class="app-sidebar__group-label">其他</div>
+        <!-- 其他组：Empty 已移入「数据展示」；Other 结果页拆出后页内暂无在展内容（仅存暂停块），整组先注释，需要时放开 -->
+        <!-- <div class="app-sidebar__group-label">其他</div>
         <ul class="app-sidebar__nav">
-          <li><a href="#empty" :class="{ 'is-active': activeSection === 'empty' }">Empty 空状态</a></li>
           <li><a href="#other" :class="{ 'is-active': activeSection === 'other' }">Other 其他组件</a></li>
-        </ul>
+        </ul> -->
         </template>
 
         <template v-if="currentTopTab === 'business'">
@@ -130,6 +148,12 @@
         </p>
         <ButtonExamples />
       </section> -->
+      <BreadcrumbDemo />
+      <TabsDemo />
+      <PaginationDemo />
+      <AnchorDemo />
+      <StepsDemo />
+      <DropdownDemo />
       <InputDemo />
       <SelectDemo />
       <!-- <section id="select-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
@@ -139,8 +163,12 @@
         </p>
         <SelectExamples />
       </section> -->
-      <FormControlDemo />
       <DatePickerDemo />
+      <RadioDemo />
+      <CheckboxDemo />
+      <SwitchDemo />
+      <SliderDemo />
+      <RateDemo />
       <!-- Upload 上传：暂时用不到，先注释保留，需要时放开 -->
       <!-- <UploadDemo /> -->
       <!-- Transfer 穿梭框：暂时用不到，先注释保留，需要时放开 -->
@@ -154,9 +182,12 @@
         </p>
         <TableExamples />
       </section> -->
+      <BadgeDemo />
+      <DescriptionsDemo />
       <AvatarDemo />
-      <DataDisplayDemo />
-      <NavigationDemo />
+      <EmptyDemo />
+      <!-- DataDisplay 数据展示：页内暂无在展内容（仅存暂停块），随导航一并注释，需要时放开 -->
+      <!-- <DataDisplayDemo /> -->
       <DialogDemo />
       <!-- <section id="dialog-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
         <h2 class="demo-section__title">📋 Dialog Examples（design-spec/examples/ 临时预览）</h2>
@@ -165,12 +196,17 @@
         </p>
         <DialogExamples />
       </section> -->
+      <DrawerDemo />
       <MessageDemo />
+      <AlertDemo />
+      <NotificationDemo />
       <PopconfirmDemo />
-      <FeedbackDemo />
+      <TooltipDemo />
       <LoadingDemo />
-      <EmptyDemo />
-      <OtherDemo />
+      <SkeletonDemo />
+      <ResultDemo />
+      <!-- Other 其他组件：结果页拆出后页内暂无在展内容（仅存暂停块），先注释，需要时放开 -->
+      <!-- <OtherDemo /> -->
       </div>
       <div v-show="currentTopTab === 'business'">
       <StepBarDemo />
@@ -221,23 +257,39 @@ import MotionDemo from './components/token/MotionDemo.vue'
 import ButtonDemo from './components/ButtonDemo.vue'
 import InputDemo from './components/InputDemo.vue'
 import SelectDemo from './components/SelectDemo.vue'
-import FormControlDemo from './components/FormControlDemo.vue'
+import RadioDemo from './components/RadioDemo.vue'
+import CheckboxDemo from './components/CheckboxDemo.vue'
+import SwitchDemo from './components/SwitchDemo.vue'
+import SliderDemo from './components/SliderDemo.vue'
+import RateDemo from './components/RateDemo.vue'
 import DatePickerDemo from './components/DatePickerDemo.vue'
 // import UploadDemo from './components/UploadDemo.vue'  // ⏸ 暂停启用，需要时放开
 // Transfer 穿梭框：暂时用不到，先注释保留，需要时放开
 // import TransferDemo from './components/TransferDemo.vue'
 import TagDemo from './components/TagDemo.vue'
 import TableDemo from './components/TableDemo.vue'
-import NavigationDemo from './components/NavigationDemo.vue'
-import DataDisplayDemo from './components/DataDisplayDemo.vue'
+import TabsDemo from './components/TabsDemo.vue'
+import BreadcrumbDemo from './components/BreadcrumbDemo.vue'
+import DropdownDemo from './components/DropdownDemo.vue'
+import StepsDemo from './components/StepsDemo.vue'
+import AnchorDemo from './components/AnchorDemo.vue'
+import PaginationDemo from './components/PaginationDemo.vue'
+// import DataDisplayDemo from './components/DataDisplayDemo.vue'  // ⏸ 暂停启用（页内暂无在展内容），需要时放开
 import AvatarDemo from './components/AvatarDemo.vue'
+import BadgeDemo from './components/BadgeDemo.vue'
+import DescriptionsDemo from './components/DescriptionsDemo.vue'
 import DialogDemo from './components/DialogDemo.vue'
 import MessageDemo from './components/MessageDemo.vue'
 import PopconfirmDemo from './components/PopconfirmDemo.vue'
-import FeedbackDemo from './components/FeedbackDemo.vue'
+import AlertDemo from './components/AlertDemo.vue'
+import TooltipDemo from './components/TooltipDemo.vue'
+import NotificationDemo from './components/NotificationDemo.vue'
+import DrawerDemo from './components/DrawerDemo.vue'
 import LoadingDemo from './components/LoadingDemo.vue'
+import SkeletonDemo from './components/SkeletonDemo.vue'
 import EmptyDemo from './components/EmptyDemo.vue'
-import OtherDemo from './components/OtherDemo.vue'
+import ResultDemo from './components/ResultDemo.vue'
+// import OtherDemo from './components/OtherDemo.vue'  // ⏸ 暂停启用（页内暂无在展内容），需要时放开
 import PatternFormDemo from './components/pattern/PatternFormDemo.vue'
 import PatternListItemDemo from './components/pattern/PatternListItemDemo.vue'
 import PatternToolbarDemo from './components/pattern/PatternToolbarDemo.vue'
@@ -256,9 +308,11 @@ const activeSection = ref('palette')
 
 const sectionIds = [
   'palette', 'token-color', 'token-font-base', 'token-font-semantic', 'token-spacing', 'token-radius', 'token-shadow', 'token-motion',
-  'button', 'input', 'select', 'form-control', 'date-picker',
-  'tag', 'table', 'avatar', 'data-display',
-  'navigation', 'dialog', 'message', 'popconfirm', 'feedback', 'loading', 'empty', 'other',
+  'button',
+  'breadcrumb', 'tabs', 'pagination', 'anchor', 'steps', 'dropdown',
+  'input', 'select', 'date-picker', 'radio', 'checkbox', 'switch', 'slider', 'rate',
+  'tag', 'table', 'badge', 'descriptions', 'avatar', 'empty',
+  'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
   'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'copywriting-time',
 ]
