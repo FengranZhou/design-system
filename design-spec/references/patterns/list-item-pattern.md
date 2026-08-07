@@ -60,7 +60,7 @@
 
 1. **先分区再落元素**：任何一行/条目，先按四区归位每个字段，再按上表选组件。不要字段平铺、不分主次。
 2. **状态必用标签**：状态 / 分类字段用 `el-tag`（走状态语义色 + `round`），**不要用纯文字**表示状态（无法一眼区分）。
-3. **操作区固定右侧、样式统一**：表格操作按钮一律 `<el-button class="table-operation">` + **图标（lucide）+ 文字**（如「✎ 编辑」，用约定类不用 text/link）；≥3 个操作时，主操作外露、其余收进 `el-dropdown`「更多」（下拉项走纯文字）。表格里操作列 `fixed="right"`。
+3. **操作区固定右侧、样式统一**：表格操作按钮一律 `<el-button class="table-operation">` + **图标（lucide）+ 文字**（如「✎ 编辑」，用约定类不用 text/link）；≥3 个操作时，主操作外露、其余收进 `el-dropdown`「更多」（下拉项走纯文字）。表格里操作列 `fixed="right"`。「更多」触发器同样走源头约定：`<el-dropdown class="table-operation">` + 内层 `<span class="table-operation__more">更多 <ChevronDown /></span>`（对齐/间距/色号全在 `table.scss` 源头）；**危险操作**（删除等）在按钮上加 `.table-operation--danger`（常态即危险红、hover 加深，不手写 color）。
 4. **数值右对齐**：金额 / 数量等数值列右对齐，便于比较。
 5. **列宽与冻结**：关键信息区按内容给合理 `width` / `min-width`。
    - **默认冻结规则（无特殊情况即遵守）**：当**列内容总宽超出表格展示宽度（会触发横向滚动）时，默认必须启用首尾列冻结** —— 主题区（姓名/名称）`fixed="left"`、操作区 `fixed="right"`。理由：横滚时用户仍需随时看到「这是谁（主题列）」和「能干什么（操作列）」，否则滚到中间就找不到行主体、够不到操作。
@@ -113,12 +113,15 @@
         <!-- 外露操作：图标 + 文字（图标用 lucide） -->
         <el-button class="table-operation"><template #icon><SquarePen :size="14" /></template>编辑</el-button>
         <el-button class="table-operation"><template #icon><Eye :size="14" /></template>查看</el-button>
-        <el-dropdown>
-          <span>更多</span>
+        <!-- 「更多」触发器：el-dropdown 也挂 .table-operation（对齐兄弟按钮），内层用约定容器 __more -->
+        <el-dropdown class="table-operation">
+          <span class="table-operation__more">更多 <ChevronDown :size="14" :stroke-width="2" /></span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>复制</el-dropdown-item>
-              <el-dropdown-item divided>删除</el-dropdown-item>
+              <el-dropdown-item divided>
+                <span style="color: var(--iflyv-danger-primary)">删除</span>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>

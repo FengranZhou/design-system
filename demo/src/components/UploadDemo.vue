@@ -1,5 +1,5 @@
 <template>
-  <section id="upload" class="demo-section">
+  <section id="upload" class="demo-section demo-plain">
     <h2 class="demo-section__title">Upload 上传</h2>
 
     <!-- ⏸ 暂停启用：基础「Upload 上传」（点击选择文件）。暂时用不到，保留代码，需要时放开。

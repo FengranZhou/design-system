@@ -97,23 +97,7 @@ const tableData = [
 </script>
 
 <style scoped>
-/* 纯本页排版，全部走令牌。上下两块 bg-card 大卡片（与 PatternFormDemo 一致）。 */
-.pattern-card {
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.pattern-card + .pattern-card { margin-top: var(--iflyv-spacing-6); }
-.pattern-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
-.pattern-card__desc {
-  margin: 0 0 var(--iflyv-spacing-6);
-  color: var(--iflyv-text-3);
-  font: var(--iflyv-font-body-sub);
-}
+/* 纯本页排版，全部走令牌 */
 
 /* 四区拆解：横向四列等宽，窄屏换行 */
 .anatomy {

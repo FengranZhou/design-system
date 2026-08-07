@@ -1,6 +1,6 @@
 <template>
-  <section id="token-color" class="demo-section" ref="rootEl">
-    <h2 class="demo-section__title">Semantic Color 语义色板</h2>
+  <section id="token-color" class="demo-section demo-plain" ref="rootEl">
+    <h2 class="demo-section__title">Color 语义色板</h2>
 
     <div class="demo-block">
       <div v-for="group in colorGroups" :key="group.label" class="token-group">

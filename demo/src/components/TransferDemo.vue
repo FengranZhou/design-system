@@ -1,5 +1,5 @@
 <template>
-  <section id="transfer" class="demo-section">
+  <section id="transfer" class="demo-section demo-plain">
     <h2 class="demo-section__title">Transfer 穿梭框</h2>
 
     <div class="demo-block">

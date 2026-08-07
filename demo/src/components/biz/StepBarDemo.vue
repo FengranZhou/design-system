@@ -4,7 +4,6 @@
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
-        <p class="demo-label">步骤条</p>
         <!-- 步骤条本体：透明底，这里给一个浅色承载区便于观察（纯本页排版） -->
         <div class="step-bar-stage">
           <StepBar :steps="steps" :current="current" :finished="finished" />
@@ -60,16 +59,6 @@ const configForm = computed(() => ({
 </script>
 
 <style scoped>
-/* 每个 demo 块用 bg-card 大卡片做区分（与基础组件各 demo 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block + .demo-block {
-  margin-top: var(--iflyv-spacing-6);
-}
 
 /* 步骤条承载区：浅底 + 圆角，模拟弹窗 header 那种承载环境便于观察（纯本页排版，不碰组件外观） */
 .step-bar-stage {
@@ -79,31 +68,14 @@ const configForm = computed(() => ({
   padding-top: var(--iflyv-spacing-2);
 }
 
-/* 配置式布局：左示例 + 右配置卡横向（与其它 demo 一致，纯本页排版） */
-.control-showcase {
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
-}
-.control-showcase__main { flex: 1; min-width: 0; }
-
-@media (max-width: 1100px) {
-  .control-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
-}
-
+/* 本页配置项多（多行表单/单选组），配置卡加宽一档 */
 .config-card {
   flex: 0 0 auto;
   width: 400px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
 }
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
+
+@media (max-width: 1100px) {
+  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
+  .config-card { width: 100%; }
 }
 </style>

@@ -4,7 +4,6 @@
 
     <div class="demo-block avatar-showcase">
       <div class="avatar-showcase__main">
-        <p class="demo-label">内置角色</p>
 
         <!-- 独立：四个内置角色各自展示，带角色名 -->
         <div v-if="avatarMode === 'single'" class="demo-row" style="gap: 40px;">
@@ -37,7 +36,7 @@
           </el-form-item>
           <el-form-item label="尺寸">
             <el-radio-group v-model="avatarSize">
-              <el-radio :value="40">40px</el-radio>
+              <el-radio :value="28">28px</el-radio>
               <el-radio :value="24">24px</el-radio>
               <el-radio :value="20">20px</el-radio>
             </el-radio-group>
@@ -59,17 +58,10 @@ const roles = (Object.keys(AVATAR_LABEL) as AvatarRole[]).map((role) => ({
 
 // 配置项：展示方式（独立/组合）+ 尺寸
 const avatarMode = ref<'single' | 'group'>('single')
-const avatarSize = ref(40)
+const avatarSize = ref(28)
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Select / Dialog / Navigation 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
 /* 头像块：左列（标题+示例）+ 右列配置卡，配置卡顶与标题顶齐平 */
 .avatar-showcase {
@@ -81,24 +73,8 @@ const avatarSize = ref(40)
 
 @media (max-width: 1100px) {
   .avatar-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
 }
 
-/* 配置卡在块卡（bg-card）内部，白底 + 细边框区分层次 */
-.config-card {
-  flex: 0 1 auto;
-  width: 220px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
 .config-card :deep(.el-radio-group) {
   flex-direction: column;
   align-items: flex-start;

@@ -18,7 +18,7 @@
 // 非 4px 间距序列上的结构性尺寸，无对应 spacing token，
 // 统一提炼为局部变量单点维护（收敛裸 px，避免多处重复魔法值）
 $app-topbar-height: 64px;
-$app-sidebar-width: 280px;
+$app-sidebar-width: 224px;  // 280 - 56：侧边栏收窄，给内容区让宽
 $app-logo-size: 32px;
 // 侧栏导航项内缩进（激活条宽 + 视觉留白，非标准间距序列，单点维护）
 $app-nav-item-indent: 28px;
@@ -419,7 +419,7 @@ body {
     font-size: var(--iflyv-font-size-26);
     line-height: var(--iflyv-line-height-48);
     color: var(--iflyv-text-1);
-    margin-bottom: 24px;
+    margin-bottom: var(--iflyv-spacing-4);  /* 16 */
     padding-bottom: 16px;
     border-bottom: 1px solid var(--iflyv-border-default);
     display: flex;
@@ -437,9 +437,41 @@ body {
   }
 }
 
+// 「基础组件 / 业务组件 / 设计模式」三个 tab 的内容容器挂 .no-title-divider：
+// 大标题下不要分割线（其余 tab 如基础样式保留原分割线）
+.no-title-divider .demo-section__title {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
 // sub-section 包裹：label + row
-.demo-block {
-  margin-bottom: 48px;
+// demo 演示大卡片（原散落 34 个 demo scoped，2026-08 收敛单点）。
+// 两种版式按展示内容选，默认卡片版，容器挂 .demo-plain 切素排：
+//   · 卡片版（默认）—— 组件演示：灰底卡片框住一组控件，块与块之间靠卡片边界区分。
+//   · 素排版（.demo-plain）—— 令牌 / 基础样式展示（色板、字体、间距、圆角、阴影、动效）：
+//     这类页面本身在展示底色 / 圆角 / 投影，套灰底圆角卡片会与被展示的内容打架，
+//     故不套卡片，仅用大间距分隔。
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+
+  & + .demo-block {
+    margin-top: var(--iflyv-spacing-6);
+  }
+}
+
+// 素排版：去掉卡片装饰，块间距回到 48（= spacing-8 + spacing-4 凑值，与 control-showcase 间距同法）
+.demo-plain .demo-block {
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  margin-bottom: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
+
+  & + .demo-block {
+    margin-top: 0;
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -471,6 +503,78 @@ body {
   }
 }
 
+
+// ============ demo 配置式展示脚手架 ============
+// config-card 配置卡 / control-showcase 左右布局 / pattern-card 模式卡
+// （原散落各 demo scoped，2026-08 收敛单点）。
+// 纯 demo 演示脚手架，不属于设计系统组件，故留在 demo 侧而非 el-theme 源头。
+// 各 demo 若需与此不同（如配置卡窄一档），只在自己 scoped 里写差异那几行做最小覆盖。
+
+// 左示例 + 右配置卡横向布局：主区自适应、配置卡定宽
+.control-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
+}
+.control-showcase__main {
+  flex: 1;
+  min-width: 0;
+}
+
+// 配置卡：块卡（bg-card）内部用面板底 + 细边框区分层次，避免同色套同色
+.config-card {
+  flex: 0 1 auto;
+  width: 220px;
+  align-self: flex-start;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-md);
+}
+.config-card__title {
+  margin: 0 0 var(--iflyv-spacing-4);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
+}
+// 配置项释义小字：紧跟控件下方
+.config-card__hint {
+  margin: var(--iflyv-spacing-1) 0 0;
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+
+// 窄屏：配置卡下移换行，把整行宽度让给示例区
+@media (max-width: 1100px) {
+  .control-showcase {
+    flex-direction: column;
+  }
+  .config-card {
+    width: 100%;
+  }
+}
+
+// 设计模式页的模式卡：上下两块大卡片（① 模式规则 / ② 标准范例）
+.pattern-card {
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+
+  & + .pattern-card {
+    margin-top: var(--iflyv-spacing-6);
+  }
+
+  &__title {
+    margin: 0 0 var(--iflyv-spacing-4);
+    color: var(--iflyv-text-1);
+    font: var(--iflyv-font-title-component);
+  }
+
+  &__desc {
+    margin: 0 0 var(--iflyv-spacing-6);
+    color: var(--iflyv-text-3);
+    font: var(--iflyv-font-body-sub);
+  }
+}
 
 // ============ 辅助样式 ============
 

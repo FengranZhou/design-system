@@ -1,5 +1,5 @@
 <template>
-  <section id="token-shadow" class="demo-section" ref="rootEl">
+  <section id="token-shadow" class="demo-section demo-plain" ref="rootEl">
     <h2 class="demo-section__title">Shadow 阴影</h2>
 
     <div class="demo-block">

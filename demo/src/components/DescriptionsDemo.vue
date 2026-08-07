@@ -4,7 +4,6 @@
 
     <div class="demo-block descriptions-showcase">
       <div class="descriptions-showcase__main">
-        <p class="demo-label">描述列表</p>
         <!-- :column = 每行组数（y 列）；条目数 = descRows × descCols，多余/不足由 descItems 动态裁剪 -->
         <el-descriptions :column="descCols" border>
           <el-descriptions-item
@@ -68,13 +67,6 @@ const descItems = computed(() => {
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Cell / Input / Radio 配置式范式一致，纯本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
 /* 描述列表块：左内容 + 右配置卡，配置卡顶与标题顶齐平 */
 .descriptions-showcase {
@@ -86,22 +78,5 @@ const descItems = computed(() => {
 
 @media (max-width: 1100px) {
   .descriptions-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
-}
-
-/* 配置卡在块卡（bg-card）内部，白底 + 细边框区分层次，避免同色套同色 */
-.config-card {
-  flex: 0 1 auto;
-  width: 220px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
 }
 </style>

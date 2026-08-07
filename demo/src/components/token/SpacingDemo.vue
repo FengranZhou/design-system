@@ -1,5 +1,5 @@
 <template>
-  <section id="token-spacing" class="demo-section" ref="rootEl">
+  <section id="token-spacing" class="demo-section demo-plain" ref="rootEl">
     <h2 class="demo-section__title">Spacing 间距</h2>
 
     <div class="demo-block">

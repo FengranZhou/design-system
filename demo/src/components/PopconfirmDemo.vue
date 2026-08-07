@@ -3,7 +3,7 @@
     <h2 class="demo-section__title">Popconfirm 气泡确认框</h2>
 
     <div class="demo-block">
-      <p class="demo-label">气泡确认</p>
+      <p class="demo-desc">目标元素的操作需要用户进一步完成交互形式更轻量的确认时使用。</p>
       <div class="demo-row">
         <el-popconfirm
           title="确定要删除这条记录吗？"
@@ -28,13 +28,3 @@ const onConfirm = () => {
   ElMessage.success('操作已确认')
 }
 </script>
-
-<style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Empty / Avatar / Dialog / Navigation 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-</style>

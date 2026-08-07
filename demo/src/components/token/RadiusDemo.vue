@@ -1,5 +1,5 @@
 <template>
-  <section id="token-radius" class="demo-section" ref="rootEl">
+  <section id="token-radius" class="demo-section demo-plain" ref="rootEl">
     <h2 class="demo-section__title">Radius 圆角</h2>
 
     <div class="demo-block">

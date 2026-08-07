@@ -25,9 +25,9 @@
         <template v-if="currentTopTab === 'token'">
         <ul class="app-sidebar__nav">
           <li><a href="#palette" :class="{ 'is-active': activeSection === 'palette' }">Palette 基础色板</a></li>
-          <li><a href="#token-color" :class="{ 'is-active': activeSection === 'token-color' }">Semantic Color 语义色板</a></li>
+          <li><a href="#token-color" :class="{ 'is-active': activeSection === 'token-color' }">Color 语义色板</a></li>
           <li><a href="#token-font-base" :class="{ 'is-active': activeSection === 'token-font-base' }">Font Base 基础字阶</a></li>
-          <li><a href="#token-font-semantic" :class="{ 'is-active': activeSection === 'token-font-semantic' }">Semantic Font 语义字阶</a></li>
+          <li><a href="#token-font-semantic" :class="{ 'is-active': activeSection === 'token-font-semantic' }">Font 语义字阶</a></li>
           <li><a href="#token-spacing" :class="{ 'is-active': activeSection === 'token-spacing' }">Spacing 间距</a></li>
           <li><a href="#token-radius" :class="{ 'is-active': activeSection === 'token-radius' }">Radius 圆角</a></li>
           <li><a href="#token-shadow" :class="{ 'is-active': activeSection === 'token-shadow' }">Shadow 阴影</a></li>
@@ -108,6 +108,8 @@
         <!-- 业务组件层导航：随组件逐个加入（如 AiPanel 等） -->
         <ul class="app-sidebar__nav">
           <li><a href="#step-bar" :class="{ 'is-active': activeSection === 'step-bar' }">StepBar 步骤条</a></li>
+          <li><a href="#page-frame" :class="{ 'is-active': activeSection === 'page-frame' }">PageFrame 页面框架</a></li>
+          <li><a href="#ai-button" :class="{ 'is-active': activeSection === 'ai-button' }">AiButton Ai按钮</a></li>
         </ul>
         </template>
 
@@ -138,7 +140,7 @@
       <ShadowDemo />
       <MotionDemo />
       </div>
-      <div v-show="currentTopTab === 'component'">
+      <div v-show="currentTopTab === 'component'" class="no-title-divider">
       <ButtonDemo />
       <!-- <section id="button-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
         <h2 class="demo-section__title">📋 Button Examples（design-spec/examples/ 临时预览）</h2>
@@ -208,10 +210,12 @@
       <!-- Other 其他组件：结果页拆出后页内暂无在展内容（仅存暂停块），先注释，需要时放开 -->
       <!-- <OtherDemo /> -->
       </div>
-      <div v-show="currentTopTab === 'business'">
+      <div v-show="currentTopTab === 'business'" class="no-title-divider">
       <StepBarDemo />
+      <PageFrameDemo />
+      <AiButtonDemo />
       </div>
-      <div v-show="currentTopTab === 'pattern'">
+      <div v-show="currentTopTab === 'pattern'" class="no-title-divider">
       <PatternFormDemo />
       <PatternListItemDemo />
       <PatternToolbarDemo />
@@ -296,6 +300,8 @@ import PatternToolbarDemo from './components/pattern/PatternToolbarDemo.vue'
 import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
 // 业务组件层 demo（引用 design-spec/components/）
 import StepBarDemo from './components/biz/StepBarDemo.vue'
+import PageFrameDemo from './components/biz/PageFrameDemo.vue'
+import AiButtonDemo from './components/biz/AiButtonDemo.vue'
 // 临时预览 examples 的 import（已注释挂载，需要时取消注释）：
 // import ButtonExamples from '../../design-spec/examples/button.examples.vue'
 // import FormExamples from '../../design-spec/examples/form.examples.vue'
@@ -313,6 +319,7 @@ const sectionIds = [
   'input', 'select', 'date-picker', 'radio', 'checkbox', 'switch', 'slider', 'rate',
   'tag', 'table', 'badge', 'descriptions', 'avatar', 'empty',
   'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
+  'step-bar', 'page-frame', 'ai-button',
   'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'copywriting-time',
 ]
@@ -322,6 +329,7 @@ const sectionIds = [
 const firstSectionByTab: Record<string, string> = {
   token: 'palette',
   component: 'button',
+  business: 'step-bar',
   pattern: 'pattern-form',
   copywriting: 'copywriting-time',
 }
@@ -333,35 +341,56 @@ watch(currentTopTab, (tab) => {
   nextTick(observeSections)
 })
 
-let observer: IntersectionObserver | null = null
+// 确定性 scroll-spy：按滚动位置取「最后一个顶部越过停靠线的 section」。
+// 之前用 IntersectionObserver 的「最后一个 isIntersecting 条目获胜」，向上滚动时
+// 相邻两个 section 会短暂同时压在判定带上、后者获胜且离开事件被忽略，高亮卡在错误项。
+// 停靠线与 html 的 scroll-padding-top 对齐（topbar 64 + spacing-3 12），再留少量容差。
+const SPY_OFFSET = 64 + 12 + 8
 
-function observeSections() {
-  observer?.disconnect()
-  sectionIds.forEach((id) => {
+let spyTicking = false
+
+function updateActiveSection() {
+  let current = ''
+  for (const id of sectionIds) {
     const el = document.getElementById(id)
-    if (el) observer!.observe(el)
+    if (!el || el.offsetParent === null) continue  // 跳过不存在或隐藏 tab 里的 section
+    if (el.getBoundingClientRect().top <= SPY_OFFSET) {
+      current = id  // 顶部已越线，暂记；继续找更靠后的
+    } else {
+      break  // sectionIds 按页面顺序排列，后面的更不可能越线
+    }
+  }
+  if (current) {
+    activeSection.value = current
+  } else {
+    // 还没有任何 section 越线（停在页面最顶端）→ 兜底高亮当前 tab 首项
+    const first = firstSectionByTab[currentTopTab.value]
+    if (first) activeSection.value = first
+  }
+}
+
+function onSpyScroll() {
+  if (spyTicking) return
+  spyTicking = true
+  requestAnimationFrame(() => {
+    spyTicking = false
+    updateActiveSection()
   })
 }
 
-onMounted(() => {
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          activeSection.value = entry.target.id
-        }
-      }
-    },
-    { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
-  )
+function observeSections() {
+  updateActiveSection()
+}
 
-  // 初始 tab 也先兜底高亮其首个 section，再挂观察器
+onMounted(() => {
+  window.addEventListener('scroll', onSpyScroll, { passive: true })
+  // 初始 tab 先兜底高亮其首个 section，再按当前位置校正
   const first = firstSectionByTab[currentTopTab.value]
   if (first) activeSection.value = first
-  observeSections()
+  updateActiveSection()
 })
 
 onBeforeUnmount(() => {
-  observer?.disconnect()
+  window.removeEventListener('scroll', onSpyScroll)
 })
 </script>

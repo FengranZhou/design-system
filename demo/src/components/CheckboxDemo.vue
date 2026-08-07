@@ -4,7 +4,7 @@
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
-        <p class="demo-label">多选</p>
+        <p class="demo-desc">单独使用可以表示两种状态之间的切换，和 switch 类似。区别在于切换 switch 会直接触发状态改变，而 checkbox 一般用于状态标记，需要和提交操作配合。</p>
         <!-- checkbox-inline-row：让 group 内两项与后面四个独立项在 flex 里成为平级等距子项
              （group 盒子 display:contents 透明化，与 radio-inline-row 同一手法，纯排版不碰组件外观） -->
         <div class="demo-row checkbox-inline-row">
@@ -44,42 +44,7 @@ const checkboxConfigForm = reactive({ checkboxShowText })
 </script>
 
 <style scoped>
-/* 纯本页排版：左示例 + 右配置卡横向布局，与 Button / Empty / Input 配置式范式一致。 */
 
-/* demo 块用 bg-card 大卡片做区分（本页排版，走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-
-.control-showcase {
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
-}
-.control-showcase__main { flex: 1; min-width: 0; }
-
-@media (max-width: 1100px) {
-  .control-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
-}
-
-.config-card {
-  flex: 0 1 auto;
-  width: 220px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
-}
 
 /* Checkbox 六态平级等距：group 盒子 display:contents 透明化，让「选中/未选」两项与后面
    四个独立展示项都成为 .demo-row(flex) 的直接子项，六个平级等距（与 radio-inline-row 同手法）。 */

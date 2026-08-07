@@ -162,18 +162,15 @@
 .el-cascader .el-input .icon-arrow-down { font-size: var(--iflyv-font-size-14); }
 
 /* ======================================================================== */
-/* ============= 搜索框（标准物料 · search-input）======================== */
+/* ============= 搜索框语义锚点（search-input，SearchMini 内部挂载）======= */
 /* ======================================================================== */
-/* 搜索框 = el-input + 前缀 Search 图标 + clearable 的固化约定。
-   外观与普通输入框一致（复用 .el-input 全部规则），此 class 主要承载
-   "这是标准搜索框" 的语义锚点，便于下游统一引用、便于将来附加搜索专属行为。
-   —— 基础形式（常驻展开）：
-        <el-input class="search-input" clearable placeholder="搜索">
-          <template #prefix><Search :size="16" :stroke-width="2" /></template>
-        </el-input>
-   目前视觉无差异，仅少量对齐微调集中在此，避免下游各写一套。 */
+/* ⚠️ 下游不要手拼搜索框：搜索框的唯一正门是业务组件 SearchMini
+   （design-spec/components/SearchMini/，选型与用法见 references/patterns/search-pattern.md）——
+   右侧可点击放大镜、防抖、回车触发、收起态等行为都在组件里，手拼 el-input 拿不到且口径会分叉。
+   本 class 由 SearchMini 内部挂载，作为「这是标准搜索框」的语义锚点：
+   将来若搜索框需统一圆角/底色等专属样式，改此处一处生效、所有 SearchMini 同步。 */
 .el-input.search-input {
   /* 语义锚点：预留搜索框专属规则的挂载点。当前与普通输入框一致，
-     不写裸值、不造无谓视觉差异；将来若搜索框需统一圆角/底色等，改此处一处生效。 */
+     不写裸值、不造无谓视觉差异。 */
 }
 

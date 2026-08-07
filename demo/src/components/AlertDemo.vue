@@ -4,7 +4,7 @@
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
-        <p class="demo-label">警告</p>
+        <p class="demo-desc">当提示内容较重要，并需要吸引用户查看时使用。</p>
         <!-- 单条实时示例：场景（语义色）× 辅助信息（带/不带描述）两个正交配置项叠加，共 5×2=10 种组合 -->
         <el-alert
           :key="alertScene.value + String(alertShowDesc)"
@@ -55,39 +55,15 @@ const alertConfigForm = reactive({ alertSceneKey, alertShowDesc })
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Dialog / Select / Input 各 demo 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
-/* 配置式布局：左示例 + 右配置卡横向（与 Dialog / Input 配置式范式一致，纯本页排版，不含组件外观） */
-.control-showcase {
-  display: flex;
-  align-items: flex-start;
-  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
-}
-.control-showcase__main { flex: 1; min-width: 0; }
-
-@media (max-width: 1100px) {
-  .control-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
-}
-
+/* 本页配置项多（多行表单/单选组），配置卡加宽一档 */
 .config-card {
   flex: 0 0 auto;
   width: 400px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
 }
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
+
+@media (max-width: 1100px) {
+  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
+  .config-card { width: 100%; }
 }
 </style>

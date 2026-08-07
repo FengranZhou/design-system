@@ -167,18 +167,3 @@ const treeDataDisabled = [
 // const collapseActive = ref(['1'])
 // const collapseAccordion = ref('1')
 </script>
-
-<style scoped>
-/* 每个 demo 块用 bg-card 大卡片做区分（与 Cell / Input / FormControl 配置式范式一致）。
-   卡间垂直间距统一 24（spacing-6）；覆盖全局 .demo-block 自带的 48px margin，避免叠加。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
-.demo-section .demo-block + .demo-block {
-  margin-top: var(--iflyv-spacing-6);
-}
-
-</style>

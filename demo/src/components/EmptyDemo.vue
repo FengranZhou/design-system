@@ -107,13 +107,6 @@ const current = computed(() => ({
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Avatar / Select / Dialog / Navigation 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
 /* 纯本页排版：左侧预览 + 右侧配置卡片 */
 .empty-showcase {
@@ -128,24 +121,14 @@ const current = computed(() => ({
   justify-content: center;
 }
 
-@media (max-width: 1100px) {
-  .empty-showcase { flex-direction: column; }
-  .config-card { width: 100%; }
+/* 空状态预览需并排看插画与配置，配置卡比公共层加宽一档 */
+.config-card {
+  width: 280px;
 }
 
-/* 配置卡在块卡（bg-card）内部，白底 + 细边框区分层次（与 Avatar 配置卡一致） */
-.config-card {
-  flex: 0 0 auto;
-  width: 280px;
-  align-self: flex-start;
-  padding: var(--iflyv-spacing-4);
-  background: var(--iflyv-bg-panel);
-  border: 1px solid var(--iflyv-border-subtle);
-  border-radius: var(--iflyv-radius-md);
-}
-.config-card__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-component);
+@media (max-width: 1100px) {
+  .empty-showcase { flex-direction: column; }
+  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
+  .config-card { width: 100%; }
 }
 </style>

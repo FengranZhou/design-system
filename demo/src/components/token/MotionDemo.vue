@@ -1,5 +1,5 @@
 <template>
-  <section id="token-motion" class="demo-section" ref="rootEl">
+  <section id="token-motion" class="demo-section demo-plain" ref="rootEl">
     <h2 class="demo-section__title">Motion 动效</h2>
 
     <div class="demo-block">

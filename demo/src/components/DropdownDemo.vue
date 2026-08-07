@@ -3,8 +3,7 @@
     <h2 class="demo-section__title">Dropdown 下拉菜单</h2>
 
     <div class="demo-block">
-      <p class="demo-label">下拉菜单</p>
-      <p class="demo-desc">常与"触发器"（按钮、图标、下拉选择器等）组合使用。</p>
+      <p class="demo-desc">常与"触发器"（按钮、图标、下拉选择器等）组合使用，当页面上的操作命令过多时，用此组件可以收纳操作元素。</p>
       <div class="demo-row">
         <el-dropdown @visible-change="dropdownVisible = $event">
           <span class="dropdown-trigger">
@@ -38,13 +37,6 @@ const dropdownVisible = ref(false)
 </script>
 
 <style scoped>
-/* demo 块用 bg-card 大卡片做区分（与 Select / Input 一致，本页排版走令牌）。 */
-.demo-section .demo-block {
-  margin-bottom: 0;
-  padding: var(--iflyv-spacing-6);
-  background: var(--iflyv-bg-card);
-  border-radius: var(--iflyv-radius-lg);
-}
 
 /* Dropdown 轻量文字触发器（纯本页装扮：本 demo 的触发器排版，走令牌；面板外观归 el-theme 源头） */
 .dropdown-trigger {

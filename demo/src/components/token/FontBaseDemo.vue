@@ -1,5 +1,5 @@
 <template>
-  <section id="token-font-base" class="demo-section" ref="rootEl">
+  <section id="token-font-base" class="demo-section demo-plain" ref="rootEl">
     <h2 class="demo-section__title">Font Base 基础字阶</h2>
 
     <!-- ==================== 字重 ==================== -->
