@@ -18,6 +18,7 @@
 @use './components/cascader.scss';
 @use './components/checkbox.scss';
 @use './components/collapse.scss';
+@use './components/color-picker.scss';
 @use './components/datepicker.scss';
 @use './components/descriptions.scss';
 @use './components/dialog.scss';
@@ -41,6 +42,7 @@
 @use './components/progress.scss';
 @use './components/radio.scss';
 @use './components/result.scss';
+@use './components/scrollbar.scss';
 @use './components/select.scss';
 @use './components/skeleton.scss';
 @use './components/slider.scss';
@@ -56,3 +58,10 @@
 @use './components/transfer.scss';
 @use './components/tree.scss';
 @use './components/upload.scss';
+
+/* 设计模式层样式（非 EP 组件覆盖，而是模式级布局约定类，
+   规则全文见 references/patterns/*.md） */
+@use './patterns/toolbar.scss';
+/* PageFrame 收起态导航浮层：面板 teleport 到 body、scoped 构不着，故归全局层
+   （非对外约定类，由业务组件 PageFrame 内部渲染，接入方无需引用） */
+@use './patterns/page-frame-flyout.scss';

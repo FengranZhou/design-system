@@ -65,14 +65,13 @@ const radioConfigForm = reactive({ radioShowText })
 /* Radio 四项连续等距：两个 el-radio-group 盒子用 display:contents 透明化，
    四个 el-radio 直接成为 .demo-row(flex) 的子项，与 Checkbox 一行等距一致。
    保留两个 group 是单选状态约束（一组正常单选、一组禁用/选中禁用）所必需。 */
-.radio-inline-row {
-  gap: 30px;
-}
 .radio-inline-row :deep(.el-radio-group) {
   display: contents;
 }
-/* 抹掉 EP el-radio 默认的 margin-right(30px)，间距统一交给 .demo-row 的 gap 管，避免叠加 */
+/* 抹掉源头 el-radio 的 margin-inline-end(16px)，间距统一交给 .demo-row 的 gap 管，避免叠加。
+   注意压的是 margin-inline-end 而非 margin-right——源头 radio.scss 已把 margin-right 设为 unset，
+   压 margin-right 无效（与 CheckboxDemo 同手法）。 */
 .radio-inline-row :deep(.el-radio) {
-  margin-right: 0;
+  margin-inline-end: 0;
 }
 </style>

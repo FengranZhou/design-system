@@ -6,7 +6,13 @@
       <div class="control-showcase__main">
         <!-- 单条实时示例：弹出方向由右侧「方向」配置项控制（:key 触发方向切换时重挂载） -->
         <div class="demo-row">
-          <el-tooltip :key="tooltipPlacement" :content="tooltipContent" :placement="tooltipPlacement">
+          <!-- show-after 300：全站统一延迟，避免鼠标路过一排图标时 tooltip 连片闪烁 -->
+          <el-tooltip
+            :key="tooltipPlacement"
+            :content="tooltipContent"
+            :placement="tooltipPlacement"
+            :show-after="300"
+          >
             <el-button>悬停查看提示</el-button>
           </el-tooltip>
         </div>

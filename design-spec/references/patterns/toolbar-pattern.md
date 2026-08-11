@@ -54,19 +54,48 @@
 - 判定顺序 ① → ② → ③，**从上往下第一个命中的分支即为最终布局**。
 - 左右两侧各自内部，**元素仍按「二」的固定顺序**排列。
 
-### 2. 间距与内边距（固定令牌，禁裸值）
+### 2. 布局、间距、标题字阶 —— **在源头，使用方不写**
 
-- **相邻元素水平间距**：`12px` → `var(--iflyv-spacing-3)`。左右两组各自用 `display: flex; gap: var(--iflyv-spacing-3)` 提供，**不在元素上写 margin**（同按钮间距规范）。
-- **工具栏内边距**：上下 `16px` → `var(--iflyv-spacing-4)`；左右 `24px` → `var(--iflyv-spacing-6)`。即 `padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6)`。
-- **下边距按标题层级分档**：
-  - **页面级标题**（页面标题 / 页面级 tab 栏）→ 下边距 `16px` → `var(--iflyv-spacing-4)`（即上下都 16）。
-  - **模块级标题**（模块标题 / 模块级 tab 栏）→ 下边距收为 `12px` → `var(--iflyv-spacing-3)`（上 16、下 12）。
-  - 理由：模块级标题层级更轻，收 4px 下边距使工具栏视觉更紧凑、与标题重量匹配。
+以下**已固化在 `el-theme/patterns/toolbar.scss`**，写上约定 class 即生效，**使用方不必也不应重写**：
 
-### 3. 布局用 `justify-content: space-between`
+- **外层 `space-between` 分左右两组**（`__left` / `__right` 各自 flex）。分支 ③（只有操作按钮）时不写 `__right` 即可，左组自然靠左。
+- **相邻元素水平间距** `12px`（`spacing-3`）：由 `.toolbar__left` / `.toolbar__right` 的 gap 提供，**不在元素上写 margin**（同按钮间距规范）。
+- **标题字阶两档**：`.toolbar__title` 默认页面级（`title-page` 26/48），加 `--module` 降为模块级（`title-module` 18/36）。
+- **工具栏内 tab** 的 header 下边距清零（使其与同排元素垂直居中）。
 
-- 外层容器 `display: flex; align-items: center; justify-content: space-between`：左组一个 flex 容器、右组一个 flex 容器，两组被推到两端。
-- 分支 ③（只有操作按钮、靠左）时，右组为空，左组自然靠左即可（不需要 space-between，或右组留空占位）。
+### 3. 留白 —— **由页面给出（源头不含任何内边距）**
+
+`.toolbar` **不含任何内边距**，两个方向各有其归属：
+
+**左右 —— 属于「页面内容区容器」，由容器统一给一次**
+
+按 `foundations.md` 间距速查：**页面内容与页面左右边缘之间 = `spacing-6`（24px）**。这是**容器**的内边距，工具栏、列表、表单等所有内容共用同一次，自然左右齐平。
+
+- ⛔ **不要写进工具栏**：容器已给内边距时会叠加成 48；工具栏以外的内容还得各自再对齐一遍。
+
+**上下 —— 工具栏与页面上下文的间距，按标题层级取档**
+
+按 `foundations.md` 间距速查：
+
+| 位置 | 令牌 | 值 |
+|---|---|---|
+| 页面级标题与页面顶部之间 | `spacing-4` | 16px |
+| 页面级标题与其下方内容之间 | `spacing-4` | 16px |
+| 模块级标题与其下方内容之间（层级更轻，收一档） | `spacing-3` | 12px |
+
+- 容器**上下已有留白**时不必再加，避免叠加。
+
+```css
+/* 容器给左右（一次，所有内容共用） */
+.page-content { padding-inline: var(--iflyv-spacing-6); }
+
+/* 页面级标题工具栏 */
+.page-content > .toolbar { padding-block: var(--iflyv-spacing-4); }
+/* 模块级标题工具栏：下方收一档 */
+.page-content > .toolbar--module { padding-block-end: var(--iflyv-spacing-3); }
+```
+
+> 一律走令牌，禁裸值（`padding: 16px 24px` ❌）。
 
 ### 4. 每类元素仍走各自的组件 / 模式
 
@@ -86,12 +115,17 @@
 
 ## 五、可照抄骨架
 
+> ⛔ **工具栏样式的唯一数据源在 `el-theme/patterns/toolbar.scss`（全局层）。**
+> 使用方**只写约定 class**——布局 / 元素间距 / 标题字阶 / 工具栏内 tab 对齐，全部已在源头处理好。
+> 在使用方 scoped 里重写这几条 = 局部私货（源头改了它不动），一律禁止。
+> **需要页面自己写的只有留白**（见「三、留白」）：左右归页面内容区容器统一给，上下按标题层级取档（页面级 16 / 模块级下方 12）。
+
 ```vue
 <template>
   <!-- 分支①：有标题 —— 标题左，其余全右 -->
   <div class="toolbar">
     <div class="toolbar__left">
-      <h3 class="toolbar__title">模块标题</h3>
+      <h3 class="toolbar__title">页面标题</h3>
     </div>
     <div class="toolbar__right">
       <!-- 顺序：组件级 tab → 下拉 → 搜索 → 次按钮 → 主按钮 -->
@@ -116,20 +150,26 @@
 </template>
 
 <style scoped>
-/* 纯排版，全部走令牌 */
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6);   /* 上下16 左右24 */
-}
-.toolbar__left,
-.toolbar__right {
-  display: flex;
-  align-items: center;
-  gap: var(--iflyv-spacing-3);   /* 相邻元素水平间距12 */
-}
+/* 左右由页面内容区容器统一给（spacing-6），工具栏只写上下 */
+.toolbar { padding-block: var(--iflyv-spacing-4); }
 </style>
 ```
 
-> 照抄要点：**外层 space-between 分左右两组、组内 `gap: spacing-3`、内边距 `spacing-4 spacing-6`**；元素相对顺序恒为「标题→组件级tab→下拉→搜索→次按钮→主按钮」；左右归哪边按「三分支」判定。每个元素本身仍套各自的组件/模式规范。
+### 标题两档
+
+| 层级 | 标题标签（字阶，源头） | 页面自写的下边距 |
+|---|---|---|
+| **页面级**（页面标题 / 页面级 tab 栏） | `<h3 class="toolbar__title">` → `title-page` 26/48 | `spacing-4`（16） |
+| **模块级**（模块标题 / 模块级 tab 栏） | `<h4 class="toolbar__title toolbar__title--module">` → `title-module` 18/36 | `spacing-3`（12） |
+
+```vue
+<!-- 模块级：标题加 --module 降字阶即可，无需额外类 -->
+<div class="toolbar">
+  <div class="toolbar__left">
+    <h4 class="toolbar__title toolbar__title--module">我的项目</h4>
+  </div>
+  <div class="toolbar__right">…</div>
+</div>
+```
+
+> 照抄要点：**只写 class，不写 CSS**；元素相对顺序恒为「标题→组件级tab→下拉→搜索→次按钮→主按钮」；左右归哪边按「三分支」判定；标题按层级选字阶档。每个元素本身仍套各自的组件/模式规范。

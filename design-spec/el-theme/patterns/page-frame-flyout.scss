@@ -1,0 +1,28 @@
+/* ======================================================================== */
+/* ============= PageFrame 收起态导航浮层（约定类，非 EP 组件） ============= */
+/* ======================================================================== */
+
+/* 浮层本体是 el-dropdown（基础组件）——面板外壳、菜单项行高 36 / 圆角 / hover 底色 /
+   文字色阶全部来自 dropdown.scss 源头，本文件不重复定义、不覆盖。
+
+   面板抬头（一级项名称）走 dropdown.scss 的通用约定类 .dropdown-group-title，
+   本文件不再另定义——抬头是"下拉面板内的分组标题"这一通用形态，口径与 Select 的
+   分组下拉一致（灰小字），归 dropdown 源头统一管，避免同一形态两套写法。
+
+   这里只补 el-dropdown 没有的一样：
+     选中态——EP dropdown 无"当前选中项"概念（它面向命令，不面向导航状态），
+     故补一条 .is-active，口径与展开态侧栏一致（加粗 + text-1）。
+
+   为什么在这里而不在 PageFrame.vue 的 scoped 里：面板被 teleport 到 <body>，
+   已不在组件的 scoped 子树内，scoped 与 :deep() 都构不着（:deep 也需要 scoped 祖先）。
+
+   接入方无需引用本文件里的任何类——它们由 PageFrame 内部渲染，不是对外 API。 */
+
+.page-frame-flyout {
+  /* 选中态：与侧栏一致（加粗 + text-1）。仅补字重与色阶，
+     行高/圆角/hover 仍归 dropdown.scss。 */
+  .el-dropdown-menu__item.is-active {
+    color: var(--iflyv-text-1);
+    font-weight: var(--iflyv-font-weight-semibold);
+  }
+}

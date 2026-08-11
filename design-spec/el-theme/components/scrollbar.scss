@@ -1,0 +1,70 @@
+/* ======================================================================== */
+/* ======================== Scrollbar 样式覆盖 ============================= */
+/* ======================================================================== */
+/* 全站滚动条统一入口。两条战线：
+   ① 内部滚动容器 —— 一律用基础组件 <el-scrollbar>（本段只补 EP 缺的过渡）
+   ② 页面主滚动（html/body）—— 浏览器原生条，无法用 el-scrollbar 接管，
+      这里用 ::-webkit-scrollbar 对齐 ① 的观感，使全站滚动条长得一样。
+   使用规则见 design-spec/CLAUDE.md「任务→必读」表 + references/component-interaction.md。 */
+
+/* ------------------------------------------------------------------ */
+/* ① 内部滚动容器：el-scrollbar                                          */
+/* ------------------------------------------------------------------ */
+
+/* EP 原生 bar 恒定 6px，hover 只改 thumb 透明度、粗细不变。
+   本层补「hover 变粗 6→8px」并给过渡，让粗细与显隐一起平滑。 */
+.el-scrollbar__bar {
+  transition:
+    width var(--iflyv-duration-fast) var(--iflyv-ease-default),
+    height var(--iflyv-duration-fast) var(--iflyv-ease-default),
+    opacity var(--iflyv-duration-normal) var(--iflyv-ease-default);
+
+  &.is-vertical {
+    &:hover,
+    &.is-dragging {
+      width: 8px;
+    }
+  }
+
+  &.is-horizontal {
+    &:hover,
+    &.is-dragging {
+      height: 8px;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* ② 页面主滚动条：对齐 el-scrollbar 观感                                 */
+/* ------------------------------------------------------------------ */
+/* 逐项对齐 ①，保证全站一致：宽 6px / 圆角 4px / thumb = text-2 30%（hover 50%）/ track 透明。
+   ⚠ 原生滚动条无法只在 hover 时变宽（改 ::-webkit-scrollbar 宽度会引起布局回流），
+   故主滚动条恒 6px，仅 thumb 颜色随 hover 加深；el-scrollbar 那侧才有 6→8 变粗。
+   ⚠ 仅 WebKit·Blink（Chrome/Edge/Safari）生效；Firefox 走下方 scrollbar-width/color 降级。 */
+html {
+  /* Firefox 降级：只能给「细」档 + 拇指/轨道两色，无 hover 变粗 */
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--iflyv-text-2) 30%, transparent) transparent;
+}
+
+body {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: color-mix(in srgb, var(--iflyv-text-2) 30%, transparent);
+    transition: background-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--iflyv-text-2) 50%, transparent);
+    }
+  }
+
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}

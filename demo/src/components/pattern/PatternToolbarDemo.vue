@@ -74,10 +74,10 @@
     <div class="pattern-card">
       <p class="pattern-card__title">标准范例</p>
 
-      <!-- 工具栏：外层 space-between 分左右两组，组内 gap 12，内边距上下16左右24。
+      <!-- 工具栏：外层 space-between 分左右两组，组内 gap 12（均在源头）。
            每个元素按三分支 filterSide/actionSide 落在左组还是右组。
-           标题为「模块级」（模块标题 / 模块级 tab 栏）时，标题更轻，工具栏 padding-bottom 收为 12（is-module-title）。 -->
-      <div class="toolbar" :class="{ 'is-module-title': titleSide === 'left' && isModuleTitle }">
+           内边距上下16左右24 由本页给出（源头不含内边距）。 -->
+      <div class="toolbar">
           <div class="toolbar__left">
             <!-- 标题：4 选 1，仅在归左时渲染 -->
             <template v-if="titleSide === 'left'">
@@ -174,9 +174,6 @@ const type = ref('')
 const keyword = ref('')
 const pageTab = ref('overview')
 
-// 模块级标题（模块标题 / 模块级 tab 栏）：比页面级更轻，工具栏下边距收为 12
-const isModuleTitle = computed(() => titleType.value === 'module' || titleType.value === 'module-tab')
-
 // —— 三分支左右分配 —— 顺序恒定：标题→组件级tab→下拉→搜索→次按钮→主按钮
 const hasTitle = computed(() => showTitle.value)
 const hasFilter = computed(() => showTab.value || showSelect.value || showSearch.value)
@@ -199,9 +196,6 @@ const hasRight = computed(() => filterSide.value === 'right' || actionSide.value
 
 <style scoped>
 /* 纯本页排版，全部走令牌 */
-
-/* 配置项三区卡片内的表单：末项去掉底部 margin，避免卡片底部多余留白 */
-.zone :deep(.el-form-item:last-child) { margin-bottom: 0; }
 
 /* 三区拆解：横向三列等宽，窄屏换行（与 List Item 的 .anatomy / .zone 一致） */
 .anatomy {
@@ -241,38 +235,18 @@ const hasRight = computed(() => filterSide.value === 'right' || actionSide.value
 }
 
 
-/* 标准范例工具栏：外层 space-between 分左右两组，组内 gap 12，内边距上下16左右24 */
+/* 工具栏的布局 / 间距 / 标题字阶 / tab 对齐已归全局层
+   el-theme/patterns/toolbar.scss，本页只补两样：
+   ① 留白 —— 源头不含内边距：左右本应由页面内容区容器统一给，
+      此处范例独立成块、无外层内容容器，故由范例自身补上 spacing-6；
+      上下取页面级档位 16（模块级标题时下方应收为 12）。
+   ② 让范例在模式卡里浮起成形的展示性装饰 —— 非工具栏规则，故不进源头
+      （真实页面的工具栏通常不需要底色描边）。 */
 .toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--iflyv-spacing-3);
   padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6);
   background: var(--iflyv-bg-panel);
   border: 1px solid var(--iflyv-border-subtle);
   border-radius: var(--iflyv-radius-lg);
 }
-/* 标题为「模块级」（模块标题 / 模块级 tab 栏）时：标题层级更轻，下边距收为 12（spacing-3） */
-.toolbar.is-module-title {
-  padding-bottom: var(--iflyv-spacing-3);
-}
-.toolbar__left,
-.toolbar__right {
-  display: flex;
-  align-items: center;
-  gap: var(--iflyv-spacing-3);
-}
-.toolbar__title {
-  margin: 0;
-  color: var(--iflyv-text-1);
-  font: var(--iflyv-font-title-page);
-}
-.toolbar__title--module {
-  font: var(--iflyv-font-title-module);
-}
 
-/* tab 在工具栏内无内容面板，清掉 EP header 默认下边距 */
-.toolbar :deep(.el-tabs__header) {
-  margin-bottom: 0;
-}
 </style>

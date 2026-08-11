@@ -80,9 +80,13 @@ const contentRow = [
 
 <style scoped>
 
-/* 本页演示专用：el-table 没有 show-body 开关，「只展示表头单元格」只能喂空数据实现，
+/* 【规范展示页的讲解脚手架】——见 design-spec/CLAUDE.md 铁律 3「唯一例外」条。
+   本页演示专用：el-table 没有 show-body 开关，「只展示表头单元格」只能喂空数据实现，
    但空数据会残留一块 empty 占位区。仅对本块的 .header-only-table 压掉该占位高度——
-   不进源头、不影响其它空表的「暂无数据」正常显示（那是 el-table 该有的行为）。 */
+   不影响其它空表的「暂无数据」正常显示（那是 el-table 该有的行为）。
+   为何不进源头：「只渲染表头的表格」是为讲解表头单元格而造的展示形态，真实业务不存在此需求，
+   放进源头 = 给下游多一个永远用不到的类，属污染。故就地留在本 demo 页，且不改变
+   el-table 在任何真实用法下的外观。 */
 .header-only-table :deep(.el-table__empty-block) {
   min-height: 0;
   height: 0;

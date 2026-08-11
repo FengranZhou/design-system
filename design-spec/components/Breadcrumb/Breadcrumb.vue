@@ -14,6 +14,8 @@
     返回禁用：  <Breadcrumb :items="items" :back-disabled="noPrev" @back="..." />
     深层折叠：  <Breadcrumb :items="items" :max-items="4" @item-click="..." />
   说明：最后一项自动为当前页（不可点击，text-1）；带 to 的项可点击跳转（交给 EP 路由）。
+       back-disabled 判据 = 倒数第二项是不是可跳转的实体页面，不是层数：分组标题 / 只负责展开
+       子菜单的可折叠父项等非实体层级作上一级时必须禁用，写法 :back-disabled="!items[items.length-2]?.to"。
        max-items 默认 0（不折叠、全量平铺）；设为 ≥2 时若层数超过它，则保留「首项 + 末项当前页」，
        中间超出的层级折进一个 `…` 项，hover 弹下拉菜单展开被折叠层级（每项可点跳转），可见项数即 max-items。
 -->

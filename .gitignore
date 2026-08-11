@@ -17,3 +17,7 @@ dist/
 
 # Vercel 本地文件
 .vercel
+
+# Claude Code：项目级共享设置(.claude/settings.json)与 hook 随仓库分发，
+# 个人本地覆盖不提交
+.claude/settings.local.json

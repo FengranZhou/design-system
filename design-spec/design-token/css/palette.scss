@@ -140,6 +140,8 @@ $ai-conic-green: #4AEDA6;
 $ai-conic-blue: #45B2E8;
 
 $bg-card-gradient-end: #FAFAFA;
+/* 蓝灰底：返回/次级操作块的填充底色（中性灰偏冷，与 gray-1 的纯灰区分） */
+$bg-back: #DFE8F0;
 $border-default-fallback: rgba(21, 21, 21, 0.1);
 $border-on-dark-fallback: rgba(255, 255, 255, 0.1);
 $mask-primary-fallback: rgba(21, 21, 21, 0.6);
