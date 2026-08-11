@@ -120,7 +120,9 @@ withDefaults(defineProps<{
   padding: 0 var(--iflyv-spacing-4);
   border: 1px solid transparent;
   border-radius: var(--iflyv-radius-sm);
-  color: var(--iflyv-text-1);
+  /* 底是恒定浅色渐变（暗色下也不变），故文字用 on-light 不随主题翻转
+     —— 用 text-1 会在暗色下翻成浅色，浅字压浅底读不出来 */
+  color: var(--iflyv-text-on-light);
   background:
     var(--iflyv-ai-fill-gradient) padding-box,
     var(--iflyv-ai-border-gradient) border-box;

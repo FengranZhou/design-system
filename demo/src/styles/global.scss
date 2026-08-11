@@ -14,6 +14,16 @@
   (#182522, #19372e, #1d483a, #1e5e49, #207d5e, #229b73, #41af86, #66c39e, #8fd3b6, #bee2d0)
 );
 
+// 理工蓝品牌色：base #0077FF（设计哲学里的辅色蓝）
+// 亮色 10 阶 = AntD 算法；暗色 10 阶 = 对齐本设计系统暗色板约定（1 最深 → 10 最浅、
+// 第 6 阶为饱和主色），沿用 palette-dark 里 green 暗板的明度/饱和曲线，而非 AntD
+// 暗色算法——后者输出的亮度走向是"先升后降"，会让 accent-6 掉到接近背景的暗档。
+@include register-brand(
+  "science-blue",
+  (#E6F6FF, #A3DAFF, #7AC6FF, #52AEFF, #2994FF, #0077FF, #005ED9, #0047B3, #00338C, #002266),
+  (#151E28, #122740, #123154, #0E3A6D, #094A95, #0458B8, #2672CA, #4E8FDA, #7CACE4, #B7CFEB)
+);
+
 // ============ 布局骨架尺寸 ============
 // 非 4px 间距序列上的结构性尺寸，无对应 spacing token，
 // 统一提炼为局部变量单点维护（收敛裸 px，避免多处重复魔法值）
@@ -67,6 +77,85 @@ body {
     border-inline-end: 1px solid var(--iflyv-border-default);
   }
 
+  // 主题切换区（品牌色 + 亮/暗），贴顶栏右缘
+  &__theme {
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-4);
+    padding-inline-end: var(--iflyv-spacing-6);
+    flex-shrink: 0;
+  }
+
+  // 品牌色切换：一排色点（预置 + 自定义取色器）
+  .brand-switcher {
+    display: flex;
+    align-items: center;
+    // 选中环向外扩 4px，间距需大于它才不被相邻色点压住
+    gap: var(--iflyv-spacing-3);
+    flex-shrink: 0;
+  }
+
+  .brand-dot {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    // dot 自带 data-brand 属性，命中 [data-brand] 色板作用域后 accent-6 即该品牌主色
+    background: var(--iflyv-accent-6);
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.15s ease;
+
+    // 选中态：外圈描边环。用 box-shadow 画（不占布局尺寸，选中时色点不位移）——
+    // 内侧先垫一圈页面底色做留白，外侧再描深色环
+    &.is-active {
+      box-shadow:
+        0 0 0 2px var(--iflyv-bg-panel),
+        0 0 0 4px var(--iflyv-text-1);
+    }
+
+    &:hover:not(.is-active) {
+      opacity: 0.75;
+    }
+  }
+
+  // 自定义色点：底色由行内 style 给（默认黑，选定后即所选色），
+  // 内嵌下拉箭头示意"可展开输入色值"
+  .brand-dot--custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // 底色走行内 style，此处覆盖掉基类的 accent-6
+    background: none;
+
+    .brand-dot__caret {
+      color: var(--iflyv-text-on-dark);
+      pointer-events: none;
+    }
+  }
+
+  // 亮/暗切换：图标按钮
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--iflyv-border-default);
+    border-radius: var(--iflyv-radius-sm);
+    background: var(--iflyv-bg-inset);
+    color: var(--iflyv-text-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      color: var(--iflyv-brand-primary);
+      border-color: var(--iflyv-brand-primary);
+    }
+  }
+
   &__logo {
     width: $app-logo-size;
     height: $app-logo-size;
@@ -111,6 +200,25 @@ body {
   }
 }
 
+// 自定义主色输入浮层（el-popover 内容渲染到 body，样式须写在顶层作用域）
+// 间距对齐 Dialog 的「内容 → footer」节奏：footer 上方 spacing-5(20px)、
+// 按钮组 gap spacing-3(12px)（见 el-theme/components/dialog.scss 与
+// component-interaction.md「按钮间距」段：按钮组一律 gap，推荐 12px）
+// 浮层内边距：EP 默认 12px 对「表单 + 操作按钮」这种承载偏挤，
+// 提到 spacing-5(20px) 与 Dialog 内容区同节奏
+.custom-color-popover.el-popover {
+  padding: var(--iflyv-spacing-5);
+}
+
+.custom-color-panel {
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--iflyv-spacing-3);
+    margin-top: var(--iflyv-spacing-5);
+  }
+}
+
 // ============ Layout ============
 .app-layout {
   display: flex;
@@ -132,17 +240,8 @@ body {
   // 固定框架层，略低于顶栏（同 sticky 档 -1）；浮层同样应压过它
   z-index: calc(var(--iflyv-z-sticky) - 1);
 
-  // 自定义滚动条
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--iflyv-text-4);
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  // 滚动条样式不在此定义：本元素不滚动（滚动在 __nav-wrap，走 el-scrollbar），
+  // 且滚动条外观统一归源头 el-theme/components/scrollbar.scss
 
   &__header {
     padding: 24px 20px 20px;
@@ -182,28 +281,6 @@ body {
     margin-top: 2px;
   }
 
-  // 主题切换按钮
-  .theme-toggle {
-    margin-inline-start: auto;
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--iflyv-border-default);
-    border-radius: var(--iflyv-radius-sm);
-    background: var(--iflyv-bg-inset);
-    color: var(--iflyv-text-2);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
-    flex-shrink: 0;
-
-    &:hover {
-      color: var(--iflyv-brand-primary);
-      border-color: var(--iflyv-brand-primary);
-    }
-  }
-
   &__controls {
     display: flex;
     flex-direction: column;
@@ -211,53 +288,6 @@ body {
     align-items: flex-start;
     gap: 16px;
     margin-top: 16px;
-  }
-
-  // 品牌色切换
-  .brand-switcher {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  .brand-dot {
-    position: relative;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: none;
-    // dot 自带 data-brand 属性，命中 [data-brand] 色板作用域后 accent-6 即该品牌主色
-    background: var(--iflyv-accent-6);
-    cursor: pointer;
-    padding: 0;
-    transition: opacity 0.15s ease;
-
-    // default 品牌无 [data-brand] 注册规则，需阻断从 html 继承当前品牌的 accent 覆盖
-    &[data-brand="default"] {
-      background: var(--iflyv-geekblue-6);
-    }
-
-    // 选中态：中心圆点
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--iflyv-text-on-dark);
-      transform: translate(-50%, -50%) scale(0);
-      transition: transform 0.15s ease;
-    }
-
-    &.is-active::after {
-      transform: translate(-50%, -50%) scale(1);
-    }
-
-    &:hover:not(.is-active) {
-      opacity: 0.75;
-    }
   }
 
   // 字号档位切换
@@ -330,26 +360,14 @@ body {
     }
   }
 
+  // 内部滚动区走 el-scrollbar（见 component-interaction.md 滚动条段）：
+  // 外壳只占位，内容排布放 view 上，滚动条外观全归源头
   &__nav-wrap {
     flex: 1;
-    overflow-y: auto;
-    padding: var(--iflyv-spacing-3) 0;
-
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-    /* 默认隐藏（thumb 透明），hover 侧栏时才显示——不常显 */
-    &::-webkit-scrollbar-thumb {
-      background: transparent;
-      border-radius: 4px;
-      transition: background var(--iflyv-duration-normal) var(--iflyv-ease-default);
-    }
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
+    min-height: 0;
   }
-  &:hover &__nav-wrap::-webkit-scrollbar-thumb {
-    background: var(--iflyv-text-4);
+  &__nav-view {
+    padding: var(--iflyv-spacing-3) 0;
   }
 
   &__group-label {

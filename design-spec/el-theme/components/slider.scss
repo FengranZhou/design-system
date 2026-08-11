@@ -12,6 +12,15 @@
   height: 14px;
 }
 
+/* 刻度标签（marks）：EP 默认取 --el-color-info，本系统 info 是蓝色辅色，
+   会让纯说明性的刻度数字看起来像「可点击 / 有状态」。刻度是轴上的中性标注，
+   统一走次要文本令牌 + 12/18 紧凑字阶（与轴本身的信息层级相称）。 */
+.el-slider__marks-text {
+  color: var(--iflyv-text-3);
+  font-size: var(--iflyv-font-size-12);
+  line-height: var(--iflyv-line-height-18);
+}
+
 /* RTL：滑块保持 LTR 方向（数值范围无文字方向性，EP JS 拖拽不支持 RTL） */
 
 /* RTL：带输入框时 margin 方向 */

@@ -5,8 +5,15 @@
 .el-switch {
   height: calc(var(--el-component-size) - 12px);
   /* active-text/inactive-text 文字标签：常规字重、与开关本体保持 spacing-2 间距。
-     文字色对齐 Checkbox 标签（常态/激活 = text-1，禁用态 = 禁用灰），见下方规则。 */
-  .el-switch__label { font-weight: 400; margin: 0 var(--iflyv-spacing-2); }
+     文字色对齐 Checkbox 标签（常态/激活 = text-1，禁用态 = 禁用灰），见下方规则。
+     ⚠️ margin 归零后由下方 --left/--right 规则单侧补间距：只在「贴开关的那一侧」留白，
+     文字外侧不留——外侧留白属于开关与相邻元素的关系，由父容器 gap 决定，
+     写在这里会与 gap 叠加（并排多个开关时视觉间距被撑大、与设计稿对不上）。 */
+  .el-switch__label { font-weight: 400; margin: 0; }
+  /* 文字与开关本体之间保留 spacing-2（8px）；文字外侧不留白——
+     外侧留白属于开关与相邻元素的关系，由父容器 gap 决定，写在这里会与 gap 叠加。 */
+  .el-switch__label--right { margin-inline-start: var(--iflyv-spacing-2); }
+  .el-switch__label--left { margin-inline-end: var(--iflyv-spacing-2); }
 }
 
 /* Switch 文字标签取色，对齐 Checkbox 标签的取色规则：
@@ -42,9 +49,10 @@
   --el-switch-on-color: var(--iflyv-brand-primary);
 }
 
-/* RTL：覆盖 EP 硬编码物理 margin/position */
-.el-switch__label--left { margin-right: unset; margin-inline-end: 10px; }
-.el-switch__label--right { margin-left: unset; margin-inline-start: 10px; }
+/* RTL：覆盖 EP 硬编码物理 margin/position。
+   单侧间距（spacing-2）在上方 .el-switch 块内给，这里只负责清掉 EP 的物理 margin。 */
+.el-switch__label--left { margin-right: unset; }
+.el-switch__label--right { margin-left: unset; }
 .el-switch__core .el-switch__action { left: unset; inset-inline-start: 1px; }
 .el-switch.is-checked .el-switch__core .el-switch__action { left: unset; inset-inline-start: calc(100% - 17px); }
 .el-switch--large.is-checked .el-switch__core .el-switch__action { left: unset; inset-inline-start: calc(100% - 21px); }

@@ -53,6 +53,7 @@
   --iflyv-bg-inset: var(--iflyv-gray-1);
   --iflyv-bg-segment-active: var(--iflyv-gray-0);
   --iflyv-bg-card: linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%);
+  --iflyv-bg-back: #{$bg-back};
 
   /* ==================== AI 视觉渐变 ==================== */
   /* AI 标识专用蓝→绿渐变（AI 标签 / 按钮 / 图标等复用同一处）。
@@ -77,6 +78,9 @@
   --iflyv-text-3: var(--iflyv-gray-5);
   --iflyv-text-4: var(--iflyv-gray-3);
   --iflyv-text-on-dark: var(--iflyv-gray-0);
+  /* 恒定浅底上的文字：底色本身不随主题翻转（如 AI 渐变实心块），故文字两个主题下
+     都保持深色。与 text-on-dark 对称，切勿用 text-1 代替——text-1 暗色下会翻成浅色。 */
+  --iflyv-text-on-light: var(--iflyv-gray-10);
 
   /* ==================== 图标色 Icon ==================== */
   --iflyv-icon-1: var(--iflyv-gray-10);

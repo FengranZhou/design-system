@@ -39,13 +39,17 @@ html[data-theme="dark"] {
   --iflyv-info-pressed: var(--iflyv-blue-5);
 
   /* ==================== 背景色 Background ==================== */
-  /* 暗色层级：page(最深) < panel(浮起) < inset(嵌套更亮) */
+  /* 暗色层级：page(最深) < panel(浮起) < card / inset(嵌套更亮) */
   --iflyv-bg-page: var(--iflyv-gray-0);        /* 页面底板 #0F0F0F */
   --iflyv-bg-page-white: var(--iflyv-gray-0);   /* 白底页面 — 暗色下同 bg-page */
   --iflyv-bg-panel: var(--iflyv-gray-1);  /* 卡片/面板 #1A1A1A */
   --iflyv-bg-inset: var(--iflyv-gray-2);  /* 嵌套区域 #262626 */
   --iflyv-bg-segment-active: var(--iflyv-gray-3); /* Segment 选中块 */
-  --iflyv-bg-card: var(--iflyv-gray-1);   /* 卡片渐变→暗色用纯色 */
+  /* 块卡：亮色下是「白面板 + 浅灰卡」两层，暗色必须同样分两层——
+     若跟 bg-panel 同取 gray-1，卡片叠在面板上就与底同色、边界彻底消失。
+     故暗色取 surface-2（同 bg-inset 层级），保持「panel < card」的浮起关系。 */
+  --iflyv-bg-card: var(--iflyv-gray-2);   /* 卡片渐变→暗色用纯色，比 panel 高一层 #262626 */
+  --iflyv-bg-back: #{$dark-bg-back};      /* 返回/次级操作块底 #32373C */
 
   /* AI 视觉渐变：暗色沿用同一蓝→绿品牌渐变（AI 标识色不随明暗变） */
   --iflyv-ai-gradient: linear-gradient(296deg, #{$ai-blue} 5%, #{$ai-green} 95%);
@@ -66,6 +70,9 @@ html[data-theme="dark"] {
   --iflyv-text-3: var(--iflyv-gray-6);    /* #888888 — 亮色 gray-5，暗色提亮至 gray-6 */
   --iflyv-text-4: var(--iflyv-gray-4);      /* 禁用：gray-4 (#444) 低对比但可辨识 */
   --iflyv-text-on-dark: var(--iflyv-gray-10); /* 翻转：暗色下 "深底文字" 需为亮色 */
+  /* 不翻转：底色本身是恒定浅色（AI 渐变实心块等），文字须保持深色。
+     用 Sass 变量 $gray-10 钉死亮色原值——若写 var(--iflyv-gray-10) 会命中暗色灰阶而反转成浅色。 */
+  --iflyv-text-on-light: #{$gray-10};
 
   /* ==================== 图标色 Icon ==================== */
   /* icon-1~3 通过灰阶覆盖自动生效 */

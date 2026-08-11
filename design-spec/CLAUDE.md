@@ -21,6 +21,9 @@ updated: 2026-04-12
    - **使用方只"引用"不"复制"**：任何使用方（本仓库的 `demo/`、以及将来 `import` 本组件库的其它项目）一律通过约定 class（如 `.tabs-page` / `.tabs-sub` / 裸 `el-tabs` 等）或直接用 EP 组件来**引用**全局标准，**严禁**在使用方的 `<style scoped>`（含 `:deep()`）或任何局部样式里**重新定义 / 覆盖组件外观**。局部 scoped 只能放"纯本页排版留白"（如某个 demo 块的 `margin` 间距），**不得触碰组件本身的外观规则**。
    - **为什么**：源头改一次 → 所有引用方随之同步变化（改品牌色、调圆角、换字重，一处生效、处处生效），这正是设计系统"单点维护、统一控制"的价值。一旦有人在使用方 scoped 里私自复制并改写组件样式（"局部私货"），该处就**脱离源头、不再同步**：你改全局它不动，将来统一升级时要挨个项目翻 scoped 排查 —— **这就是最典型的翻车**。
    - **判定"局部私货"（命中任一即违规，须归位到全局层）**：在使用方文件里出现 `:deep(.el-xxx...)` 覆盖了组件的字号 / 字重 / 颜色 / 边框 / 圆角 / 选中态 / 装饰 / 溢出行为等**外观类**属性；或用裸值 / 私有 class 复刻了某个已有标准组件的样子。
+   - **唯一例外：规范展示页的「讲解脚手架」**（**边界极窄，三条须同时满足，缺一即回归违规**）：① 仅限本仓库 `demo/` 的规范展示页，**业务项目一律不适用**；② 目的是**为讲解组件的某个局部而制造一种真实业务中不存在的展示形态**（如为讲「表头单元格」而只渲染表头，`el-table` 无 `show-body` 开关，只能喂空数据 + 压掉残留占位）；③ **不改变该组件在真实用法下的任何外观**，且必须写注释说明"为何是脚手架、为何不进源头"。
+     > 这类脚手架**不该进源头**——源头是给下游业务用的，下游没有「只渲染表头的表格」这种需求，加进去是污染。同理于 Tag 段已有的「枚举全部状态色板的展示页除外」先例。
+     > **反过来说**：只要该 `:deep` 会影响组件在真实场景下的样子，或它其实是"我想让这个组件长得不一样"，就**不是脚手架，是私货**，老实回源头。
    - **正确做法**：需要调整组件外观 → 改 `el-theme/components/<组件>.scss` 源头；某个组合场景（如 Badge+Tabs）需要固定行为 → 也提炼进全局层并给出约定 class，而不是写死在单个 demo 里。拿不准该不该进全局时，先向用户确认，不要就地 scoped 覆盖。
 
 4. **引用方接入方式（决定"同步"是否成立的前提）** —— "改源头 → 引用方同步"只在引用方**正确引用了全局层**时才成立。任何使用方（本仓库 `demo/`、以及将来接入的其它项目）必须按以下方式接入，否则会脱钩、不再同步：
@@ -47,6 +50,12 @@ updated: 2026-04-12
 
 5. **落地前自检** —— 每次改动完成前，逐条核对上述各点；命中「找不到令牌 / 找不到组件 / 想在使用方 scoped 覆盖组件外观 / 引用方接入方式不合规」时必须暂停并向用户说明，由用户决定新增全局定义还是调整方案。
 
+   > **⚙ 本条有 hook 兜底**：`.claude/hooks/guard-reinvent-components.sh`（PreToolUse，随仓库分发、克隆即生效）会在写 `.vue/.jsx/.tsx/.html` 前拦截「手撸组件库已有之物」的高置信度特征（自写浮层面板 / 菜单条目 / 遮罩 / 组件等价物 / Teleport 面板），强制弹确认。
+   >
+   > **为什么需要它**：本规范写得再全也挡不住「没去读」——真实翻车案例是「hover 弹出面板」直接选了 `el-popover` 自拼条目行，而组件库里就是 `Dropdown`、反例第一条正写着「手撸一个绝对定位的浮层当下拉」。**md 规则负责让 CC 理解意图，hook 负责在漏判时强制刹车**（与「全局样式改动必须先确认」同一双保险思路）。
+   >
+   > **被拦下时不要顺手放行**：先回答「这形态在组件库里叫什么」，再读 `references/component-interaction.md` 对应段的**反例**。详见 `.claude/hooks/README.md`。
+
 6. **改一处 = 扫全部引用，主动同步（不待用户追问）** —— 改任何令牌值 / 组件规则 / 设计模式规则时，**必须主动扫描并同步所有引用它的地方**，不留「规范说 A、代码是 B」的裂缝。典型的联动面：
    - 改**令牌/组件间距值** → 同步 `el-theme/*.scss`（实现）+ `references/foundations.md`（间距/圆角速查）+ 相关 `*-pattern.md`（若引用了该值）。
    - 改**设计模式规则** → 同步该模式的 `*-pattern.md`（规则正文 + 反例 + 可照抄骨架 三处口径一致）+ 对应 demo 展示。
@@ -58,7 +67,10 @@ updated: 2026-04-12
 | 层 | 源头位置 | 本质 | 规矩所在 |
 |---|---|---|---|
 | **基础组件层** | `el-theme/components/*.scss` | 原生 EP + SCSS 皮肤覆盖（换外观，行为归 EP） | 上文最高铁律 |
+| **模式层样式** | `el-theme/patterns/*.scss` | 设计模式的**布局约定类**（非 EP 组件，如 `.toolbar`），规则全文在对应 `references/patterns/*.md` | 上文最高铁律（同样只此一份、使用方只引用不复刻） |
 | **业务组件层** | `design-spec/components/<Name>/*.vue` | 用基础组件搭出的成品（AI 面板、卡片等），有自己的 DOM | **`design-spec/components/CLAUDE.md`** |
+
+> **模式层样式**：某个设计模式的布局若在多处复用（如工具栏），把布局类沉到 `el-theme/patterns/<模式>.scss` 并在 `el-theme/index.scss` 里 `@use`，使用方只写约定 class。**判据**：属于模式本身的规则（布局、元素间距、字阶）进源头；取决于放在哪的（如与页面上下文的留白）留给页面，并在 `*.md` 里给出档位。
 
 > **接到「新增 / 修改业务组件」类任务前，必须先读 `design-spec/components/CLAUDE.md`**（业务组件层公约：三条铁律 + 自由发挥 vs 私货判据 + 正规调用方式）。业务组件层是最高铁律的延伸而非例外——用到基础组件只引用不覆盖、token 尽量复用不符合先确认、只装扮自己骨架不碰基础组件外观。
 
@@ -104,30 +116,59 @@ updated: 2026-04-12
 | **取任何样式值**：设颜色 / 字体字号 / 间距 / 圆角 / 阴影 / z-index 层级 / 渐变（写任何 CSS 前的选令牌动作） | `references/foundations.md` | 令牌用途速查的唯一入口：文本/图标 4 阶怎么选、bg 5 层怎么叠、border 3 档、shadow 3 档、语义字阶 12 档、spacing/radius 场景表、z-index 6 档、渐变分级管控与 AI 渐变令牌。**禁止跳过它凭感觉挑令牌或写裸值** |
 | 做**表单** / 录入界面 / 一组「标签+控件」的信息组织 | `references/patterns/form-pattern.md` | 表单布局范式 |
 | 做**表格** / **列表** / **信息流**（一行=一条记录：表头/单元格类型、状态列、操作列、卡片条目…） | `references/patterns/list-item-pattern.md` | 列表条目模式：一条记录=四区拼装（全局功能/主题/关键信息/操作）+ 每类元素用哪个组件；**标准表格直接用业务组件 `DataTable`**（列配置式、操作列/冻结列内置，`design-spec/components/`），自由度不够才退回手拼 `el-table` 按模式拼装 |
-| 做**工具栏** / 页面头部操作条 / 列表页顶部一排（标题 + tab + 筛选下拉 + 搜索 + 操作按钮） | `references/patterns/toolbar-pattern.md` | 工具栏布局：固定顺序（标题→组件级tab→下拉→搜索→次按钮→主按钮）+ 左右分配三分支（有标题→标题左其余右 / 无标题有筛选→筛选左按钮右 / 都无→按钮左）+ 间距 spacing-3、内边距 spacing-4/spacing-6 |
+| 做**工具栏** / 页面头部操作条 / 列表页顶部一排（标题 + tab + 筛选下拉 + 搜索 + 操作按钮） | `references/patterns/toolbar-pattern.md` | **一律用源头约定 class `.toolbar` / `__left` / `__right` / `__title`**（样式在 `el-theme/patterns/toolbar.scss`，布局/元素间距/标题字阶全在源头，**禁在使用方 scoped 复刻这几条**）。固定顺序（标题→组件级tab→下拉→搜索→次按钮→主按钮）+ 左右分配三分支（有标题→标题左其余右 / 无标题有筛选→筛选左按钮右 / 都无→按钮左）。标题两档：页面级 `<h3 class="toolbar__title">` / 模块级加 `--module`（只差字阶）。**页面只写留白**：左右归页面内容区容器统一给 spacing-6、上下按标题层级取档（页面级 spacing-4 / 模块级下方 spacing-3） |
 | 加**搜索框** / 搜索入口 / 列表筛选检索 | `references/patterns/search-pattern.md` | 搜索框选型（核心→展开 / 非核心→收起）+ SearchMini 用法 |
-| **从固定选项里选一个**：加**单选 / 下拉选择器** / 筛选下拉 / 类型选择 | `references/patterns/select-pattern.md` | **先选控件**：>5 不建议 Radio→用 Select；≤5 需并排比较时 Radio 更好（非必须，也可 Select）。用 Select 再定可清除（有默认语义项→不可清 / 无默认值→可清）+ 可搜索 |
+| **从固定选项里选**（单选**或多选**）：加**单选 / 下拉选择器 / 多选下拉** / 筛选下拉 / 类型选择 / 标签选择 | `references/patterns/select-pattern.md`（多选另见 `component-interaction.md` Select 多选段） | **先选控件**：>5 不建议 Radio→用 Select；≤5 需并排比较时 Radio 更好（非必须，也可 Select）。用 Select 再定可清除（有默认语义项→不可清 / 无默认值→可清）+ 可搜索。**多选** Select 默认 `collapse-tags collapse-tags-tooltip :max-collapse-tags="2"` |
 | 做**弹窗** / 操作载体选型（一个填写/操作/确认，纠结弹窗 vs 页面 vs 抽屉） | `references/patterns/dialog-pattern.md` | 载体四维判据（信息量少 / 关联度高 / 任务连贯性弱 / 页面遮挡多 → 用弹窗）+ 宽度三档场景 |
 | 做**弹窗** / **对话框** / 模态框（"弹个框做表单/确认/警示…"） | `references/component-interaction.md`（Dialog 段） | 一律用 `<el-dialog>`（禁手撸、禁 ElMessageBox）；内容放**默认插槽=content 区**、按钮放 `#footer`；危险操作加 `class="is-danger"` 等 4 种语义变体；**宽度按场景从三档选**（确认/单字段=400、常规表单=640、复杂/双列=800），**禁非档位宽度**（如 `width="480px"` 越界）。弹窗内引导提示条用 `el-alert.alert-neutral` 放 content 顶部、多标题切换头用 `.dialog-titles`（见 Dialog 结构件段）。弹窗内若含表单/表格/搜索，**再叠加对应模式**（如表单→form-pattern） |
 | 做**抽屉** / 侧边浮层 / Drawer（纠结抽屉 vs 对话框 vs 页面） | `references/component-interaction.md`（Drawer 段） | 先按四维判据（承载信息量 / 信息关联度 / 任务连贯性 / 页面遮挡）判断该用抽屉还是对话框：**信息量大 + 任务需来回切换主页面 → 抽屉**；信息量少 + 需全神贯注 → 对话框。抽屉宽度 400px（轻量）或 600px（详细），有按钮时放 `#footer`（主按钮在右，与对话框一致） |
 | 做**二次确认** / 删除·离开前确认 / 就地气泡确认 | `references/component-interaction.md`（Popconfirm 段） | 低风险操作用 `el-popconfirm`（就地气泡，不打断），高风险 / 需全神贯注才升级 `el-dialog`。**气泡内按钮走 32px 小号（源头已定，下游不覆盖）**：直接用 `<el-button>` 即自动 32px，禁给气泡按钮硬写 `height` / `size="small"` 凑小号；按钮个数「一退路 + 一进路」（取消 + 确认） |
 | 用 **Tag 标签** / 状态标签 / 一处并列多个彩色标签（状态列、卡片头…） | `references/component-interaction.md`（Tag 段） | **选色**：无语义普通标签默认 `type="info"`（蓝，防与品牌绿/success 混淆），品牌强调才用 primary；灰色中性用 `el-tag--gray`、AI 标识用 `el-tag--ai`（渐变已固化，不自拼）。**数量**：一处并列**≤3 个为宜**，避免 4 个及以上平铺让标签退化成噪音（枚举全部状态色板的展示页除外） |
 | 做**空状态** / 无数据·无结果占位（列表为空、搜索无结果、加载失败、页面无内容…） | `references/component-interaction.md`（Empty 段） | 一律用 `el-empty` + **设计系统插画**（`el-theme/assets/empty/` 按场景选 8 张之一，import 后 `:image` 传入，暗色用 `dark/` 变体）+ **档位 class**（整页 `empty-page` / 卡片区块 `empty-block`）；**两样缺一即落回 EP 默认纸盒图 = 没接设计系统**。底部按钮放默认插槽、用默认态不用 primary |
-| 做**下拉菜单** / 更多操作 / 悬浮菜单 / 一个触发后弹出的选项面板 | `references/component-interaction.md`（Dropdown 段） | 一律用 `el-dropdown`（面板放 `#dropdown` 插槽、禁手撸浮层）；**触发器按场景选形态**（主操作→按钮 / 紧凑操作列→纯图标 / 行内轻量入口→文字+箭头），不写死单一形态；触发器尾部箭头用约定 class **`.dropdown-caret`** + `@visible-change` 绑 `.is-expanded`（展开翻转在源头，禁自写旋转动效） |
-| 做**面包屑** / 路径导航 / 带返回箭头的层级导航 | `references/component-interaction.md`（Breadcrumb 段） | 一律用业务组件 `Breadcrumb`（`design-spec/components/`），传 `items` + 接 `@back`（真实项目通常接 `router.back()`），禁手写 `el-breadcrumb`+`span` 拼返回箭头；无上一级传 `back-disabled`，不需要箭头传 `show-back=false` |
+| 做**下拉菜单** / 更多操作 / 悬浮菜单 / 一个触发后弹出的选项面板 / **给下拉菜单分组**（选项多要按语义分段加抬头） | `references/component-interaction.md`（Dropdown 段） | 一律用 `el-dropdown`（面板放 `#dropdown` 插槽、禁手撸浮层）；**触发器按场景选形态**（主操作→按钮 / 紧凑操作列→纯图标 / 行内轻量入口→文字+箭头），不写死单一形态；触发器尾部箭头用约定 class **`.dropdown-caret`** + `@visible-change` 绑 `.is-expanded`（展开翻转在源头，禁自写旋转动效）；**分组抬头用约定 class `.dropdown-group-title` + 裸 `<li>` 承载**（禁用 `el-dropdown-item` 冒充——会带 hover 底色让用户误以为可点） |
+| 做**面包屑** / 路径导航 / 带返回箭头的层级导航 | `references/component-interaction.md`（Breadcrumb 段） | 一律用业务组件 `Breadcrumb`（`design-spec/components/`），传 `items` + 接 `@back`（真实项目通常接 `router.back()`），禁手写 `el-breadcrumb`+`span` 拼返回箭头；**返回箭头可用性看「倒数第二项是不是可跳转实体页」而非层数**——分组标题 / 只展开子菜单的可折叠父项等非实体层级作上一级时须传 `back-disabled`；不需要箭头传 `show-back=false` |
 | 做**步骤条** / 步骤指示器 / 分步流程进度（"第几步 / 填写→生成→完成"这类多步骤流程头部） | `components/StepBar/StepBar.vue`（业务组件，顶部速查注释） | 一律用业务组件 `StepBar`（`design-spec/components/`），`import { StepBar } from '<path>/design-spec/components'`；传 `:steps="['填写要求','生成清单','生成内容']"`（数组长度即步骤数）+ `:current="2"`（当前步 1-based，< 为已完成、= 为当前、> 为未开始）。大圆节点+补零序号+渐变粗连接线+前进/回退动效全在源头，**禁手写 div 拼步骤条、禁用 el-steps 复刻这套观感** |
 | 做**页面框架** / 整页后台布局 / 工作区骨架（左侧边导航 + 顶栏面包屑/用户区 + 内容区） | `components/PageFrame/PageFrame.vue`（业务组件，顶部速查注释） | 一律用业务组件 `PageFrame`（`design-spec/components/`）：传 `:menus`（分组导航，item 带 `children` 即可折叠）+ `v-model:active` + `:course`（侧边栏课程卡）+ `:breadcrumbs`（内部复用 Breadcrumb）+ `:notice-count` / `avatar-role`，页面内容放默认插槽（白色圆角内容卡）。返回平台按钮/课程卡/导航选中态/顶栏全在源头，**禁手写 aside/header 拼同款框架、禁用 el-menu/el-container 复刻这套观感** |
 | 加**用户头像** / 角色头像 / 人员标识 | `components/UserAvatar/UserAvatar.vue`（业务组件，顶部速查注释） | 一律用业务组件 `UserAvatar`（`design-spec/components/`）：内置教师/学生男女四款角色图，传 `role="teacher-male"` 等命中；自定义图传 `src`。**尺寸只用三档 40（默认）/ 24 / 20** 保持全站一致，禁手拼 `el-avatar` + 自配图片/尺寸 |
 | 做 **AI 按钮** / AI 功能入口（AI 生成、智能出题、AI 提交等 AI 操作按钮） | `components/AiButton/AiButton.vue`（业务组件，顶部速查注释） | 一律用业务组件 `AiButton`（`design-spec/components/`）：`type` 三形态（`primary` 渐变实心=AI 主操作 / `outline` 白底描边渐变字=工具栏入口 / `text` 行内文字链=轻量入口）+ `disabled` + `loading`（四角星旋转，文案自定如"思考中..."）。四角星图标为组件内置原版切图、渐变走 AI 渐变令牌，全固化在源头，**禁手拼渐变按钮 / 在 el-button 上自贴渐变复刻这套观感** |
-| 做**页内导航 / 内容组织**：标签页 tab / 页内锚点 / 分页 / 轻量步骤条 | `references/component-interaction.md`（Tabs / Anchor / 分页器 / Steps 段） | Tabs **先选三档**：页面级 `.tabs-page` / 模块级裸 `el-tabs` / 组件级 `.tabs-sub`；tab 带计数用 `.tab-label-count`+`.tab-count`、挂徽标用 `.badge-tabs`+`.tab-badge`（全是源头约定 class，禁 scoped 复刻）。Anchor=页内锚点链接与快速跳转；分页=分隔长列表每次只加载一页（常规/小型两档按容器选）；Steps=任务复杂/有先后关系时分解成一系列步骤 |
-| **二值/数值控件选型**：多选框 vs 开关、滑块 | `references/component-interaction.md`（Checkbox / Switch / Slider 段） | switch 切换直接触发状态改变；checkbox 一般用于状态标记、需和提交操作配合；数值区间/自定义区间（连续或离散值）用 Slider |
-| 加**反馈/提示**：轻提示 / 警告条 / 徽标未读数 / 加载骨架屏 / 结果页 | `references/component-interaction.md`（Message / Alert / Badge / Skeleton / Result 段） | Message=不打断操作的轻量提示；Alert=提示内容较重要需吸引查看；Badge=待处理消息条数醒目提醒（**一律默认红、勿传 type**；包裸宿主定位，挂 tab 走 `.tab-badge`）；Skeleton=可替代加载、视觉体验更好；Result=重要操作的复杂/重要结果反馈 |
+| 做**页内导航 / 内容组织**：标签页 tab / 分页 / 轻量步骤条 | `references/component-interaction.md`（Tabs / 分页器 / Steps 段） | Tabs **先选三档**：页面级 `.tabs-page` / 模块级裸 `el-tabs` / 组件级 `.tabs-sub`；tab 带计数用 `.tab-label-count`+`.tab-count`、挂徽标用 `.badge-tabs`+`.tab-badge`（全是源头约定 class，禁 scoped 复刻）。分页=分隔长列表每次只加载一页（常规/小型两档按容器选）；Steps=任务复杂/有先后关系时分解成一系列步骤 |
+| 做**页内锚点 / 目录导航**（右侧目录、长页分节跳转、"跳到某一节"、锚点被顶栏挡住 / 不高亮的排障） | `references/component-interaction.md`（Anchor 段） | 用 `el-anchor`+`el-anchor-link`。**两条不写就必然出 bug**：① 有固定顶栏时**必须传 `:offset`**（=顶栏高+间距，本项目 76）——EP 走 JS 滚动、**不吃** `scroll-padding-top`，不传则跳转后标题被顶栏盖住；② **滚动容器不是 window 时必须传 `container`**——⚠️ 与「滚动条一律 el-scrollbar」规则的**交叉盲区**：内容区一旦被 `el-scrollbar` 包裹，Anchor 默认监听 window 会完全失效，须指向其 wrap。横向=页内 tab 式、竖向=侧边目录 |
+| 做**内部滚动区** / 区域内容超出要滚动（侧栏、面板、卡片内长列表、弹窗抽屉可滚内容区…）/ 想调滚动条样式 | `references/component-interaction.md`（滚动条 段） | 一律用基础组件 `<el-scrollbar>` 包裹，**禁在 div 上直接写 `overflow: auto`**（原生滚动条样式不可控：track 白底去不掉，且给 `::-webkit-scrollbar` 设属性会让 Chrome 切成占位滚动条、挤宽内容错位）。滚动内容的 flex/gap/内边距写在 `view-class` 指定的 view 上，外壳只负责 `flex:1; min-height:0` 占位。**滚动条外观（粗细/颜色/圆角/过渡）与页面主滚动条样式全部在源头 `el-theme/components/scrollbar.scss`，接入方一律不覆盖、不自封装** |
+| **二值 / 数值控件**（选型 **+ 用法**）：多选框 vs 开关怎么选；**给开关配文字标签** / 开关禁用态；**多选框**的文字与值 / 半选 / 全选行；**滑块**带输入框 / 区间 / 离散值 / 刻度 | `references/component-interaction.md`（Checkbox / Switch / Slider 段） | **Switch 文字标签默认 `active-text`（右侧）**，仅当「开关左侧无内容、右侧有其他内容」时才用 `inactive-text` 置左（两者互斥、只配一个）；禁在开关外套 `<span>` 或用 `el-form-item` 当 label——字重/间距/取色全在源头 `switch.scss`；`inline-prompt` 未启用。**Checkbox 文案传 `label`、值传 `value`**（EP 2.6+ 语义已变），多选必用 `el-checkbox-group` 包、禁再加 flex+gap，半选用 `indeterminate`（不受 v-model 控制须自算）。**Slider** 要数值输入用 `show-input`（禁旁边拼 `el-input-number`）、区间用 `range`、离散值必须 `step`+`show-stops`、须有定宽容器 |
+| 加**反馈/提示**且**纠结用哪种**：轻提示 vs 警告条 vs 通知 vs 弹窗 vs 结果页 | `references/component-interaction.md`（Message / Alert / Notification / Result 段） | Message=飘过即消失的即时反馈（无需用户响应）；Alert=嵌在页面/弹窗里常驻的说明条；Notification=右上角、可带操作按钮、默认常驻；Dialog=需要用户决策；Result=整页结果反馈。**需要用户决策的一律不用 Message/Alert** |
+| 用 **Message 轻提示**（`ElMessage`，保存成功/删除失败 toast）/ 用 **Alert 提示条**（`el-alert`，页面或弹窗内常驻说明、**中性灰底提示**） | `references/component-interaction.md`（Message / Alert 段） | **Message 一律传 `showClose: true`**（源头已定制 Lucide 关闭按钮并强制常显，不传就看不到），禁用 `.success()` 简写。**Alert 五档**：四语义 + **中性 `class="alert-neutral"`**（通用变体，**不限弹窗内**；禁裸 div 自配灰底、禁拿 `type="info"` 蓝底冒充中性）；默认带 `show-icon`；禁用 el-alert 做确认/删除确认 |
+| 做**加载占位**（骨架屏 / 内容未到位的占位）/ 做**结果页**（操作成功·失败的整页反馈） | `references/component-interaction.md`（Skeleton / Result 段） | **Skeleton 必 `animated` + 必须铺在 `bg-panel` 白底上**（灰条在 `bg-card` 浅灰上对比过弱＝写了等于没写），用 `:loading`+默认插槽切换、禁手写 v-if/v-else 两套。**Result 的 `icon` 仅 `success`/`error` 两个合法值**（源头只适配这两类，传 `warning`/`info` 得到无色图标＝越界违规）；结构固定 title+sub-title+`#extra` |
+| 加**徽标未读数** / 消息条数红点 | `references/component-interaction.md`（Badge 段） | Badge=待处理消息条数醒目提醒（**一律默认红、勿传 type**；包裸宿主定位，挂 tab 走 `.tab-badge`） |
 | 弹**通知** / 右上角结果通知 / 带操作按钮的通知（"完成后通知我"这类长时结果告知） | `references/component-interaction.md`（Notification 段） | 一律用 `ElNotification`；**默认常驻**（`duration: 0`，非必要不设自动消失）；带操作按钮**必须**用 `h()` 渲染 message + 按钮行套约定 class **`.notify-actions`**（右对齐/间距在源头），按钮「一退路+一进路」、点击调 `handle.close()`，禁手撸浮层/行内布局 style |
-| 写**按钮/输入框的图标与间距细节**：按钮加图标 / 纯图标按钮 / 输入框前后缀图标 / 一排按钮的间距 / Select 多选折叠 | `references/component-interaction.md`（按钮图标 / 纯图标按钮 / 输入框图标 / 按钮间距 / Select 多选 段） | 图标一律 Lucide + 插槽传递（按钮 `#icon`、输入框 `#prefix`/`#suffix`，禁 `:icon` 属性）；纯图标按钮必加 `.btn-icon-square`（否则被 min-width 80 撑成长方形）；按钮组间距一律父容器 `flex+gap`（源头已清零 EP 相邻 margin，禁再写 margin）；Select 多选默认 `collapse-tags collapse-tags-tooltip :max-collapse-tags="2"` |
+| 写**按钮/输入框的图标与间距细节**：按钮加图标 / 纯图标按钮 / 输入框前后缀图标 / 一排按钮的间距 | `references/component-interaction.md`（按钮图标 / 纯图标按钮 / 输入框图标 / 按钮间距 段） | 图标一律 Lucide + 插槽传递（按钮 `#icon`、输入框 `#prefix`/`#suffix`，禁 `:icon` 属性）；纯图标按钮必加 `.btn-icon-square`（否则被 min-width 80 撑成长方形）；按钮组间距一律父容器 `flex+gap`（源头已清零 EP 相邻 margin，禁再写 margin） |
+| 加**文字提示气泡** `el-tooltip` / **给纯图标按钮配说明**（图标是什么意思）/ **补全被省略号截断的文本** / hover 出提示 | `references/component-interaction.md`（Tooltip 段） | **纯图标入口必须配 tooltip 给全称**（否则语义靠猜），一律 `el-tooltip content=""`、**禁原生 `title` 属性**（延迟约 1s、样式失控、移动端不触发）；**每个 tooltip 必传 `:show-after="300"`**（全站统一延迟，防鼠标扫过一排图标时气泡连片弹出；延迟是 JS prop、**源头 scss 兜不住**，漏传即漏）；`placement` 按可用空间选（顶栏→`bottom`、底部→`top`），气泡白底/无箭头/字阶/限宽 318 限高 240 全在源头 `tooltip.scss`，**禁 `popper-class`/`:deep` 改外观**；`effect="dark"` 未启用（源头已统一白底）；必读信息与可交互内容不进 tooltip（分别用 `el-alert` / `el-popover`） |
 
 > 命中上表任一场景时，**这是强制步骤，不是可选参考**：先读对应细则，按其中的「强制做法」执行、避开「反例」、可直接套用「可照抄骨架」。读之前不要凭直觉自拟布局。
 >
 > 新增设计模式时：① 在 `references/patterns/` 建 `<模式>-pattern.md`（四段式）；② 在本表加一行「任务→必读」映射。**两步都做，模式才算沉淀。**
+
+#### ⚠️ 触发行的措辞纪律（写/改本表任一行时必须遵守）
+
+规则写得再对，**触发不到就等于不存在**。曾真实翻车：Switch 那行原措辞是「二值/数值控件**选型**：多选框 vs 开关」——「选型」二字把触发面锁死在"选哪个控件"，于是接到「给开关加个文字标签」（用法任务）时完全命中不了，实现者凭手感套了 `el-form` + `el-form-item` 当 label，还写 `:deep` 去修副作用，写出了下游绝不该有的私货。
+
+因此每行必须满足：
+
+1. **触发条件写「选型 + 用法」双句式**，不要只写选型。凡出现「选型」「A vs B」这类措辞，必须同时列出该组件**最高频的 2~3 个用法任务**（如"给开关配文字标签""做全选行""滑块带输入框"）。想象下游 CC 接到「我要用 X 做 Y」（Y 是具体用法），这行能不能命中。
+2. **说明列禁止只复读组件定义**（`X=…的组件`）。说明列的职责是**让 CC 在 Read 之前就知道这里有硬规则**，至少给出一条「强制做法」或「最易踩的坑」。
+3. **一行最多捆 2~3 个组件**。某组件的用法规则超过 3 条就单独起一行——否则篇幅会被最"重"的那个吃光，长尾组件被淹没（反例：曾有一行捆了 Message/Alert/Badge/Skeleton/Result 五个）。
+4. **组件名要出现在触发条件里**（`el-alert` / `ElMessage` 等），不能只写"警告条""轻提示"这类白话——下游任务里最可能出现的就是组件名。
+
+#### ⚠️ 源头 SCSS → references 的对账纪律（可机械化自检）
+
+**判据**：源头 `el-theme/components/*.scss` 里若有**专门为某个 prop / 形态写的覆盖规则**（如 `switch.scss` 的 `__label`、`slider.scss` 的 `.show-input`、`message.scss` 的 `__closeBtn`），说明该能力是本设计系统的**一等公民** → **references 里必须有对应用法条目，且触发表能命中**。
+
+反之，源头**没有**适配的形态（如 `result.scss` 只配了 `success`/`error` 两类图标、`switch.scss` 注释写明 `--wide` 未启用），必须在 references 里**显式写「未启用/不要用」**——不写，下游就会用出没有配套样式的形态。
+
+> 一次排查曾用这条判据抓出 8 个空白段中的 5 个。**改源头 SCSS 时顺手对账一次**：新增了某 prop 的覆盖规则 → 去 references 补用法；这是「改一处 = 扫全部引用」纪律在本层的具体落法。
+
+#### ⚠️ demo 注释里的设计约定必须回流 references
+
+demo 的 HTML/scoped 注释里常沉淀着真实的落地约束（曾发现：Switch 文字统一在右侧、Anchor 的 `:offset="76"` 不传就被顶栏遮住、Skeleton 必须铺白底否则看不见）。**这些只活在 demo 注释里的约定，下游 CC 读不到**——demo 是给人看的，references 才是给下游 CC 读的。写 demo 时若注释里出现了「为什么必须这么写」的约束，同步补进 references 对应段。
 
 ### demo 展示约定（设计模式 tab 的统一版式）
 
@@ -255,5 +296,7 @@ design-spec/
 │   ├── index.scss
 │   ├── var-mapping.scss
 │   ├── assets/                      ← 静态资源（tab装饰、空状态插图等）
-│   └── components/                  ← 40+ 组件样式覆盖
+│   ├── components/                  ← 40+ 组件样式覆盖
+│   └── patterns/                    ← 设计模式的布局约定类（非 EP 组件）
+│       └── toolbar.scss              ← .toolbar/__left/__right/__title（规则见 references/patterns/toolbar-pattern.md）
 ```

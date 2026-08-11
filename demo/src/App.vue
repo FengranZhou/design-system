@@ -18,10 +18,68 @@
         :name="tab.value"
       />
     </el-tabs>
+    <div class="app-topbar__theme">
+      <div class="brand-switcher">
+        <!-- 预置品牌：dot 自带 data-brand，命中该品牌色板作用域后 accent-6 即其主色 -->
+        <button
+          v-for="b in presetBrands"
+          :key="b.value"
+          type="button"
+          class="brand-dot"
+          :class="{ 'is-active': currentBrand === b.value }"
+          :data-brand="b.value"
+          :title="b.label"
+          @click="currentBrand = b.value"
+        />
+        <!-- 自定义：点击弹出浮层，输入 16 进制色值作为主色。
+             色点默认黑底 + 下拉箭头，选定后即所选色，选中态与预置色点同款外框 -->
+        <el-popover
+          v-model:visible="customPanelVisible"
+          :width="280"
+          placement="bottom-end"
+          trigger="click"
+          popper-class="custom-color-popover"
+          @before-enter="customColorInput = customColor"
+        >
+          <template #reference>
+            <button
+              type="button"
+              class="brand-dot brand-dot--custom"
+              :class="{ 'is-active': currentBrand === CUSTOM_BRAND }"
+              :style="{ background: customColor }"
+              title="自定义主色"
+            >
+              <ChevronDown :size="14" class="brand-dot__caret" />
+            </button>
+          </template>
+
+          <div class="custom-color-panel">
+            <el-input
+              v-model="customColorInput"
+              placeholder="请输入十六进制色值作为主色"
+              @keyup.enter="confirmCustomColor"
+            />
+            <div class="custom-color-panel__footer">
+              <el-button @click="cancelCustomColor">取消</el-button>
+              <el-button type="primary" @click="confirmCustomColor">确定</el-button>
+            </div>
+          </div>
+        </el-popover>
+      </div>
+      <button
+        type="button"
+        class="theme-toggle"
+        :title="isDark ? '切换到亮色' : '切换到暗色'"
+        @click="isDark = !isDark"
+      >
+        <Moon v-if="isDark" :size="18" />
+        <Sun v-else :size="18" />
+      </button>
+    </div>
   </header>
   <div class="app-layout">
     <aside class="app-sidebar">
-      <div class="app-sidebar__nav-wrap">
+      <el-scrollbar class="app-sidebar__nav-wrap" view-class="app-sidebar__nav-view">
         <template v-if="currentTopTab === 'token'">
         <ul class="app-sidebar__nav">
           <li><a href="#palette" :class="{ 'is-active': activeSection === 'palette' }">Palette 基础色板</a></li>
@@ -126,7 +184,7 @@
           <li><a href="#copywriting-time" :class="{ 'is-active': activeSection === 'copywriting-time' }">Time 通用时间</a></li>
         </ul>
         </template>
-      </div>
+      </el-scrollbar>
     </aside>
 
     <main class="app-content">
@@ -230,8 +288,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
-import { ElConfigProvider } from 'element-plus'
+import { ElConfigProvider, ElMessage } from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import { Sun, Moon, ChevronDown } from 'lucide-vue-next'
+import { generatePalette } from './utils/generate-palette'
 
 // 顶部导航 tab
 const topTabs = [
@@ -244,8 +304,83 @@ const topTabs = [
 ]
 const currentTopTab = ref('component')
 
-// demo 默认使用 green 品牌
-document.documentElement.dataset.brand = 'green'
+// ============ 主题切换（品牌色 + 亮/暗）============
+// ============ 主题切换（品牌色 + 亮/暗）============
+// 预置品牌：值即 register-brand 注册的 name。
+// ⚠ 注册在使用方（见本 demo 的 styles/global.scss 顶部），源头只提供 mixin——
+//   下游项目要用自己的品牌色，同样在自己项目里 @include register-brand 注册。
+const presetBrands = [
+  { value: 'green', label: '品牌绿（默认）' },
+  { value: 'science-blue', label: '理工蓝 #0077FF' },
+]
+const CUSTOM_BRAND = 'custom'
+
+const currentBrand = ref('green')
+// 自定义色默认黑（色点显示为黑底 + 白箭头）；仅当用户主动选色后才切到自定义品牌
+const customColor = ref('#000000')
+const isDark = ref(false)
+
+// 自定义色：由主色算出 10 阶亮/暗色板，写成行内 CSS 变量覆盖 accent-1~10。
+// 走行内 style 而非 scss 注册，是因为 register-brand 是编译期 mixin，接不了运行时色值。
+function applyCustomPalette(color: string, dark: boolean) {
+  const root = document.documentElement
+  if (!color) {
+    for (let i = 1; i <= 10; i += 1) root.style.removeProperty(`--iflyv-accent-${i}`)
+    return
+  }
+  const palette = generatePalette(color, dark ? { theme: 'dark' } : {})
+  palette.forEach((c, i) => root.style.setProperty(`--iflyv-accent-${i + 1}`, c))
+}
+
+const customPanelVisible = ref(false)
+const customColorInput = ref('')
+
+/** 取消：回落到首个预置主色（绿），自定义色点复位为黑 */
+function cancelCustomColor() {
+  customColorInput.value = ''
+  customColor.value = '#000000'
+  currentBrand.value = 'green'
+  customPanelVisible.value = false
+}
+
+/** 确定：色值合法则应用为自定义主色，同时把选中态从预置色点移走 */
+function confirmCustomColor() {
+  const raw = customColorInput.value.trim()
+  const hex = raw.startsWith('#') ? raw : `#${raw}`
+  // 支持 #RGB 简写与 #RRGGBB
+  if (!/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex)) {
+    ElMessage.warning('请输入合法的十六进制色值，如 #0077FF')
+    return
+  }
+  // 简写补全成 6 位，供色板算法解析
+  const full =
+    hex.length === 4
+      ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`
+      : hex
+  customColor.value = full.toUpperCase()
+  currentBrand.value = CUSTOM_BRAND
+  customPanelVisible.value = false
+}
+
+// 写到 html 上：[data-brand] 命中品牌色板、[data-theme="dark"] 命中暗色语义层
+watch(
+  [currentBrand, customColor, isDark],
+  ([brand, color, dark]) => {
+    const root = document.documentElement
+    if (dark) root.dataset.theme = 'dark'
+    else delete root.dataset.theme
+
+    if (brand === CUSTOM_BRAND && color) {
+      // 自定义色不走 [data-brand] 作用域，清掉它避免预置色板残留
+      delete root.dataset.brand
+      applyCustomPalette(color, dark as boolean)
+    } else {
+      applyCustomPalette('', false) // 清掉行内覆盖，交还给 scss 注册的色板
+      root.dataset.brand = brand as string
+    }
+  },
+  { immediate: true },
+)
 
 // 语言 locale（固定中文）
 const epLocale = ref(zhCn)

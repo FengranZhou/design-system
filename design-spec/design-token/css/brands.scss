@@ -16,6 +16,9 @@
    );
 */
 
+/* ⚠ 色板必须用上述算法生成，不要手调单个色阶 —— 10 阶之间的色相偏移 / 饱和度 /
+   明度关系是算法保证的，手改会破坏阶梯的均匀性，导致 hover / active / 禁用态失衡。 */
+
 @mixin register-brand($name, $palette-light, $palette-dark) {
   [data-brand="#{$name}"] {
     @for $i from 1 through 10 {

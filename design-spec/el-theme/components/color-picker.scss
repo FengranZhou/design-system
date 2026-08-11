@@ -1,0 +1,63 @@
+/* ======================================================================== */
+/* ======================= ColorPicker 样式覆盖 ============================ */
+/* ======================================================================== */
+/* EP 取色面板是一组写死的像素尺寸：面板 300px（content-box）、内部 svpanel /
+   色相条 / 透明度条各 280px、底部 hex 输入框 160px。本设计系统把按钮尺寸与字号
+   档位都放大了，底部「输入框 + 清空 + 确定」一行超出 300px → 面板出横向滚动条、
+   按钮显示不全。
+   修法：整体加宽面板到 360，内部各块同步加宽到 340，并禁掉滚动条——
+   加宽而非压缩，才能在放大字号档位下把内容完整放下。 */
+
+/* 面板内容宽度（content-box，内部块 = 本值 - 左右各 10 的视觉余量） */
+$panel-width: 360px;
+$inner-width: 340px;
+
+/* 承载面板的 popper 容器：不限制宽度、不出滚动条 */
+.el-color-picker__panel {
+  max-width: none;
+  overflow: visible;
+}
+
+.el-color-picker-panel {
+  width: $panel-width;
+  /* 面板内一律不出滚动条：内容靠加宽 + 下方弹性布局放下 */
+  overflow: visible;
+}
+
+/* 取色方块 / 色相条 / 透明度条：EP 写死 280，跟随面板同步加宽 */
+.el-color-picker-panel {
+  .el-color-svpanel,
+  .el-color-hue-slider,
+  .el-color-alpha-slider {
+    width: $inner-width;
+  }
+
+  /* 取色方块同步增高，保持接近原比例、不显得扁 */
+  .el-color-svpanel {
+    height: 220px;
+  }
+
+  .el-color-picker-panel__wrapper {
+    overflow: visible;
+  }
+}
+
+.el-color-picker-panel__footer {
+  display: flex;
+  align-items: center;
+  /* EP 原样式靠 space-between 撑开，元素间无最小间距；这里显式给一档 */
+  gap: var(--iflyv-spacing-2);
+
+  /* hex 输入框：EP 写死 160px，改为弹性——按钮先拿到自己需要的宽度，余下归输入框 */
+  .el-input {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+  }
+
+  /* 「清空 / 确定」不被压缩、不换行 */
+  .el-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}

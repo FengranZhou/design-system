@@ -13,6 +13,32 @@
   &--divided { margin: 4px 0; }
 }
 
+/* ==================== 面板内分组标题约定 .dropdown-group-title ====================
+   下拉面板里给一组选项加抬头（非可选项，故不是 el-dropdown-item，用裸 <li> 承载）：
+
+     <template #dropdown>
+       <el-dropdown-menu>
+         <li class="dropdown-group-title">技术部门</li>
+         <el-dropdown-item command="fe">前端开发</el-dropdown-item>
+       </el-dropdown-menu>
+     </template>
+
+   ⚠️ 口径与 Select 的分组标题（select.scss 的 .el-select-group__title）一致：
+      text-3 灰 + 12px 字号，把"抬头"与"可选项"的层级拉开。
+      左右内边距取 spacing-4（16px），对齐本面板 el-dropdown-item 的左右内边距，
+      而非照抄 Select 的 20px——否则与同面板选项左边缘错位。
+      行高 36 与 el-dropdown-item 同高：抬头与选项在面板里保持同一套竖直节奏。
+      ⚠️ 单行垂直居中用 line-height 而非 flex（与 tooltip.scss 同理，也与 item 写法一致）；
+      故上下不再另加 padding，否则与行高叠加把抬头撑高。 */
+.el-dropdown-menu .dropdown-group-title {
+  padding: 0 var(--iflyv-spacing-4);
+  height: 36px;
+  line-height: 36px;
+  color: var(--iflyv-text-3);
+  font-size: var(--iflyv-font-size-12);
+  list-style: none;
+}
+
 /* 行高 rem 化：覆盖 EP 尺寸变体 baked-in px */
 .el-dropdown-menu--large .el-dropdown-menu__item { line-height: var(--iflyv-line-height-22); }
 .el-dropdown-menu--small .el-dropdown-menu__item { line-height: var(--iflyv-line-height-20); }

@@ -210,6 +210,17 @@
   }
   &.is-text:not(.is-disabled) {
     &:not([class*="--"]) {
+      /* 无类型 text 按钮的「纯图标」形态（图标操作入口：行内删除、更多等）取 icon-2 ——
+         与顶栏等处的纯图标入口同色阶，避免图标按钮比正文还重、在列表里抢戏。
+         判据 = 有 .el-icon 但无 <span>：图标走 #icon 插槽被 EP 包成 .el-icon，
+         文案则会渲染进 <span>——故"有图标无文案"即纯图标按钮。
+         @depends-on: 使用方必须用 <template #icon> 插槽传图标（裸 svg 不匹配 .el-icon）。
+         ⚠️ 仅限纯图标：带文案的 text 按钮仍走 EP 默认文字色，
+            文字色不该由 icon-* 令牌管（语义错位，将来调图标会误伤文字）。 */
+      &:has(.el-icon):not(:has(span)):not(:hover):not(:active) {
+        --el-button-text-color: var(--iflyv-icon-2);
+        color: var(--iflyv-icon-2);
+      }
       &:hover, &:active { --el-button-text-color: var(--iflyv-brand-text); color: var(--iflyv-brand-text); }
     }
 
