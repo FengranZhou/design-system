@@ -165,8 +165,8 @@
         <template v-if="currentTopTab === 'business'">
         <!-- 业务组件层导航：随组件逐个加入（如 AiPanel 等） -->
         <ul class="app-sidebar__nav">
-          <li><a href="#step-bar" :class="{ 'is-active': activeSection === 'step-bar' }">StepBar 步骤条</a></li>
           <li><a href="#page-frame" :class="{ 'is-active': activeSection === 'page-frame' }">PageFrame 页面框架</a></li>
+          <li><a href="#step-bar" :class="{ 'is-active': activeSection === 'step-bar' }">StepBar 步骤条</a></li>
           <li><a href="#ai-button" :class="{ 'is-active': activeSection === 'ai-button' }">AiButton Ai按钮</a></li>
         </ul>
         </template>
@@ -269,8 +269,8 @@
       <!-- <OtherDemo /> -->
       </div>
       <div v-show="currentTopTab === 'business'" class="no-title-divider">
-      <StepBarDemo />
       <PageFrameDemo />
+      <StepBarDemo />
       <AiButtonDemo />
       </div>
       <div v-show="currentTopTab === 'pattern'" class="no-title-divider">
@@ -454,7 +454,7 @@ const sectionIds = [
   'input', 'select', 'date-picker', 'radio', 'checkbox', 'switch', 'slider', 'rate',
   'tag', 'table', 'badge', 'descriptions', 'avatar', 'empty',
   'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
-  'step-bar', 'page-frame', 'ai-button',
+  'page-frame', 'step-bar', 'ai-button',
   'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'copywriting-time',
 ]
@@ -464,7 +464,7 @@ const sectionIds = [
 const firstSectionByTab: Record<string, string> = {
   token: 'palette',
   component: 'button',
-  business: 'step-bar',
+  business: 'page-frame',
   pattern: 'pattern-form',
   copywriting: 'copywriting-time',
 }

@@ -362,7 +362,7 @@ const emit = defineEmits<{
 /** 鼠标是否停留在侧栏上（决定收起把手是否浮出） */
 const sidebarHover = ref(false)
 
-/** 移开侧栏后把手的延迟消失计时器：鼠标离开不立即收，留 1s 反悔窗口——
+/** 移开侧栏后把手的延迟消失计时器：鼠标离开不立即收，留 0.5s 反悔窗口——
  *  把手贴在侧栏右缘，鼠标从侧栏移向它的路径上很容易先划出侧栏边界，
  *  立即消失会让人"够不着"这个按钮。进入时清掉待执行的隐藏。 */
 let handleHideTimer: ReturnType<typeof setTimeout> | undefined
@@ -376,7 +376,7 @@ const onSidebarLeave = () => {
   clearTimeout(handleHideTimer)
   handleHideTimer = setTimeout(() => {
     sidebarHover.value = false
-  }, 1000)
+  }, 500)
 }
 
 onBeforeUnmount(() => clearTimeout(handleHideTimer))
@@ -603,7 +603,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
 }
 
 .page-frame__back-icon {
-  color: var(--iflyv-icon-1);
+  color: var(--iflyv-icon-2);
   flex-shrink: 0;
 }
 
