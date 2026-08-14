@@ -29,13 +29,13 @@
   | BLOCKING  | input 不用 v-model                     | 受控组件变非受控，表单数据无法收集       |
   | STRONG    | 提交按钮放在 form-item 外              | 失去 form-item__content 内置 12px gap   |
   | STRONG    | 用 style="width: 80px" 改 label 宽度   | 应用 label-width 属性，避免硬编码        |
-  | STRONG    | label-position 各页面随意混用          | 同一系统内应统一规范（top 多用于半页面） |
+  | STRONG    | 用 label-position="top" 顶部标签       | 全站只用「标签在左」，top 暂停启用       |
   | STRONG    | 多行文本用 el-input 不带 type="textarea" | 只能输入单行，体验破坏                  |
   | SOFT      | rules 不带 trigger                     | 默认 change，输入即校验，体验差          |
   | SOFT      | form 不加 ref                          | 无法编程式 validate / resetFields        |
   | SOFT      | 表单按钮没 loading 反馈                | 提交瞬间用户不知道是否点中               |
 
-  完整规范见：design-spec/references/component-interaction.md「表单」章节
+  完整规范见：design-spec/references/patterns/form-pattern.md（表单布局模式，以此为准）
 ================================================================================
 -->
 
@@ -43,27 +43,19 @@
   <div class="examples">
 
     <!-- ============================================================ -->
-    <!-- 示例 1：label-position 三种模式                               -->
+    <!-- 示例 1：标签布局（全站唯一一种：标签在左）                      -->
     <!-- ============================================================ -->
     <section>
-      <h3>1. label-position 模式</h3>
+      <h3>1. 标签布局</h3>
 
-      <!-- ✅ 推荐：top 模式用于整页/半页表单（创建页、编辑页），label 在上方 -->
+      <!-- ✅ 推荐：标签在左 + label-width="auto"
+           auto 自动取本表单最长 label 的实际宽度作统一列宽：短 label 右对齐后
+           输入框左缘对齐成一条线，且零富余（不像手写固定 px 那样留多余空白）。
+           注：EP 的 label-position="right" 指「标签文字右对齐」，标签仍在控件左侧。 -->
       <div class="row">
-        <el-form :model="form1" label-position="top" style="width: 240px;">
+        <el-form :model="form2" label-width="auto" label-position="right" style="width: 280px;">
           <el-form-item label="用户名">
-            <el-input v-model="form1.username" placeholder="顶部 label" />
-          </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="form1.email" placeholder="" />
-          </el-form-item>
-        </el-form>
-
-        <!-- ✅ 推荐：right 模式用于弹窗内表单 / 局部表单区域
-             label 文字右对齐，紧贴 input 边缘，视觉上 label-input 配对关系最强 -->
-        <el-form :model="form2" label-width="80px" label-position="right" style="width: 280px;">
-          <el-form-item label="用户名">
-            <el-input v-model="form2.username" placeholder="弹窗内表单" />
+            <el-input v-model="form2.username" placeholder="标签在左" />
           </el-form-item>
           <el-form-item label="邮箱">
             <el-input v-model="form2.email" placeholder="" />
@@ -72,12 +64,19 @@
       </div>
 
       <!--
-        @anti-pattern: 同一系统内 label-position 各页面随意混用
+        @anti-pattern: 用 label-position="top" 做顶部标签表单
         @priority: STRONG
-        后果：用户切换页面时视觉跳跃，体验割裂。
-        正确：按 references/component-interaction.md 约定——
-              整页/半页 → top；弹窗/局部 → right；
-              `left` 不在推荐清单，避免使用。
+        后果：与全站表单布局不一致，用户切换页面时视觉跳跃。
+        正确：全站只用「标签在左」这一种布局，top 暂停启用
+              （源头 form.scss 亦已注明暂停）。完整规则见
+              references/patterns/form-pattern.md。
+      -->
+
+      <!--
+        @anti-pattern: 手写固定 label-width="80px"
+        @priority: SOFT
+        后果：label 列宽与实际最长标签不匹配，留多余空白或挤压。
+        正确：用 label-width="auto"，除非有特殊对齐需求。
       -->
 
       <!--
@@ -284,7 +283,6 @@ import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 
-const form1 = reactive({ username: '', email: '' })
 const form2 = reactive({ username: '', email: '' })
 
 const formRef = ref<FormInstance>()

@@ -35,7 +35,7 @@
 
 ## 三、强制做法
 
-### 1. 一律 import 源头 `formatTime`，不重写、不硬编码
+### 1. 一律 import 源头 `formatTime`，不重写、不硬编码 <!-- @rule id=time-use-formattime level=MUST cat=文案规范 view=impl detect=regex dtitle=时间展示格式全站统一（本年省年份、不显示秒） title=时间展示一律 import 源头 formatTime，禁各自写格式化函数/硬编码时间字符串 -->
 
 ```ts
 import { formatTime } from '<path>/design-spec/utils/format-time'
@@ -73,17 +73,18 @@ formatTime(Date.now())           // 接受 string | number | Date
 
 ```vue
 <template>
-  <!-- 列表/时间线/卡片里的时间戳：一律 formatTime 包一层 -->
-  <el-timeline>
-    <el-timeline-item
-      v-for="item in items"
-      :key="item.raw"
-      :timestamp="formatTime(item.raw)"
-    >{{ item.label }}</el-timeline-item>
-  </el-timeline>
+  <!-- 表格时间列：用 formatter 包一层，不直接打印原始值 -->
+  <el-table :data="rows">
+    <el-table-column prop="name" label="名称" />
+    <el-table-column
+      prop="updatedAt"
+      label="更新时间"
+      :formatter="(_r, _c, v) => formatTime(v)"
+    />
+  </el-table>
 
-  <!-- 表格时间列同理 -->
-  <!-- <el-table-column :formatter="(_r,_c,v) => formatTime(v)" prop="updatedAt" label="更新时间" /> -->
+  <!-- 卡片 / 列表条目里的时间戳同理，一律 formatTime 包一层 -->
+  <!-- <span class="card__time">{{ formatTime(item.updatedAt) }}</span> -->
 </template>
 
 <script setup lang="ts">

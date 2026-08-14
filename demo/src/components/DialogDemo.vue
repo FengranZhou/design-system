@@ -172,7 +172,7 @@ const activeTip = computed(() => tipScenes.find(s => s.value === tipScene.value)
   border-radius: var(--iflyv-radius-md);
   color: var(--iflyv-brand-text);
   /* body-sub 字体族含空格字体名，不能用 font: 简写，拆分属性逐条设 */
-  font-size: var(--iflyv-font-size-14);
+  font: var(--iflyv-font-body-sub);
   line-height: var(--iflyv-line-height-20);
   font-weight: var(--iflyv-font-weight-regular);
 }
@@ -183,8 +183,4 @@ const activeTip = computed(() => tipScenes.find(s => s.value === tipScene.value)
   width: 400px;
 }
 
-@media (max-width: 1100px) {
-  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
-  .config-card { width: 100%; }
-}
 </style>

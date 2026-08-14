@@ -56,10 +56,10 @@ updated: 2026-04-16
 - [允许] 使用原生页头布局（替代 el-page-header）
 - [允许] 使用原生引导实现（替代 el-tour）
 - `el-button` 的 icon 必须使用插槽方式插入
-- `el-empty` 必须使用 `#image` 插槽配合 `.empty-icon-plate` 类，禁止使用默认图标
+- `el-empty` 必须同时传两样：设计系统插画（`:image` 属性，import `el-theme/assets/empty/` 下 8 张场景图之一）+ 档位 class（整页 `empty-page` / 区块 `empty-block`）；缺任一即落回 EP 默认纸盒图
 - `text-overflow: ellipsis` 的文字必须配套 tooltip 组件
 - 禁止使用 `el-button` 的 `type="success"` / `"warning"` / `"info"`，仅允许 `default` / `primary` / `danger`
-- 禁止使用 `el-button` 的 `circle` 属性，改用 `class="btn-icon-square"`
+- 禁止使用 `el-button` 的 `circle` 属性；纯图标入口用 `<el-button text>` + `#icon` 插槽（`.btn-icon-square` 已暂停启用，写了不生效）
 - 禁止使用 `el-input` / `el-select` 的 `:prefix-icon` / `:suffix-icon` 属性，改用 `#prefix` / `#suffix` 插槽
 - 禁止使用 `el-table` 的 `stripe` 属性
 

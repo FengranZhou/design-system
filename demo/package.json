@@ -4,9 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "extract-rules": "node ../scripts/extract-rules.mjs",
+    "dev": "npm run extract-rules && vite",
+    "build": "npm run extract-rules && vue-tsc && vite build",
+    "preview": "vite preview",
+    "audit:page": "node ../scripts/audit-page.mjs demo/src",
+    "audit:spec": "node ../scripts/audit-spec.mjs"
   },
   "dependencies": {
     "vue": "^3.5.13",

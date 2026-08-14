@@ -23,7 +23,7 @@ function rgbToHex(rgb: string): string {
 
 export function copyToken(name: string) {
   navigator.clipboard.writeText(`var(${name})`).then(() => {
-    ElMessage.success(`已复制 var(${name})`)
+    ElMessage({ message: `已复制 var(${name})`, type: 'success', showClose: true })
   })
 }
 

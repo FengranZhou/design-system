@@ -76,7 +76,4 @@ const descItems = computed(() => {
 }
 .descriptions-showcase__main { flex: 1; min-width: 0; }
 
-@media (max-width: 1100px) {
-  .descriptions-showcase { flex-direction: column; }
-}
 </style>

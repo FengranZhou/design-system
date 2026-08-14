@@ -1,0 +1,1310 @@
+{
+  "generatedBy": "scripts/extract-rules.mjs",
+  "total": 87,
+  "totalWeight": 250,
+  "byLevel": {
+    "MUST": 76,
+    "SHOULD": 11,
+    "MAY": 0
+  },
+  "byDetect": {
+    "regex": 65,
+    "ast": 6,
+    "manual": 16
+  },
+  "byView": {
+    "design": 68,
+    "impl": 79
+  },
+  "categoryOrder": [
+    "单一数据源",
+    "设计令牌",
+    "组件选用",
+    "组件用法",
+    "布局与栅格",
+    "设计模式",
+    "状态设计",
+    "文案规范",
+    "视觉呈现"
+  ],
+  "items": [
+    {
+      "id": "display-no-ep-override",
+      "title": "展示型页面同样不得覆盖 EP 组件外观（需要不同观感就改源头或另做自定义排版组件）",
+      "designTitle": "展示型页面同样不得覆盖 EP 组件外观（需要不同观感就改源头或另做自定义排版组件）",
+      "level": "MUST",
+      "cat": "单一数据源",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/display-guide.md",
+      "line": 22
+    },
+    {
+      "id": "ssot-no-scoped-override",
+      "title": "禁在使用方 scoped/:deep() 里覆盖组件外观（局部私货，脱离源头不再同步）",
+      "designTitle": "禁在使用方 scoped/:deep() 里覆盖组件外观（局部私货，脱离源头不再同步）",
+      "level": "MUST",
+      "cat": "单一数据源",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/judging-criteria.md",
+      "line": 149
+    },
+    {
+      "id": "integration-three-layers",
+      "title": "必须按固定顺序引入样式三层（EP 基础 → 令牌 → 组件覆盖层）",
+      "designTitle": "必须按固定顺序引入样式三层（EP 基础 → 令牌 → 组件覆盖层）",
+      "level": "MUST",
+      "cat": "单一数据源",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/judging-criteria.md",
+      "line": 151
+    },
+    {
+      "id": "integration-no-copy",
+      "title": "严禁拷贝式接入（拷贝 scss 进自己仓库＝脱离源头）",
+      "designTitle": "严禁拷贝式接入（拷贝 scss 进自己仓库＝脱离源头）",
+      "level": "MUST",
+      "cat": "单一数据源",
+      "detect": "manual",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/judging-criteria.md",
+      "line": 153
+    },
+    {
+      "id": "biz-component-no-override",
+      "title": "业务组件只装扮自己骨架，不覆盖所用基础组件的外观",
+      "designTitle": "业务组件只装扮自己骨架，不覆盖所用基础组件的外观",
+      "level": "MUST",
+      "cat": "单一数据源",
+      "detect": "manual",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/judging-criteria.md",
+      "line": 157
+    },
+    {
+      "id": "integration-claude-at-import",
+      "title": "下游根 CLAUDE.md 须 @ 引入 design-spec/CLAUDE.md（否则下游 CC 读不到规则）",
+      "designTitle": "下游根 CLAUDE.md 须 @ 引入 design-spec/CLAUDE.md（否则下游 CC 读不到规则）",
+      "level": "SHOULD",
+      "cat": "单一数据源",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/judging-criteria.md",
+      "line": 155
+    },
+    {
+      "id": "color-no-hardcode",
+      "title": "颜色值一律走令牌，禁硬编码 hex/rgb",
+      "designTitle": "颜色应取自色板，不应出现色板外的杂色",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 14
+    },
+    {
+      "id": "font-no-hardcode-size",
+      "title": "字号一律走字体令牌，禁硬编码 px",
+      "designTitle": "字号一律走字体令牌，禁硬编码 px",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 15
+    },
+    {
+      "id": "font-set-as-whole",
+      "title": "设文字须整套设齐字号+行高+字重，禁只写 font-size",
+      "designTitle": "设文字须整套设齐字号+行高+字重，禁只写 font-size",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 16
+    },
+    {
+      "id": "spacing-no-magic",
+      "title": "间距一律走 spacing 令牌，禁魔法 px 值",
+      "designTitle": "间距应落在标准档位上，同类元素留白一致",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 17
+    },
+    {
+      "id": "button-type-whitelist",
+      "title": "el-button 的 type 仅允许 default/primary/danger（AI 入口用 AiButton，其 primary/outline/text 是另一套）",
+      "designTitle": "常规按钮只有默认/主要/危险三种，不应出现其他颜色（AI 功能入口另用业务组件 AiButton，不在此列）",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 18
+    },
+    {
+      "id": "button-no-circle",
+      "title": "禁用 circle 属性做纯图标按钮",
+      "designTitle": "不应出现圆形的纯图标按钮",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 19
+    },
+    {
+      "id": "icon-lucide-only",
+      "title": "图标统一用 lucide-vue-next 按需导入，禁全量引入/禁混用其他图标库",
+      "designTitle": "图标统一用 lucide-vue-next 按需导入，禁全量引入/禁混用其他图标库",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 33
+    },
+    {
+      "id": "icon-stroke-width-2",
+      "title": "图标 stroke-width 统一为 2，不允许其他值",
+      "designTitle": "图标粗细应统一，不应有的粗有的细",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 39
+    },
+    {
+      "id": "ai-gradient-token",
+      "title": "AI 元素一律用现成 AI 渐变令牌，禁自拼渐变",
+      "designTitle": "AI 相关元素的渐变应全站一致，不是各处自调的渐变",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 209
+    },
+    {
+      "id": "gradient-cross-hue",
+      "title": "自定义渐变必须跨色相（例外：数据可视化色阶梯度）",
+      "designTitle": "渐变两端应取不同色相，同色相渐变显得平淡",
+      "level": "SHOULD",
+      "cat": "设计令牌",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/foundations.md",
+      "line": 210
+    },
+    {
+      "id": "aibutton-use-component",
+      "title": "AI 按钮一律用业务组件 AiButton，禁在 el-button 上自贴渐变复刻",
+      "designTitle": "AI 功能入口应是统一的渐变按钮样式，不应各处自调渐变",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 599
+    },
+    {
+      "id": "breadcrumb-use-component",
+      "title": "面包屑一律用业务组件 Breadcrumb，禁手拼 el-breadcrumb + span 返回箭头",
+      "designTitle": "面包屑返回箭头应各页一致",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 626
+    },
+    {
+      "id": "anchor-vertical-ask-first",
+      "title": "> ⚠️ 用户明确要「侧边目录 / 左侧导航跳转 / 竖着的目录」时，这是需求与规范的冲突，不是你漏传了参数——按最高铁律「规范与需求冲突时必须先问」，停下来说明「本设计系统的锚点只有横向形态」并给出选项（改用横向分节目录 / 由设计负责人决定是否新增竖向适配），不要默默改成横向交付。用户要的是\"侧边\"，你给了\"顶部\"却不说，等于替他砍掉了需求。",
+      "designTitle": "> ⚠️ 用户明确要「侧边目录 / 左侧导航跳转 / 竖着的目录」时，这是需求与规范的冲突，不是你漏传了参数——按最高铁律「规范与需求冲突时必须先问」，停下来说明「本设计系统的锚点只有横向形态」并给出选项（改用横向分节目录 / 由设计负责人决定是否新增竖向适配），不要默默改成横向交付。用户要的是\"侧边\"，你给了\"顶部\"却不说，等于替他砍掉了需求。",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "manual",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 676
+    },
+    {
+      "id": "dialog-no-messagebox",
+      "title": "弹窗统一用 el-dialog，不引入 ElMessageBox 命令式 API",
+      "designTitle": "所有弹窗观感一致（标题/按钮/圆角同一套），不应有长得不一样的系统弹窗",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1073
+    },
+    {
+      "id": "component-no-suspended",
+      "title": "不得使用「勿用清单」内已停用的组件（el-popover/el-menu/el-link/el-collapse/el-progress/el-timeline 等）",
+      "designTitle": "组件观感应与规范展示页一致，不应出现明显偏离设计系统的原生样式控件",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1274
+    },
+    {
+      "id": "select-v2-over-200",
+      "title": "选项超过 200 必须换 el-select-v2（虚拟滚动），否则首次展开卡顿",
+      "designTitle": "选项超过 200 必须换 el-select-v2（虚拟滚动），否则首次展开卡顿",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/select-pattern.md",
+      "line": 38
+    },
+    {
+      "id": "tooltip-no-native-title",
+      "title": "文字提示一律用 el-tooltip，禁用原生 title 属性",
+      "designTitle": "悬停提示应是设计系统的白底气泡，不是浏览器默认的黑色小方块",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 112
+    },
+    {
+      "id": "tooltip-show-after",
+      "title": "每个 el-tooltip 必传 :show-after=\"300\"（源头兜不住，漏传即漏）",
+      "designTitle": "鼠标扫过一排图标时气泡不应连片弹出，需停留片刻才提示",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 114
+    },
+    {
+      "id": "tooltip-no-override",
+      "title": "tooltip 气泡外观一律不覆盖（禁 popper-class / :deep 改样式）",
+      "designTitle": "tooltip 气泡外观一律不覆盖（禁 popper-class / :deep 改样式）",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 116
+    },
+    {
+      "id": "tooltip-no-interactive",
+      "title": "禁给 tooltip 塞可交互元素，需要可交互浮层用 dropdown/popconfirm/dialog",
+      "designTitle": "提示气泡里不应放按钮等要点击的内容（鼠标移过去就消失，够不着）",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "ast",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 128
+    },
+    {
+      "id": "datepicker-value-format",
+      "title": "el-date-picker 必须传 value-format",
+      "designTitle": "日期选择后展示格式应统一，不出现时间戳或英文日期",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 205
+    },
+    {
+      "id": "timepicker-value-format",
+      "title": "el-time-picker 必传 value-format",
+      "designTitle": "el-time-picker 必传 value-format",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 241
+    },
+    {
+      "id": "checkbox-label-prop",
+      "title": "多选框文案传 label 属性，禁外套 <span> 手拼标签",
+      "designTitle": "多选框文案传 label 属性，禁外套 <span> 手拼标签",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 306
+    },
+    {
+      "id": "switch-text-prop",
+      "title": "开关文字标签用 active-text/inactive-text，禁外套 <span> 手拼",
+      "designTitle": "开关文字标签用 active-text/inactive-text，禁外套 <span> 手拼",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 341
+    },
+    {
+      "id": "slider-width-container",
+      "title": "el-slider 必须有显式宽度的容器（默认撑满父级）",
+      "designTitle": "滑块不应拉满整行，需放在定宽区块内",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 360
+    },
+    {
+      "id": "descriptions-not-disabled-form",
+      "title": "只读详情用 el-descriptions，禁用 el-form + disabled 冒充",
+      "designTitle": "只读信息应是清晰的字段展示，不应是一片灰掉的表单",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 400
+    },
+    {
+      "id": "inputnumber-min-max",
+      "title": "el-input-number 必须传 :min / :max",
+      "designTitle": "数字输入框应有合理上下限，不应能填负数或超大值",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 424
+    },
+    {
+      "id": "dropdown-use-slots",
+      "title": "下拉面板放 #dropdown 插槽的 <el-dropdown-menu>，禁手撸浮层",
+      "designTitle": "下拉菜单的面板观感应与全站一致，不应是自己拼的浮层",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 544
+    },
+    {
+      "id": "dropdown-caret-class",
+      "title": "下拉触发器箭头必须用约定 class .dropdown-caret + @visible-change 绑 .is-expanded",
+      "designTitle": "下拉触发器的箭头应在展开时翻转，动效与全站一致",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 545
+    },
+    {
+      "id": "anchor-select-scroll-top",
+      "title": "3. 第一节就在容器顶部时必须传 `select-scroll-top`。EP 内部 `getCurrentHref()` 有一条特判：`scrollTop === 0` 时，若未开启 `selectScrollTop` 就返回空串——即滚动回到顶部后所有锚点一起失去高亮（首项明明在视口里却不亮）。这不是 bug 是 EP 默认行为，但对\"第一节紧贴容器顶部\"的常见版式（表单分组跳转、长页分节）几乎总是错的，须显式开启。",
+      "designTitle": "3. 第一节就在容器顶部时必须传 `select-scroll-top`。EP 内部 `getCurrentHref()` 有一条特判：`scrollTop === 0` 时，若未开启 `selectScrollTop` 就返回空串——即滚动回到顶部后所有锚点一起失去高亮（首项明明在视口里却不亮）。这不是 bug 是 EP 默认行为，但对\"第一节紧贴容器顶部\"的常见版式（表单分组跳转、长页分节）几乎总是错的，须显式开启。",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 684
+    },
+    {
+      "id": "anchor-stale-hash",
+      "title": "它读的是整个页面的 hash，不区分是不是自己的锚点。所以只要页面别处用了原生 `<a href=\"#…\">` 导航（侧边目录、章节跳转…），地址栏就残留着上次点的 id；此时条件渲染出一个 `el-anchor`（v-if 切换形态、进入某个 tab、打开弹窗），它一挂载就跳到那个毫不相干的位置去。表现为\"我只是切了个选项，页面自己跳走了\"。挂载前 `history.replaceState(null, '', location.pathname + location.search)` 清掉即可（若高亮是按滚动位置算的，清 hash 不影响导航）。",
+      "designTitle": "它读的是整个页面的 hash，不区分是不是自己的锚点。所以只要页面别处用了原生 `<a href=\"#…\">` 导航（侧边目录、章节跳转…），地址栏就残留着上次点的 id；此时条件渲染出一个 `el-anchor`（v-if 切换形态、进入某个 tab、打开弹窗），它一挂载就跳到那个毫不相干的位置去。表现为\"我只是切了个选项，页面自己跳走了\"。挂载前 `history.replaceState(null, '', location.pathname + location.search)` 清掉即可（若高亮是按滚动位置算的，清 hash 不影响导航）。",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 693
+    },
+    {
+      "id": "pagination-small-layout",
+      "title": "分页小型档必须同时加 small 且精简 layout 为 prev,pager,next",
+      "designTitle": "窄容器里的分页器应精简且不换行",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 799
+    },
+    {
+      "id": "message-show-close",
+      "title": "ElMessage 一律传 showClose: true",
+      "designTitle": "轻提示右侧应始终有关闭按钮",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 856
+    },
+    {
+      "id": "alert-title-prop",
+      "title": "el-alert 主文案必须传 title 属性，禁塞默认插槽（插槽=description 区，会触发大图标）",
+      "designTitle": "el-alert 主文案必须传 title 属性，禁塞默认插槽（插槽=description 区，会触发大图标）",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 886
+    },
+    {
+      "id": "loading-no-custom-spinner",
+      "title": "区域加载一律用 v-loading 指令，禁自拼转圈图标/遮罩层",
+      "designTitle": "加载动画应是设计系统的四圆点，不是自拼的转圈图标",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 931
+    },
+    {
+      "id": "result-icon-two-values",
+      "title": "el-result 的 icon 仅允许 success/error，传 warning/info 属名单越界",
+      "designTitle": "结果页图标只有成功（绿）和失败（红）两种，不应出现无颜色的图标",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 994
+    },
+    {
+      "id": "notification-h-actions",
+      "title": "通知里的操作按钮必须用 h() 渲染 + .notify-actions 约定类，禁手撸布局",
+      "designTitle": "通知里的操作按钮必须用 h() 渲染 + .notify-actions 约定类，禁手撸布局",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1026
+    },
+    {
+      "id": "scrollbar-no-raw-overflow",
+      "title": "内部滚动区一律用 el-scrollbar，禁在 div 上直接写 overflow:auto/scroll",
+      "designTitle": "区域滚动条应是细长半透明的设计系统样式，不是浏览器默认灰色滚动条",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1223
+    },
+    {
+      "id": "timepicker-disabled-range",
+      "title": "限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤",
+      "designTitle": "限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 243
+    },
+    {
+      "id": "rate-max-5",
+      "title": "el-rate 档位固定 5 星，不改 :max",
+      "designTitle": "评分星级固定 5 颗，不应出现 10 颗星",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 449
+    },
+    {
+      "id": "badge-default-red",
+      "title": "Badge 一律默认红色，勿传 type",
+      "designTitle": "徽标未读数一律红色，不应出现其他颜色的徽标",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 508
+    },
+    {
+      "id": "badge-max-99",
+      "title": "Badge 未读数场景一律加 :max=\"99\"",
+      "designTitle": "未读数超过 99 应显示 99+，不撑破角标",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 509
+    },
+    {
+      "id": "scrollbar-view-class",
+      "title": "滚动内容的排布写在 view-class 指定的 view 上，不写在 el-scrollbar 外壳",
+      "designTitle": "滚动内容的排布写在 view-class 指定的 view 上，不写在 el-scrollbar 外壳",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1235
+    },
+    {
+      "id": "grid-no-el-row",
+      "title": "分栏用源头栅格类 .grid/.grid__col-*，禁用 el-row/el-col、禁自拼 flex",
+      "designTitle": "分栏宽度应落在标准档位上，各栏间距均匀一致",
+      "level": "MUST",
+      "cat": "布局与栅格",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/efficiency-guide.md",
+      "line": 50
+    },
+    {
+      "id": "layout-no-sub1200-mq",
+      "title": "禁写 <1200 的 media query（1200 是硬下限，写了永不触发）",
+      "designTitle": "窗口变窄时页面应整体横向滚动，而不是把布局挤变形",
+      "level": "MUST",
+      "cat": "布局与栅格",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/efficiency-guide.md",
+      "line": 148
+    },
+    {
+      "id": "grid-min-6col",
+      "title": "模块宽度不得小于 6 列",
+      "designTitle": "一行最多四等分，模块不应比这更窄",
+      "level": "MUST",
+      "cat": "布局与栅格",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 22
+    },
+    {
+      "id": "form-label-left",
+      "title": "表单标签一律在左（label-width=\"auto\"），label-position=\"top\" 未启用",
+      "designTitle": "表单标签一律在左侧、右对齐，全站只此一种布局",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 33
+    },
+    {
+      "id": "dialog-single-footer",
+      "title": "弹窗内表单不自带底部按钮，一律交给 #footer",
+      "designTitle": "弹窗里不应出现两排提交按钮",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "ast",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/dialog-pattern.md",
+      "line": 80
+    },
+    {
+      "id": "dialog-width-three-tiers",
+      "title": "弹窗宽度只能取 400/640/800 三档，禁非档位宽度",
+      "designTitle": "弹窗宽度只有窄/中/宽三档，不应出现非标准宽度",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/dialog-pattern.md",
+      "line": 81
+    },
+    {
+      "id": "form-use-el-form",
+      "title": "表单骨架一律用 el-form + el-form-item，禁 div/flex 手拼",
+      "designTitle": "表单标签列应对齐成一条线，必填星号位置统一",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 25
+    },
+    {
+      "id": "form-validate-on-blur",
+      "title": "长表单禁止只在提交时报错，本地可判的规则一律失焦即报",
+      "designTitle": "长表单填错应在离开输入框时立刻提示，不是提交后才一起报",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 79
+    },
+    {
+      "id": "form-error-below-field",
+      "title": "错误提示放输入域下方，禁汇总到表单顶部",
+      "designTitle": "错误提示应在对应输入框下方，不应汇总到表单顶部",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "ast",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 81
+    },
+    {
+      "id": "form-step-validate-each",
+      "title": "分步表单必须每步校验，禁止留到末步统一报错",
+      "designTitle": "分步表单应在点下一步时校验当前步，不应等到最后一步才统一报错",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 85
+    },
+    {
+      "id": "form-actions-outside-cards",
+      "title": "卡片分组的表单，操作区必须在所有卡片之外",
+      "designTitle": "分组套卡片时提交/取消应放在所有卡片之外，不能塞进最后一张卡片里",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 124
+    },
+    {
+      "id": "form-single-column",
+      "title": "表单一律单列，禁多列 Z 字动线",
+      "designTitle": "表单应单列排布，不应铺成两列造成 Z 字动线",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "ast",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 145
+    },
+    {
+      "id": "form-same-carrier",
+      "title": "同一操作的载体形态必须一致（不能这里弹窗那里跳页）",
+      "designTitle": "同一个操作从哪个入口进都应弹出同样的容器形态",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 204
+    },
+    {
+      "id": "form-label-width-unified",
+      "title": "禁手写固定 label-width，用 label-width=\"auto\" 保证全表单统一",
+      "designTitle": "同一表单内标签列宽应统一，输入框左缘对齐成一条线",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 238
+    },
+    {
+      "id": "list-status-use-tag",
+      "title": "列表/表格的状态列一律用 el-tag，禁裸文字",
+      "designTitle": "列表里的状态应是彩色标签，不是一段裸文字",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/list-item-pattern.md",
+      "line": 49
+    },
+    {
+      "id": "table-freeze-columns",
+      "title": "表格内容超宽触发横滚时，必须冻结主题列(fixed=left)与操作列(fixed=right)",
+      "designTitle": "表格横向滚动时，首列与操作列应固定不动",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/list-item-pattern.md",
+      "line": 66
+    },
+    {
+      "id": "table-use-sortable",
+      "title": "表格排序一律用 el-table 的 sortable，禁自造排序箭头",
+      "designTitle": "表头排序应是标准箭头样式，与全站一致",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/list-item-pattern.md",
+      "line": 96
+    },
+    {
+      "id": "search-use-searchmini",
+      "title": "搜索框一律用业务组件 SearchMini，禁 el-input+放大镜手拼",
+      "designTitle": "搜索框应是统一的标准样式与宽度，各页一致",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/search-pattern.md",
+      "line": 36
+    },
+    {
+      "id": "toolbar-order",
+      "title": "工具栏顺序固定为 标题→组件级tab→下拉→搜索→次按钮→主按钮",
+      "designTitle": "工具栏元素顺序应各页一致：标题→tab→下拉→搜索→次按钮→主按钮",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "ast",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "line": 126
+    },
+    {
+      "id": "toolbar-convention-class",
+      "title": "工具栏一律用源头约定 class .toolbar/__left/__right/__title，禁在使用方复刻",
+      "designTitle": "工具栏标题、筛选、按钮的间距与对齐应各页一致",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "line": 140
+    },
+    {
+      "id": "form-max-width",
+      "title": "单列表单整体宽度用 max-width 约束在容器一处，不散落每个控件",
+      "designTitle": "表单不应拉满整个页面宽度，输入区应有合理上限",
+      "level": "SHOULD",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 49
+    },
+    {
+      "id": "form-no-fake-group",
+      "title": "禁止为了分组而分组，组内字段必须有强关联",
+      "designTitle": "分组要有内在关联，不能因为字段多就随便切几段",
+      "level": "SHOULD",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 143
+    },
+    {
+      "id": "form-anchor-group-title",
+      "title": "锚点分节的各组必须各自带组标题",
+      "designTitle": "锚点分组的各组都要有组标题，否则分不清边界",
+      "level": "SHOULD",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 189
+    },
+    {
+      "id": "empty-image-and-class",
+      "title": "el-empty 必须同时传设计系统插画 :image 与档位 class（empty-page/empty-block）",
+      "designTitle": "空状态应使用设计系统插画，不是默认的灰色纸盒图",
+      "level": "MUST",
+      "cat": "状态设计",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 818
+    },
+    {
+      "id": "skeleton-animated",
+      "title": "el-skeleton 必须传 animated",
+      "designTitle": "骨架屏应有流动动画，且在底色上看得清",
+      "level": "MUST",
+      "cat": "状态设计",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 960
+    },
+    {
+      "id": "skeleton-on-panel",
+      "title": "骨架屏承载容器必须用 bg-panel 白底（bg-card 浅灰上对比过弱）",
+      "designTitle": "骨架屏应铺在白底上，灰底上会看不清",
+      "level": "MUST",
+      "cat": "状态设计",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 961
+    },
+    {
+      "id": "loading-no-blank-screen",
+      "title": "禁止全屏白屏 + 居中 Spinner，任何加载都应保留页面结构",
+      "designTitle": "加载时不应整页空白只转个圈，应保留页面结构（骨架屏/局部遮罩）",
+      "level": "MUST",
+      "cat": "状态设计",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/efficiency-guide.md",
+      "line": 105
+    },
+    {
+      "id": "dialog-title-specific",
+      "title": "弹窗标题必须写清操作对象，禁「确认操作」「提示」这类通用文案",
+      "designTitle": "弹窗标题必须写清操作对象，禁「确认操作」「提示」这类通用文案",
+      "level": "MUST",
+      "cat": "文案规范",
+      "detect": "manual",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1124
+    },
+    {
+      "id": "time-use-formattime",
+      "title": "时间展示一律 import 源头 formatTime，禁各自写格式化函数/硬编码时间字符串",
+      "designTitle": "时间展示格式全站统一（本年省年份、不显示秒）",
+      "level": "MUST",
+      "cat": "文案规范",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/copywriting/time.md",
+      "line": 38
+    },
+    {
+      "id": "form-error-two-parts",
+      "title": "表单错误文案必须两段式（错在哪 + 怎么改）",
+      "designTitle": "报错文案要说清错在哪、怎么改，只说「格式不正确」不合格",
+      "level": "MUST",
+      "cat": "文案规范",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/form-pattern.md",
+      "line": 80
+    },
+    {
+      "id": "lightspot-not-in-components",
+      "title": "渐变光斑禁止用于效率型组件内部",
+      "designTitle": "表单/表格/弹窗内部不应出现光斑等装饰效果",
+      "level": "MUST",
+      "cat": "视觉呈现",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/display-guide.md",
+      "line": 352
+    },
+    {
+      "id": "button-primary-unique",
+      "title": "同一视觉层级内最多一个 Primary 按钮，杜绝主按钮泛滥",
+      "designTitle": "同一视觉层级内最多一个 Primary 按钮，杜绝主按钮泛滥",
+      "level": "MUST",
+      "cat": "视觉呈现",
+      "detect": "ast",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/efficiency-guide.md",
+      "line": 127
+    },
+    {
+      "id": "line-no-decorative",
+      "title": "禁用粗线、双线、装饰性线条",
+      "designTitle": "禁用粗线、双线、装饰性线条",
+      "level": "MUST",
+      "cat": "视觉呈现",
+      "detect": "regex",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 20
+    },
+    {
+      "id": "shadow-popup-only",
+      "title": "静态卡片不加投影，阴影仅用于浮层",
+      "designTitle": "静态卡片不加投影，阴影仅用于浮层",
+      "level": "MUST",
+      "cat": "视觉呈现",
+      "detect": "regex",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 21
+    },
+    {
+      "id": "gradient-not-in-components",
+      "title": "渐变禁用于效率型组件内部（表单/表格/弹窗/抽屉）",
+      "designTitle": "表单/表格/弹窗等组件内部不应出现渐变装饰",
+      "level": "MUST",
+      "cat": "视觉呈现",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 204
+    },
+    {
+      "id": "button-primary-edge",
+      "title": "主按钮贴近按钮组所在容器的对齐侧边缘（右对齐贴右/左对齐贴左）",
+      "designTitle": "主按钮贴近按钮组所在容器的对齐侧边缘（右对齐贴右/左对齐贴左）",
+      "level": "MUST",
+      "cat": "视觉呈现",
+      "detect": "manual",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 332
+    },
+    {
+      "id": "gsap-display-only",
+      "title": "GSAP 仅展示型页面可用，效率型页面禁止引入",
+      "designTitle": "GSAP 仅展示型页面可用，效率型页面禁止引入",
+      "level": "MUST",
+      "cat": "视觉呈现",
+      "detect": "regex",
+      "views": [
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 435
+    },
+    {
+      "id": "dark-surface-bordered",
+      "title": "暗色下卡片描边用 .surface-bordered，不用纯色描边",
+      "designTitle": "暗色下卡片描边应柔和，不是生硬的实线",
+      "level": "SHOULD",
+      "cat": "视觉呈现",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/foundations.md",
+      "line": 23
+    }
+  ]
+}

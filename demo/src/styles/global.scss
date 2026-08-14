@@ -244,7 +244,7 @@ body {
   // 且滚动条外观统一归源头 el-theme/components/scrollbar.scss
 
   &__header {
-    padding: 24px 20px 20px;
+    padding: var(--iflyv-spacing-6) var(--iflyv-spacing-5) var(--iflyv-spacing-5);
     border-bottom: 1px solid var(--iflyv-border-default);
     flex-shrink: 0;
   }
@@ -252,7 +252,7 @@ body {
   &__brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--iflyv-spacing-3);
   }
 
   &__logo {
@@ -278,7 +278,7 @@ body {
   &__subtitle {
     font: var(--iflyv-font-body-min);
     color: var(--iflyv-text-3);
-    margin-top: 2px;
+    margin-top: var(--iflyv-spacing-0_5);
   }
 
   &__controls {
@@ -286,33 +286,32 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    gap: 16px;
-    margin-top: 16px;
+    gap: var(--iflyv-spacing-4);
+    margin-top: var(--iflyv-spacing-4);
   }
 
   // 字号档位切换
   .font-size-switcher {
     display: flex;
-    gap: 2px;
+    gap: var(--iflyv-spacing-0_5);
     flex-shrink: 0;
     background: var(--iflyv-bg-inset);
     border-radius: var(--iflyv-radius-sm);
-    padding: 2px;
+    padding: var(--iflyv-spacing-0_5);
   }
 
   .font-size-btn {
     min-width: 28px;
     height: 24px;
-    padding: 0 4px;
+    padding: 0 var(--iflyv-spacing-1);
     border: none;
     border-radius: calc(var(--iflyv-radius-sm) - 2px);
     background: transparent;
     color: var(--iflyv-text-3);
-    font-size: 11px;
-    font-weight: 600;
+    font: var(--iflyv-font-body-min);
+    font-weight: var(--iflyv-font-weight-semibold);
     cursor: pointer;
-    transition: all 0.15s ease;
-    line-height: 1;
+    transition: all var(--iflyv-duration-fast) var(--iflyv-ease-default);
 
     &:hover:not(.is-active) {
       color: var(--iflyv-text-2);
@@ -321,33 +320,31 @@ body {
     &.is-active {
       background: var(--iflyv-bg-segment-active);
       color: var(--iflyv-brand-text);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
     }
   }
 
   // 语言/方向切换
   .lang-switcher {
     display: flex;
-    gap: 2px;
+    gap: var(--iflyv-spacing-0_5);
     flex-shrink: 0;
     background: var(--iflyv-bg-inset);
     border-radius: var(--iflyv-radius-sm);
-    padding: 2px;
+    padding: var(--iflyv-spacing-0_5);
   }
 
   .lang-btn {
     min-width: 28px;
     height: 24px;
-    padding: 0 4px;
+    padding: 0 var(--iflyv-spacing-1);
     border: none;
     border-radius: calc(var(--iflyv-radius-sm) - 2px);
     background: transparent;
     color: var(--iflyv-text-3);
-    font-size: 11px;
-    font-weight: 600;
+    font: var(--iflyv-font-body-min);
+    font-weight: var(--iflyv-font-weight-semibold);
     cursor: pointer;
-    transition: all 0.15s ease;
-    line-height: 1;
+    transition: all var(--iflyv-duration-fast) var(--iflyv-ease-default);
 
     &:hover:not(.is-active) {
       color: var(--iflyv-text-2);
@@ -356,7 +353,6 @@ body {
     &.is-active {
       background: var(--iflyv-bg-segment-active);
       color: var(--iflyv-brand-text);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
     }
   }
 
@@ -432,17 +428,19 @@ body {
   }
 
   &__title {
+    /* 阿里普惠字体名含空格，不能用 font: 简写（会被解析失败/覆盖），
+       故按规范拆分属性但字号/行高/字重一个不漏 —— 规格同 --iflyv-font-title-page */
     font-family: var(--iflyv-font-family-emphasis);
-    font-weight: var(--iflyv-font-weight-extrabold);
     font-size: var(--iflyv-font-size-26);
     line-height: var(--iflyv-line-height-48);
+    font-weight: var(--iflyv-font-weight-extrabold);
     color: var(--iflyv-text-1);
-    margin-bottom: var(--iflyv-spacing-4);  /* 16 */
-    padding-bottom: 16px;
+    margin-bottom: var(--iflyv-spacing-4);
+    padding-bottom: var(--iflyv-spacing-4);
     border-bottom: 1px solid var(--iflyv-border-default);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--iflyv-spacing-3);
 
     &::before {
       content: '';
@@ -514,7 +512,7 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: var(--iflyv-spacing-6);
-  margin-bottom: 20px;
+  margin-bottom: var(--iflyv-spacing-5);
 
   &:last-child {
     margin-bottom: 0;
@@ -559,16 +557,6 @@ body {
   margin: var(--iflyv-spacing-1) 0 0;
   color: var(--iflyv-text-3);
   font: var(--iflyv-font-body-sub);
-}
-
-// 窄屏：配置卡下移换行，把整行宽度让给示例区
-@media (max-width: 1100px) {
-  .control-showcase {
-    flex-direction: column;
-  }
-  .config-card {
-    width: 100%;
-  }
 }
 
 // 设计模式页的模式卡：上下两块大卡片（① 模式规则 / ② 标准范例）

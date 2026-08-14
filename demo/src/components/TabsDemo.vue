@@ -67,19 +67,10 @@ const tabsActive = ref('a')
   border: 1px solid var(--iflyv-border-subtle);
 }
 
-/* Tabs 示例无内容面板，清掉 EP header 默认下边距 */
-.demo-block :deep(.el-tabs__header) {
-  margin-bottom: 0;
-}
-
 /* 本页配置卡内容宽度不定，宽度随内容自适应而非公共层的固定宽 */
 .config-card {
   flex: 0 1 auto;
   width: auto;
 }
 
-@media (max-width: 1100px) {
-  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
-  .config-card { width: 100%; }
-}
 </style>

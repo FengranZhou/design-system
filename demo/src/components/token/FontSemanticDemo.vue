@@ -40,6 +40,12 @@ const semanticFontTokens = [
   // —— 展示数字 ——
   { name: '--iflyv-font-number-display', desc: '展示数字 26/40 抖音美好体', sample: '1234567890' },
   { name: '--iflyv-font-number-display-sm', desc: '展示数字小 22/34 抖音美好体', sample: '1234567890' },
+  // —— 多行变体：预期 ≥3 行时用，1~2 行一律用常规档（行高＝字号 2 倍，短句上会过松）
+  //    标题/tab/label 角色上不成段落，故无多行档 ——
+  { name: '--iflyv-font-title-page-multiline', desc: '页面标题·≥3 行 26/52 阿里普惠 800', split: { family: 'emphasis', weight: 'extrabold', size: 26, lh: 52 } },
+  { name: '--iflyv-font-body-primary-multiline', desc: '常规正文·≥3 行 16/32' },
+  { name: '--iflyv-font-body-sub-multiline', desc: '次要正文·≥3 行 14/28' },
+  { name: '--iflyv-font-body-min-multiline', desc: '辅助信息·≥3 行 12/24' },
 ]
 
 // 语义字体示例样式：默认用 font 简写；split 令牌改用拆分属性。

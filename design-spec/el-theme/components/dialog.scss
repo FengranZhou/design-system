@@ -152,7 +152,7 @@
      @when-changed: gap: 12px 提供按钮组间距 + 清零相邻 button margin 防叠加——
                     与 button.scss 全局清零策略一致（双保险）。
                     使用方禁止再写 .el-dialog__footer .el-button { margin-inline-start: ... }。
-     @see: examples/dialog.examples.vue 「确认对话框」section 的标准按钮顺序。 */
+     @see: references/component-interaction.md Dialog 段「按钮个数」。 */
   .el-dialog__footer {
     flex-shrink: 0; /* 限高滚动时底部按钮固定不压缩、始终可见可点 */
     padding: 20px 0 0;
@@ -185,7 +185,7 @@
                 因为「彩色底板 + 白色 icon」组合在亮/暗模式都成立。
    @when-changed: 升级 EP 大版本若改了 .el-dialog__title 结构需要同步调整。
                   调整图标尺寸：底板 20×20 + 内部 icon 14×14（在 background-size 控制）。
-   @see: examples/dialog.examples.vue 「语义化标题」section。 */
+   @see: references/component-interaction.md「Dialog 语义化标题」段。 */
 
 /* 提示弹窗高度下限：语义变体（警告/危险/成功/信息）是「提示」类，内容轻（一两行文案 + 按钮），
    下限收到 160px（区别于基础对话框这类「操作」弹窗的 240px 下限，避免提示弹窗被撑出大片空白）。

@@ -72,7 +72,7 @@
                   EP 会自动用 .el-icon 容器包裹，本规则才能生效。
      @when-changed: 使用方若把 <svg> 直接塞 button default slot（裸 svg 不是 .el-icon），
                     6px 间距规则不触发，icon 会贴着文字。
-     @see: examples/button.examples.vue 「图标 + 文字」section 的反模式 #1。 */
+     @see: references/component-interaction.md「按钮图标」段的反例。 */
   .el-icon {
     font-size: var(--iflyv-font-size-16);
 
@@ -307,7 +307,7 @@
                   ::after 是相对 .el-icon 容器定位的。
      @when-changed: 若使用方裸 <svg> 塞 default slot，加载图标无法替换，
                     loading 时会同时显示原图标 + 没有 spinner。
-     @see: examples/button.examples.vue 「加载态」section 中 aria-busy 的配套用法。 */
+     @see: references/component-interaction.md「按钮图标 / 纯图标按钮」段。 */
   &.is-loading .el-icon {
     svg {
       visibility: hidden;
@@ -329,12 +329,16 @@
 /* ==================== 图标方形按钮 Icon-only Square ====================
    ⏸ 暂停启用（现阶段不用，且避免干扰 CC 从组件库选组件）。需要时放开本段注释，
       并把下方 min-width 选择器里的 `:not(.btn-icon-square)` 豁免一并恢复。
+   ⚠ 恢复时必须同步 references：`component-interaction.md`「纯图标按钮」段、
+      `foundations.md` 禁止事项、`CLAUDE.md` 触发表、`impl-review-checklist.md`
+      当前都写着「本类已暂停启用、勿写」，恢复后这些口径全部要改回来
+      （对账纪律见 CLAUDE.md「源头 SCSS → references 的对账纪律」）。
    使用方式：<el-button class="btn-icon-square">，禁止使用 circle 属性。
    @depends-on: 本工具类必须配合下方 min-width 排除规则才能生效——
                 `:not(.btn-icon-square)` 把本类从 80px 强制宽度中豁免，
                 使纯图标按钮能保持等宽等高方形。
    @when-changed: 两段规则强相关，维护时必须连读，不要单独删一段。
-   @see: examples/button.examples.vue 「纯图标按钮」section。 */
+   @see: references/component-interaction.md「纯图标按钮」段。 */
 /* .btn-icon-square {
   width: var(--el-component-size);
   height: var(--el-component-size);

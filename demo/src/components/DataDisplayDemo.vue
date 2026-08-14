@@ -9,9 +9,9 @@
       <p class="demo-label">进度条</p>
       <div style="width: 400px;">
         <el-progress :percentage="30" />
-        <el-progress :percentage="70" status="success" style="margin-top: 12px;" />
-        <el-progress :percentage="50" status="warning" style="margin-top: 12px;" />
-        <el-progress :percentage="80" status="exception" style="margin-top: 12px;" />
+        <el-progress :percentage="70" status="success" style="margin-top: var(--iflyv-spacing-3);" />
+        <el-progress :percentage="50" status="warning" style="margin-top: var(--iflyv-spacing-3);" />
+        <el-progress :percentage="80" status="exception" style="margin-top: var(--iflyv-spacing-3);" />
       </div>
     </div>
     -->
@@ -36,15 +36,15 @@
       <p class="demo-label">树形控件</p>
       <div class="demo-row" style="gap: 48px; align-items: flex-start;">
         <div>
-          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">基础树</p>
+          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: var(--iflyv-spacing-2);">基础树</p>
           <el-tree :data="treeData" default-expand-all />
         </div>
         <div>
-          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">可选择树（含禁用）</p>
+          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: var(--iflyv-spacing-2);">可选择树（含禁用）</p>
           <el-tree :data="treeDataDisabled" show-checkbox default-expand-all node-key="id" />
         </div>
         <div>
-          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">高亮当前节点</p>
+          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: var(--iflyv-spacing-2);">高亮当前节点</p>
           <el-tree :data="treeData" default-expand-all node-key="id" highlight-current :current-node-key="2" />
         </div>
       </div>
@@ -56,7 +56,7 @@
       <p class="demo-label">折叠面板</p>
       <div class="demo-row" style="gap: 48px; align-items: flex-start;">
         <div style="width: 360px;">
-          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">默认模式</p>
+          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: var(--iflyv-spacing-2);">默认模式</p>
           <el-collapse v-model="collapseActive">
             <el-collapse-item title="一致性" name="1">
               <p>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念。</p>
@@ -70,7 +70,7 @@
           </el-collapse>
         </div>
         <div style="width: 360px;">
-          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">手风琴模式</p>
+          <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: var(--iflyv-spacing-2);">手风琴模式</p>
           <el-collapse v-model="collapseAccordion" accordion>
             <el-collapse-item title="一致性" name="1">
               <p>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念。</p>

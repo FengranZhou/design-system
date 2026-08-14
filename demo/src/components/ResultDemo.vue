@@ -72,8 +72,4 @@ const configForm = reactive({ scene, showSubtitle, showButton })
   margin-bottom: 0;
 }
 
-/* 窄屏时配置卡片下移换行，把整行宽度让给结果展示 */
-@media (max-width: 1100px) {
-  .result-showcase { flex-direction: column; }
-}
 </style>

@@ -74,7 +74,7 @@
           <template #prefix><Mail :size="16" :stroke-width="2" /></template>
         </el-input>
       </div>
-      <div class="demo-row" style="margin-top: 12px;">
+      <div class="demo-row" style="margin-top: var(--iflyv-spacing-3);">
         <el-input v-model="linkValue" placeholder="请输入链接" style="width: 240px">
           <template #suffix><Link :size="16" :stroke-width="2" /></template>
         </el-input>
@@ -165,10 +165,6 @@ const numberValue = ref(1)
 .input-showcase__main { flex: 1; min-width: 0; }
 .input-showcase .demo-row { flex-wrap: wrap; }
 /* 左列内标题下与示例的间距（标题原 margin-bottom 保留即可） */
-
-@media (max-width: 1100px) {
-  .input-showcase { flex-direction: column; }
-}
 
 /* 默认收起字段单元：开关 + hint 竖排为一个整体（与 SelectDemo「可清除」布局一致）。 */
 .config-field {

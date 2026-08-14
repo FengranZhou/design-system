@@ -6,7 +6,7 @@
       <div class="avatar-showcase__main">
 
         <!-- 独立：四个内置角色各自展示，带角色名 -->
-        <div v-if="avatarMode === 'single'" class="demo-row" style="gap: 40px;">
+        <div v-if="avatarMode === 'single'" class="demo-row" style="gap: var(--iflyv-spacing-10);">
           <div v-for="item in roles" :key="item.role" class="avatar-cell">
             <UserAvatar :role="item.role" :size="avatarSize" />
             <span class="avatar-cell__label">{{ item.label }}</span>
@@ -71,10 +71,6 @@ const avatarSize = ref(28)
 }
 .avatar-showcase__main { flex: 1; min-width: 0; }
 
-@media (max-width: 1100px) {
-  .avatar-showcase { flex-direction: column; }
-}
-
 .config-card :deep(.el-radio-group) {
   flex-direction: column;
   align-items: flex-start;
@@ -85,11 +81,11 @@ const avatarSize = ref(28)
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--iflyv-spacing-2);
 }
 
 .avatar-cell__label {
-  font-size: 13px;
+  font: var(--iflyv-font-body-sub);
   color: var(--iflyv-text-3);
 }
 
@@ -103,7 +99,7 @@ const avatarSize = ref(28)
 }
 
 .avatar-group__item {
-  box-shadow: 0 0 0 2px #fff;
+  box-shadow: 0 0 0 2px var(--iflyv-bg-panel);
   border-radius: 50%;
 }
 </style>

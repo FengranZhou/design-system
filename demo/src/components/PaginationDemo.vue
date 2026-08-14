@@ -60,10 +60,6 @@ const paginationSizeHint = computed(() =>
   width: auto;
 }
 
-@media (max-width: 1100px) {
-  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
-  .config-card { width: 100%; }
-}
 /* 控件 + 释义纵向容器：使释义换行落到控件下方（与 Select demo 一致，避免覆盖 el-form-item__content） */
 .config-field {
   display: flex;

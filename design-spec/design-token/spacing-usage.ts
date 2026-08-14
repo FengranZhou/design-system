@@ -22,18 +22,24 @@ export interface SpacingUsage {
 }
 
 export const SPACING_USAGE: SpacingUsage[] = [
-  { name: '--iflyv-spacing-0_5', px: 2, scenes: ['微间距'] },
-  { name: '--iflyv-spacing-1', px: 4, scenes: ['微间距'] },
-  { name: '--iflyv-spacing-1_5', px: 6, scenes: ['微间距'] },
-  { name: '--iflyv-spacing-2', px: 8, scenes: ['微间距'] },
-  { name: '--iflyv-spacing-3', px: 12, scenes: ['模块级与内容垂直间距', '按钮水平间距'] },
+  { name: '--iflyv-spacing-0_5', px: 2, scenes: ['紧贴元素微调（图标与其紧邻文字的视觉对齐补偿）'] },
+  { name: '--iflyv-spacing-1', px: 4, scenes: ['图标与文字间距', '标签内文字与图标间距'] },
+  { name: '--iflyv-spacing-1_5', px: 6, scenes: ['Tag / Badge 等小控件的左右内边距'] },
+  { name: '--iflyv-spacing-2', px: 8, scenes: ['列表项内子元素间距（标题与其描述、主信息与副信息）', '一组紧凑图标之间'] },
+  { name: '--iflyv-spacing-3', px: 12, scenes: ['模块级标题与其下方内容之间', '按钮之间（水平）'] },
   {
     name: '--iflyv-spacing-4',
     px: 16,
-    scenes: ['页面级与下方内容垂直间距', '页面级与页面顶部垂直间距', '卡片间常规间距'],
+    scenes: [
+      '页面级标题与其下方内容之间',
+      '页面级标题与页面顶部之间',
+      '卡片之间（同级卡片常规间距）',
+      '栅格列间水槽',
+      '小卡片内边距（内容与卡片四周）',
+    ],
   },
-  { name: '--iflyv-spacing-5', px: 20, scenes: [] },
-  { name: '--iflyv-spacing-6', px: 24, scenes: ['表单垂直间距', '页面内容距页面左右内间距'] },
-  { name: '--iflyv-spacing-8', px: 32, scenes: ['模块垂直间距'] },
-  { name: '--iflyv-spacing-10', px: 40, scenes: [] },
+  { name: '--iflyv-spacing-5', px: 20, scenes: ['大卡片内边距（内容与卡片四周）'] },
+  { name: '--iflyv-spacing-6', px: 24, scenes: ['表单项之间（label+控件为一组，组与组）', '页面内容距页面左右内边距', '面板内边距（内容与底板四周）'] },
+  { name: '--iflyv-spacing-8', px: 32, scenes: ['模块之间（垂直，区块与区块）'] },
+  { name: '--iflyv-spacing-10', px: 40, scenes: ['页面级 Section 之间（展示型页面的大留白）'] },
 ]

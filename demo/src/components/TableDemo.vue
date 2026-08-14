@@ -46,9 +46,12 @@
               <template #icon><Eye :size="14" :stroke-width="2" /></template>
               查看
             </el-button>
-            <!-- 更多：... 图标 + 下拉（与 DataTable 一致，复用 .table-operation 约定） -->
+            <!-- 更多：... 图标 + 下拉（与 DataTable 一致，复用 .table-operation 约定）
+                 纯图标入口必配 tooltip，show-after 300 全站统一 -->
             <el-dropdown class="table-operation">
-              <span class="table-operation__more"><MoreHorizontal :size="16" :stroke-width="2" /></span>
+              <el-tooltip content="更多操作" placement="top" :show-after="300">
+                <span class="table-operation__more"><MoreHorizontal :size="16" :stroke-width="2" /></span>
+              </el-tooltip>
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item>复制</el-dropdown-item>
