@@ -33,6 +33,8 @@
         />
         <!-- 自定义：点击弹出浮层，输入 16 进制色值作为主色。
              色点默认黑底 + 下拉箭头，选定后即所选色，选中态与预置色点同款外框 -->
+        <!-- audit-ignore 品牌色自定义浮层：需承载输入框+按钮的可交互内容，
+             dropdown 只能放选项、dialog 对这个轻量操作过重。经确认保留 el-popover -->
         <el-popover
           v-model:visible="customPanelVisible"
           :width="280"
@@ -173,6 +175,7 @@
 
         <template v-if="currentTopTab === 'pattern'">
         <ul class="app-sidebar__nav">
+          <li><a href="#pattern-form-org" :class="{ 'is-active': activeSection === 'pattern-form-org' }">Form 表单组织</a></li>
           <li><a href="#pattern-form" :class="{ 'is-active': activeSection === 'pattern-form' }">Form Layout 表单布局</a></li>
           <li><a href="#pattern-list-item" :class="{ 'is-active': activeSection === 'pattern-list-item' }">List Item 列表条目</a></li>
           <li><a href="#pattern-toolbar" :class="{ 'is-active': activeSection === 'pattern-toolbar' }">Toolbar 工具栏布局</a></li>
@@ -182,6 +185,13 @@
         <template v-if="currentTopTab === 'copywriting'">
         <ul class="app-sidebar__nav">
           <li><a href="#copywriting-time" :class="{ 'is-active': activeSection === 'copywriting-time' }">Time 通用时间</a></li>
+        </ul>
+        </template>
+
+        <template v-if="currentTopTab === 'judging'">
+        <ul class="app-sidebar__nav">
+          <li><a href="#judging-intro" :class="{ 'is-active': activeSection === 'judging-intro' }">Overview 说明</a></li>
+          <li><a href="#judging-list" :class="{ 'is-active': activeSection === 'judging-list' }">Checklist 检查清单</a></li>
         </ul>
         </template>
       </el-scrollbar>
@@ -200,9 +210,9 @@
       </div>
       <div v-show="currentTopTab === 'component'" class="no-title-divider">
       <ButtonDemo />
-      <!-- <section id="button-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
+      <!-- <section id="button-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: var(--iflyv-spacing-6); margin-top: var(--iflyv-spacing-6);">
         <h2 class="demo-section__title">📋 Button Examples（design-spec/examples/ 临时预览）</h2>
-        <p style="color: var(--iflyv-text-3); margin-bottom: 16px; font-size: 13px;">
+        <p style="color: var(--iflyv-text-3); margin-bottom: var(--iflyv-spacing-4); font-size: 13px;">
           这是 design-spec/examples/button.examples.vue 的渲染效果。
           反模式（注释中的代码）不会渲染，只展示推荐写法。验收完毕可移除本 section。
         </p>
@@ -216,9 +226,9 @@
       <DropdownDemo />
       <InputDemo />
       <SelectDemo />
-      <!-- <section id="select-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
+      <!-- <section id="select-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: var(--iflyv-spacing-6); margin-top: var(--iflyv-spacing-6);">
         <h2 class="demo-section__title">📋 Select Examples（design-spec/examples/ 临时预览）</h2>
-        <p style="color: var(--iflyv-text-3); margin-bottom: 16px; font-size: 13px;">
+        <p style="color: var(--iflyv-text-3); margin-bottom: var(--iflyv-spacing-4); font-size: 13px;">
           design-spec/examples/select.examples.vue 的渲染效果。反模式仅在源码注释中。
         </p>
         <SelectExamples />
@@ -235,9 +245,9 @@
       <!-- <TransferDemo /> -->
       <TagDemo />
       <TableDemo />
-      <!-- <section id="table-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
+      <!-- <section id="table-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: var(--iflyv-spacing-6); margin-top: var(--iflyv-spacing-6);">
         <h2 class="demo-section__title">📋 Table Examples（design-spec/examples/ 临时预览）</h2>
-        <p style="color: var(--iflyv-text-3); margin-bottom: 16px; font-size: 13px;">
+        <p style="color: var(--iflyv-text-3); margin-bottom: var(--iflyv-spacing-4); font-size: 13px;">
           design-spec/examples/table.examples.vue 的渲染效果。反模式仅在源码注释中。
         </p>
         <TableExamples />
@@ -249,9 +259,9 @@
       <!-- DataDisplay 数据展示：页内暂无在展内容（仅存暂停块），随导航一并注释，需要时放开 -->
       <!-- <DataDisplayDemo /> -->
       <DialogDemo />
-      <!-- <section id="dialog-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: 24px; margin-top: 24px;">
+      <!-- <section id="dialog-examples" class="demo-section" style="border-top: 2px dashed var(--iflyv-brand-primary); padding-top: var(--iflyv-spacing-6); margin-top: var(--iflyv-spacing-6);">
         <h2 class="demo-section__title">📋 Dialog Examples（design-spec/examples/ 临时预览）</h2>
-        <p style="color: var(--iflyv-text-3); margin-bottom: 16px; font-size: 13px;">
+        <p style="color: var(--iflyv-text-3); margin-bottom: var(--iflyv-spacing-4); font-size: 13px;">
           design-spec/examples/dialog.examples.vue 的渲染效果。反模式仅在源码注释中。
         </p>
         <DialogExamples />
@@ -274,12 +284,17 @@
       <AiButtonDemo />
       </div>
       <div v-show="currentTopTab === 'pattern'" class="no-title-divider">
+      <PatternFormOrgDemo />
       <PatternFormDemo />
       <PatternListItemDemo />
       <PatternToolbarDemo />
       </div>
       <div v-show="currentTopTab === 'copywriting'">
       <CopywritingTimeDemo />
+      </div>
+      <div v-show="currentTopTab === 'judging'" class="no-title-divider">
+      <JudgingIntroDemo />
+      <JudgingListDemo />
       </div>
     </main>
   </div>
@@ -301,6 +316,7 @@ const topTabs = [
   { value: 'pattern', label: '设计模式' },
   { value: 'page', label: '典型页面' },
   { value: 'copywriting', label: '文案规范' },
+  { value: 'judging', label: '评判标准' },
 ]
 const currentTopTab = ref('component')
 
@@ -349,7 +365,7 @@ function confirmCustomColor() {
   const hex = raw.startsWith('#') ? raw : `#${raw}`
   // 支持 #RGB 简写与 #RRGGBB
   if (!/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex)) {
-    ElMessage.warning('请输入合法的十六进制色值，如 #0077FF')
+    ElMessage({ message: '请输入合法的十六进制色值，如 #0077FF', type: 'warning', showClose: true })
     return
   }
   // 简写补全成 6 位，供色板算法解析
@@ -429,10 +445,13 @@ import SkeletonDemo from './components/SkeletonDemo.vue'
 import EmptyDemo from './components/EmptyDemo.vue'
 import ResultDemo from './components/ResultDemo.vue'
 // import OtherDemo from './components/OtherDemo.vue'  // ⏸ 暂停启用（页内暂无在展内容），需要时放开
+import PatternFormOrgDemo from './components/pattern/PatternFormOrgDemo.vue'
 import PatternFormDemo from './components/pattern/PatternFormDemo.vue'
 import PatternListItemDemo from './components/pattern/PatternListItemDemo.vue'
 import PatternToolbarDemo from './components/pattern/PatternToolbarDemo.vue'
 import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
+import JudgingIntroDemo from './components/JudgingIntroDemo.vue'
+import JudgingListDemo from './components/JudgingListDemo.vue'
 // 业务组件层 demo（引用 design-spec/components/）
 import StepBarDemo from './components/biz/StepBarDemo.vue'
 import PageFrameDemo from './components/biz/PageFrameDemo.vue'
@@ -455,8 +474,9 @@ const sectionIds = [
   'tag', 'table', 'badge', 'descriptions', 'avatar', 'empty',
   'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
   'page-frame', 'step-bar', 'ai-button',
-  'pattern-form', 'pattern-list-item', 'pattern-toolbar',
+  'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'copywriting-time',
+  'judging-intro', 'judging-list',
 ]
 
 // 每个顶部 tab 对应它的首个 section id，切 tab 时先兜底高亮该项，
@@ -465,8 +485,9 @@ const firstSectionByTab: Record<string, string> = {
   token: 'palette',
   component: 'button',
   business: 'page-frame',
-  pattern: 'pattern-form',
+  pattern: 'pattern-form-org',
   copywriting: 'copywriting-time',
+  judging: 'judging-intro',
 }
 
 watch(currentTopTab, (tab) => {

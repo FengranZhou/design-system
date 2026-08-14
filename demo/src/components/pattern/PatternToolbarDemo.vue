@@ -11,7 +11,7 @@
       <div class="anatomy">
         <div class="zone">
           <span class="zone__tag">标题区</span>
-          <el-form label-position="right" label-width="72px">
+          <el-form label-position="right" label-width="auto">
             <el-form-item label="标题">
               <el-switch v-model="showTitle" />
             </el-form-item>
@@ -25,7 +25,7 @@
 
         <div class="zone">
           <span class="zone__tag">筛选区</span>
-          <el-form label-position="right" label-width="88px">
+          <el-form label-position="right" label-width="auto">
             <el-form-item label="组件级 tab">
               <el-switch v-model="showTab" />
             </el-form-item>
@@ -40,7 +40,7 @@
 
         <div class="zone">
           <span class="zone__tag">操作区</span>
-          <el-form label-position="right" label-width="72px">
+          <el-form label-position="right" label-width="auto">
             <el-form-item label="次按钮">
               <el-switch v-model="showSecondaryBtn" />
             </el-form-item>
@@ -203,9 +203,7 @@ const hasRight = computed(() => filterSide.value === 'right' || actionSide.value
   grid-template-columns: repeat(3, 1fr);
   gap: var(--iflyv-spacing-4);
 }
-@media (max-width: 1100px) {
-  .anatomy { grid-template-columns: 1fr; }
-}
+
 .zone {
   display: flex;
   flex-direction: column;

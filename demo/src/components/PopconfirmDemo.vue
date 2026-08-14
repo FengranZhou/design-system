@@ -25,6 +25,6 @@
 import { ElMessage } from 'element-plus'
 
 const onConfirm = () => {
-  ElMessage.success('操作已确认')
+  ElMessage({ message: '操作已确认', type: 'success', showClose: true })
 }
 </script>

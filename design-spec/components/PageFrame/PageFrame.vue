@@ -43,6 +43,9 @@
   收起交互（内置，接入方无需做任何事）：
     hover 侧边栏 → 右缘垂直居中浮出收起把手 → 点击收起为 64px 图标栏
     （返回平台收成图标、课程卡与分组标题隐藏）→ hover 某图标弹出下拉面板补回分组标题与子项。
+    窄屏自动折叠：视口 < 1440 时自动收起（把宽度让给内容区）；**用户手动切换过之后
+    不再自动干预**。接入方无需写任何 media query。（1200 是页面硬下限，更窄时整页
+    走横向滚动、布局不再变化，故不存在更低的断点。）
   emits：
     menu-select(key, item)  选中某菜单项（父项展开/收起不触发）
     back                    点击面包屑返回箭头
@@ -294,7 +297,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { House, ChevronDown, ChevronLeft, CircleHelp, Bell } from 'lucide-vue-next'
 import { Breadcrumb } from '../Breadcrumb'
 import type { BreadcrumbItem } from '../Breadcrumb'
@@ -381,7 +384,31 @@ const onSidebarLeave = () => {
 
 onBeforeUnmount(() => clearTimeout(handleHideTimer))
 
+/* ==================== 窄屏自动折叠 ====================
+   1200~1439 区间内自动收起侧边栏为图标栏，把宽度让给内容区
+   （规则见 references/efficiency-guide.md「响应式策略」）。
+   ⚠️ 只在 ≥1200 区间内生效——窄于 1200 时整页走横向滚动、布局不再变化
+      （--iflyv-layout-min-width 是硬下限），故无需也不该设更低的断点。
+   ⚠️ 用户手动切换过之后就不再自动干预（userToggled 锁）：自动折叠只是
+      「默认初始状态」的智能化，用户的显式选择优先级更高，否则拖窗口会
+      不断覆盖用户刚做的操作。 */
+const AUTO_COLLAPSE_BELOW = 1440
+/** 用户是否手动切换过收起态——一旦为 true，窗口尺寸变化不再改 collapsed */
+let userToggled = false
+
+const syncCollapseByWidth = () => {
+  if (userToggled) return
+  collapsed.value = window.innerWidth < AUTO_COLLAPSE_BELOW
+}
+
+onMounted(() => {
+  syncCollapseByWidth()
+  window.addEventListener('resize', syncCollapseByWidth)
+})
+onBeforeUnmount(() => window.removeEventListener('resize', syncCollapseByWidth))
+
 const toggleCollapse = () => {
+  userToggled = true
   collapsed.value = !collapsed.value
   emit('collapse-change', collapsed.value)
 }
@@ -693,10 +720,23 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   flex-direction: column;
   gap: 10px;
   padding-bottom: var(--iflyv-spacing-4);
+  /* 展开过渡中导航按展开态定宽铺开（见 __nav），这里锁住 view 宽度并裁切，
+     让超出的部分被侧栏遮住，而不是把滚动区撑出一条横向滚动条 */
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .page-frame__nav {
   flex-shrink: 0;
+  /* 展开过渡中侧栏宽度还在 64→200 之间，此刻文字已回到 DOM：
+     导航整块按展开态宽度（200 - 左右 spacing-3）铺开、由侧栏 overflow 裁切，
+     文字全程横排、未展开的部分被遮住（同 __group-title 的处理思路）。
+     收起态交给 .is-collapsed 分支重新收成一列图标宽。 */
+  width: calc(200px - var(--iflyv-spacing-3) * 2);
+
+  .is-collapsed & {
+    width: 40px;
+  }
 }
 
 /* 分组小标题：与导航项文字同一左缘（spacing-3 缩进） */
@@ -793,6 +833,11 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   color: var(--iflyv-text-3);
   font: var(--iflyv-font-body-primary);
   cursor: pointer;
+  /* 同 __group-title / __item-label：收起过渡中宽度仍在变（且本项缩进占掉 40px+），
+     不锁 nowrap 会被挤成一列竖排字——始终横排、超出裁切 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition:
     background var(--iflyv-duration-fast) var(--iflyv-ease-default),
     color var(--iflyv-duration-fast) var(--iflyv-ease-default);

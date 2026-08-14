@@ -13,7 +13,7 @@
 /* 表单项默认间距：spacing-6（24px）。
    @depends-on: 与 references/foundations.md 间距速查表「表单项之间」一致。
    @when-changed: 改此值需同步更新 foundations.md，否则规范-代码再次不一致。
-   @see: examples/form.examples.vue 「label-position」section 的标准间距示例。 */
+   @see: references/patterns/form-pattern.md「标签（label）」段。 */
 .el-form-item { margin-bottom: var(--iflyv-spacing-6); &:last-child { margin-bottom: 0; } }
 
 /* label 高度 = 组件统一高度。
@@ -28,7 +28,7 @@
                 清零 .el-button + .el-button margin 是为了防止与本 gap 叠加（与全局清零策略一致）。
    @when-changed: 这是 form-item 的「内置按钮组」特性，与 button.scss 的「父容器 gap」原则不冲突——
                   此处 form-item__content 本身就是 flex 父容器，gap 由它提供。
-   @see: examples/form.examples.vue 「表单按钮」section。 */
+   @see: references/patterns/form-pattern.md「操作区（按钮组）」段。 */
 .el-form-item__content { min-height: var(--el-component-size); gap: 12px; .el-button + .el-button { margin-inline-start: 0; } }
 
 /* 字号 rem 化：覆盖 EP 尺寸变体 baked-in px。
@@ -58,7 +58,7 @@
                   视觉中线对齐；form-item 间距改用 column-gap 替代每个 form-item 的 margin-inline-end
                   （避免 margin 与新的 gap 叠加）。
                   row-gap 处理换行场景（form-item 多到一行装不下时）。
-   @see: examples/form.examples.vue 「inline 表单」section（查询/重置按钮场景）。 */
+   @see: references/patterns/form-pattern.md「横排表单（inline）」段。 */
 .el-form--inline {
   display: flex;
   flex-wrap: wrap;

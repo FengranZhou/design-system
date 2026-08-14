@@ -55,7 +55,8 @@ const columns: DataTableColumn[] = [
   { prop: 'amount', label: '金额', kind: 'amount', width: 150 },
   { prop: 'department', label: '部门', width: 150 },
   { prop: 'position', label: '职位', width: 180 },
-  { prop: 'remark', label: '备注', minWidth: 200 },
+  // 长文本列：单行截断 + hover 补全（见 list-item-pattern §四.7）
+  { prop: 'remark', label: '备注', minWidth: 200, showOverflowTooltip: true },
 ]
 
 // 四区模型（对应 list-item-pattern.md「一条记录=四区」）
@@ -88,11 +89,13 @@ const zones = [
 
 // 一份完整数据，两态共用（关闭冻结时只是少展示几列）
 const tableData = [
-  { name: '张三', status: '进行中', statusType: 'primary', date: '2026-03-10', amount: 1200, department: '技术部', position: '前端工程师', remark: '项目进展顺利' },
+  // 状态选色见 component-interaction.md Tag 段对照表：要等要盯→warning、结果好→success、
+  // 要补救→danger、中性事实→info、已翻篇→statusClass 走 el-tag--gray（灰是 class 不是 type）
+  { name: '张三', status: '进行中', statusType: 'warning', date: '2026-03-10', amount: 1200, department: '技术部', position: '前端工程师', remark: '项目进展顺利，预计本周内完成全部交付物' },
   { name: '李四', status: '已完成', statusType: 'success', date: '2026-03-11', amount: 3450, department: '产品部', position: '产品经理', remark: '已交付' },
   { name: '王五', status: '待审核', statusType: 'warning', date: '2026-03-12', amount: 890, department: '设计部', position: 'UI设计师', remark: '等待审批中' },
-  { name: '赵六', status: '已驳回', statusType: 'danger', date: '2026-03-13', amount: 2100, department: '市场部', position: '市场专员', remark: '材料需补充' },
-  { name: '钱七', status: '已关闭', statusType: 'info', date: '2026-03-14', amount: 560, department: '运营部', position: '运营专员', remark: '已归档' },
+  { name: '赵六', status: '已驳回', statusType: 'danger', date: '2026-03-13', amount: 2100, department: '市场部', position: '市场专员', remark: '材料需补充，请重新提交完整的立项说明与预算明细' },
+  { name: '钱七', status: '已关闭', statusClass: 'el-tag--gray', date: '2026-03-14', amount: 560, department: '运营部', position: '运营专员', remark: '已归档' },
 ]
 </script>
 
@@ -104,9 +107,6 @@ const tableData = [
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--iflyv-spacing-4);
-}
-@media (max-width: 1100px) {
-  .anatomy { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* 区块卡片：白底柔描边，区名淡色胶囊浮左上、职责一行、元素清单圆点竖排 */

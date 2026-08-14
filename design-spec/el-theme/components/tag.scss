@@ -18,13 +18,14 @@
   line-height: var(--iflyv-line-height-18);
   border: none;
 
-  /* 统一尺寸 20px */
+  /* 统一尺寸 20px（组件高度，间距令牌体系不覆盖此类尺寸值） */
   height: 20px;
-  padding: 0 6px;
+  /* 左右内边距走令牌：spacing-1_5 = 6px，对应「Tag/Badge 等小控件的左右内边距」场景 */
+  padding: 0 var(--iflyv-spacing-1_5);
 
   .el-tag__close {
     margin-left: 0; /* 清除 EP .el-tag .el-tag__close { margin-left: 6px }，防止 RTL 残留 */
-    margin-inline-start: 2px;
+    margin-inline-start: var(--iflyv-spacing-0_5);
     position: relative;
     color: var(--iflyv-icon-3);
 
@@ -109,8 +110,10 @@
 .el-select .el-tag,
 .el-tag.in-tooltip {
   height: 20px !important;
-  line-height: 18px !important;
-  padding: 1px 8px !important;
+  line-height: var(--iflyv-line-height-18) !important;
+  /* 左右 spacing-2（8）比常规 tag 宽一档：多选 tag 内含关闭按钮，需多留呼吸；
+     上下 1px 为高度补偿（20 高 - 18 行高）÷2，非间距语义，故不走令牌 */
+  padding: 1px var(--iflyv-spacing-2) !important;
   color: var(--iflyv-text-2) !important;
   background-color: var(--iflyv-bg-inset) !important;
   border: none !important;

@@ -287,10 +287,6 @@ const treeSelectData = [
 .input-showcase__main { flex: 1; min-width: 0; }
 .input-showcase .demo-row { flex-wrap: wrap; }
 
-@media (max-width: 1100px) {
-  .input-showcase { flex-direction: column; }
-}
-
 /* 可清除字段单元：开关 + hint 竖排为一个整体，整体与「可搜索」的间距
    由 form-item 源头 24px 承担（不覆盖 form-item margin，避免局部私货）。 */
 .config-field {

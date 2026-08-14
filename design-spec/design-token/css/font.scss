@@ -128,7 +128,6 @@ $font-weight-extrabold: 800;   /* 阿里普惠 95 ExtraBold / 页面标题强调
 
   /* 模块级选中 Tab 项 - Tab-Active-Sub - 模块级 Tabs 激活项 */
   --iflyv-font-tab-active-sub: #{$font-weight-semibold} 1.125rem / 1.75rem #{$font-family-base};
-  --iflyv-font-tab-active-sub-multiline: #{$font-weight-semibold} 1.125rem / 2.25rem #{$font-family-base};
 
   /* 默认 Tab 项 - Tab-Default - Tabs 常规（未选中）项 */
   --iflyv-font-tab-default: #{$font-weight-regular} 1.125rem / 2.25rem #{$font-family-base};  /* 18px/36px */
@@ -154,7 +153,6 @@ $font-weight-extrabold: 800;   /* 阿里普惠 95 ExtraBold / 页面标题强调
 
   /* 常规标签 - Label-Primary - 绝大多数标签内的文字 */
   --iflyv-font-label-primary: #{$font-weight-regular} 0.75rem / 1.125rem #{$font-family-base};
-  --iflyv-font-label-primary-multiline: #{$font-weight-regular} 0.75rem / 1.5rem #{$font-family-base};
 
   /* 数字展示类型 Number Display */
 

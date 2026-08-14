@@ -111,7 +111,7 @@ const formatterSource = `function formatTime(input) {
 
   code {
     font-family: var(--iflyv-font-family-number);
-    padding: 2px 6px;
+    padding: var(--iflyv-spacing-0_5) var(--iflyv-spacing-1_5);
     border-radius: var(--iflyv-radius-xs);
     background: var(--iflyv-bg-inset);
     color: var(--iflyv-text-1);
@@ -171,12 +171,14 @@ const formatterSource = `function formatTime(input) {
   border: 1px solid var(--iflyv-border-default);
   border-radius: var(--iflyv-radius-md);
   padding: var(--iflyv-spacing-4);
+  /* audit-ignore 代码块的横向溢出源于内容本身不换行，非「区域内容超出要滚动」；
+     包 el-scrollbar 会破坏 <pre> 的选中复制行为 */
   overflow-x: auto;
   max-width: 720px;
 
   code {
     font-family: var(--iflyv-font-family-number);
-    font-size: var(--iflyv-font-size-12);
+    font: var(--iflyv-font-body-min);
     line-height: var(--iflyv-line-height-20);
     color: var(--iflyv-text-1);
     white-space: pre;

@@ -57,13 +57,14 @@
 |---|---|---|
 | 确认 / 单字段 | 400px | 单列、1~3 项或纯文本 |
 | 常规表单 | 640px | 单列多字段、中等信息量 |
-| 复杂 / 双列 | 800px | 双列表单、内嵌表格/列表、富内容 |
+| 复杂 / 富内容 | 800px | 内嵌表格 / 列表 / 穿梭选择、图文并排等**非表单富内容**。⚠️ **不含"双列表单"**——`form-pattern.md` §8① 规定表单**一律单列**（多列 Z 字动线易遗漏），字段多应先分组/分步，仍装不下就改抽屉 |
 
 > 若一次操作连 800px 复杂档都装不下（多分区滚动） → 说明它已越过弹窗边界，回到判据、改跳页面。
 
 ### 3. 弹窗内表单不自带底部按钮，交给弹窗 footer
 
-- 弹窗里的表单**本体只有标签区 + 输入区**，提交/取消由 `<template #footer>` 承载——见 `form-pattern.md` §7（表单承载容器＝弹窗时，不放表单底部按钮）。**主按钮在右**（弹窗惯例，与页面级表单"主按钮在左"相反），`type="primary"`。
+- 弹窗里的表单**本体只有标签区 + 输入区**，提交/取消由 `<template #footer>` 承载——见 `form-pattern.md` §7（表单承载容器＝弹窗时，不放表单底部按钮）。**主按钮在右**，`type="primary"`。
+  > 这不是"弹窗特有的惯例"，而是**主按钮贴边原则**（见 `foundations.md`）的结果：footer 按钮组右对齐 → 主按钮贴右缘。页面级表单主按钮在左，是同一条规则在左对齐下的结果——**两者不矛盾，无需分别记忆**。
 
 ### 4. 危险 / 语义化确认用变体类，不引命令式 API
 
@@ -76,8 +77,8 @@
 - ❌ **把大表单 / 多分区 / 长流程硬塞进弹窗** —— 信息量、任务连贯性都偏"页面"，塞进弹窗后要内部滚动、遮住背景又断上下文。该跳独立页面。
 - ❌ **需要边看背景边填的操作用全遮罩弹窗** —— 遮挡代价高的场景应改 `el-drawer`（侧滑保留背景），而非 Dialog。
 - ❌ **凭"弹窗开发最快"一律 `el-dialog`** —— 载体是按四维判据选的，不是默认弹窗。
-- ❌ **弹窗内表单又放一套底部提交按钮** —— 与弹窗 footer 的按钮重复；提交/取消一律交给 `#footer`。
-- ❌ **弹窗宽度手写任意 px**（如 `width="520px"`）—— 从 400 / 640 / 800 三档场景里选。
+- ❌ **弹窗内表单又放一套底部提交按钮** <!-- @rule id=dialog-single-footer level=MUST cat=设计模式 detect=ast dtitle=弹窗里不应出现两排提交按钮 title=弹窗内表单不自带底部按钮，一律交给 #footer --> —— 与弹窗 footer 的按钮重复；提交/取消一律交给 `#footer`。
+- ❌ **弹窗宽度手写任意 px**（如 `width="520px"`） <!-- @rule id=dialog-width-three-tiers level=MUST cat=设计模式 detect=regex dtitle=弹窗宽度只有窄/中/宽三档，不应出现非标准宽度 title=弹窗宽度只能取 400/640/800 三档，禁非档位宽度 -->—— 从 400 / 640 / 800 三档场景里选。
 - ❌ **在使用方 scoped 里覆盖 dialog 外观**（`:deep(.el-dialog ...)` 改圆角/头部/间距等）—— 外观归 `el-theme/components/dialog.scss` 源头，手写即私货、不同步。
 
 ---
@@ -88,7 +89,13 @@
 <template>
   <!-- 命中弹窗判据：确认/单字段/中等表单，一次性聚焦操作 -->
   <!-- 宽度按场景选：确认=400 / 常规表单=640 / 复杂双列=800 -->
-  <el-dialog v-model="visible" title="编辑用户" width="640px">
+  <!-- 含表单的弹窗必须 :close-on-click-modal="false"——误点遮罩会丢掉已填内容 -->
+  <el-dialog
+    v-model="visible"
+    title="编辑用户"
+    width="640px"
+    :close-on-click-modal="false"
+  >
     <!-- 弹窗内表单：只有标签区+输入区，label-width="auto"，按钮交给 footer -->
     <el-form :model="form" label-width="auto">
       <el-form-item label="姓名" prop="name">
@@ -100,7 +107,7 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <!-- footer 承载提交/取消：主按钮在右（弹窗惯例） -->
+    <!-- footer 承载提交/取消：主按钮在右（按钮组右对齐 → 主按钮贴右缘，见 foundations 主按钮贴边原则） -->
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="onSubmit">确认</el-button>

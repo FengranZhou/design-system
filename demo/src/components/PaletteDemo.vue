@@ -25,7 +25,7 @@
       </div>
 
       <!-- 灰阶色板 -->
-      <div class="palette-group" style="margin-top: 20px;">
+      <div class="palette-group" style="margin-top: var(--iflyv-spacing-5);">
         <div class="palette-group__label">
           <span class="palette-group__dot" :style="{ background: 'var(--iflyv-gray-6)' }"></span>
           Gray 灰阶
@@ -141,16 +141,16 @@ function cellTextClass(hex: string | undefined): string {
 
 <style scoped lang="scss">
 .palette-group {
-  margin-bottom: 24px;
+  margin-bottom: var(--iflyv-spacing-6);
   &:last-child { margin-bottom: 0; }
 
   &__label {
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 4px;
+    font: var(--iflyv-font-body-min);
+    font-weight: var(--iflyv-font-weight-semibold);
+    margin-bottom: var(--iflyv-spacing-1);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--iflyv-spacing-1_5);
     color: var(--iflyv-text-3);
   }
 
@@ -164,7 +164,7 @@ function cellTextClass(hex: string | undefined): string {
 
 .palette-row {
   display: flex;
-  border-radius: 6px;
+  border-radius: var(--iflyv-radius-sm);
   overflow: hidden;
 }
 
@@ -179,14 +179,19 @@ function cellTextClass(hex: string | undefined): string {
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
   cursor: default;
 
+  // 色块内标注：48px 格子里要叠「色阶号 + hex」两行，语义最小档 12px 放不下。
+  // 用 em 相对于 body-min 收缩，至少能跟随全站字号档位（s/m/l/xl）缩放——
+  // 原先的 10px/8px 裸值在无障碍放大时纹丝不动。
   &__step {
-    font-size: 10px;
-    font-weight: 700;
+    font: var(--iflyv-font-body-min);
+    font-size: 0.83em;
+    font-weight: var(--iflyv-font-weight-bold);
     margin-bottom: 1px;
   }
 
   &__hex {
-    font-size: 8px;
+    font: var(--iflyv-font-body-min);
+    font-size: 0.67em;
     opacity: 0.55;
     text-transform: uppercase;
   }

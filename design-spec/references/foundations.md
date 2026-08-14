@@ -11,16 +11,18 @@ updated: 2026-05-10
 
 ## 禁止事项汇总
 
-- ❌ 硬编码颜色值（如 `color: #23B283`），必须使用CSS 变量
-- ❌ 硬编码字号（如 `font-size: 16px`），必须使用字体令牌
-- ❌ 设置文字时只写 `font-size` 不设行高/字重（行高会塌回浏览器默认 `normal`，出现 16.5 这种魔法值）。设置文字要**整套用语义复合令牌 `font: var(--iflyv-font-*)`**；含空格字体名不能用简写时，**拆分属性但字号/行高/字重一个不漏**（详见「设置文字的铁律」）
-- ❌ 使用非规范间距（如 `margin: 10px`），必须使用间距令牌
-- ❌ 使用 `success`、`warning`、`info` 类型按钮（指 el-button 的 type 属性），仅允许 `default`、`primary`、`danger`
-- ❌ 使用 `circle` 属性做纯图标按钮，改用 `class="btn-icon-square"`
-- ❌ 使用粗线、双线、装饰性线条
-- ❌ 卡片默认加投影（阴影仅用于浮层）
-- ❌ 模块宽度小于 6 列（栅格最小粒度）
-- ❌ 暗色模式下卡片使用纯色描边（改用 `.surface-bordered` 双光源渐变描边工具类）
+- ❌ 硬编码颜色值（如 `color: #23B283`），必须使用CSS 变量 <!-- @rule id=color-no-hardcode level=MUST cat=设计令牌 detect=regex dtitle=颜色应取自色板，不应出现色板外的杂色 title=颜色值一律走令牌，禁硬编码 hex/rgb -->
+- ❌ 硬编码字号（如 `font-size: 16px`），必须使用字体令牌 <!-- @rule id=font-no-hardcode-size level=MUST cat=设计令牌 view=impl detect=regex title=字号一律走字体令牌，禁硬编码 px -->
+- ❌ 设置文字时只写 `font-size` 不设行高/字重（行高会塌回浏览器默认 `normal`，出现 16.5 这种魔法值）。设置文字要**整套用语义复合令牌 `font: var(--iflyv-font-*)`**；含空格字体名不能用简写时，**拆分属性但字号/行高/字重一个不漏**（详见「设置文字的铁律」） <!-- @rule id=font-set-as-whole level=MUST cat=设计令牌 view=impl detect=regex title=设文字须整套设齐字号+行高+字重，禁只写 font-size -->
+- ❌ 使用非规范间距（如 `margin: 10px`），必须使用间距令牌 <!-- @rule id=spacing-no-magic level=MUST cat=设计令牌 detect=regex dtitle=间距应落在标准档位上，同类元素留白一致 title=间距一律走 spacing 令牌，禁魔法 px 值 -->
+- ❌ 使用 `success`、`warning`、`info` 类型按钮（指 el-button 的 type 属性），仅允许 `default`、`primary`、`danger` <!-- @rule id=button-type-whitelist level=MUST cat=设计令牌 detect=regex dtitle=常规按钮只有默认/主要/危险三种，不应出现其他颜色（AI 功能入口另用业务组件 AiButton，不在此列） title=el-button 的 type 仅允许 default/primary/danger（AI 入口用 AiButton，其 primary/outline/text 是另一套） -->
+- ❌ 使用 `circle` 属性做纯图标按钮（纯图标入口现阶段用 `<el-button text>` + `#icon` 插槽，见 `component-interaction.md`「纯图标按钮」段；`.btn-icon-square` 已暂停启用，勿写） <!-- @rule id=button-no-circle level=MUST cat=设计令牌 detect=regex dtitle=不应出现圆形的纯图标按钮 title=禁用 circle 属性做纯图标按钮 -->
+- ❌ 使用粗线、双线、装饰性线条 <!-- @rule id=line-no-decorative level=MUST cat=视觉呈现 detect=regex title=禁用粗线、双线、装饰性线条 -->
+- ❌ 卡片默认加投影（阴影仅用于浮层） <!-- @rule id=shadow-popup-only level=MUST cat=视觉呈现 detect=regex title=静态卡片不加投影，阴影仅用于浮层 -->
+- ❌ 模块宽度小于 6 列（栅格最小粒度） <!-- @rule id=grid-min-6col level=MUST cat=布局与栅格 detect=regex dtitle=一行最多四等分，模块不应比这更窄 title=模块宽度不得小于 6 列 -->
+- ❌ 暗色模式下卡片使用纯色描边（改用 `.surface-bordered` 双光源渐变描边工具类） <!-- @rule id=dark-surface-bordered level=SHOULD cat=视觉呈现 detect=regex dtitle=暗色下卡片描边应柔和，不是生硬的实线 title=暗色下卡片描边用 .surface-bordered，不用纯色描边 -->
+
+> 上面每条末尾的 `@rule` 标记是**评判标准条目的提取源**（见 `judging-criteria.md`）。新增强制规则时一并打标记，条目会自动进入评判清单；漏打由 `audit-spec.mjs` 的 C8 检查兜底。
 
 > 特殊场景确需破例时，须在设计评审中论证必要性，经确认后作为例外记录，不得静默绕过。
 
@@ -28,13 +30,13 @@ updated: 2026-05-10
 
 ## 图标库
 
-- 统一使用 `lucide-vue-next`，按需导入，**禁止全量引入**
+- 统一使用 `lucide-vue-next`，按需导入，**禁止全量引入** <!-- @rule id=icon-lucide-only level=MUST cat=设计令牌 view=impl detect=regex title=图标统一用 lucide-vue-next 按需导入，禁全量引入/禁混用其他图标库 -->
   ```ts
   import { Search, Plus, Trash2 } from 'lucide-vue-next'
   ```
 - 模板中直接作为组件使用：`<Search :size="16" :stroke-width="2" />`
 - 默认尺寸：正文/操作按钮 `16px`，提示信息 `14px`
-- **`stroke-width` 统一使用 `2`**，不允许使用其他值
+- **`stroke-width` 统一使用 `2`**，不允许使用其他值 <!-- @rule id=icon-stroke-width-2 level=MUST cat=设计令牌 detect=regex dtitle=图标粗细应统一，不应有的粗有的细 title=图标 stroke-width 统一为 2，不允许其他值 -->
 
 ---
 
@@ -66,7 +68,7 @@ updated: 2026-05-10
 | 维度 | 取向 | 说明 |
 |------|------|------|
 | 整体氛围 | 清晰通透、温和专业 | 大面积留白 + 浅灰底色营造通透感；避免深色大块面、强对比撞色 |
-| 装饰倾向 | 克制、功能性优先 | 不使用纯装饰性元素；图标、色彩、插图仅在有信息传达意义时出现 |
+| 装饰倾向 | 克制、功能性优先 | **装饰不是禁区，但每一处都应有其存在的理由**——图标、色彩、插图优先服务于信息传达，避免无意义的视觉堆砌（效率型从严、展示型见 `display-guide.md` 装饰手法表） |
 | 人文温度 | 文艺舒适、有活人感 | 文案语气避免机械生硬，空状态/引导页可使用轻量插画；整体感受"有人在用"而非"机器在运转" |
 | 视觉重量 | 轻盈 | 细描边（1px）、轻阴影；渐变仅限头部模块和展示型区块（见"配色原则"）；UI 元素"浮"在背景上而非"压"在上面 |
 
@@ -115,6 +117,33 @@ updated: 2026-05-10
 
 green / red / orange / blue 在语义场景中含义固定，不因页面类型改变。当功能色被选作辅助色时，其装饰性用法应与语义用法有明确视觉区分（如装饰仅用 step-1~2 浅底色，不触及 step-6 语义强调色）。
 
+### 功能色 → 用途（品牌色与四语义色，选色时照此对号入座）
+
+五个色族（品牌 + 四语义），**每族固定五个后缀，语义一一对应**——不要凭手感在色板里挑 `accent-6` 这类原始色阶，一律用下面的语义令牌：
+
+| 后缀 | 用途 | 取值 |
+|---|---|---|
+| `-primary` | **主色**：实心按钮底、选中态、进度条、图标强调等**面积较小的高饱和锚点** | step-6 |
+| `-text` | **文字专用**（仅 brand 有）：见下方说明 | 亮 = primary / 暗 = step-7 |
+| `-hover` | 悬停态（比 primary 浅一档） | step-5 |
+| `-pressed` | 按下态（比 primary 深一档） | step-7 |
+| `-disabled` | 禁用态（同色相但明显变淡，仍可辨认是哪一族） | step-4 |
+| `-bg` | **浅底**：标签底、提示条底、选中行底等**大面积浅色块** | step-1 |
+
+| 色族 | 何时用 |
+|---|---|
+| `--iflyv-brand-*` | 品牌主色（绿）：主操作按钮、关键强调、选中态。**面积克制**——主色用于关键操作和锚点，不做大面积铺底（见「设计原则 · 绿主蓝辅」） |
+| `--iflyv-danger-*` | 危险 / 错误：删除等不可逆操作、错误提示、校验失败 |
+| `--iflyv-warning-*` | 警示：可逆但需提醒（未保存、配额将满） |
+| `--iflyv-success-*` | 成功：操作完成反馈。⚠️ **本系统品牌色也是绿**——普通标签别用 success，会被误读为"成功态"（见 `component-interaction.md` Tag 段） |
+| `--iflyv-info-*` | 信息 / 中性提示（蓝）：辅助色，用于信息类与 AI 相关场景 |
+
+> ⭐ **`brand-text` vs `brand-primary`：文字用前者，块面用后者。**
+> 亮色下两者同值，**暗色下 `brand-text` 会自动提亮一级**（`accent-7`）——因为品牌绿在深色底上对比度不足，直接用 `brand-primary` 当文字色会看不清。
+> **判据**：这个颜色是用在**文字/图标**上，还是用作**填充块**（按钮底、进度条）？文字 → `brand-text`；块面 → `brand-primary`。四个语义色族没有 `-text` 变体，文字直接用 `-primary`。
+
+> **其余令牌**：`--iflyv-mask-primary` / `--iflyv-mask-on-dark`（遮罩层黑）、`--iflyv-scroller-*`（滚动条滑块，源头已统一、下游不碰）、`--iflyv-message-border-*`（Message 各语义描边）、`--iflyv-input-focus-ring` / `--iflyv-input-hover-border`（输入框聚焦环 / hover 边框）、`--iflyv-loading-path` / `--iflyv-avatar-default-bg`——**都是组件源头内部使用的桥接变量，下游不直接引用**。
+
 ### 文本 / 图标色阶 → 用途（层级语义，选色阶时照此对号入座）
 
 文本色 `--iflyv-text-N`、图标色 `--iflyv-icon-N` 按**信息层级**分四级 + 深底反白，**用途一一对应**——设文字/图标颜色时按用途选对应色阶，不要凭手感挑：
@@ -155,6 +184,7 @@ green / red / orange / blue 在语义场景中含义固定，不因页面类型�
 | `--iflyv-border-subtle` | 最轻分隔：列表行线、卡片内细分隔，几乎不打扰 | 6% |
 | `--iflyv-border-default` | 常规边框：输入框、卡片、面板的默认描边 | 10% |
 | `--iflyv-border-strong` | 加重边框：需要强调的分区、选中/聚焦态边框 | 20% |
+| `--iflyv-border-on-dark` | **深色底上的描边**（深色块内部的分隔线、深色浮层描边）——上面三档是"深色描边压浅底"，这档反过来是**浅色描边压深底**，两个主题下都取当前主题的亮端灰阶 10% | 亮端灰阶 10% |
 
 > 选强度：**能用越轻的越好**（本设计系统"线条为辅、层级为主"）。默认边框用 `default`；只在需要"更明显的分隔"时才升到 `strong`；行内细线用 `subtle`。不要用裸 `1px solid #ccc`——一律走这三档令牌。
 
@@ -171,12 +201,14 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 | 页面头部模块 | 所有页面允许 | 效率型克制使用（文字扫光、微弱底色渐变/光斑），展示型可大面积 Hero 背景 |
 | 内容区 Section 背景 | 仅展示型 | 用于章节头部或区块分隔 |
 | 卡片悬浮光效 | 所有页面允许 | hover 时渐显，`opacity: 0 → 0.2`，详见 `display-guide.md > 渐变光斑技法` |
-| 组件/卡片内部 | 禁止 | 表单、表格、弹窗、抽屉等效率型组件内部不允许 |
+| 组件/卡片内部 | **效率型禁止** | 表单、表格、弹窗、抽屉等效率型组件内部不允许 | <!-- @rule id=gradient-not-in-components level=MUST cat=视觉呈现 detect=regex dtitle=表单/表格/弹窗等组件内部不应出现渐变装饰 title=渐变禁用于效率型组件内部（表单/表格/弹窗/抽屉） -->
+| **展示型的自定义排版组件** | 仅展示型，按装饰手法表 | 文字渐变填充、毛玻璃卡片、旋转渐变描边（CTA/搜索框聚焦态）等——**限自定义排版组件，仍不得覆盖 EP 组件外观**；各手法的用量上限见 `display-guide.md > 装饰手法` |
 
 渐变配色规则：
 
-- **AI 相关元素一律用现成的 AI 渐变令牌，不自拼**：`--iflyv-ai-gradient`（实色蓝→绿渐变，用于文字背景裁剪 / 描边 / 图标）、`--iflyv-ai-gradient-bg`（10% 透明度渐变，用于 AI 元素浅底）、`--iflyv-ai-fill-gradient`（薄荷青→绿实心底，用于 AI 实心按钮等强调块）、`--iflyv-ai-border-gradient`（彩色锥形渐变描边，与 fill 配套走 border-box 层，或单独作 hover 描边）。这是设计原则「AI 用柔和蓝色渐变做视觉区分」的唯一落地口径（AI 标签已有 `el-tag--ai`、AI 按钮已有业务组件 `AiButton`）。下面的配色规则只约束**这些令牌覆盖不了的自定义渐变**。
-- **必须跨色相**：两端取自不同色相家族，同色相渐变视觉过平，禁止使用
+- **AI 相关元素一律用现成的 AI 渐变令牌，不自拼** <!-- @rule id=ai-gradient-token level=MUST cat=设计令牌 detect=regex dtitle=AI 相关元素的渐变应全站一致，不是各处自调的渐变 title=AI 元素一律用现成 AI 渐变令牌，禁自拼渐变 -->：`--iflyv-ai-gradient`（实色蓝→绿渐变，用于文字背景裁剪 / 描边 / 图标）、`--iflyv-ai-gradient-bg`（10% 透明度渐变，用于 AI 元素浅底）、`--iflyv-ai-fill-gradient`（薄荷青→绿实心底，用于 AI 实心按钮等强调块）、`--iflyv-ai-border-gradient`（彩色锥形渐变描边，与 fill 配套走 border-box 层，或单独作 hover 描边）。这是设计原则「AI 用柔和蓝色渐变做视觉区分」的唯一落地口径（AI 标签已有 `el-tag--ai`、AI 按钮已有业务组件 `AiButton`）。下面的配色规则只约束**这些令牌覆盖不了的自定义渐变**。
+- **必须跨色相**：两端取自不同色相家族，同色相渐变视觉过平，禁止使用 <!-- @rule id=gradient-cross-hue level=SHOULD cat=设计令牌 detect=manual dtitle=渐变两端应取不同色相，同色相渐变显得平淡 title=自定义渐变必须跨色相（例外：数据可视化色阶梯度） -->
+  > **例外：数据可视化的色阶梯度不受此限**。单指标图表用同一色相的浓度梯度（`step-3/5/7`）或透明度递减来区分序列，那是**用色阶表达数值大小**、不是装饰性渐变，跨色相反而会让读者误以为是不同指标。详见 `display-guide.md > 配色策略`。
 - **色阶按主题选取**：暗色模式的低阶色值与面板背景明度差极小，需向上偏移才能保持等效视觉存在感
 
   | 主题 | 渐变色阶范围 | 原因 |
@@ -228,10 +260,28 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 | `--iflyv-font-tab-active-sub` | 模块级选中 Tab 项 | 18/28 · semibold |
 | `--iflyv-font-tab-default` | 默认（未选中）Tab 项 | 18/36 · regular |
 | `--iflyv-font-label-primary` | 常规标签（表单 label、字段名等） | 12/18 |
-| `--iflyv-font-number-display` | 展示数字（大号强调数字，如数据看板） | 26/40 · 抖音美好体 |
-| `--iflyv-font-number-display-sm` | 展示数字（小号） | 22/34 · 抖音美好体 |
+| `--iflyv-font-number-display` | **主指标数字**：一屏里最该被看到的那个数（看板首屏核心指标、结果页的总数） | 26/40 · 抖音美好体 |
+| `--iflyv-font-number-display-sm` | **次级指标数字**：与主指标并列或从属的数（一排指标卡里的各项、卡片内的统计值） | 22/34 · 抖音美好体 |
 
-> 判断入口：先问"这段文字是什么角色？"——页面主标题→`title-page`、区块标题→`title-module`、卡片标题→`title-component`、正文→`body-primary`、次要说明→`body-sub`、最小附注→`body-min`、表单 label→`label-primary`、强调数字→`number-display`。选定后按下方「设置文字的铁律」落地（含空格字体名的拆分规则）。
+> 判断入口：先问"这段文字是什么角色？"——页面主标题→`title-page`、区块标题→`title-module`、卡片标题→`title-component`、正文→`body-primary`、次要说明→`body-sub`、最小附注→`body-min`、表单 label→`label-primary`、强调数字→`number-display`（**一屏最核心的那个数**用它，并列的次级指标用 `-sm`）。选定后按下方「设置文字的铁律」落地（含空格字体名的拆分规则）。
+
+#### `-multiline` 变体：预期 ≥3 行时换宽松行高
+
+上表 4 个字阶另有 `-multiline` 变体，**字号相同、行高放宽至字号的 2 倍**：
+
+| 令牌 | 常规档 | `-multiline` 档 |
+|---|---|---|
+| `--iflyv-font-title-page-multiline` | 26/48 | 26/52 |
+| `--iflyv-font-body-primary-multiline` | 16/24 | 16/32 |
+| `--iflyv-font-body-sub-multiline` | 14/20 | 14/28 |
+| `--iflyv-font-body-min-multiline` | 12/18 | 12/24 |
+
+> **判据：这段文字预期会占 ≥3 行时，用 `-multiline`；1~2 行一律用常规档。**
+> 行数少时常规档的紧凑行高更聚拢、成块；行数一多，紧凑行高会让整段发闷、难以逐行扫读，此时才需要拉开行距。
+>
+> ⚠️ **不要因为"可能会换行"就默认选 `-multiline`**——它的行高是字号的 2 倍（如 12/24），用在一两行的短句上会让行距明显过松、文字块散掉。真实翻车：卡片里三两句短说明用了 `body-min-multiline`，行距 24px 撑得整块文字发散。
+>
+> **只有正文类字阶有 `-multiline`**：`title-module` / `title-component` / `tab-*` / `label-primary` 等**角色上就不成段落**（标题、tab 项、表单 label 都是短标签），故不提供多行变体，也不要自己拼一个。
 
 > ⚠️ **本表会持续扩展**：后续新增/新用途的语义字阶（如新的标题级、数字级、状态文字级等），**必须同步更新本表**，不能只在 demo 的 `FontSemanticDemo.vue` 里加一行——demo 展示对下游 CC 不可见，只有写进本文件，下游 `@` 接入后 CC 才能"知道该用哪个字阶"。（同「语义信息沉淀通则」，见下。）
 
@@ -271,7 +321,26 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 ### 层级对比策略
 
 - **效率型页面**（管理后台、列表、表单）：标题与正文**相邻层级**配对即可，保持 ≥1.25× 字号比，节奏平稳不跳跃
-- **展示型页面**（首页概览、数据报告、对外汇报）：刻意**跨级拉大**标题与正文的字号比至 2×~3×，用 Display / Number-Display 变量制造视觉张力。辅助信息压到 `body-sub` 或 `label-primary`，反衬主信息的分量感
+- **展示型页面**（首页概览、数据报告、对外汇报）：刻意**跨级拉大**标题与正文的字号比至 2×~3×，标题用 `title-page`、强调数字用 `number-display` / `number-display-sm` 制造视觉张力。辅助信息压到 `body-sub` 或 `label-primary`，反衬主信息的分量感
+
+---
+
+## 按钮位置通则：主按钮贴边原则
+
+> **跨场景公理**（弹窗 / 抽屉 / 表单 / 工具栏 / 卡片底部…通用）。有了它，遇到规范里还没写到的新场景也能自行推出主按钮该放哪，不必逐场景死记。
+
+**规则**：一处出现按钮组时，**主按钮贴近该组所在容器的对齐侧边缘**。 <!-- @rule id=button-primary-edge level=MUST cat=视觉呈现 detect=manual title=主按钮贴近按钮组所在容器的对齐侧边缘（右对齐贴右/左对齐贴左） -->
+
+| 按钮组的对齐方式 | 主按钮位置 | 典型场景 |
+|---|---|---|
+| **右对齐** | 贴**右**缘（主按钮在最右） | 弹窗 / 抽屉 `#footer`、工具栏右组 |
+| **左对齐** | 贴**左**缘（主按钮在最左） | 页面级表单底部操作区 |
+
+**唯一例外：方向性按钮**（上一步 / 下一步、返回 / 继续）——它们的位置由**方向语义**决定（"下一步"恒在右、"上一步"恒在左），不适用贴边原则。
+
+> **为什么要有这条**：弹窗"主按钮在右"、页面表单"主按钮在左"，看起来互相矛盾、只能当两个惯例分别记忆；实际上二者是**同一条规则**在不同对齐方式下的结果——弹窗 footer 右对齐所以贴右，页面表单操作区左对齐所以贴左。收敛成一条后，新场景可推理，不必每遇到一个就回来问。
+
+**这条只管"主按钮在按钮组里的哪一端"**，不管按钮组本身如何对齐（那取决于容器：弹窗 footer 右对齐、页面表单跟随输入区左对齐，各自见 `patterns/dialog-pattern.md` / `patterns/form-pattern.md`）。
 
 ---
 
@@ -299,28 +368,38 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 |---|---|---|
 | `spacing-0_5` ~ `spacing-2` | 2 / 4 / 6 / 8px | 微间距（紧凑元素内间距如 Tag、Badge；列表项内部子元素如标题与描述、图标与文字） |
 | **`spacing-3`** | 12px | **模块级标题与其下方内容之间**（比页面级收一档）；**按钮之间**（水平间距） |
-| **`spacing-4`** | 16px | **页面级标题与其下方内容之间**；**页面级标题与页面顶部之间**；**卡片之间**（同级卡片常规间距） |
-| `spacing-5` | 20px | —（暂无专属场景） |
-| **`spacing-6`** | 24px | **表单项之间**（label + input 为一组，组与组的间距）；**页面内容距页面左右内间距**（内容区容器的左右内边距） |
+| **`spacing-4`** | 16px | **页面级标题与其下方内容之间**；**页面级标题与页面顶部之间**；**卡片之间**（同级卡片常规间距）；**小卡片内边距**（内容与卡片四周） |
+| **`spacing-5`** | 20px | **大卡片内边距**（内容与卡片四周） |
+| **`spacing-6`** | 24px | **表单项之间**（label + input 为一组，组与组的间距）；**页面内容距页面左右内间距**（内容区容器的左右内边距）；**面板内边距**（内容与底板四周） |
 | **`spacing-8`** | 32px | **模块之间**（垂直间距，区块与区块） |
 | `spacing-10` | 40px | —（暂无专属场景） |
 
-**未在上表列出的场景**（无专属档位，按容器与内容体量在区间内取值）：
+**几个易混场景的唯一答案**（这几处最容易在邻近档之间取错，逐个钉死）：
 
-| 场景 | 推荐变量 | 值 |
-|------|---------|-----|
-| 工具栏内元素之间（按钮组、筛选项、搜索框） | `spacing-3` ~ `spacing-4` | 12~16px |
-| 卡片/面板内边距 | `spacing-3` ~ `spacing-5` | 12~20px |
-| 页面级 Section 之间 | `spacing-6` ~ `spacing-12` | 24~48px |
-| 展示型页面 Section 之间 | `spacing-12`+ | 48px+ |
+| 场景 | 取值 | 为什么不是邻近档 |
+|---|---|---|
+| **工具栏内元素之间**（搜索框、筛选项、按钮…） | **不写**，由源头 `.toolbar__left/__right` 的 `gap: spacing-3`（12）提供 | 曾有"12~16 自选"的表述，已作废——工具栏布局全在源头 `el-theme/patterns/toolbar.scss`，使用方写任何值（哪怕写对 12）都是私货 |
+| **内容与容器四周的内边距**（卡片 / 面板 / 底板） | **按容器体量选三档**：**面板 / 底板 → `spacing-6`（24）**；**大卡片 → `spacing-5`（20）**；**小卡片 → `spacing-4`（16）** | 判据是容器体量，不是"松一点紧一点"的手感。大卡片内还套子卡片时，外层底板取 24、内层子卡片取 16，靠差值形成层级。不要用 12——那是模块级标题的间距档，用在内边距上会让内容贴边 |
+| **模块之间**（页面内区块与区块） | **`spacing-8`（32）** | 见下方「模块 vs Section」判据 |
+| **展示型页面的大留白** | `spacing-10`（40） | 仅展示型；效率型页面用 32 已足够，40 会让信息密度过低 |
 
-> **选档要点**：先在「令牌 → 场景」表里找**精确匹配的场景**（那是有专属档位的，不可自行发挥）；找不到再看下方区间表。**判断"模块级 vs 页面级"**：看该标题在当前页面里的层级——页面主标题=页面级（`title-page` 字阶），页面内某个区块的标题=模块级（`title-module` 字阶）；字阶与间距档位一一对应，选错字阶间距也会跟着错。
+> ### ⚠️ 「模块」与「Section」不是两个东西——别再纠结
+>
+> 二者**同义**，都指"页面内的一个区块"，**统一用 `spacing-8`（32）**。此前区间表里"页面级 Section 之间 24~40"的写法已作废（同一件事给两个答案，必然取错）。
+>
+> **唯一的例外是展示型页面**（首页概览 / 数据报告 / 对外汇报）：为了排版张力可放大到 `spacing-10`（40）。判据是"这是效率型还是展示型页面"，不是"叫模块还是叫 Section"。
+
+> **选档总方法**：先在「令牌 → 场景」表里找**精确匹配的场景**（有专属档位的不可自行发挥）；找不到再看上表。**判断"模块级 vs 页面级"**：看该标题在当前页面里的层级——页面主标题=页面级（`title-page` 字阶），页面内某个区块的标题=模块级（`title-module` 字阶）；字阶与间距档位一一对应，选错字阶间距也会跟着错。
 
 ### 页面最小宽度
 
 | 令牌 | 值 | 用途 |
 |------|-----|------|
 | `--iflyv-layout-min-width` | 1200px | 整页框架的宽度下限。承载容器窄于此值时**出横向滚动条，而非继续压缩布局** |
+| `--iflyv-grid-columns` | 24 | 内容区栅格列数。**不直接引用**——用源头约定类 `.grid` / `.grid__col-*`（见下） |
+| `--iflyv-grid-gutter` | 16px（= `spacing-4`） | 栅格列间水槽。与「卡片之间」同档，保证栅格并排的卡片与非栅格场景间距一致 |
+
+> **栅格怎么用**：写 `<div class="grid"><div class="grid__col-16">…</div><div class="grid__col-8">…</div></div>`，样式在源头 `el-theme/patterns/grid.scss`。**只提供 `col-6/8/10/12/14/16/18/20/24` 九档**——「模块宽度不得小于 6 列」由源头保证，写不出违规值。**不用 `el-row`/`el-col`**（EP 走 flex + 负 margin，`:gutter` 拿不到 CSS 变量）。完整规则见 `efficiency-guide.md`「栅格系统」。
 
 本系统面向桌面端后台，不做响应式收窄：窄屏下侧边栏 + 内容区一旦被压缩就不可用，因此统一以横向滚动兜底。
 
@@ -353,7 +432,7 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 | 基础层 | CSS transition / @keyframes + `--iflyv-*` 变量 | 所有页面 |
 | 增强层 | GSAP（ScrollTrigger / Timeline 等），按需动态加载 | 仅展示型页面 |
 
-- 效率型页面只使用基础层，禁止引入 GSAP
+- 效率型页面只使用基础层，禁止引入 GSAP <!-- @rule id=gsap-display-only level=MUST cat=视觉呈现 view=impl detect=regex title=GSAP 仅展示型页面可用，效率型页面禁止引入 -->
 - 两层互补不替代：增强层的时序编排能力补充基础层做不到的滚动驱动、多元素协同入场等场景
 - 增强层详见 `display-guide.md > 滚动驱动动效`
 

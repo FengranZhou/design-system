@@ -19,7 +19,7 @@
             ></span>
           </span>
         </div>
-        <el-button size="small" style="align-self: flex-start" @click="replay">播放</el-button>
+        <el-button style="align-self: flex-start" @click="replay">播放</el-button>
       </div>
     </div>
   </section>

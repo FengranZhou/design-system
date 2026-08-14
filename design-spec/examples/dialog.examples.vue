@@ -34,7 +34,7 @@
   | STRONG    | 变体类与主按钮 type 语义不匹配           | is-warning 配 type="danger" 让用户困惑   |
   | STRONG    | 用 is-warning 做删除 / is-danger 做未保存提示 | 警示等级错位，认知失准              |
   | STRONG    | dialog 标题用通用文案"确认操作"          | 屏幕阅读器/视障用户无法判断具体操作      |
-  | STRONG    | dialog 内表单 label-position 没用 "right" | 与设计系统约定不符（弹窗用 right 紧贴）  |
+  | STRONG    | dialog 内表单用 label-position="top"     | 全站只用「标签在左」，top 暂停启用       |
   | STRONG    | 在 footer .el-button 上写 margin        | 与 footer 自带 gap 叠加，间距双倍        |
   | SOFT      | 重要表单没 close-on-click-modal=false   | 用户误点遮罩丢失输入                     |
   | SOFT      | 多步骤 dialog 没设 destroy-on-close     | 切换后状态残留                           |
@@ -341,7 +341,7 @@
       <h3>6. 嵌套表单（validate 后再关闭）</h3>
 
       <!-- ✅ 推荐：dialog 内 form 加 ref，提交前调 validate；
-           弹窗内表单约定用 label-position="right"（与 form.examples.vue 一致） -->
+           表单标签一律在左（与 form.examples.vue 一致，见 form-pattern.md） -->
       <el-button @click="visibleForm = true">编辑信息</el-button>
 
       <el-dialog
@@ -384,10 +384,11 @@
       -->
 
       <!--
-        @anti-pattern #2: 弹窗内表单 label-position 用 "top" 或 "left"
+        @anti-pattern #2: 弹窗内表单用 label-position="top" 顶部标签
         @priority: STRONG
-        后果：与设计系统约定不符——弹窗内表单约定 label-position="right"（label 文字右对齐紧贴 input）。
-        正确：弹窗内表单用 right；整页/半页表单用 top；其他局部表单可用 left。
+        后果：与全站表单布局不一致——本设计系统只用「标签在左」，top 暂停启用。
+        正确：标签在左 + label-width="auto"（EP 的 label-position="right" 指标签
+              文字右对齐，标签仍在控件左侧）。完整规则见 references/patterns/form-pattern.md。
       -->
 
       <!--

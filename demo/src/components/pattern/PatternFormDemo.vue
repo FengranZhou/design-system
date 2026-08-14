@@ -69,7 +69,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="入职日期">
-          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" style="width: 100%;" />
+          <el-date-picker v-model="form.date" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%;" />
         </el-form-item>
         <el-form-item label="通知方式">
           <el-checkbox-group v-model="form.notify">

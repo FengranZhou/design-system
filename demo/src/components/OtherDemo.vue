@@ -37,14 +37,14 @@
       <p class="demo-label">回到顶部</p>
       <div
         class="backtop-scroll-area"
-        style="height: 200px; overflow-y: auto; border: 1px solid var(--el-border-color); border-radius: 4px; padding: 16px; position: relative;"
+        style="height: 200px; overflow-y: auto; border: 1px solid var(--el-border-color); border-radius: 4px; padding: var(--iflyv-spacing-4); position: relative;"
       >
         <p v-for="i in 20" :key="i" style="color: var(--iflyv-text-2); line-height: 2;">
           这是第 {{ i }} 行内容，向下滚动后右下角将出现 Backtop 按钮
         </p>
         <el-backtop target=".backtop-scroll-area" :visibility-height="50" />
       </div>
-      <p style="color: var(--iflyv-text-3); font-size: 12px; margin-top: 8px;">
+      <p style="color: var(--iflyv-text-3); font-size: 12px; margin-top: var(--iflyv-spacing-2);">
         提示：在上方区域向下滚动，右下角会出现回到顶部按钮。
       </p>
     </div>

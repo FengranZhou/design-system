@@ -11,6 +11,7 @@
           <el-date-picker
             v-model="dateValue"
             :type="withDateTime ? 'datetime' : 'date'"
+            :value-format="withDateTime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'"
             :placeholder="withDateTime ? '选择日期时间' : '选择日期'"
             :style="{ width: withDateTime ? '280px' : '240px' }"
           />
@@ -36,6 +37,7 @@
             <el-date-picker
               v-model="dateRange"
               :type="withTime ? 'datetimerange' : 'daterange'"
+              :value-format="withTime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'"
               range-separator="至"
               :start-placeholder="withTime ? '开始时间' : '开始日期'"
               :end-placeholder="withTime ? '结束时间' : '结束日期'"
@@ -57,7 +59,7 @@
     <div class="demo-block">
       <p class="demo-label">时间选择</p>
       <div class="demo-row">
-        <el-time-picker v-model="timeValue" placeholder="选择时间" style="width: 200px" />
+        <el-time-picker v-model="timeValue" placeholder="选择时间" value-format="HH:mm:ss" style="width: 200px" />
       </div>
     </div>
   </section>

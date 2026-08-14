@@ -132,7 +132,7 @@
                 间距由 `& + .table-operation` 相邻选择器提供 spacing-3（12px）。
    @when-changed: 不要把 .table-operation 兄弟塞进 flex+gap 父容器（会与相邻选择器叠加）；
                   也不要在使用方覆盖此处的 margin-inline-start / 再叠 text/link 属性。
-   @see: examples/table.examples.vue 「操作列」section 的标准用法 + 反模式。
+   @see: references/patterns/list-item-pattern.md「操作区固定右侧」段 + 反例。
    @see: references/component-interaction.md「按钮间距」例外清单。 */
 
 /* 用 .el-button.table-operation 提升特异性，压过 EP 默认按钮的 padding/min-width/底色/边框，

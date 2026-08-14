@@ -6,8 +6,8 @@
       <p class="demo-desc">可以被「加载」完全代替，但是在可用的场景下可以比 Spin 提供更好的视觉效果和用户体验。</p>
       <!-- ⏸ 暂停展示：基础骨架屏（无动画）。暂时不用，保留代码，需要时放开。
       <div style="width: 300px;">
-        <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: 8px;">基础骨架屏</p>
-        <el-skeleton :rows="3" />
+        <p style="color: var(--iflyv-text-3); font-size: 12px; margin-bottom: var(--iflyv-spacing-2);">基础骨架屏</p>
+        <el-skeleton :rows="3" animated />
       </div>
       -->
       <!-- 白底衬底：骨架屏灰条铺在浅灰 bg-card 上对比弱，套一层 bg-panel 白底衬托 -->
@@ -15,8 +15,8 @@
         <el-skeleton :rows="3" animated />
       </div>
       <!-- ⏸ 暂停展示：切换加载状态（loading ↔ 内容）。暂时不用，保留代码 + script 里 skeletonLoading，需要时一并放开。
-      <div style="margin-top: 24px;">
-        <el-button @click="skeletonLoading = !skeletonLoading" style="margin-bottom: 12px;">
+      <div style="margin-top: var(--iflyv-spacing-6);">
+        <el-button @click="skeletonLoading = !skeletonLoading" style="margin-bottom: var(--iflyv-spacing-3);">
           切换加载状态
         </el-button>
         <el-skeleton :loading="skeletonLoading" animated :rows="2">

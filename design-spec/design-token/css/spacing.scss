@@ -38,6 +38,13 @@
      避免侧边栏 + 内容区在小屏被挤到不可用。单点维护，勿在组件里硬写 1200。 */
   --iflyv-layout-min-width: 1200px;
 
+  /* 栅格：内容区 24 列，水槽 16px（= spacing-4，与「卡片之间」同档，
+     保证栅格并排的卡片与非栅格场景的卡片间距一致）。
+     用法见 el-theme/patterns/grid.scss 的 .grid / .grid__col-* 约定类，
+     规则见 references/efficiency-guide.md「栅格系统」。 */
+  --iflyv-grid-columns: 24;
+  --iflyv-grid-gutter: var(--iflyv-spacing-4);
+
   /* ==================== 遮罩模糊 Mask Blur ==================== */
   --iflyv-mask-blur: 4px;
 }

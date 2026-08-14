@@ -12,6 +12,17 @@
         amount→ 右对齐 + 千分位
     - 操作区：actions（外露操作，用源头约定类 .table-operation）+ moreActions（收进「更多」下拉），固定右侧
 
+  长文本列：加 showOverflowTooltip: true（标题 / 备注 / 简介等长度不可预期的列）
+           → 单行截断 + hover 补全，不要在使用方自写 text-overflow。
+
+  状态标签取色（kind:'tag'）：行数据里放两个字段，组件按列名自动取——
+    `${prop}Type`   语义色：进行中/待审核→warning、已通过/已完成→success、
+                    已驳回/失败→danger、未开始/草稿→info
+    `${prop}Class`  约定类：**已结束/已归档/已关闭→'el-tag--gray'**（灰色是 class 不是 type，
+                    type 表达不了）、AI 标识→'el-tag--ai'；不需要时留空即可
+    两者可共存（同一列里某些行走 type、某些行走 class）。字段名可用 tagTypeProp /
+    tagClassProp 改。选色判据见 references/component-interaction.md Tag 段状态对照表。
+
   内部只引用基础组件（el-table / el-table-column / el-tag / el-button / el-dropdown），
   外观均归各自 el-theme 源头，不覆盖；scoped 只装扮自己骨架。
 
@@ -20,6 +31,7 @@
       :data="rows"
       :columns="[
         { prop:'name', label:'姓名', width:120, fixed:'left' },
+        { prop:'intro', label:'简介', minWidth:220, showOverflowTooltip:true },
         { prop:'status', label:'状态', kind:'tag', width:100 },
         { prop:'date', label:'日期', kind:'date', width:150, sortable:true },
         { prop:'amount', label:'金额', kind:'amount', width:120, sortable:true },
@@ -53,12 +65,16 @@
       :sortable="col.sortable"
       :fixed="col.fixed"
       :align="col.kind === 'amount' ? 'right' : undefined"
+      :show-overflow-tooltip="col.showOverflowTooltip"
     >
       <template #default="{ row }">
-        <!-- tag：状态 / 分类标签 -->
+        <!-- tag：状态 / 分类标签。
+             type 走语义色；class 走约定类变体（el-tag--gray 非活跃 / el-tag--ai），
+             二者可共存——同一列里某些行灰、某些行走语义色。 -->
         <el-tag
           v-if="col.kind === 'tag'"
           :type="row[col.tagTypeProp ?? `${col.prop}Type`]"
+          :class="row[col.tagClassProp ?? `${col.prop}Class`]"
           round
         >{{ row[col.prop] }}</el-tag>
         <!-- amount：右对齐 + 千分位 -->
@@ -94,7 +110,10 @@
             class="table-operation"
             @command="(cmd: string) => emit('action', { command: cmd, row, index: $index })"
           >
-            <span class="table-operation__more"><MoreHorizontal :size="16" :stroke-width="2" /></span>
+            <!-- 纯图标入口必配 tooltip 给全称（show-after 300 全站统一延迟），否则语义靠猜 -->
+            <el-tooltip content="更多操作" placement="top" :show-after="300">
+              <span class="table-operation__more"><MoreHorizontal :size="16" :stroke-width="2" /></span>
+            </el-tooltip>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item

@@ -74,8 +74,4 @@ const configForm = computed(() => ({
   width: 400px;
 }
 
-@media (max-width: 1100px) {
-  /* 本页覆盖了 config-card 宽度，窄屏撑满需在此重申（scoped 特异性高于公共层） */
-  .config-card { width: 100%; }
-}
 </style>

@@ -33,7 +33,7 @@
 
 ## 三、强制做法
 
-### 1. 一律用 `SearchMini` 组件，不手拼
+### 1. 一律用 `SearchMini` 组件，不手拼 <!-- @rule id=search-use-searchmini level=MUST cat=设计模式 detect=regex dtitle=搜索框应是统一的标准样式与宽度，各页一致 title=搜索框一律用业务组件 SearchMini，禁 el-input+放大镜手拼 -->
 
 ```ts
 import { SearchMini } from '<path>/design-spec/components'

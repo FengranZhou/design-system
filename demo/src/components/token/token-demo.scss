@@ -11,7 +11,7 @@
   &:last-child { margin-bottom: 0; }
 
   &__label {
-    font-size: var(--iflyv-font-size-12);
+    font: var(--iflyv-font-body-min);
     font-weight: var(--iflyv-font-weight-semibold);
     color: var(--iflyv-text-3);
     margin-bottom: var(--iflyv-spacing-1_5);
@@ -19,25 +19,25 @@
 }
 
 .token-name {
+  font: var(--iflyv-font-body-min);
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: var(--iflyv-font-size-12);
   color: var(--iflyv-text-1);
 }
 
 .token-value {
+  font: var(--iflyv-font-body-min);
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 11px;
   color: var(--iflyv-text-3);
 }
 
 .token-desc {
-  font-size: 11px;
+  font: var(--iflyv-font-body-min);
   color: var(--iflyv-text-4);
 }
 
 .token-source {
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 10px;
+  font: var(--iflyv-font-body-min);
   color: var(--iflyv-text-3);
   background: var(--iflyv-bg-inset);
   padding: 0 var(--iflyv-spacing-1);
@@ -176,17 +176,16 @@
 }
 
 .token-scenes__label {
-  font-size: 11px;
+  font: var(--iflyv-font-body-min);
   color: var(--iflyv-text-3);
   margin-right: var(--iflyv-spacing-0_5);
 }
 
 .token-scene-chip {
-  font-size: var(--iflyv-font-size-12);
-  line-height: var(--iflyv-line-height-20);
+  font: var(--iflyv-font-body-min);
   color: var(--iflyv-text-2);
   background: var(--iflyv-bg-panel);
-  padding: 0 10px;
+  padding: 0 var(--iflyv-spacing-2);
   border-radius: var(--iflyv-radius-xs);
   white-space: nowrap;
 }
@@ -241,18 +240,17 @@
 }
 
 .token-lineheights__label {
-  font-size: 11px;
+  font: var(--iflyv-font-body-min);
   color: var(--iflyv-text-3);
   margin-right: var(--iflyv-spacing-0_5);
 }
 
 .token-lh-chip {
+  font: var(--iflyv-font-body-min);
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 11px;
-  line-height: var(--iflyv-line-height-18);
   color: var(--iflyv-text-2);
   background: var(--iflyv-bg-inset);
-  padding: 0 7px;
+  padding: 0 var(--iflyv-spacing-2);
   border-radius: var(--iflyv-radius-xs);
 }
 

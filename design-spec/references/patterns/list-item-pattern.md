@@ -46,10 +46,10 @@
 | 展开 | `el-table` 的 `type="expand"` | 全局功能区 |
 | 名称 / 纯文字 | 纯文本单元格（`prop` 直出 或 `formatter`） | 主题区 / 关键信息区最常见 |
 | 头像 | 业务组件 `UserAvatar`（`design-spec/components`） | 主题区 |
-| 状态 / 分类标签 | `el-tag`（状态语义色；`round` 胶囊） | 关键信息区，**状态一律用标签，不用裸文字** |
+| 状态 / 分类标签 | `el-tag`（状态语义色；`round` 胶囊） | 关键信息区，**状态一律用标签，不用裸文字** | <!-- @rule id=list-status-use-tag level=MUST cat=设计模式 detect=regex dtitle=列表里的状态应是彩色标签，不是一段裸文字 title=列表/表格的状态列一律用 el-tag，禁裸文字 -->
 | 日期 / 时间 | 纯文本（统一格式，见文案规范 Time 模块） | 关键信息区 |
 | 数值 / 金额 | 纯文本 + `formatter`（如 `¥1,200`），**右对齐** | 关键信息区 |
-| 进度 | `el-progress` | 关键信息区 |
+| 进度 | ⏸ `el-progress` **当前暂停启用**（见 `component-interaction.md` 文末「勿用清单」）——需展示进度先与设计负责人确认 | 关键信息区 |
 | 操作按钮 | `<el-button class="table-operation">` + **图标(lucide)+ 文字**；多操作收进 `el-dropdown`「更多」(纯文字) | 操作区，**固定右侧**。表格操作列用源头约定类 `.table-operation`（一个 class 全包：无底/紧贴文案/相邻间距 12/hover 绿），不用再加 text/link |
 
 > 表头单元格类型收敛为三类：**纯文字 / 复选框（selection 列）/ 带排序（sortable）**。内容单元格类型即上表——按数据语义选，别混。
@@ -60,26 +60,40 @@
 
 1. **先分区再落元素**：任何一行/条目，先按四区归位每个字段，再按上表选组件。不要字段平铺、不分主次。
 2. **状态必用标签**：状态 / 分类字段用 `el-tag`（走状态语义色 + `round`），**不要用纯文字**表示状态（无法一眼区分）。
-3. **操作区固定右侧、样式统一**：表格操作按钮一律 `<el-button class="table-operation">` + **图标（lucide）+ 文字**（如「✎ 编辑」，用约定类不用 text/link）；≥3 个操作时，主操作外露、其余收进 `el-dropdown`「更多」（下拉项走纯文字）。表格里操作列 `fixed="right"`。「更多」触发器同样走源头约定：`<el-dropdown class="table-operation">` + 内层 `<span class="table-operation__more">更多 <ChevronDown /></span>`（对齐/间距/色号全在 `table.scss` 源头）；**危险操作**（删除等）在按钮上加 `.table-operation--danger`（常态即危险红、hover 加深，不手写 color）。
+3. **操作区固定右侧、样式统一**：表格操作按钮一律 `<el-button class="table-operation">` + **图标（lucide）+ 文字**（如「✎ 编辑」，用约定类不用 text/link）；≥3 个操作时，主操作外露、其余收进 `el-dropdown`「更多」（下拉项走纯文字）。表格里操作列 `fixed="right"`。「更多」触发器同样走源头约定：`<el-dropdown class="table-operation">` + 内层 `<span class="table-operation__more"><MoreHorizontal :size="16" /></span>`（**纯图标形态**，与业务组件 `DataTable` 一致；对齐/间距/色号全在 `table.scss` 源头）——**纯图标入口必须外包 `el-tooltip content="更多操作" :show-after="300"`**；**危险操作**（删除等）在按钮上加 `.table-operation--danger`（常态即危险红、hover 加深，不手写 color）。
 4. **数值右对齐**：金额 / 数量等数值列右对齐，便于比较。
 5. **列宽与冻结**：关键信息区按内容给合理 `width` / `min-width`。
-   - **默认冻结规则（无特殊情况即遵守）**：当**列内容总宽超出表格展示宽度（会触发横向滚动）时，默认必须启用首尾列冻结** —— 主题区（姓名/名称）`fixed="left"`、操作区 `fixed="right"`。理由：横滚时用户仍需随时看到「这是谁（主题列）」和「能干什么（操作列）」，否则滚到中间就找不到行主体、够不到操作。
+   - **默认冻结规则（无特殊情况即遵守）**：当**列内容总宽超出表格展示宽度（会触发横向滚动）时，默认必须启用首尾列冻结** <!-- @rule id=table-freeze-columns level=MUST cat=设计模式 detect=regex dtitle=表格横向滚动时，首列与操作列应固定不动 title=表格内容超宽触发横滚时，必须冻结主题列(fixed=left)与操作列(fixed=right) --> —— 主题区（姓名/名称）`fixed="left"`、操作区 `fixed="right"`。理由：横滚时用户仍需随时看到「这是谁（主题列）」和「能干什么（操作列）」，否则滚到中间就找不到行主体、够不到操作。
    - 列不多、不横滚（内容宽 ≤ 容器宽）时无需冻结。
    - **用 DataTable 时已自动**：DataTable 内置 `auto-freeze`（默认开），会测量列总宽 vs 容器宽，**超宽即自动给主题列补 `fixed:left`**（操作列 `fixed:right` 本就内置）——无需手动传 fixed。特殊场景可 `:auto-freeze="false"` 关闭，或在 columns 里手动指定 fixed（优先于自动）。
    - 手写 el-table 时：按本规则自行给主题列 `fixed="left"`、操作列 `fixed="right"`。
+   - ⚠️ **RTL（阿语等从右到左语境）下固定列被主动降级**：源头 `table.scss` 在 RTL 下取消了 sticky 定位，`fixed` 列会变成普通列。承接 RTL 业务时**需提前告知业务方这一限制**，不要在使用方自己写 sticky 去补（会与源头打架）。
 6. **至少留一列弹性（防右侧空白列）**：表格设 `width: 100%`（撑满容器）时，**不要把每一列都写死 `width`**——否则当"固定列宽总和 < 容器宽"时，`el-table` 会把剩余宽度补成一个**空白列**，右侧留一大片空。**至少让一列用 `min-width`（或不写宽）做弹性列**，吸收剩余宽度。通常让内容最长、最该伸展的那列（如主题区名称列或操作区）承担弹性。
    - `el-table` 默认列宽分配（原生行为，源头不改）：**所有列都不写宽 → 等分铺满**；**部分写死、部分不写 → 剩余宽等分给未写宽的列**；**全部写死且总和 < 容器 → 才补空白列**。所以只要有一列不写死，就不会出现右侧空白。
-7. **拼装而非硬写**：把行看成"四区拼装"，同类记录复用同一套列定义；不要每个页面重写一版结构和样式。
+   - **弹性列该选哪一列**：挑**内容最长、最值得伸展**的那列，按业务类型对号入座——用户列表→邮箱/账号，订单列表→商品名/订单号，设备列表→设备名/型号，文章列表→标题，申请列表→申请理由/备注。
+     **反过来不要选**姓名、状态、金额、日期这类**短且定长**的列做弹性——数据短时会被拉得空荡荡，一行里出现大片空白。
+   - **万一所有列都短、没有合适的弹性候选**，三选一：① 外层包一个 `max-width` 容器，让表格不必撑满整行；② 表格去掉 `width: 100%`，让列宽自然累加（表格比容器窄，靠左排布）；③ 退而求其次，让相对最长的主信息列承担弹性。
+7. **长文本列加 `show-overflow-tooltip`**：标题、备注、简介这类长度不可预期的列，给 `<el-table-column>` 加此属性——EP 原生能力，**自带单行截断 + hover 弹 tooltip 补全**，不要手动包 `el-tooltip`、也不要自写 `text-overflow: ellipsis`。
+   - **用 DataTable 时**：在该列配置里写 `showOverflowTooltip: true`。
+8. **状态标签的灰色变体走 class 不走 type**：`el-tag--gray`（已结束 / 已归档等非活跃状态）是**约定类**，`type` 表达不了它。
+   - **手拼 el-table 时**：`<el-tag class="el-tag--gray" round>已结束</el-tag>`。
+   - **用 DataTable 时**：行数据里放 `${prop}Class` 字段（如状态列 `prop:'status'` → 行里写 `statusClass: 'el-tag--gray'`），组件自动透传；走语义色的行该字段留空即可，两者可在同一列共存。字段名要改用 `tagClassProp` 指定。
+   - 选色判据见 `component-interaction.md` Tag 段的状态对照表。
+9. **拼装而非硬写**：把行看成"四区拼装"，同类记录复用同一套列定义；不要每个页面重写一版结构和样式。
 
 ---
 
 ## 五、反例（禁止）
 
 - ❌ **一行字段平铺、不分区**——主次不分，用户扫不出"这是什么 / 有什么 / 能干什么"。
+- ❌ **给表格加 `stripe` 斑马纹**——本设计系统**不使用斑马纹**，行与行的区分靠 hover 高亮 + `border-subtle` 行线（符合「层级即导航、线条为辅」）。斑马纹会让表格显得沉重、且与卡片底色叠加后层次混乱。
 - ❌ **状态用裸文字**（如直接写"进行中"纯文本）——应 `el-tag`，一眼区分状态。
 - ❌ **操作按钮各页各样**（有的实心、有的描边、有的位置飘）——统一 `.table-operation` + 固定右侧 + 「更多」下拉。
 - ❌ **表格 `width:100%` 时把每一列都写死 `width`**——固定列宽总和 < 容器宽时，`el-table` 会补一个空白列，右侧留一大片空。至少留一列 `min-width`（或不写宽）做弹性列吸收剩余宽度。
 - ❌ **在使用方 scoped 里覆盖 `el-table` / `el-tag` / `el-button` 外观**（`:deep(.el-table__cell){…}` 改字号/边框/底色等）——表格/标签/按钮外观归各自 `el-theme` 源头，手写即私货、不同步。
+- ❌ **操作按钮用 `<span class="table-operation">` 代替 `<el-button>`**——视觉一模一样，但丢了键盘可达性（Tab 到不了）、丢了屏幕阅读器的按钮语义。**看起来像按钮不等于是按钮。**
+- ❌ **「更多」下拉用 `<span>` + 自写显示隐藏**代替 `<el-dropdown>`——丢了原生的键盘 ↑↓ 切换、Esc 关闭、焦点陷阱。
+- ❌ **自造排序箭头** <!-- @rule id=table-use-sortable level=MUST cat=设计模式 detect=regex dtitle=表头排序应是标准箭头样式，与全站一致 title=表格排序一律用 el-table 的 sortable，禁自造排序箭头 -->（在表头塞两个三角图标自己接 click）——会丢 `el-table` 内置的 `sort-change` 事件、多列排序、默认排序能力，且箭头视觉与源头 `table.scss` 统一替换的 Lucide 风格对不上。**排序一律用列的 `sortable` 属性。**
 - ❌ **把整套"带状态+操作"的表格逻辑在每个页面重抄一遍**——同构记录应复用列定义（将来可抽成业务组件）。
 
 ---
@@ -113,9 +127,12 @@
         <!-- 外露操作：图标 + 文字（图标用 lucide） -->
         <el-button class="table-operation"><template #icon><SquarePen :size="14" /></template>编辑</el-button>
         <el-button class="table-operation"><template #icon><Eye :size="14" /></template>查看</el-button>
-        <!-- 「更多」触发器：el-dropdown 也挂 .table-operation（对齐兄弟按钮），内层用约定容器 __more -->
+        <!-- 「更多」触发器：el-dropdown 也挂 .table-operation（对齐兄弟按钮），内层用约定容器 __more；
+             纯图标入口必须配 tooltip（含 :show-after="300"），否则语义靠猜 -->
         <el-dropdown class="table-operation">
-          <span class="table-operation__more">更多 <ChevronDown :size="14" :stroke-width="2" /></span>
+          <el-tooltip content="更多操作" placement="top" :show-after="300">
+            <span class="table-operation__more"><MoreHorizontal :size="16" :stroke-width="2" /></span>
+          </el-tooltip>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>复制</el-dropdown-item>

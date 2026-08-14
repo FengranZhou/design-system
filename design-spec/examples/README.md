@@ -5,16 +5,29 @@ updated: 2026-05-10
 
 # design-spec/examples/
 
-> **本目录是 EP 组件用法的范式入口。**
-> 涉及 EP 组件的代码编写或改造，**动手前必须先翻对应 `*.examples.vue`**——里面已写明变体类、按钮 type 匹配、anti-pattern 优先级。直接照搬范式，不要按通用 EP 经验发明。
+> # ⚠️ 本目录已停止维护，不再是规范来源
 >
-> 副条款：本目录是参考代码片段，不是可 import 的组件库——请复制需要的 section 到自己项目，不要整体 `import`。
+> **写代码时一律以 `references/` 为准**，不要参照本目录的示例代码。
+>
+> 本目录是设计系统早期的产物，其中相当一部分写法已被后来的规则取代（如 `.btn-icon-square`、`<el-button link>`、`size` 三档、`label-position="top"`、固定 `label-width`、表格「更多」的文字形态等**均已停用或改判**）。照抄这里的代码会写出**违反当前规范**的实现。
+>
+> 其中仍然成立的规则、判据与坑位说明，**已于 2026-08 全部回流至 `references/`**：
+>
+> | 原内容 | 现在去哪读 |
+> |---|---|
+> | 按钮类型 / 图标 / 间距 / 纯图标形态 | `references/component-interaction.md`（按钮各段） |
+> | 表单布局 / 校验 / 操作区 / inline 横排表单 | `references/patterns/form-pattern.md` |
+> | 表格四区拼装 / 操作列 / 冻结 / 列宽决策 | `references/patterns/list-item-pattern.md` |
+> | 弹窗载体判据 / 宽度三档 / 异步锁关闭路径 | `references/patterns/dialog-pattern.md` + `component-interaction.md`（Dialog 段） |
+> | 选择控件选型 / clearable / 远程搜索 / Cascader | `references/patterns/select-pattern.md` |
+>
+> **反模式优先级定义（BLOCKING / STRONG / SOFT）的正本在 `references/component-interaction.md` 开头**，本目录只是曾经的引用方。
+>
+> 保留本目录仅为历史追溯。**新增规则不要写到这里**——写进 `references/` 对应文件，并按 `design-spec/CLAUDE.md` 的「任务→必读」表补触发行。
 
-## 这里是什么
+## 历史内容索引（仅供追溯，勿照抄）
 
-`design-spec/examples/` 提供 5 个高频组件的「**范式权威**」——每个文件展示推荐写法 + 反模式对照，是使用方（人 + AI）写代码时的第一查阅入口。
-
-| 文件 | 涵盖内容 |
+| 文件 | 曾涵盖内容 |
 |------|---------|
 | `button.examples.vue` | 类型 / 图标 / 纯图标方形 / 文字链接 / 加载禁用 / 间距 / 尺寸 |
 | `form.examples.vue` | label-position / 必填校验 / 表单按钮 / inline 表单 / 尺寸 |

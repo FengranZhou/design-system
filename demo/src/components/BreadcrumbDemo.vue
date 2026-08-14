@@ -75,7 +75,5 @@ const onBreadcrumbItemClick = (_item: { label: string; to?: unknown }, index: nu
   flex: 0 1 auto;
   width: 280px;
 }
-@media (max-width: 1100px) {
-  .config-card--breadcrumb { width: 100%; }
-}
+
 </style>

@@ -6,9 +6,11 @@
     <div class="demo-block badge-showcase">
       <div class="badge-showcase__main">
         <p class="demo-desc">用于显示需要处理的消息条数，通过醒目视觉形式吸引用户处理。</p>
+        <!-- audit-ignore-file badge-max-99 本页演示 Badge 的各种数值形态，故意不都加 :max
+             （另有一处 :value="100" :max="99" 专门演示超限）。真实业务的未读数仍须加 :max="99" -->
 
         <!-- 头像 -->
-        <div v-if="badgeType === 'avatar'" class="demo-row" style="gap: 24px;">
+        <div v-if="badgeType === 'avatar'" class="demo-row" style="gap: var(--iflyv-spacing-6);">
           <el-badge is-dot>
             <UserAvatar :size="28" role="teacher-male" />
           </el-badge>
@@ -40,7 +42,7 @@
         </div>
 
         <!-- 图标 -->
-        <div v-else-if="badgeType === 'icon'" class="demo-row" style="gap: 32px;">
+        <div v-else-if="badgeType === 'icon'" class="demo-row" style="gap: var(--iflyv-spacing-8);">
           <el-badge is-dot>
             <Mail :size="20" :stroke-width="2" style="color: var(--iflyv-icon-2); cursor: pointer;" />
           </el-badge>
@@ -114,10 +116,6 @@ const badgeType = ref('avatar')
   gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
 }
 .badge-showcase__main { flex: 1; min-width: 0; }
-
-@media (max-width: 1100px) {
-  .badge-showcase { flex-direction: column; }
-}
 
 /* 配置项内单选纵向排列，占满配置卡宽度 */
 .config-card :deep(.el-radio-group) {

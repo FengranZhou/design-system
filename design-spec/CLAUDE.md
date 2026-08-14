@@ -13,6 +13,15 @@ updated: 2026-04-12
 
 1. **所有样式值必须走已定义的设计令牌（design token）** —— 颜色、间距、圆角、字体、阴影、动效等，一律引用 `design-spec/design-token/` 里定义的 CSS 变量（如 `var(--iflyv-brand-primary)`、`var(--iflyv-radius-sm)`、`font: var(--iflyv-font-...)` 等）。**禁止**写裸值（硬编码 hex 色、`px` 魔法间距、字面字号 / 行高 / 字重等）。找不到对应令牌时，先停下来向用户确认应新增哪个令牌，而不是就地硬编码。
 
+   > ⚠️ **"每个值都引了令牌" ≠ 合规——拆开基础令牌自拼出一档新规格，同样是违规。**
+   > 真实翻车：为了做大数字，写成 `font-size: var(--iflyv-font-size-40); line-height: var(--iflyv-line-height-48); font-weight: var(--iflyv-font-weight-bold)`——三个值都是令牌，但 40/48/bold **这个组合不是任何一档语义字阶**，等于绕过语义层新造了一档。正确做法是用现成的 `font: var(--iflyv-font-number-display)`。
+   > **判据**：多档位体系（字阶、间距、圆角、阴影、z-index）有**语义层**时，必须整档取用；把基础层的原子值重新排列组合出语义层没有的规格，属于"自造档位"，与写裸值同罪——因为它同样不随源头统一调整。
+
+   > ⛔ **规范与需求冲突时，必须先问，不得自行取舍。**
+   > 当用户给出的明确诉求（参考图、指定效果、具体要求）与本规范某条冲突时，**停下来说明冲突点、给出选项，由用户决定**——不要①擅自脱离规范满足需求，也不要②擅自砍掉需求以迁就规范。
+   > 真实翻车：用户给参考图要求"照此优化"，实施方觉得图中的英文角标与彩色底色不合规范，**未经说明就自行删掉了这两处特征**——结果既没满足需求（参考图的特征正在于此），用户也没机会做决定。
+   > **判据**：凡是"我打算不完全按用户说的做"，无论理由是不是规范，都必须先讲出来。规范是用来保证一致性的，不是用来替用户做决定的。
+
 2. **凡涉及组件，必须使用已定义的设计组件** —— 优先复用 Element Plus + `design-spec/el-theme/` 主题覆盖层里已定义的组件与样式规范，不得另起炉灶手写一套等价组件或覆盖其既有样式。需要的组件不存在时，先向用户确认，而不是临时拼装。
 
 3. **组件样式的唯一数据源在 `el-theme/components/`（Single Source of Truth）** —— 这是本设计系统作为"可被多项目引用的组件库"能成立的根基，**绝对不可破坏**：
@@ -61,6 +70,19 @@ updated: 2026-04-12
    - 改**设计模式规则** → 同步该模式的 `*-pattern.md`（规则正文 + 反例 + 可照抄骨架 三处口径一致）+ 对应 demo 展示。
    - 改**组件外观** → demo 与源头一致性（见「删 demo 时源头如何同步」类规则）。
    > 这是**主动纪律**，不依赖用户发现不一致才修。改规则前先想「哪些地方引用了它」，改完逐一核对。
+   >
+   > **⚙ 可机械化的部分已脚本化：改完跑一次 `node scripts/audit-spec.mjs`**（无参数即全量检查，退出码 0=通过）。它自动扫六类裂缝：
+   > ① 语义令牌没进 `foundations.md` 用途表（下游只拿到值、不知何时用）；② references 引用了不存在的令牌（写了拿不到值）；③ references 仍在推荐已停用组件；④ 源头/demo 已停用但没进「勿用清单」（下游会以为能用）；⑤ 触发表指向的文件不存在；⑥ 源头约定 class 无 references 用法条目。
+   >
+   > **其中 C7 是本仓库的核心命题检查**：每个启用组件必须落在三种状态之一——① references 有实质条目、② 在「⏸ 勿用清单」、③ 在「✅ 无额外规矩」清单。**三者都不在 = 下游遇到它时既查不到用法、也不知道能不能用**。脚本会直接报出覆盖率（当前 51/51 = 100%），新增组件时若忘了写文档会立刻掉下来。
+   >
+   > **⚙ 另一个脚本管「取值准不准」：`node scripts/audit-precision.mjs`**。前一个查「有没有」（覆盖率 / 引用失效 / 停用未标注），这个查**多档位体系里每一档是否有唯一可判的场景锚点**——扫间距 10 档、圆角 5 档、阴影 3 档、字阶 12 档、文本色 6 档、背景色 7 档、描边 4 档、z-index 6 档，报出「某档用途为空」和「多档共用同一句用途描述」。
+   >
+   > **为什么单独一个脚本**：令牌选错**不报错、编译通过、页面照样跑**，只是视觉全乱——这类问题 audit-spec 查不出来。真实翻车：spacing 的 2/4/6/8 四档曾共用一个场景词「微间距」，下游在 Tag 内边距 / 图标间距之间只能靠猜。**新增令牌档位后必跑一次**，否则很容易又长出一个"有值无判据"的档。
+   >
+   > **脚本只覆盖"机械可判"的部分**——口径矛盾（同一规则两处说法相反）、措辞过时、**触发行能不能被真实任务命中**这三类仍须人工审。**跑通 ≠ 规范正确，只是没有这几类已知裂缝。**
+   >
+   > **触发命中率怎么测**：拿一批**真实下游任务话术**（"帮我做个课程列表页""按钮点了要转圈"），模拟只有本文件在上下文的下游 CC，逐个判断能否命中触发行、读完能否落地。**这是唯一能验证"规则真的到得了下游"的方法**——曾用 20 个任务测出 3 个失效点（停用清单无触发入口、Loading 行措辞锁死在"遮罩"漏掉按钮 loading、侧边导航粒度错配）。
 
 本设计系统分两层，各有其源头目录与规矩：
 
@@ -111,37 +133,57 @@ updated: 2026-04-12
 
 ### ⚡ 任务 → 必读细则（命中即先 Read，再动手）
 
+> **📁 路径怎么读**：下表「动手前必须先 Read」列的路径**都相对于本文件所在的 `design-spec/` 目录**。
+> - 在**本仓库**工作 → 直接读 `design-spec/references/...`。
+> - 在**下游项目**工作 → 前面拼上你接入本设计系统的路径，即你项目根 `CLAUDE.md` 里那行 `@` 的目录部分。
+>   例：`@../xiaoya3.0设计规范/design-spec/CLAUDE.md` → 读 `../xiaoya3.0设计规范/design-spec/references/foundations.md`；
+>   npm 包接入 → `node_modules/<包名>/design-spec/references/foundations.md`。
+> - 拿不准时用文件名搜（如 `foundations.md`）——**别因为路径拼不对就跳过这一步**，那等于绕开了整套规范。
+
 | 当任务是… | 动手前必须先 Read | 说明 |
 |---|---|---|
+| ⛔ **要用一个本表没提到的 EP 组件**（进度条 / 时间线 / 折叠面板 / 上传 / 穿梭框 / 树形控件 / 链接 / 菜单 / 回到顶部 / 气泡卡片 / 分割线 / 统计数值…）**或拿不准某个组件能不能用** | `references/component-interaction.md` **文末两份清单** | **动手前必查**。组件分三种状态：① 上表有触发行的 → 按对应条目用；② **「⏸ 勿用清单」里的（10+ 个）→ 已停用**，写出来**不报错、页面也能跑**，但拿到 EP 原生观感、脱离设计系统且不随源头更新，**你不会收到任何警告**（清单给了替代方案：链接→`<el-button text>`、折叠面板→`el-tabs`、穿梭框→Select 多选、树→Cascader…）；③ **「✅ 无额外规矩」清单里的 → 直接按 EP 官方文档用**（源头只做了令牌对齐，无坑）。**三份都没有的组件才需要先与设计负责人确认**——"查不到"不等于"不让用" |
+| ⛔ **要做移动端 / 手机适配**（"手机上打开很难用""学生要用手机查成绩"）**或网页打印**（"成绩单要能打印盖章""打出来格式乱"） | `references/efficiency-guide.md`（响应式策略 → **明确不支持的两件事**） | **两者都不在本设计系统支持范围内——是"不做"，不是"还没做"**。移动端：只面向桌面端，**禁写 `<1200` 的 media query** 去"顺手适配"（与 1200 硬下限 + 横向滚动机制直接打架），移动端属独立产品形态、须产品侧另行立项。打印：**不提供打印样式规范**，纸质件走**后端导出 PDF/Excel** 由服务端排版（A4 约 794px 落在硬下限之下，前端写打印样式必然与布局机制冲突）。**接到这类需求应推回产品侧，不要硬做** |
 | **取任何样式值**：设颜色 / 字体字号 / 间距 / 圆角 / 阴影 / z-index 层级 / 渐变（写任何 CSS 前的选令牌动作） | `references/foundations.md` | 令牌用途速查的唯一入口：文本/图标 4 阶怎么选、bg 5 层怎么叠、border 3 档、shadow 3 档、语义字阶 12 档、spacing/radius 场景表、z-index 6 档、渐变分级管控与 AI 渐变令牌。**禁止跳过它凭感觉挑令牌或写裸值** |
-| 做**表单** / 录入界面 / 一组「标签+控件」的信息组织 | `references/patterns/form-pattern.md` | 表单布局范式 |
+| **做一个「效率型」页面**（管理后台 / 列表页 / 表单页 / 详情下钻）：**排版面怎么分栏**（用几列、模块多宽）/ 信息密度 / 要不要加分割线 / loading·空态·错误态怎么设计 | `references/efficiency-guide.md` | **分栏一律用源头栅格约定类 `.grid` / `.grid__col-*`**（24 列、水槽 16px 全走令牌，**禁用 `el-row`/`el-col`**、禁自拼 flex）；**只有 `col-6/8/10/12/14/16/18/20/24` 九档**——「模块宽度不得小于 6 列」由源头保证。分隔优先级：**间距 > 色差 > 细线**（线能不用就不用）。**响应式只在 ≥1200 区间做**（1200 是硬下限，更窄出横向滚动；**禁写 `<1200` 的 media query**，写了永不触发） |
+| 做**图表 / 数据看板 / 统计分析**（平均分、及格率、分数段分布、趋势曲线、占比构成…）：**选什么图** / 图表配色 / ECharts 怎么接令牌 | `references/display-guide.md`（数据可视化 段） | **先按"读者要比较什么"选图**：比大小→柱/条；看走势→折线（≤4 条）；看构成→环形（扇区 ≤5）；**只是一个核心数字→别画图**，直接 `--iflyv-font-number-display` 大号数字。⚠️ **ECharts 画在 canvas 里、读不到 CSS 变量**——直接写 `color: 'var(--iflyv-brand-primary)'` **不生效**，必须用 `getComputedStyle` 把令牌值取出来再喂 option（骨架见该段）；且**切主题/切品牌色后要重取色并 `setOption` 重绘**，图表不会自己变 |
+| **做一个「展示型」页面**（首页概览 / 数据报告 / 成果展示 / 对外汇报这类"看"重于"操作"的页）：构图 / 排版张力 / 装饰手法 / 滚动动效 | `references/display-guide.md` | **先定三种子风格之一**（结构化阅读 / 编辑式叙事 / 沉浸式体验），它决定后续装饰与动效的上限，不先定就开做必然风格混乱。**审美不变量优先于子风格**：中性色视觉面积 ≥70%、着色靠小面积锚点而非大面积填充。**EP 组件外观仍不可覆盖**（展示型不例外）；GSAP 仅展示型可用、须按需动态 import，**效率型禁止引入** |
+| **摆一组按钮**：主按钮该放左还是右（弹窗/抽屉 footer、表单底部操作区、工具栏、卡片底部…任何"次按钮 + 主按钮"并排的地方） | `references/foundations.md`（主按钮贴边原则） | **一条公理覆盖所有场景**：主按钮贴近该按钮组所在容器的**对齐侧边缘**——右对齐→主按钮贴右（弹窗/抽屉 footer、工具栏右组），左对齐→主按钮贴左（页面级表单操作区）。**唯一例外是方向性按钮**（上一步/下一步由方向语义定位）。弹窗"主按钮在右"与页面表单"主按钮在左"**不是互相矛盾的两个惯例**，是同一条规则的两个结果——遇到规范没写到的新场景据此自行推理，别凭手感摆 |
+| 做**表单** / 录入界面 / 一组「标签+控件」的信息组织 / **字段太多怎么组织**（分组·分步·锚点）/ **可增删的字段组**（动态表单·可编辑表格·折叠面板）/ **定输入框宽度** / **定校验时机与报错文案** | `references/patterns/form-pattern.md` | 骨架一律 `el-form`+`el-form-item`（禁 div/flex 手拼）、`label-width="auto"`、星号与间距全在源头。**组织分三问**：① 要不要分组——**≤7 平铺到底**（后面都不用问）/ >7 且有关联才分组；② 这些组怎么分布——**要来回对照→同屏 `el-anchor`** / **有先后顺序→拆开 `StepBar`（≤3 步）**；③ 组边界怎么标（**单个可见区域内并列多组时才需要**）——**默认小标题分段**，仅当「**单组 >5 项或含 textarea 等高度不定控件**」或「**各组起不出共同上位词**（不是同一类东西）」命中任一时才每组套卡片。⚠️ **分步时每一步要把 ①②③ 重走一遍**：该步 ≤7 项就平铺、不拆子组也不套卡片（**别给三五个字段的单步硬套卡片**）；>7 才拆子组、才谈组形式。⛔ **禁用 `el-tabs` 做表单分节**——表单各段是同一条记录的不同部分，违反 Tabs「各 tab 数据无交集」硬规则。**组标题别重复**：分步**且一步一组**时标题已由步骤条给出，容器内不再渲染一遍；一步内含多组时步内各组仍需各自标题（层级不同，不算重复）。**分组后操作区放哪看"提交管多大范围"**：小标题分段→仍在末组表单末尾；**每组套卡片→必须提到所有卡片之外**（塞进最后一张卡片会读成"只提交这张卡片"），与卡片外左缘对齐、且别放到滚动区外做成吸底条。一律单列（禁多列 Z 字动线）。**输入框宽度按字段语义选档**（验证码 120 / 手机号 200 / 姓名 320 / 长度不可预期才 100%），**禁为整齐拉成同宽**。**校验：本地可判的失焦即报**（长表单禁止只在提交时统一报错），错误提示放输入域**下方**、文案两段式（错在哪+怎么改）。字段 **>8 项弹窗换抽屉** |
 | 做**表格** / **列表** / **信息流**（一行=一条记录：表头/单元格类型、状态列、操作列、卡片条目…） | `references/patterns/list-item-pattern.md` | 列表条目模式：一条记录=四区拼装（全局功能/主题/关键信息/操作）+ 每类元素用哪个组件；**标准表格直接用业务组件 `DataTable`**（列配置式、操作列/冻结列内置，`design-spec/components/`），自由度不够才退回手拼 `el-table` 按模式拼装 |
-| 做**工具栏** / 页面头部操作条 / 列表页顶部一排（标题 + tab + 筛选下拉 + 搜索 + 操作按钮） | `references/patterns/toolbar-pattern.md` | **一律用源头约定 class `.toolbar` / `__left` / `__right` / `__title`**（样式在 `el-theme/patterns/toolbar.scss`，布局/元素间距/标题字阶全在源头，**禁在使用方 scoped 复刻这几条**）。固定顺序（标题→组件级tab→下拉→搜索→次按钮→主按钮）+ 左右分配三分支（有标题→标题左其余右 / 无标题有筛选→筛选左按钮右 / 都无→按钮左）。标题两档：页面级 `<h3 class="toolbar__title">` / 模块级加 `--module`（只差字阶）。**页面只写留白**：左右归页面内容区容器统一给 spacing-6、上下按标题层级取档（页面级 spacing-4 / 模块级下方 spacing-3） |
+| 做**工具栏** / 页面头部操作条 / 列表页顶部一排（标题 + tab + 筛选下拉 + 搜索 + 操作按钮）/ **给列表页定过滤条件**（该放哪些筛选项、条件太多怎么收） | `references/patterns/toolbar-pattern.md` | **一律用源头约定 class `.toolbar` / `__left` / `__right` / `__title`**（样式在 `el-theme/patterns/toolbar.scss`，布局/元素间距/标题字阶全在源头，**禁在使用方 scoped 复刻这几条**）。固定顺序（标题→组件级tab→下拉→搜索→次按钮→主按钮）+ 左右分配三分支（有标题→标题左其余右 / 无标题有筛选→筛选左按钮右 / 都无→按钮左）。标题两档：页面级 `<h3 class="toolbar__title">` / 模块级加 `--module`（只差字阶）。**页面只写留白**：左右归页面内容区容器统一给 spacing-6、上下按标题层级取档（页面级 spacing-4 / 模块级下方 spacing-3）。**过滤条件不超过两行**（超出则高频前置、低频收进「更多筛选」）；**并列同义的条件必须合并**（ID/关键词/订单号三个框→一个多字段模糊搜索；有包含关系→级联下拉），判据是「这些条件之间能否产生交集」 |
 | 加**搜索框** / 搜索入口 / 列表筛选检索 | `references/patterns/search-pattern.md` | 搜索框选型（核心→展开 / 非核心→收起）+ SearchMini 用法 |
 | **从固定选项里选**（单选**或多选**）：加**单选 / 下拉选择器 / 多选下拉** / 筛选下拉 / 类型选择 / 标签选择 | `references/patterns/select-pattern.md`（多选另见 `component-interaction.md` Select 多选段） | **先选控件**：>5 不建议 Radio→用 Select；≤5 需并排比较时 Radio 更好（非必须，也可 Select）。用 Select 再定可清除（有默认语义项→不可清 / 无默认值→可清）+ 可搜索。**多选** Select 默认 `collapse-tags collapse-tags-tooltip :max-collapse-tags="2"` |
 | 做**弹窗** / 操作载体选型（一个填写/操作/确认，纠结弹窗 vs 页面 vs 抽屉） | `references/patterns/dialog-pattern.md` | 载体四维判据（信息量少 / 关联度高 / 任务连贯性弱 / 页面遮挡多 → 用弹窗）+ 宽度三档场景 |
-| 做**弹窗** / **对话框** / 模态框（"弹个框做表单/确认/警示…"） | `references/component-interaction.md`（Dialog 段） | 一律用 `<el-dialog>`（禁手撸、禁 ElMessageBox）；内容放**默认插槽=content 区**、按钮放 `#footer`；危险操作加 `class="is-danger"` 等 4 种语义变体；**宽度按场景从三档选**（确认/单字段=400、常规表单=640、复杂/双列=800），**禁非档位宽度**（如 `width="480px"` 越界）。弹窗内引导提示条用 `el-alert.alert-neutral` 放 content 顶部、多标题切换头用 `.dialog-titles`（见 Dialog 结构件段）。弹窗内若含表单/表格/搜索，**再叠加对应模式**（如表单→form-pattern） |
+| 做**弹窗** / **对话框** / 模态框（"弹个框做表单/确认/警示…"） | `references/component-interaction.md`（Dialog 段） | 一律用 `<el-dialog>`（禁手撸、禁 ElMessageBox）；内容放**默认插槽=content 区**、按钮放 `#footer`；危险操作加 `class="is-danger"` 等 4 种语义变体；**宽度按场景从三档选**（确认/单字段=400、常规表单=640、**复杂富内容**=800），**禁非档位宽度**（如 `width="480px"` 越界）。⚠️ 800 档是给**内嵌表格/列表等非表单富内容**的——**不是给"双列表单"**，表单一律单列（见 form-pattern §8①）。弹窗内引导提示条用 `el-alert.alert-neutral` 放 content 顶部、多标题切换头用 `.dialog-titles`（见 Dialog 结构件段）。弹窗内若含表单/表格/搜索，**再叠加对应模式**（如表单→form-pattern） |
 | 做**抽屉** / 侧边浮层 / Drawer（纠结抽屉 vs 对话框 vs 页面） | `references/component-interaction.md`（Drawer 段） | 先按四维判据（承载信息量 / 信息关联度 / 任务连贯性 / 页面遮挡）判断该用抽屉还是对话框：**信息量大 + 任务需来回切换主页面 → 抽屉**；信息量少 + 需全神贯注 → 对话框。抽屉宽度 400px（轻量）或 600px（详细），有按钮时放 `#footer`（主按钮在右，与对话框一致） |
 | 做**二次确认** / 删除·离开前确认 / 就地气泡确认 | `references/component-interaction.md`（Popconfirm 段） | 低风险操作用 `el-popconfirm`（就地气泡，不打断），高风险 / 需全神贯注才升级 `el-dialog`。**气泡内按钮走 32px 小号（源头已定，下游不覆盖）**：直接用 `<el-button>` 即自动 32px，禁给气泡按钮硬写 `height` / `size="small"` 凑小号；按钮个数「一退路 + 一进路」（取消 + 确认） |
-| 用 **Tag 标签** / 状态标签 / 一处并列多个彩色标签（状态列、卡片头…） | `references/component-interaction.md`（Tag 段） | **选色**：无语义普通标签默认 `type="info"`（蓝，防与品牌绿/success 混淆），品牌强调才用 primary；灰色中性用 `el-tag--gray`、AI 标识用 `el-tag--ai`（渐变已固化，不自拼）。**数量**：一处并列**≤3 个为宜**，避免 4 个及以上平铺让标签退化成噪音（枚举全部状态色板的展示页除外） |
+| 用 **Tag 标签** / **状态标签**（进行中·待审核·已结束这类状态列）/ 一处并列多个彩色标签 | `references/component-interaction.md`（Tag 段） | **状态选色按「用户看到要做什么」对号入座**（别凭状态名字面挑）：要庆幸（已通过/已完成）→`success`；**要等或要盯（进行中/待审核/待批改）→`warning`**；要补救（已驳回/失败）→`danger`；纯中性事实（未开始/草稿）→`info`；已翻篇不用再看（已结束/已归档）→`el-tag--gray`。⚠️ **「进行中」不要用 success**——success 是"结果好"不是"运行正常"，且品牌色也是绿、一片绿会误读成都完成了。无语义普通标签默认 `type="info"`；AI 标识用 `el-tag--ai`。**数量**：一处并列 **≤3 个**为宜 |
 | 做**空状态** / 无数据·无结果占位（列表为空、搜索无结果、加载失败、页面无内容…） | `references/component-interaction.md`（Empty 段） | 一律用 `el-empty` + **设计系统插画**（`el-theme/assets/empty/` 按场景选 8 张之一，import 后 `:image` 传入，暗色用 `dark/` 变体）+ **档位 class**（整页 `empty-page` / 卡片区块 `empty-block`）；**两样缺一即落回 EP 默认纸盒图 = 没接设计系统**。底部按钮放默认插槽、用默认态不用 primary |
 | 做**下拉菜单** / 更多操作 / 悬浮菜单 / 一个触发后弹出的选项面板 / **给下拉菜单分组**（选项多要按语义分段加抬头） | `references/component-interaction.md`（Dropdown 段） | 一律用 `el-dropdown`（面板放 `#dropdown` 插槽、禁手撸浮层）；**触发器按场景选形态**（主操作→按钮 / 紧凑操作列→纯图标 / 行内轻量入口→文字+箭头），不写死单一形态；触发器尾部箭头用约定 class **`.dropdown-caret`** + `@visible-change` 绑 `.is-expanded`（展开翻转在源头，禁自写旋转动效）；**分组抬头用约定 class `.dropdown-group-title` + 裸 `<li>` 承载**（禁用 `el-dropdown-item` 冒充——会带 hover 底色让用户误以为可点） |
 | 做**面包屑** / 路径导航 / 带返回箭头的层级导航 | `references/component-interaction.md`（Breadcrumb 段） | 一律用业务组件 `Breadcrumb`（`design-spec/components/`），传 `items` + 接 `@back`（真实项目通常接 `router.back()`），禁手写 `el-breadcrumb`+`span` 拼返回箭头；**返回箭头可用性看「倒数第二项是不是可跳转实体页」而非层数**——分组标题 / 只展开子菜单的可折叠父项等非实体层级作上一级时须传 `back-disabled`；不需要箭头传 `show-back=false` |
 | 做**步骤条** / 步骤指示器 / 分步流程进度（"第几步 / 填写→生成→完成"这类多步骤流程头部） | `components/StepBar/StepBar.vue`（业务组件，顶部速查注释） | 一律用业务组件 `StepBar`（`design-spec/components/`），`import { StepBar } from '<path>/design-spec/components'`；传 `:steps="['填写要求','生成清单','生成内容']"`（数组长度即步骤数）+ `:current="2"`（当前步 1-based，< 为已完成、= 为当前、> 为未开始）。大圆节点+补零序号+渐变粗连接线+前进/回退动效全在源头，**禁手写 div 拼步骤条、禁用 el-steps 复刻这套观感** |
-| 做**页面框架** / 整页后台布局 / 工作区骨架（左侧边导航 + 顶栏面包屑/用户区 + 内容区） | `components/PageFrame/PageFrame.vue`（业务组件，顶部速查注释） | 一律用业务组件 `PageFrame`（`design-spec/components/`）：传 `:menus`（分组导航，item 带 `children` 即可折叠）+ `v-model:active` + `:course`（侧边栏课程卡）+ `:breadcrumbs`（内部复用 Breadcrumb）+ `:notice-count` / `avatar-role`，页面内容放默认插槽（白色圆角内容卡）。返回平台按钮/课程卡/导航选中态/顶栏全在源头，**禁手写 aside/header 拼同款框架、禁用 el-menu/el-container 复刻这套观感** |
+| 做**页面框架** / 整页后台布局 / 工作区骨架 / **加侧边导航**（左侧边导航 + 顶栏面包屑/用户区 + 内容区） | `components/PageFrame/PageFrame.vue`（业务组件，顶部速查注释） | ⚠️ **先判粒度**：要的是**整页骨架**（侧边导航 + 顶栏 + 内容区一整套）→ 用 `PageFrame`；只是想在**已有页面内部**加一条局部导航（模块内分区切换）→ **不要套 PageFrame**（过重），用 `el-tabs`（见 Tabs 段三档选型）或 `el-anchor` 分节目录（**只有横向形态**，竖向源头未适配，见 Anchor 段）——**`el-menu` 已暂停启用**（见勿用清单），别退回手写它。以下是整页骨架的用法：一律用业务组件 `PageFrame`（`design-spec/components/`）：传 `:menus`（分组导航，item 带 `children` 即可折叠）+ `v-model:active` + `:course`（侧边栏课程卡）+ `:breadcrumbs`（内部复用 Breadcrumb）+ `:notice-count` / `avatar-role`，页面内容放默认插槽（白色圆角内容卡）。返回平台按钮/课程卡/导航选中态/顶栏全在源头，**禁手写 aside/header 拼同款框架、禁用 el-menu/el-container 复刻这套观感** |
 | 加**用户头像** / 角色头像 / 人员标识 | `components/UserAvatar/UserAvatar.vue`（业务组件，顶部速查注释） | 一律用业务组件 `UserAvatar`（`design-spec/components/`）：内置教师/学生男女四款角色图，传 `role="teacher-male"` 等命中；自定义图传 `src`。**尺寸只用三档 40（默认）/ 24 / 20** 保持全站一致，禁手拼 `el-avatar` + 自配图片/尺寸 |
 | 做 **AI 按钮** / AI 功能入口（AI 生成、智能出题、AI 提交等 AI 操作按钮） | `components/AiButton/AiButton.vue`（业务组件，顶部速查注释） | 一律用业务组件 `AiButton`（`design-spec/components/`）：`type` 三形态（`primary` 渐变实心=AI 主操作 / `outline` 白底描边渐变字=工具栏入口 / `text` 行内文字链=轻量入口）+ `disabled` + `loading`（四角星旋转，文案自定如"思考中..."）。四角星图标为组件内置原版切图、渐变走 AI 渐变令牌，全固化在源头，**禁手拼渐变按钮 / 在 el-button 上自贴渐变复刻这套观感** |
-| 做**页内导航 / 内容组织**：标签页 tab / 分页 / 轻量步骤条 | `references/component-interaction.md`（Tabs / 分页器 / Steps 段） | Tabs **先选三档**：页面级 `.tabs-page` / 模块级裸 `el-tabs` / 组件级 `.tabs-sub`；tab 带计数用 `.tab-label-count`+`.tab-count`、挂徽标用 `.badge-tabs`+`.tab-badge`（全是源头约定 class，禁 scoped 复刻）。分页=分隔长列表每次只加载一页（常规/小型两档按容器选）；Steps=任务复杂/有先后关系时分解成一系列步骤 |
-| 做**页内锚点 / 目录导航**（右侧目录、长页分节跳转、"跳到某一节"、锚点被顶栏挡住 / 不高亮的排障） | `references/component-interaction.md`（Anchor 段） | 用 `el-anchor`+`el-anchor-link`。**两条不写就必然出 bug**：① 有固定顶栏时**必须传 `:offset`**（=顶栏高+间距，本项目 76）——EP 走 JS 滚动、**不吃** `scroll-padding-top`，不传则跳转后标题被顶栏盖住；② **滚动容器不是 window 时必须传 `container`**——⚠️ 与「滚动条一律 el-scrollbar」规则的**交叉盲区**：内容区一旦被 `el-scrollbar` 包裹，Anchor 默认监听 window 会完全失效，须指向其 wrap。横向=页内 tab 式、竖向=侧边目录 |
+| 加**分页** `el-pagination`（列表翻页、每页条数、跳转到第几页） | `references/component-interaction.md`（分页器 段） | layout 固定顺序 `prev, pager, next, sizes, jumper`（**不含 `total`**）；**总数文本不走分页器**——外层 `flex + space-between`，左侧放「共 128 条」、右侧放分页器。**两档按容器选**：整页/弹窗列表用常规档；卡片内/抽屉里等窄容器加 `small` **且同时**把 layout 精简为 `prev, pager, next`（只加 small 不精简会挤出换行） |
+| 选**颜色** `el-color-picker`（让用户自选任意色，如给标签/分类配色） | `references/component-interaction.md`（ColorPicker 段） | **先想清楚是不是该用**：界面元素配色一律走设计令牌，ColorPicker 只用于「颜色本身是业务数据」的场景。⚠️ **面板宽度源头已从 300 改为 360px**（为放大字号档位适配），**别按 300 做定位或容器约束**，会错位；也不要在使用方覆盖面板尺寸 |
+| 做**页内导航 / 内容组织**：标签页 tab / 轻量步骤条 / **决定某批内容该不该用 tab 切分** | `references/component-interaction.md`（Tabs / Steps 段） | **前置硬规则：各 tab 数据必须「无交集」**——一条记录只能落在一个 tab 里；状态/流程节点（待批改/已批改）可以，`我创建的 / 我关注的 / 我处理过的` **不行**（同一条可能三者皆是，应放筛选下拉）。Tabs **再选三档**：页面级 `.tabs-page` / 模块级裸 `el-tabs` / 组件级 `.tabs-sub`；tab 带计数用 `.tab-label-count`+`.tab-count`、挂徽标用 `.badge-tabs`+`.tab-badge`（全是源头约定 class，禁 scoped 复刻）。分页=分隔长列表每次只加载一页（常规/小型两档按容器选）；Steps=任务复杂/有先后关系时分解成一系列步骤 |
+| 做**页内锚点 / 目录导航**（长页分节跳转、"跳到某一节"、表单分组跳转、锚点被顶栏挡住 / 不高亮 / marker 样式不对的排障） | `references/component-interaction.md`（Anchor 段） | 用 `el-anchor`+`el-anchor-link`。**六条不写就必然出错**：① **必须传 `direction="horizontal"`**——**竖向源头未适配**（只有横向写了 marker 规格），而竖向恰是 EP 默认值，**漏传即落到未适配形态**；② 有固定顶栏时**必须传 `:offset`**（=顶栏高+间距，本项目 76）——EP 走 JS 滚动、**不吃** `scroll-padding-top`，不传则跳转后标题被顶栏盖住；③ **滚动容器不是 window 时必须传 `container`**——⚠️ 与「滚动条一律 el-scrollbar」规则的**交叉盲区**：内容区一旦被 `el-scrollbar` 包裹，Anchor 默认监听 window 会完全失效，须指向其 wrap；④ **首节贴容器顶部时必须传 `select-scroll-top`**——EP 在 `scrollTop===0` 时故意不高亮任何项，**回顶后锚点全灭**；⑤ **用了 `container` 就必须 `@click="e => e.preventDefault()"`**——link 是真 `<a href="#…">` 而 EP 不拦默认行为，浏览器原生锚跳会叠加一次**页面级滚动、把整个模块顶出视口**；⑥ **页面存在 hash 导航时，条件渲染出的 `el-anchor` 挂载前须清 `location.hash`**——EP 在 `onMounted` 里读**全局** hash 并跳过去，于是"切个选项/开个弹窗，页面自己跳到别处"。⛔ ①~④ 任一漏传的表现都是"不高亮"，**别据此断定 EP 高亮不生效而去监听 `@scroll` 自算 active**（marker 由 EP 的 JS 定位，手工 class 驱动不了）；`@click` 也**只拦默认行为、不接管滚动** |
 | 做**内部滚动区** / 区域内容超出要滚动（侧栏、面板、卡片内长列表、弹窗抽屉可滚内容区…）/ 想调滚动条样式 | `references/component-interaction.md`（滚动条 段） | 一律用基础组件 `<el-scrollbar>` 包裹，**禁在 div 上直接写 `overflow: auto`**（原生滚动条样式不可控：track 白底去不掉，且给 `::-webkit-scrollbar` 设属性会让 Chrome 切成占位滚动条、挤宽内容错位）。滚动内容的 flex/gap/内边距写在 `view-class` 指定的 view 上，外壳只负责 `flex:1; min-height:0` 占位。**滚动条外观（粗细/颜色/圆角/过渡）与页面主滚动条样式全部在源头 `el-theme/components/scrollbar.scss`，接入方一律不覆盖、不自封装** |
 | **二值 / 数值控件**（选型 **+ 用法**）：多选框 vs 开关怎么选；**给开关配文字标签** / 开关禁用态；**多选框**的文字与值 / 半选 / 全选行；**滑块**带输入框 / 区间 / 离散值 / 刻度 | `references/component-interaction.md`（Checkbox / Switch / Slider 段） | **Switch 文字标签默认 `active-text`（右侧）**，仅当「开关左侧无内容、右侧有其他内容」时才用 `inactive-text` 置左（两者互斥、只配一个）；禁在开关外套 `<span>` 或用 `el-form-item` 当 label——字重/间距/取色全在源头 `switch.scss`；`inline-prompt` 未启用。**Checkbox 文案传 `label`、值传 `value`**（EP 2.6+ 语义已变），多选必用 `el-checkbox-group` 包、禁再加 flex+gap，半选用 `indeterminate`（不受 v-model 控制须自算）。**Slider** 要数值输入用 `show-input`（禁旁边拼 `el-input-number`）、区间用 `range`、离散值必须 `step`+`show-stops`、须有定宽容器 |
 | 加**反馈/提示**且**纠结用哪种**：轻提示 vs 警告条 vs 通知 vs 弹窗 vs 结果页 | `references/component-interaction.md`（Message / Alert / Notification / Result 段） | Message=飘过即消失的即时反馈（无需用户响应）；Alert=嵌在页面/弹窗里常驻的说明条；Notification=右上角、可带操作按钮、默认常驻；Dialog=需要用户决策；Result=整页结果反馈。**需要用户决策的一律不用 Message/Alert** |
-| 用 **Message 轻提示**（`ElMessage`，保存成功/删除失败 toast）/ 用 **Alert 提示条**（`el-alert`，页面或弹窗内常驻说明、**中性灰底提示**） | `references/component-interaction.md`（Message / Alert 段） | **Message 一律传 `showClose: true`**（源头已定制 Lucide 关闭按钮并强制常显，不传就看不到），禁用 `.success()` 简写。**Alert 五档**：四语义 + **中性 `class="alert-neutral"`**（通用变体，**不限弹窗内**；禁裸 div 自配灰底、禁拿 `type="info"` 蓝底冒充中性）；默认带 `show-icon`；禁用 el-alert 做确认/删除确认 |
+| 用 **Message 轻提示**（`ElMessage`，保存成功/删除失败 toast）/ 用 **Alert 提示条**（`el-alert`，页面或弹窗内常驻说明、**中性灰底提示**） | `references/component-interaction.md`（Message / Alert 段） | **Message 一律传 `showClose: true`**（源头已定制 Lucide 关闭按钮并强制常显，不传就看不到），禁用 `.success()` 简写。**Alert 五档**：四语义 + **中性 `class="alert-neutral"`**（通用变体，**不限弹窗内**；禁裸 div 自配灰底、禁拿 `type="info"` 蓝底冒充中性）；默认带 `show-icon`；**主文案一律传 `title` 属性**——`el-alert` 的默认插槽是 `description` 区，把单行文案塞进标签中间会触发 EP 的 `is-big`、图标变大与同页其它 alert 不一致；禁用 el-alert 做确认/删除确认 |
 | 做**加载占位**（骨架屏 / 内容未到位的占位）/ 做**结果页**（操作成功·失败的整页反馈） | `references/component-interaction.md`（Skeleton / Result 段） | **Skeleton 必 `animated` + 必须铺在 `bg-panel` 白底上**（灰条在 `bg-card` 浅灰上对比过弱＝写了等于没写），用 `:loading`+默认插槽切换、禁手写 v-if/v-else 两套。**Result 的 `icon` 仅 `success`/`error` 两个合法值**（源头只适配这两类，传 `warning`/`info` 得到无色图标＝越界违规）；结构固定 title+sub-title+`#extra` |
+| 加**加载中状态**（**按钮点了要转圈** / 提交中·删除中防重复点 / 区域刷新遮罩 / 全屏加载）：`<el-button loading>` vs `v-loading` vs 骨架屏怎么选 | `references/component-interaction.md`（Loading 段） | **先按"等待发生在哪"选三种形态**：① **按钮触发的异步操作 → 按钮自身 `<el-button loading>`**（防重复提交，**不要给整个区域套遮罩**，最常见的过度实现）；② 区域内容刷新 / 版式未知 → `v-loading` 指令（全屏用 `ElLoading.service()`）；③ 版式已知的内容加载 → 骨架屏。`v-loading` **禁自拼转圈图标/遮罩**——源头已把 EP 默认 spinner 换成**四圆点动画**（跟随品牌色、全屏自动反白），文案走 `element-loading-text` |
+| 做**评分 / 星级** `el-rate`（教学评价、课程评分、作业星级） | `references/component-interaction.md`（Rate 段） | **只对主观评价用星星**——客观数值（85 分、完成度 60%）直接用文字+数字字阶，别降级成 5 档。只读展示传 `disabled`（不是 `readonly`）+ `show-score`；半星用 `allow-half`；**档位固定 5 星别改 `:max`**。星色取 `warning-primary`（橙，非品牌绿——星级是"评价程度"不是品牌操作）、尺寸已 rem 化跟随字号档位，**全在源头 `rate.scss`，禁在使用方改 `--el-rate-*` 变量** |
+| 选**日期 / 时间 / 日期区间**（`el-date-picker`、`el-time-picker`：表单日期字段、筛选时间范围） | `references/component-interaction.md`（DatePicker 段） | **必传 `value-format`**（否则 v-model 拿到 Date 对象，还要自己转）；区间用 `type="daterange"` 一个组件搞定、**禁拼两个 DatePicker**（丢联动校验）；**图标按 type 自动分流** Calendar/Clock，**禁传 `prefix-icon`**（会被源头 mask 盖住白写）；datetime 面板头部输入框读的是 `--el-component-size-small`，调高度要改 `-small` 变量。**展示**已选日期走 `formatTime`（见文案规范） |
 | 加**徽标未读数** / 消息条数红点 | `references/component-interaction.md`（Badge 段） | Badge=待处理消息条数醒目提醒（**一律默认红、勿传 type**；包裸宿主定位，挂 tab 走 `.tab-badge`） |
 | 弹**通知** / 右上角结果通知 / 带操作按钮的通知（"完成后通知我"这类长时结果告知） | `references/component-interaction.md`（Notification 段） | 一律用 `ElNotification`；**默认常驻**（`duration: 0`，非必要不设自动消失）；带操作按钮**必须**用 `h()` 渲染 message + 按钮行套约定 class **`.notify-actions`**（右对齐/间距在源头），按钮「一退路+一进路」、点击调 `handle.close()`，禁手撸浮层/行内布局 style |
-| 写**按钮/输入框的图标与间距细节**：按钮加图标 / 纯图标按钮 / 输入框前后缀图标 / 一排按钮的间距 | `references/component-interaction.md`（按钮图标 / 纯图标按钮 / 输入框图标 / 按钮间距 段） | 图标一律 Lucide + 插槽传递（按钮 `#icon`、输入框 `#prefix`/`#suffix`，禁 `:icon` 属性）；纯图标按钮必加 `.btn-icon-square`（否则被 min-width 80 撑成长方形）；按钮组间距一律父容器 `flex+gap`（源头已清零 EP 相邻 margin，禁再写 margin） |
-| 加**文字提示气泡** `el-tooltip` / **给纯图标按钮配说明**（图标是什么意思）/ **补全被省略号截断的文本** / hover 出提示 | `references/component-interaction.md`（Tooltip 段） | **纯图标入口必须配 tooltip 给全称**（否则语义靠猜），一律 `el-tooltip content=""`、**禁原生 `title` 属性**（延迟约 1s、样式失控、移动端不触发）；**每个 tooltip 必传 `:show-after="300"`**（全站统一延迟，防鼠标扫过一排图标时气泡连片弹出；延迟是 JS prop、**源头 scss 兜不住**，漏传即漏）；`placement` 按可用空间选（顶栏→`bottom`、底部→`top`），气泡白底/无箭头/字阶/限宽 318 限高 240 全在源头 `tooltip.scss`，**禁 `popper-class`/`:deep` 改外观**；`effect="dark"` 未启用（源头已统一白底）；必读信息与可交互内容不进 tooltip（分别用 `el-alert` / `el-popover`） |
+| 写**按钮/输入框的图标与间距细节**：按钮加图标 / 纯图标按钮 / 输入框前后缀图标 / 一排按钮的间距 | `references/component-interaction.md`（按钮图标 / 纯图标按钮 / 输入框图标 / 按钮间距 段） | 图标一律 Lucide + 插槽传递（按钮 `#icon`、输入框 `#prefix`/`#suffix`，禁 `:icon` 属性）；**纯图标入口用 `<el-button text>` + `#icon`**（`.btn-icon-square` 已暂停启用、写了不生效；text 不受 min-width 80 约束，图标色阶源头自动给）；按钮组间距一律父容器 `flex+gap`（源头已清零 EP 相邻 margin，禁再写 margin） |
+| 做**详情展示** `el-descriptions`（只读的「字段名+值」信息组，如详情页基本信息、弹窗信息回显） | `references/component-interaction.md`（Descriptions 段） | **只读用 Descriptions、可编辑才用 `el-form`**——禁拿 `el-form` + `disabled` 冒充只读（禁用态文字过淡、语义也不对）。默认加 `border`；`:column` 按内容长短选（短字段 3~4 列 / 含长文本 1~2 列或 `:span` 占整行）；`size` 三档字号源头已成套定义、**不在使用方覆盖**；空值补 `—` 不留空白；时间走 `formatTime` |
+| 输入**数值** `el-input-number`（数量 / 分数 / 时长 / 阈值这类带步进的数字输入） | `references/component-interaction.md`（InputNumber 段） | **必传 `:min` / `:max`**（否则用户能填负数或超大值），小数配 `:precision`+`:step`；三形态：默认 / `controls-position="right"`（空间紧张）/ `:controls="false"`（只要输入框外观）；增减图标源头已换 Lucide、不自定义。⚠️ **滑块旁显示数值不要拼它**——用 `<el-slider show-input>` |
+| 加**文字提示气泡** `el-tooltip` / **给纯图标按钮配说明**（图标是什么意思）/ **补全被省略号截断的文本** / hover 出提示 | `references/component-interaction.md`（Tooltip 段） | **纯图标入口必须配 tooltip 给全称**（否则语义靠猜），一律 `el-tooltip content=""`、**禁原生 `title` 属性**（延迟约 1s、样式失控、移动端不触发）；**每个 tooltip 必传 `:show-after="300"`**（全站统一延迟，防鼠标扫过一排图标时气泡连片弹出；延迟是 JS prop、**源头 scss 兜不住**，漏传即漏）；`placement` 按可用空间选（顶栏→`bottom`、底部→`top`），气泡白底/无箭头/字阶/限宽 318 限高 240 全在源头 `tooltip.scss`，**禁 `popper-class`/`:deep` 改外观**；`effect="dark"` 未启用（源头已统一白底）；必读信息不进 tooltip（用 `el-alert`）、可交互内容也不进（用 `el-dropdown` / `el-popconfirm` / `el-dialog`——`el-popover` 已暂停启用） |
 
 > 命中上表任一场景时，**这是强制步骤，不是可选参考**：先读对应细则，按其中的「强制做法」执行、避开「反例」、可直接套用「可照抄骨架」。读之前不要凭直觉自拟布局。
 >
@@ -208,6 +250,20 @@ demo 里出现的英文分三层，性质不同，处理方式不同——**新�
 > 命中上表任一场景时，**这是强制步骤**：先读细则，按「格式规则」定形态、import 对应「可执行实现」落地、避开「反例」。**绝不硬编码文案值**（如把时间写死成 `2026-03-17`）。
 >
 > 新增文案规范时：① 在 `references/copywriting/` 建 `<主题>.md`（四段式）；② 若有可执行逻辑，在 `design-spec/utils/` 建实现，规则文档与所有使用方都 import 它；③ 在本表加一行「任务→必读」映射。**三步都做，文案规范才算沉淀（可被下游识别、不散落硬编码）。**
+
+---
+
+## 📋 评判标准（给接入项目 / 页面打分）——【任务触发：必读细则】
+
+> 令牌管"用什么值"、组件管"用什么控件"、设计模式管"怎么组织布局"、文案规范管"文字怎么写"，
+> **评判标准管"做完了怎么验收"**——把上述各层的强制规则收敛成一份可逐条核对的清单。
+
+| 当任务是… | 动手前必须先 Read | 说明 |
+|---|---|---|
+| **检查某个页面 / 项目合不合规范**（"这个页面符合设计规范吗""帮我按规范检查一下""做个规范评分""接入验收"） | `references/judging-criteria.md` | 条目由 `scripts/extract-rules.mjs` 从各规范文档的 `@rule` 标记提取，产物在 `references/rules.generated.json`（**生成物，勿手改**）。分级 MUST/SHOULD/MAY 决定权重，百分制 85 合格，**MUST 未通过即不合规**（与总分无关）。可视化清单见 demo「评判标准」tab |
+| ⭐ **新增 / 修改任何组件、设计模式、令牌纪律**——凡是往 `references/` 写下一条「一律 / 必须 / 禁止 / 不得」的规则（新增组件段、新建 `*-pattern.md`、补令牌用途、加勿用清单条目…） | `references/judging-criteria.md`（§二 标记语法） | ⚠️ **规则写完必须顺手打 `@rule` 标记**——否则它不进评判清单、接入方评分时查不到这条，等于白写。标记在规则行末尾（HTML 注释，md 渲染不可见）：<br>`<!-- @rule id=kebab-唯一 level=MUST/SHOULD/MAY cat=类别 detect=regex/ast/manual dtitle=设计师看到的现象 -->`<br>**`dtitle` 别漏**：同一条规则设计师看现象、研发看写法，不写 `dtitle` 的话该条在设计视角只有技术措辞（「禁用 circle 属性」对不动代码的设计师是无效条目）。**提取已挂进 `pnpm dev/build`，不必手动跑脚本**；漏打标记由 `audit-spec.mjs` 的 C8 检查报出 |
+
+> **为什么条目要从规范提取而不是手写一份**：手写的清单会随规范演进而过期，长出「规范说 A、清单说 B」的裂缝——正是「改一处 = 扫全部引用」纪律要防的东西。做成**投影**后改规范即改条目，天然同步。这也是「后续新增内容能自动落入评判标准」的实现方式。
 
 ---
 

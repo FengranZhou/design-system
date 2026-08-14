@@ -93,14 +93,6 @@ const states = [
    配置卡片在中屏就下移换行，把整行宽度让给网格，
    否则网格被右侧卡片挤窄、text 按钮文字会重叠。 */
 
-@media (max-width: 1100px) {
-  .button-showcase { flex-direction: column; }
-  .button-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-@media (max-width: 640px) {
-  .button-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
 /* 右侧配置项卡片：块卡（bg-card）内部用白底 + 细边框区分层次
    （与 Input / Avatar 配置卡一致），「配置项」标题 + el-form 表单布局 */
 </style>
