@@ -46,7 +46,7 @@
 | 展开 | `el-table` 的 `type="expand"` | 全局功能区 |
 | 名称 / 纯文字 | 纯文本单元格（`prop` 直出 或 `formatter`） | 主题区 / 关键信息区最常见 |
 | 头像 | 业务组件 `UserAvatar`（`design-spec/components`） | 主题区 |
-| 状态 / 分类标签 | `el-tag`（状态语义色；`round` 胶囊） | 关键信息区，**状态一律用标签，不用裸文字** | <!-- @rule id=list-status-use-tag level=MUST cat=设计模式 detect=regex dtitle=列表里的状态应是彩色标签，不是一段裸文字 title=列表/表格的状态列一律用 el-tag，禁裸文字 -->
+| 状态 / 分类标签 | `el-tag`（状态语义色；`round` 胶囊） | 关键信息区，**状态一律用标签，不用裸文字** | <!-- @rule id=list-status-use-tag level=MUST cat=设计模式 detect=manual dtitle=列表里的状态应是彩色标签，不是一段裸文字 title=列表/表格的状态列一律用 el-tag，禁裸文字 -->
 | 日期 / 时间 | 纯文本（统一格式，见文案规范 Time 模块） | 关键信息区 |
 | 数值 / 金额 | 纯文本 + `formatter`（如 `¥1,200`），**右对齐** | 关键信息区 |
 | 进度 | ⏸ `el-progress` **当前暂停启用**（见 `component-interaction.md` 文末「勿用清单」）——需展示进度先与设计负责人确认 | 关键信息区 |

@@ -19,6 +19,7 @@
  *   C6  源头有约定 class 但 references 无对应条目（对账纪律）
  *   C7  组件三态覆盖率（有条目 / 勿用清单 / 无额外规矩，三者都不在＝下游查不到）
  *   C8  强制规则未进评判标准（漏打 @rule 标记＝该规则不进清单、评分时查不到）
+ *   C9  标了 detect=regex/ast 却没写检测器（承诺自动检测却没实现）
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
@@ -405,6 +406,36 @@ let suspendSectionText = '' // C3 需据此跳过清单自身
     )
   }
 
+}
+
+// ── C9：标了可自动检测，却没写检测器 ──────────────────────────
+// detect=regex/ast 是对下游的承诺「这条评分器会自动查」。
+// 没写检测器 = 条目静默落进「需人工确认」清单，承诺落空且无人察觉。
+{
+  const rulesFile = join(REFS, 'rules.generated.json')
+  const detectorsFile = join(ROOT, 'scripts/detectors.mjs')
+  if (existsSync(rulesFile) && existsSync(detectorsFile)) {
+    const items = JSON.parse(read(rulesFile)).items || []
+    const src = read(detectorsFile)
+    // 检测器以 'id': { ... } 形式挂在 DETECTORS 上
+    const implemented = new Set(
+      (src.match(/^\s*'([a-z0-9-]+)':\s*[{A-Za-z]/gm) || []).map((m) =>
+        m.replace(/^\s*'/, '').replace(/':.*$/, ''),
+      ),
+    )
+    const missing = items
+      .filter((r) => r.detect !== 'manual' && !implemented.has(r.id))
+      .map((r) => r.id)
+    if (missing.length) {
+      report(
+        'C9 检测器缺失',
+        `${missing.length} 条标了 detect=regex/ast 但 detectors.mjs 里没有对应实现`,
+        missing.map((id) => `    ${id}`).join('\n') +
+          '\n    → 这些条目会静默落进「需人工确认」，自动检测的承诺落空。\n' +
+          '      要么补检测器，要么把该条改回 detect=manual 并说明原因',
+      )
+    }
+  }
 }
 
 // ── 输出 ────────────────────────────────────────────────────────

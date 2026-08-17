@@ -137,7 +137,7 @@
 ## 五、可照抄骨架
 
 > ⛔ **工具栏样式的唯一数据源在 `el-theme/patterns/toolbar.scss`（全局层）。**
-> 使用方**只写约定 class**——布局 / 元素间距 / 标题字阶 / 工具栏内 tab 对齐，全部已在源头处理好。 <!-- @rule id=toolbar-convention-class level=MUST cat=设计模式 detect=regex dtitle=工具栏标题、筛选、按钮的间距与对齐应各页一致 title=工具栏一律用源头约定 class .toolbar/__left/__right/__title，禁在使用方复刻 -->
+> 使用方**只写约定 class**——布局 / 元素间距 / 标题字阶 / 工具栏内 tab 对齐，全部已在源头处理好。 <!-- @rule id=toolbar-convention-class level=MUST cat=设计模式 detect=manual dtitle=工具栏标题、筛选、按钮的间距与对齐应各页一致 title=工具栏一律用源头约定 class .toolbar/__left/__right/__title，禁在使用方复刻 -->
 > 在使用方 scoped 里重写这几条 = 局部私货（源头改了它不动），一律禁止。
 > **需要页面自己写的只有留白**（见「三、留白」）：左右归页面内容区容器统一给，上下按标题层级取档（页面级 16 / 模块级下方 12）。
 

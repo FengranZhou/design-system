@@ -455,6 +455,182 @@ export const DETECTORS = {
     hint: '工具栏一律用源头约定 class .toolbar / __left / __right / __title',
   },
 
+  // ── 第三批 ──────────────────────────────────────────────────
+
+  /** 下拉面板必须放 #dropdown 插槽的 el-dropdown-menu，禁手撸浮层 */
+  'dropdown-use-slots': {
+    custom: (ctx) => {
+      if (!ctx.template) return []
+      const root = parseTemplate(ctx.template)
+      const hits = []
+      for (const dd of findAll(root, /^el-dropdown$/)) {
+        // #dropdown 插槽里必须是 el-dropdown-menu
+        for (const child of dd.children) {
+          const isDropdownSlot =
+            child.tag === 'template' &&
+            Object.keys(child.attrs).some((k) => /^#dropdown$|^v-slot:dropdown$/.test(k))
+          if (!isDropdownSlot) continue
+          if (!childrenOf(child, /^el-dropdown-menu$/).length) {
+            hits.push({
+              line: child.line + ctx.templateOffset,
+              text: '#dropdown 插槽内不是 <el-dropdown-menu>',
+            })
+          }
+        }
+      }
+      return hits
+    },
+    hint: '下拉面板放 #dropdown 插槽的 <el-dropdown-menu>，分组抬头用 .dropdown-group-title + 裸 <li>',
+  },
+
+  /** el-anchor：第一节紧贴顶部时须传 select-scroll-top */
+  'anchor-select-scroll-top': {
+    custom: (ctx) => {
+      if (!ctx.template) return []
+      const root = parseTemplate(ctx.template)
+      const hits = []
+      for (const a of findAll(root, /^el-anchor$/)) {
+        const has = a.attrs['select-scroll-top'] !== undefined || a.attrs[':select-scroll-top'] !== undefined
+        if (has) continue
+        // ⚠️ 规则的前提是「第一节紧贴容器顶部」——静态判不出版式。
+        //    折中：只在传了 container（自建滚动容器，多为表单分组/长页分节这类
+        //    首节紧贴顶部的版式）时才要求；指向页面别处区块的用法不报。
+        const hasContainer = a.attrs.container !== undefined || a.attrs[':container'] !== undefined
+        if (!hasContainer) continue
+        hits.push({
+          line: a.line + ctx.templateOffset,
+          text: '自建滚动容器却未传 select-scroll-top（滚回顶部时锚点全部熄灭）',
+        })
+      }
+      return hits
+    },
+    hint: 'EP 在 scrollTop===0 时若未开 selectScrollTop 会返回空串，导致所有锚点一起熄灭',
+  },
+
+  /** el-slider 需显式宽度容器 */
+  'slider-width-container': {
+    custom: (ctx) => {
+      if (!ctx.template) return []
+      const root = parseTemplate(ctx.template)
+      const hits = []
+      for (const sl of findAll(root, /^el-slider$/)) {
+        // 自身或父级带宽度即可
+        const selfW = /width\s*:/.test(String(sl.attrs.style || ''))
+        // 父级带任意 class 即认为有承载容器——宽度多半写在 scoped 样式里，
+        // 模板上看不到。只报「直接裸放在无 class 容器里」这种明确情况，
+        // 否则 .slider-host 这类语义命名会被误判（曾误报）
+        const parentW =
+          sl.parent &&
+          (/width\s*:/.test(String(sl.parent.attrs.style || '')) ||
+            String(sl.parent.attrs.class || '').trim().length > 0)
+        if (selfW || parentW) continue
+        hits.push({ line: sl.line + ctx.templateOffset, text: '无显式宽度容器，会撑满整行' })
+      }
+      return hits
+    },
+    hint: 'el-slider 默认撑满父级，须放在定宽区块或给父容器设宽度',
+  },
+
+  /** el-scrollbar：排布写在 view-class 指定的 view 上 */
+  'scrollbar-view-class': {
+    custom: (ctx) => {
+      if (!ctx.template) return []
+      const root = parseTemplate(ctx.template)
+      const hits = []
+      for (const sb of findAll(root, /^el-scrollbar$/)) {
+        // 外壳上直接写了排布 class 或 style，却没用 view-class
+        const hasViewClass = sb.attrs['view-class'] !== undefined || sb.attrs[':view-class'] !== undefined
+        if (hasViewClass) continue
+        const style = String(sb.attrs.style || '')
+        if (/display\s*:\s*flex|gap\s*:|padding\s*:/.test(style)) {
+          hits.push({
+            line: sb.line + ctx.templateOffset,
+            text: '排布写在 el-scrollbar 外壳上，应交给 view-class',
+          })
+        }
+      }
+      return hits
+    },
+    hint: '滚动内容的 flex/gap/内边距写在 view-class 指定的 view 上，外壳只负责 flex:1; min-height:0',
+  },
+
+  /** 骨架屏须铺在 bg-panel 白底上 */
+  'skeleton-on-panel': {
+    custom: (ctx) => {
+      if (!ctx.template) return []
+      const root = parseTemplate(ctx.template)
+      const sks = findAll(root, /^el-skeleton$/)
+      if (!sks.length) return []
+      const hits = []
+      for (const sk of sks) {
+        // 向上找承载容器，看有没有 bg-card（浅灰，对比过弱）
+        let n = sk.parent
+        while (n) {
+          const cls = String(n.attrs.class || '')
+          const sty = String(n.attrs.style || '')
+          if (/bg-card/.test(cls) || /--iflyv-bg-card/.test(sty)) {
+            hits.push({
+              line: sk.line + ctx.templateOffset,
+              text: '骨架屏铺在 bg-card 浅灰上，灰条对比过弱',
+            })
+            break
+          }
+          if (/bg-panel/.test(cls) || /--iflyv-bg-panel/.test(sty)) break
+          n = n.parent
+        }
+      }
+      return hits
+    },
+    hint: '骨架灰条在 bg-card 浅灰上几乎看不见，承载容器要用 var(--iflyv-bg-panel) 白底',
+  },
+
+  /** 渐变禁用于效率型组件内部 */
+  'gradient-not-in-components': {
+    scope: 'style',
+    custom: (ctx) => {
+      const body = ctx.style || ''
+      const hits = []
+      body.split('\n').forEach((line, i) => {
+        if (!/(linear|radial|conic)-gradient/.test(line)) return
+        if (/var\(--iflyv-(ai-|bg-card)/.test(line)) return // AI 令牌与卡片底色渐变合法
+        // 选择器里出现效率型组件 → 渐变用进了组件内部
+        const near = body.split('\n').slice(Math.max(0, i - 6), i + 1).join('\n')
+        if (/\.el-(form|table|dialog|drawer|input|select)\b/.test(near)) {
+          hits.push({ line: i + 1 + ctx.styleOffset, text: line.trim().slice(0, 80) })
+        }
+      })
+      return hits
+    },
+    hint: '表单/表格/弹窗/抽屉等效率型组件内部不允许渐变装饰',
+  },
+
+  /** 下游根 CLAUDE.md 须 @ 引入设计系统规范 */
+  'integration-claude-at-import': {
+    files: /CLAUDE\.md$/,
+    custom: (ctx) => {
+      // 只在项目根 CLAUDE.md 上判断
+      if (!/(^|\/)CLAUDE\.md$/.test(ctx.file)) return []
+      if (/@[^\s]*design-spec\/CLAUDE\.md/.test(ctx.text)) return []
+      return [{ line: 1, text: '未用 @ 引入 design-spec/CLAUDE.md，下游 CC 读不到设计规则' }]
+    },
+    hint: '在项目根 CLAUDE.md 加一行 `@<路径>/design-spec/CLAUDE.md`，下游 CC 才能拿到规则与触发指针',
+  },
+
+  /** 展示型页面同样不得覆盖 EP 组件外观 */
+  'display-no-ep-override': {
+    scope: 'style',
+    custom: (ctx) => {
+      const hits = []
+      ;(ctx.style || '').split('\n').forEach((line, i) => {
+        // 非 :deep 形式直接写 .el-xxx 选择器改外观（scoped 里写了也可能穿透到子组件）
+        if (!/^\s*\.el-[a-z-]+/.test(line)) return
+        hits.push({ line: i + 1 + ctx.styleOffset, text: line.trim().slice(0, 80) })
+      })
+      return hits
+    },
+    hint: 'EP 组件外观一律不覆盖（含展示型页面）——需要不同观感就改源头，或另做自定义排版组件承担视觉主体',
+  },
+
   /** AI 按钮：禁在 el-button 上自贴渐变复刻 */
   'aibutton-use-component': {
     custom: (ctx) => {
