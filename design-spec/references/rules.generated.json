@@ -54,7 +54,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/judging-criteria.md",
-      "line": 149
+      "line": 153
     },
     {
       "id": "integration-three-layers",
@@ -68,7 +68,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/judging-criteria.md",
-      "line": 151
+      "line": 155
     },
     {
       "id": "integration-no-copy",
@@ -82,7 +82,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/judging-criteria.md",
-      "line": 153
+      "line": 157
     },
     {
       "id": "biz-component-no-override",
@@ -96,7 +96,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/judging-criteria.md",
-      "line": 157
+      "line": 161
     },
     {
       "id": "integration-claude-at-import",
@@ -110,7 +110,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/judging-criteria.md",
-      "line": 155
+      "line": 159
     },
     {
       "id": "color-no-hardcode",

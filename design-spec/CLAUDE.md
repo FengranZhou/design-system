@@ -260,7 +260,7 @@ demo 里出现的英文分三层，性质不同，处理方式不同——**新�
 
 | 当任务是… | 动手前必须先 Read | 说明 |
 |---|---|---|
-| **检查某个页面 / 项目合不合规范**（"这个页面符合设计规范吗""帮我按规范检查一下""做个规范评分""接入验收"） | `references/judging-criteria.md` | 条目由 `scripts/extract-rules.mjs` 从各规范文档的 `@rule` 标记提取，产物在 `references/rules.generated.json`（**生成物，勿手改**）。分级 MUST/SHOULD/MAY 决定权重，百分制 85 合格，**MUST 未通过即不合规**（与总分无关）。可视化清单见 demo「评判标准」tab |
+| **检查某个页面 / 项目合不合规范**（"这个页面符合设计规范吗""帮我按规范检查一下""做个规范评分""接入验收"） | `references/judging-criteria.md`（规则定义）+ 仓库根 `scripts/README.md`（**怎么跑脚本、怎么读报告、误报怎么豁免**） | 条目由 `scripts/extract-rules.mjs` 从各规范文档的 `@rule` 标记提取，产物在 `references/rules.generated.json`（**生成物，勿手改**）。分级 MUST/SHOULD/MAY 决定权重，百分制 85 合格，**MUST 未通过即不合规**（与总分无关）。可视化清单见 demo「评判标准」tab |
 | ⭐ **新增 / 修改任何组件、设计模式、令牌纪律**——凡是往 `references/` 写下一条「一律 / 必须 / 禁止 / 不得」的规则（新增组件段、新建 `*-pattern.md`、补令牌用途、加勿用清单条目…） | `references/judging-criteria.md`（§二 标记语法） | ⚠️ **规则写完必须顺手打 `@rule` 标记**——否则它不进评判清单、接入方评分时查不到这条，等于白写。标记在规则行末尾（HTML 注释，md 渲染不可见）：<br>`<!-- @rule id=kebab-唯一 level=MUST/SHOULD/MAY cat=类别 detect=regex/ast/manual dtitle=设计师看到的现象 -->`<br>**`dtitle` 别漏**：同一条规则设计师看现象、研发看写法，不写 `dtitle` 的话该条在设计视角只有技术措辞（「禁用 circle 属性」对不动代码的设计师是无效条目）。**提取已挂进 `pnpm dev/build`，不必手动跑脚本**；漏打标记由 `audit-spec.mjs` 的 C8 检查报出 |
 
 > **为什么条目要从规范提取而不是手写一份**：手写的清单会随规范演进而过期，长出「规范说 A、清单说 B」的裂缝——正是「改一处 = 扫全部引用」纪律要防的东西。做成**投影**后改规范即改条目，天然同步。这也是「后续新增内容能自动落入评判标准」的实现方式。
