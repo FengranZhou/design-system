@@ -8,13 +8,13 @@
     "MAY": 0
   },
   "byDetect": {
-    "regex": 65,
+    "regex": 60,
     "ast": 6,
-    "manual": 16
+    "manual": 21
   },
   "byView": {
     "design": 68,
-    "impl": 79
+    "impl": 80
   },
   "categoryOrder": [
     "单一数据源",
@@ -339,7 +339,7 @@
       "designTitle": "选项超过 200 必须换 el-select-v2（虚拟滚动），否则首次展开卡顿",
       "level": "MUST",
       "cat": "组件选用",
-      "detect": "regex",
+      "detect": "manual",
       "views": [
         "impl"
       ],
@@ -540,13 +540,14 @@
     },
     {
       "id": "anchor-select-scroll-top",
-      "title": "3. 第一节就在容器顶部时必须传 `select-scroll-top`。EP 内部 `getCurrentHref()` 有一条特判：`scrollTop === 0` 时，若未开启 `selectScrollTop` 就返回空串——即滚动回到顶部后所有锚点一起失去高亮（首项明明在视口里却不亮）。这不是 bug 是 EP 默认行为，但对\"第一节紧贴容器顶部\"的常见版式（表单分组跳转、长页分节）几乎总是错的，须显式开启。",
-      "designTitle": "3. 第一节就在容器顶部时必须传 `select-scroll-top`。EP 内部 `getCurrentHref()` 有一条特判：`scrollTop === 0` 时，若未开启 `selectScrollTop` 就返回空串——即滚动回到顶部后所有锚点一起失去高亮（首项明明在视口里却不亮）。这不是 bug 是 EP 默认行为，但对\"第一节紧贴容器顶部\"的常见版式（表单分组跳转、长页分节）几乎总是错的，须显式开启。",
+      "title": "第一节紧贴容器顶部时，el-anchor 必须传 select-scroll-top",
+      "designTitle": "页面滚回顶部时锚点导航不应全部失去高亮",
       "level": "MUST",
       "cat": "组件用法",
       "detect": "regex",
       "views": [
-        "design"
+        "design",
+        "impl"
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
@@ -675,7 +676,7 @@
       "designTitle": "限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤",
       "level": "SHOULD",
       "cat": "组件用法",
-      "detect": "regex",
+      "detect": "manual",
       "views": [
         "impl"
       ],
@@ -838,7 +839,7 @@
       "designTitle": "表单标签列应对齐成一条线，必填星号位置统一",
       "level": "MUST",
       "cat": "设计模式",
-      "detect": "regex",
+      "detect": "manual",
       "views": [
         "design",
         "impl"
@@ -958,7 +959,7 @@
       "designTitle": "列表里的状态应是彩色标签，不是一段裸文字",
       "level": "MUST",
       "cat": "设计模式",
-      "detect": "regex",
+      "detect": "manual",
       "views": [
         "design",
         "impl"
@@ -1033,7 +1034,7 @@
       "designTitle": "工具栏标题、筛选、按钮的间距与对齐应各页一致",
       "level": "MUST",
       "cat": "设计模式",
-      "detect": "regex",
+      "detect": "manual",
       "views": [
         "design",
         "impl"

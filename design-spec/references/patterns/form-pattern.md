@@ -22,7 +22,7 @@
 
 ## 二、强制做法
 
-### 1. 骨架：一律用 `el-form` + `el-form-item`，不手撸 <!-- @rule id=form-use-el-form level=MUST cat=设计模式 detect=regex dtitle=表单标签列应对齐成一条线，必填星号位置统一 title=表单骨架一律用 el-form + el-form-item，禁 div/flex 手拼 -->
+### 1. 骨架：一律用 `el-form` + `el-form-item`，不手撸 <!-- @rule id=form-use-el-form level=MUST cat=设计模式 detect=manual dtitle=表单标签列应对齐成一条线，必填星号位置统一 title=表单骨架一律用 el-form + el-form-item，禁 div/flex 手拼 -->
 
 - 表单容器：`<el-form>`，必须带 `:model`（数据）、`label-width="auto"`（见下文 2）、`ref`（用于校验）。
 - 每个字段：`<el-form-item label="字段名" prop="字段key">`，内放 Element Plus 控件（`el-input` / `el-select` / `el-date-picker` / `el-checkbox-group` / `el-switch` …）。一项通常一个控件，但同一字段的多控件（如时间范围的起止日期）也放同一个 `el-form-item` 内。

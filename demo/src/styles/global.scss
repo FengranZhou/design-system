@@ -194,6 +194,9 @@ body {
     height: 100%;
     padding-inline-start: var(--iflyv-spacing-6);
 
+    /* audit-ignore 规范展示页脚手架：顶栏只借 el-tabs 做导航切换，
+       内容区由 App.vue 的 v-show 自行控制，故隐藏 EP 自带的面板容器。
+       不改变 el-tabs 在真实用法下的外观。 */
     .el-tabs__content {
       display: none;
     }

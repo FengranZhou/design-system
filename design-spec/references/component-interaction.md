@@ -240,7 +240,7 @@ updated: 2026-05-10
 
 - **必传 `value-format`**（如 `"HH:mm"` / `"HH:mm:ss"`），否则拿到 Date 对象。 <!-- @rule id=timepicker-value-format level=MUST cat=组件用法 view=impl detect=regex title=el-time-picker 必传 value-format -->
 - **时间区间**用 `is-range` + `start-placeholder` / `end-placeholder`（一个组件搞定，同样不要拼两个）。
-- **限制可选范围**（如只能选 8:00~22:00）用 `:disabled-hours` / `:disabled-minutes`。 <!-- @rule id=timepicker-disabled-range level=SHOULD cat=组件用法 view=impl detect=regex title=限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤 -->
+- **限制可选范围**（如只能选 8:00~22:00）用 `:disabled-hours` / `:disabled-minutes`。 <!-- @rule id=timepicker-disabled-range level=SHOULD cat=组件用法 view=impl detect=manual title=限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤 -->
 - 固定间隔的时间点（如每 30 分钟一档）用 `el-time-select` + `start` / `step` / `end`，它更适合"节次"这类离散时间。
 
 ```vue
@@ -681,7 +681,7 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 
 1. **有固定顶栏时必须传 `:offset`（= 顶栏高度 + 间距）**。`el-anchor` 点击走 **JS 滚动**，**不吃** CSS 的 `scroll-padding-top`——不传 offset，跳转后目标标题会被固定顶栏盖住。本项目取 `:offset="76"`（topbar 64 + spacing-3 12，见 `demo/src/styles/global.scss`）。
 2. **滚动容器不是 window 时必须传 `container`**。⚠️ **与「滚动条」段的交叉盲区**：本系统要求内部滚动区一律用 `el-scrollbar`（见文末滚动条段），而一旦内容区被 `el-scrollbar` 包裹，Anchor 默认监听 window 滚动就**完全失效**（既不高亮也不跳转），必须把 `container` 指向该 scrollbar 的 wrap 元素。
-3. **第一节就在容器顶部时必须传 `select-scroll-top`**。EP 内部 `getCurrentHref()` 有一条特判：`scrollTop === 0` 时，若未开启 `selectScrollTop` 就**返回空串**——即**滚动回到顶部后所有锚点一起失去高亮**（首项明明在视口里却不亮）。这不是 bug 是 EP 默认行为，但对"第一节紧贴容器顶部"的常见版式（表单分组跳转、长页分节）几乎总是错的，**须显式开启**。<!-- @rule id=anchor-select-scroll-top level=MUST cat=组件用法 detect=regex -->
+3. **第一节就在容器顶部时必须传 `select-scroll-top`**。EP 内部 `getCurrentHref()` 有一条特判：`scrollTop === 0` 时，若未开启 `selectScrollTop` 就**返回空串**——即**滚动回到顶部后所有锚点一起失去高亮**（首项明明在视口里却不亮）。这不是 bug 是 EP 默认行为，但对"第一节紧贴容器顶部"的常见版式（表单分组跳转、长页分节）几乎总是错的，**须显式开启**。<!-- @rule id=anchor-select-scroll-top level=MUST cat=组件用法 detect=regex dtitle=页面滚回顶部时锚点导航不应全部失去高亮 title=第一节紧贴容器顶部时，el-anchor 必须传 select-scroll-top -->
 
 4. **容器不是 window 时，还须 `@click` 拦掉浏览器的原生锚跳**：`el-anchor-link` 渲染的是真 `<a href="#…">`，而 EP 的 `handleClick` **不调 `preventDefault()`**。于是点击时发生两次滚动——EP 的 `animateScrollTo` 写 `container.scrollTop`（正确，限制在容器内），浏览器的原生锚跳又把 `#target` 滚进视口（**页面级滚动，会把整个模块顶走**）。绑 `@click="e => e.preventDefault()"` 即可，**只拦默认行为，滚动与高亮仍归 EP**。
 

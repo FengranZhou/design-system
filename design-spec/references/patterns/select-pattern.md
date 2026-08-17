@@ -35,7 +35,7 @@ Radio 有两种形态：**基础 radio（`el-radio`）是默认形态**，绝大
 |---|---|
 | ≤ 10 | 平铺即可，不必分组 |
 | 10 ~ 200 | 能按语义归类就用 `el-option-group` 分组（抬头口径见 `component-interaction.md` Dropdown 分组段），配 `filterable` |
-| **> 200** | **必须换 `el-select-v2`**（虚拟滚动） <!-- @rule id=select-v2-over-200 level=MUST cat=组件选用 view=impl detect=regex title=选项超过 200 必须换 el-select-v2（虚拟滚动），否则首次展开卡顿 -->——`el-select` 会把全部选项渲染成真实 DOM，200+ 时首次展开明显卡顿 |
+| **> 200** | **必须换 `el-select-v2`**（虚拟滚动） <!-- @rule id=select-v2-over-200 level=MUST cat=组件选用 view=impl detect=manual title=选项超过 200 必须换 el-select-v2（虚拟滚动），否则首次展开卡顿 -->——`el-select` 会把全部选项渲染成真实 DOM，200+ 时首次展开明显卡顿 |
 
 > **`el-select-v2` 的外观不用额外做任何事**：它与 `el-select` **复用同一套 class**（`.el-select__wrapper` / `.el-select-dropdown__item` 等），源头 `select.scss` 的覆盖自动生效，观感与普通 Select 一致。
 > **差异只在数据接口**：选项不用 `<el-option>` 子标签，改为 `:options="[{ label, value }]"` 数组传入；`filterable` / `multiple` / `collapse-tags` 等 prop 用法不变。
