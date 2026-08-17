@@ -5,11 +5,14 @@
   "type": "module",
   "scripts": {
     "extract-rules": "node ../scripts/extract-rules.mjs",
-    "dev": "npm run extract-rules && vite",
-    "build": "npm run extract-rules && vue-tsc && vite build",
-    "preview": "vite preview",
+    "check-rules": "node ../scripts/extract-rules.mjs --check",
     "audit:page": "node ../scripts/audit-page.mjs demo/src",
-    "audit:spec": "node ../scripts/audit-spec.mjs"
+    "audit:page:warn": "node ../scripts/audit-page.mjs demo/src --quiet || true",
+    "audit:spec": "node ../scripts/audit-spec.mjs",
+    "dev": "npm run extract-rules && vite",
+    "build": "npm run extract-rules && vue-tsc && vite build && npm run audit:page:warn",
+    "build:ci": "npm run check-rules && vue-tsc && vite build && npm run audit:page:warn",
+    "preview": "vite preview"
   },
   "dependencies": {
     "vue": "^3.5.13",
