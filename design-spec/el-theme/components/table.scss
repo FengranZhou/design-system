@@ -6,20 +6,42 @@
    @when-changed: 使用方写 <el-table stripe> 不会被禁，但视觉与设计系统不一致——
                   详见 examples/table.examples.vue 反模式。 */
 
+/* 设计系统约定：表格**不画最外层描边**——行与行之间的细线已足够区分记录，
+   再加一圈外框会让表格在卡片/面板里显得"框中框"。
+   @depends-on: 无外框后，表头行的四个圆角（L20-27）成为表格顶部的唯一形状来源。
+   @when-changed: 若将来要恢复外框，需同时恢复 border + 外层 border-radius，
+                  并回到"最后一行去 border-bottom 防双线"的原始理由（见 L45）。 */
 .el-table {
-  background-color: var(--iflyv-bg-panel);
-  border-radius: var(--iflyv-radius-sm);
-  border: 1px solid var(--iflyv-border-default);
+  /* ⚠️ 底色铺在表体（body-wrapper）而非 .el-table 整体：表头圆角把四角切开后，
+     切口必须透出表格所在容器的底色；若把 bg-panel 铺在 .el-table 上，
+     它会垫在表头之下，从切口漏出白色小三角（真实翻车）。
+     @depends-on: 与表头圆角（L31-37）强相关——有圆角就不能给 .el-table 设底色。
+     @when-changed: 若取消表头圆角，可把底色移回 .el-table。 */
+  background-color: transparent;
   box-shadow: none;
+
+  .el-table__body-wrapper { background-color: var(--iflyv-bg-panel); }
 
   /* ==================== 表头 Header ==================== */
   .el-table__header-wrapper {
+    /* 表头不画底部分割线：表头底色 bg-inset 与表体 bg-panel 的色差已完成分隔，
+       再加一条线属于「间距/色差已够时不再上线条」原则里的多余线。
+       @depends-on: 依赖表头与表体的底色差；若两者同色需另找分隔手段。 */
     th.el-table__cell {
       background-color: var(--iflyv-bg-inset);
       font-size: var(--iflyv-font-size-16);
       font-weight: var(--iflyv-font-weight-semibold);
       color: var(--iflyv-text-1);
+      border-bottom: none;
     }
+
+    /* 表头行整体四个圆角 radius-sm(8px)：左上/右上由表头容器裁切，
+       左下/右下由首尾单元格各自补上——th 是表格布局元素，圆角必须落在单元格上，
+       给 thead/tr 设 border-radius 不生效。
+       @depends-on: 依赖表头底色 bg-inset 与表体 bg-panel 的色差呈现圆角形状。
+       @when-changed: 若表头改为与表体同底色，圆角将不可见，本组规则可一并移除。 */
+    th.el-table__cell:first-child { border-start-start-radius: var(--iflyv-radius-sm); border-end-start-radius: var(--iflyv-radius-sm); }
+    th.el-table__cell:last-child  { border-start-end-radius: var(--iflyv-radius-sm);  border-end-end-radius: var(--iflyv-radius-sm); }
   }
 
   /* ==================== 行样式 Row ==================== */
@@ -34,9 +56,9 @@
       background-color: var(--iflyv-bg-inset);
     }
 
-    /* 最后一行去掉 border-bottom，避免与表格整体外框（L9 border）重合产生双线。
-       @depends-on: 依赖 .el-table 的外层 border + border-radius 提供整体边框。
-       @when-changed: 若移除 .el-table 外框，本规则需同时删除（否则最后一行视觉上"开口"）。 */
+    /* 最后一行去掉 border-bottom：表格无外框，末行底线会成为一条悬空的收尾线，
+       视觉上像"表格没结束"。行间线只用于分隔相邻两行，末行之后无行可分隔。
+       @when-changed: 若恢复表格外框，本规则的理由变为"防与外框重合产生双线"，仍需保留。 */
     &:last-child > td.el-table__cell {
       border-bottom: none;
     }
@@ -65,15 +87,14 @@
     background-color: var(--iflyv-bg-inset);
   }
 
-  /* 统一外框处理：去除 EP 默认伪元素描边，改由 L9 的 border + radius-sm 提供圆角外框。
-     @depends-on: L8 border-radius + L9 border 提供完整外框；
-                  overflow: hidden 配合 border-radius 让圆角能裁剪内部内容（否则角会"漏"）。
-     @when-changed: 三件事强相关，缺一不可——border / border-radius / overflow 缺任意一个，
-                    表格视觉都会断裂。EP 升级时若伪元素结构变化，本组规则需重写。 */
+  /* 统一外框处理：去除 EP 默认伪元素描边（EP 用 ::before/::after 画表格外围横竖线），
+     本设计系统表格不画外框，全部隐藏。
+     @depends-on: 与顶部"不画最外层描边"约定是一组；表头圆角靠 th 自身的 border-radius，
+                  不依赖父级 overflow 裁切。
+     @when-changed: EP 升级若伪元素结构变化，本组规则需重写。 */
   &::before, &::after { display: none; }
   .el-table__inner-wrapper::before,
   .el-table__inner-wrapper::after { display: none; }
-  overflow: hidden;
 
   /* border 模式：更高优先级覆盖 EP .el-table--border 伪元素 + 末列去重 */
   &.el-table--border {
