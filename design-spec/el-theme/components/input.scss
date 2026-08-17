@@ -136,6 +136,19 @@
   width: 1rem;
   height: 1rem;
 }
+
+/* 后缀区多图标并存时的图标间距（典型场景：clearable 清空按钮 + #suffix 搜索图标）。
+   EP 只给了「图标与输入文字」的间距（.el-input__icon 与 suffix-inner>:first-child
+   各有 margin-left: 8px），**没有「图标与图标」之间的间距**——
+   插槽传入的 Lucide SVG 不带 .el-input__icon 类，于是清空按钮与搜索图标紧贴在一起（真实翻车）。
+   此处补相邻图标间距：用 + 相邻兄弟选择器，只在确实有两个及以上图标时生效，
+   单图标场景不受影响。
+   @depends-on: 依赖 EP 的 suffix-inner 内 flex 排布；间距值与 EP 的 8px 保持同一档（spacing-2）。
+   @when-changed: 若 EP 将来自己补了图标间距，本条会与之叠加，需重新核对。 */
+.el-input__suffix-inner > * + *,
+.el-input__prefix-inner > * + * {
+  margin-inline-start: var(--iflyv-spacing-2);
+}
 .el-input--small .el-input__prefix-inner > svg,
 .el-input--small .el-input__suffix-inner > svg {
   width: var(--iflyv-font-size-14);
