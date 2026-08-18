@@ -233,7 +233,7 @@ watch(() => [props.columns, props.data, props.operationWidth], () => nextTick(me
 
 <style scoped>
 /* 只装扮自己骨架：操作区排布。基础组件外观不在此定义。 */
-/* 操作区：inline 排版 + nowrap 防换行撑高。间距由 .table-operation 的相邻选择器给（12），
+/* 操作区：inline 排版 + nowrap 防换行撑高。间距由 .table-operation 的相邻选择器给（16），
    故此处不用 flex/gap（会与相邻 margin 叠加成双倍）——遵守 table.scss 的约定。 */
 .data-table__ops {
   white-space: nowrap;

@@ -26,7 +26,7 @@ export const SPACING_USAGE: SpacingUsage[] = [
   { name: '--iflyv-spacing-1', px: 4, scenes: ['图标与文字间距', '标签内文字与图标间距'] },
   { name: '--iflyv-spacing-1_5', px: 6, scenes: ['Tag / Badge 等小控件的左右内边距'] },
   { name: '--iflyv-spacing-2', px: 8, scenes: ['列表项内子元素间距（标题与其描述、主信息与副信息）', '一组紧凑图标之间'] },
-  { name: '--iflyv-spacing-3', px: 12, scenes: ['模块级标题与其下方内容之间', '按钮之间（水平）'] },
+  { name: '--iflyv-spacing-3', px: 12, scenes: ['模块级标题与其下方内容之间', '按钮之间（水平，有底色/描边的按钮）'] },
   {
     name: '--iflyv-spacing-4',
     px: 16,
@@ -36,6 +36,7 @@ export const SPACING_USAGE: SpacingUsage[] = [
       '卡片之间（同级卡片常规间距）',
       '栅格列间水槽',
       '小卡片内边距（内容与卡片四周）',
+      '按钮之间（水平，无底色的文本按钮 / 纯图标按钮）',
     ],
   },
   { name: '--iflyv-spacing-5', px: 20, scenes: ['大卡片内边距（内容与卡片四周）'] },

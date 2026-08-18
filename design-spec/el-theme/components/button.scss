@@ -371,8 +371,12 @@
 /* RTL：覆盖 EP 硬编码物理 margin */
 
 /* 相邻按钮间距清零（覆盖 EP 原生 margin-left: 12px）。
-   @depends-on: 使用方按钮组间距必须由父容器 `display: flex; gap: <token>` 提供——
-                推荐 gap: var(--iflyv-spacing-3)（12px），紧凑场景 var(--iflyv-spacing-2)（8px）。
+   @depends-on: 使用方按钮组间距必须由父容器 `display: flex; gap: <token>` 提供。
+                档位按「按钮有没有可见边界」选：
+                  · 含任一有底色/描边的按钮 → gap: var(--iflyv-spacing-3)（12px）
+                  · 全组都是无底色按钮（text 文本按钮 / 纯图标按钮）→ var(--iflyv-spacing-4)（16px）
+                无底色时按钮边界只能靠文字轮廓判断，12px 会被读成普通字间距，
+                加宽是为补偿缺失的视觉边界。
    @when-changed: 使用方若再写 .el-button + .el-button { margin: ... }，
                   因为是同选择器、加载更晚，会**覆盖**本规则——
                   人话翻译：使用方写的 CSS 比 design-spec 后加载，会盖掉我们的清零设置，

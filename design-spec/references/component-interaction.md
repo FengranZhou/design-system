@@ -576,7 +576,18 @@ const onCheckAll = (val: boolean) => {
 ### 按钮间距
 design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-left: 12px }`（见 `el-theme/components/button.scss`）。
 
-**统一约定**：按钮组的间距**一律由父容器 `display: flex; gap: <token>` 提供**，推荐 `gap: var(--iflyv-spacing-3)`（12px）；紧凑场景 `var(--iflyv-spacing-2)`（8px）。
+**统一约定**：按钮组的间距**一律由父容器 `display: flex; gap: <token>` 提供**。
+
+**档位按「按钮有没有可见边界」选**——这是唯一判据，不靠手感： <!-- @rule id=button-gap-by-boundary level=MUST cat=设计令牌 detect=manual -->
+
+| 按钮组构成 | gap | 为什么 |
+|---|---|---|
+| **含任一有底色/描边的按钮**（实心主按钮、次按钮、危险按钮…） | `var(--iflyv-spacing-3)`（12px） | 底色与描边本身就是可见边界，12px 空白已足够分隔两个色块 |
+| **全部是无底色按钮**（`<el-button text>` 文本按钮 / 纯图标按钮） | `var(--iflyv-spacing-4)`（16px） | 没有底色，按钮边界只能靠文字轮廓判断。12px 会被读成"文字间的普通空格"，两个按钮糊成一句话——**加宽是为了补偿缺失的视觉边界**，让"这是两个独立可点区域"成立 |
+
+> **判据是「有没有底色/描边」，不是「按钮类型叫什么」**：一组里只要**混有**实心按钮，就按 12px（有边界的那个已经把节奏定下来了）；**全组都无底色**才升到 16px。
+>
+> ⚠️ **别把 16px 理解成"文本按钮更重要所以更宽"**——它补偿的是边界缺失，与重要性无关。同理，纯图标按钮（`<el-button text>` + `#icon`）没有文字轮廓、边界更弱，同样走 16px。
 
 **禁止**：
 - 不要在按钮上写 `margin-left` / `margin-right` / `margin-inline-start` / `margin-inline-end`
@@ -586,6 +597,7 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 - `.el-button-group` 内部按钮按 EP 默认行为（边框 -1px 重叠），不要包裹 flex+gap（会破坏 -1px 边框重叠）。
   > ⚠️ **能力边界：`el-button-group` 只是「视觉聚合」，不是分段控件**。它**不提供** ARIA radio group / toolbar 语义，**不支持** ←/→ 箭头键切换焦点——每个按钮仍是独立的 Tab 停靠点。**需要"从几个选项里选一个"的分段切换，用 `el-radio-group`**（见 `patterns/select-pattern.md`），不要拿 button-group 冒充。
 - `.el-button.table-operation`（表格操作列文字按钮）使用 `<td>` 内 inline 排版，间距由 `el-theme/components/table.scss` 的 `.table-operation + .table-operation { margin-inline-start: spacing-3 }` 相邻选择器自带，**不要包裹 flex+gap**，也不要在使用方覆盖 margin。
+  > 注：**间距值为 `spacing-4`（16px），与上表「全组无底色按钮」档一致**——操作列正是这种构成，不是例外。此处的例外只在于**间距的提供方式**（td 内 inline 排版用相邻选择器，而非父容器 flex+gap），不在于取值。值由源头统一提供，使用方无需也不应关心。
 
 > **相关：表单控件（checkbox / radio）间距说明**
 >

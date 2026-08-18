@@ -1,19 +1,19 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 87,
-  "totalWeight": 250,
+  "total": 88,
+  "totalWeight": 253,
   "byLevel": {
-    "MUST": 76,
+    "MUST": 77,
     "SHOULD": 11,
     "MAY": 0
   },
   "byDetect": {
     "regex": 60,
     "ast": 6,
-    "manual": 21
+    "manual": 22
   },
   "byView": {
-    "design": 68,
+    "design": 69,
     "impl": 80
   },
   "categoryOrder": [
@@ -111,6 +111,20 @@
       "weight": 2,
       "source": "design-spec/references/judging-criteria.md",
       "line": 159
+    },
+    {
+      "id": "button-gap-by-boundary",
+      "title": "*档位按「按钮有没有可见边界」选——这是唯一判据，不靠手感：",
+      "designTitle": "*档位按「按钮有没有可见边界」选——这是唯一判据，不靠手感：",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "manual",
+      "views": [
+        "design"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 581
     },
     {
       "id": "color-no-hardcode",
@@ -272,7 +286,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 599
+      "line": 611
     },
     {
       "id": "breadcrumb-use-component",
@@ -287,7 +301,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 626
+      "line": 638
     },
     {
       "id": "anchor-vertical-ask-first",
@@ -301,7 +315,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 676
+      "line": 688
     },
     {
       "id": "dialog-no-messagebox",
@@ -316,7 +330,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1073
+      "line": 1085
     },
     {
       "id": "component-no-suspended",
@@ -331,7 +345,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1274
+      "line": 1286
     },
     {
       "id": "select-v2-over-200",
@@ -551,7 +565,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 684
+      "line": 696
     },
     {
       "id": "anchor-stale-hash",
@@ -565,7 +579,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 693
+      "line": 705
     },
     {
       "id": "pagination-small-layout",
@@ -580,7 +594,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 799
+      "line": 811
     },
     {
       "id": "message-show-close",
@@ -595,7 +609,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 856
+      "line": 868
     },
     {
       "id": "alert-title-prop",
@@ -609,7 +623,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 886
+      "line": 898
     },
     {
       "id": "loading-no-custom-spinner",
@@ -624,7 +638,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 931
+      "line": 943
     },
     {
       "id": "result-icon-two-values",
@@ -639,7 +653,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 994
+      "line": 1006
     },
     {
       "id": "notification-h-actions",
@@ -653,7 +667,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1026
+      "line": 1038
     },
     {
       "id": "scrollbar-no-raw-overflow",
@@ -668,7 +682,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1223
+      "line": 1235
     },
     {
       "id": "timepicker-disabled-range",
@@ -741,7 +755,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1235
+      "line": 1247
     },
     {
       "id": "grid-no-el-row",
@@ -1101,7 +1115,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 818
+      "line": 830
     },
     {
       "id": "skeleton-animated",
@@ -1116,7 +1130,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 960
+      "line": 972
     },
     {
       "id": "skeleton-on-panel",
@@ -1131,7 +1145,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 961
+      "line": 973
     },
     {
       "id": "loading-no-blank-screen",
@@ -1160,7 +1174,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1124
+      "line": 1136
     },
     {
       "id": "time-use-formattime",
@@ -1290,7 +1304,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 435
+      "line": 436
     },
     {
       "id": "dark-surface-bordered",
