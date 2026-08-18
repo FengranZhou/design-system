@@ -50,7 +50,7 @@
 | 日期 / 时间 | 纯文本（统一格式，见文案规范 Time 模块） | 关键信息区 |
 | 数值 / 金额 | 纯文本 + `formatter`（如 `¥1,200`），**右对齐** | 关键信息区 |
 | 进度 | ⏸ `el-progress` **当前暂停启用**（见 `component-interaction.md` 文末「勿用清单」）——需展示进度先与设计负责人确认 | 关键信息区 |
-| 操作按钮 | `<el-button class="table-operation">` + **图标(lucide)+ 文字**；多操作收进 `el-dropdown`「更多」(纯文字) | 操作区，**固定右侧**。表格操作列用源头约定类 `.table-operation`（一个 class 全包：无底/紧贴文案/相邻间距 12/hover 绿），不用再加 text/link |
+| 操作按钮 | `<el-button class="table-operation">` + **图标(lucide)+ 文字**；多操作收进 `el-dropdown`「更多」(纯文字) | 操作区，**固定右侧**。表格操作列用源头约定类 `.table-operation`（一个 class 全包：无底/紧贴文案/相邻间距 16/hover 绿），不用再加 text/link |
 
 > 表头单元格类型收敛为三类：**纯文字 / 复选框（selection 列）/ 带排序（sortable）**。内容单元格类型即上表——按数据语义选，别混。
 

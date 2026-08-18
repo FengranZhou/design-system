@@ -64,13 +64,15 @@
     }
   }
 
-  /* 行高 48px = 上下内边距 12 + 行高 24 + 12（全部走令牌，不写裸值）。
+  /* 行高 56px = 上下内边距 16 + 行高 24 + 16（全部走令牌，不写裸值）。
      ⚠️ 纵向内边距只能有一个来源：EP 自己在 `.el-table--default .el-table__cell`
-     上给了 `padding: 8px 0`，与下面 .cell 的上下 padding 会叠加（8+12+24+12+8 ≈ 66），
+     上给了 `padding: 8px 0`，与下面 .cell 的上下 padding 会叠加（8+16+24+16+8 ≈ 74），
      故此处必须先清零，把行高交给 .cell 单独决定。
-     @depends-on: 本条清零 + .cell 的上下 spacing-3 + line-height-24 三者共同构成 48px，
+     @depends-on: 本条清零 + .cell 的上下 spacing-4 + line-height-24 三者共同构成 56px，
                   是一组，改任一个行高都会变。
-     @when-changed: 要调行高改 .cell 的上下 padding（左右 spacing-4 是水平内边距，与行高无关）；
+     @when-changed: 要调行高改 .cell 的上下 padding，且**只能整档取用**——
+                    间距体系没有 14px 档，故 52px 这类值无法在不新增令牌的前提下做到
+                    （曾评估 52px，因需上下各 14px 而改取 56px = 上下各 spacing-4）。
                     本条清零规则不要删，删了行高会被 EP 默认值顶回 64+。 */
   th.el-table__cell,
   td.el-table__cell {
@@ -78,7 +80,7 @@
   }
 
   .cell {
-    padding: var(--iflyv-spacing-3) var(--iflyv-spacing-4);
+    padding: var(--iflyv-spacing-4);
     line-height: var(--iflyv-line-height-24);
   }
 
@@ -154,7 +156,7 @@
 
 /* ==================== 操作列约定类名 ====================
    使用方式：<el-button class="table-operation">编辑</el-button>
-   —— 一个 class 全包：无底、紧贴文案、相邻间距 12、hover 绿。使用方无需再加 text/link 等属性。
+   —— 一个 class 全包：无底、紧贴文案、相邻间距 16、hover 绿。使用方无需再加 text/link 等属性。
 
    ⚠️ 设计系统例外：.table-operation 是 td 内 inline 文字按钮的明示例外——
                     与 button.scss「按钮组间距由父容器 flex+gap 提供」原则**不冲突**：
@@ -163,7 +165,8 @@
 
    @depends-on: 必须用 <el-button class="table-operation">（保留按钮 a11y），
                 禁止用 <span class="table-operation">（失去键盘可达性）。
-                间距由 `& + .table-operation` 相邻选择器提供 spacing-3（12px）。
+                间距由 `& + .table-operation` 相邻选择器提供 spacing-4（16px，
+                与「全组无底色按钮」档一致，非例外——例外只在提供方式）。
    @when-changed: 不要把 .table-operation 兄弟塞进 flex+gap 父容器（会与相邻选择器叠加）；
                   也不要在使用方覆盖此处的 margin-inline-start / 再叠 text/link 属性。
    @see: references/patterns/list-item-pattern.md「操作区固定右侧」段 + 反例。
@@ -182,8 +185,12 @@
   background: transparent;
   cursor: pointer;
 
+  /* 相邻操作按钮间距 spacing-4（16px）：操作列全是无底色文字按钮，
+     按「按钮间距」的边界判据——无底色按钮的边界只能靠文字轮廓判断，
+     12px 会被读成普通字间距、几个操作糊成一句话，故走 16px 档。
+     @see: references/component-interaction.md「按钮间距」档位表。 */
   & + .table-operation {
-    margin-inline-start: var(--iflyv-spacing-3);
+    margin-inline-start: var(--iflyv-spacing-4);
   }
 
   /* hover：无底、仅文字变品牌绿（压掉 EP 默认按钮 hover 的灰底/描边） */

@@ -37,7 +37,7 @@
           :formatter="(_r: any, _c: any, val: number) => `¥${val.toLocaleString()}`" />
         <el-table-column min-width="200">
           <template #default>
-            <!-- 一个 class 全包：.table-operation 源头保证无底/紧贴文案/相邻间距 12/hover 绿。 -->
+            <!-- 一个 class 全包：.table-operation 源头保证无底/紧贴文案/相邻间距 16/hover 绿。 -->
             <el-button class="table-operation">
               <template #icon><SquarePen :size="14" :stroke-width="2" /></template>
               编辑
