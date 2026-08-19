@@ -64,23 +64,31 @@
     }
   }
 
-  /* 行高 56px = 上下内边距 16 + 行高 24 + 16（全部走令牌，不写裸值）。
+  /* 行高 52px：由单元格 min-height 直接指定，而非「上下内边距 + 文字行高」凑出。
+     ⚠️ 为什么用 min-height 而不是加大内边距：
+        52 = 上下各 14 + 文字行高 24，而间距体系**没有 14px 档**；
+        若改用「上下 12 + 文字行高 28」，则文字行高脱离 body-primary 语义字阶
+        （它是 16/24 一整档），属于拆开语义层自拼规格 —— 两条都违反令牌铁律。
+        故保持内边距 spacing-3、文字行高 line-height-24 不动（文字观感与语义字阶
+        完全一致），另用 min-height 把行撑到 52px。取值复用 line-height-52 令牌
+        （值恰为 52px），不新增令牌。
      ⚠️ 纵向内边距只能有一个来源：EP 自己在 `.el-table--default .el-table__cell`
-     上给了 `padding: 8px 0`，与下面 .cell 的上下 padding 会叠加（8+16+24+16+8 ≈ 74），
+     上给了 `padding: 8px 0`，与下面 .cell 的上下 padding 会叠加，
      故此处必须先清零，把行高交给 .cell 单独决定。
-     @depends-on: 本条清零 + .cell 的上下 spacing-4 + line-height-24 三者共同构成 56px，
-                  是一组，改任一个行高都会变。
-     @when-changed: 要调行高改 .cell 的上下 padding，且**只能整档取用**——
-                    间距体系没有 14px 档，故 52px 这类值无法在不新增令牌的前提下做到
-                    （曾评估 52px，因需上下各 14px 而改取 56px = 上下各 spacing-4）。
+     @depends-on: 本条清零 + 下方 th/td 的 min-height 共同决定行高。
+     @when-changed: 要调行高改 th/td 的 min-height（整档取用行高令牌）；
                     本条清零规则不要删，删了行高会被 EP 默认值顶回 64+。 */
   th.el-table__cell,
   td.el-table__cell {
     padding-block: 0;
+    /* 行高落在单元格而非 .cell 上：可保持 .cell 内部原生 inline 排版
+       （操作列 .table-operation 与金额列 text-align 都依赖它），
+       若改在 .cell 上用 display:flex 会同时破坏这两处。 */
+    min-height: var(--iflyv-line-height-52);
   }
 
   .cell {
-    padding: var(--iflyv-spacing-4);
+    padding: var(--iflyv-spacing-3) var(--iflyv-spacing-4);
     line-height: var(--iflyv-line-height-24);
   }
 

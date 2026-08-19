@@ -10,7 +10,7 @@ import type { Component } from 'vue'
 export type ColumnKind =
   | 'text'    // 纯文字（名称 / 备注 / 部门…）
   | 'tag'     // 状态 / 分类标签 → el-tag（走状态语义色）
-  | 'date'    // 日期时间 → 纯文本（统一格式）
+  | 'date'    // 日期时间 → 纯文本（走 formatTime 统一格式；精度见列的 timePrecision）
   | 'amount'  // 数值 / 金额 → 右对齐 + 千分位
 
 /** 单个列定义 */
@@ -21,6 +21,14 @@ export interface DataTableColumn {
   label: string
   /** 单元格元素类型，默认 'text' */
   kind?: ColumnKind
+  /**
+   * kind='date' 时的展示精度（文案规范「时间根据需求展示」）：
+   *   'minute'（默认）带时分，如 03-25 13:00 —— 用于创建/提交/更新时间等需要时点的场景；
+   *   'day'   只到日期，如 03-25 —— 用于入职日期/截止日期等本就无时分语义的场景。
+   * ⚠️ 数据源只有日期（如 '2024-03-15'）时必须传 'day'，
+   *    否则会补出并不存在的 00:00（还会因时区偏成 08:00）。
+   */
+  timePrecision?: 'minute' | 'day'
   /** 列宽（px） */
   width?: number | string
   /** 最小列宽（px） */

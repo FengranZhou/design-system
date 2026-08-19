@@ -34,6 +34,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+// 时间展示走文案规范唯一实现；「入职日期」无时分语义，用 'day' 精度（见 copywriting/time.md）
+import { formatTime } from '../../../design-spec/utils/format-time'
 
 // 描述列表配置项：行 × 列（列 = 每行组数，label+值对）。条目按 行×列 动态生成
 const descRows = ref(2)
@@ -45,7 +47,7 @@ const descPool = [
   { label: '部门', value: '设计部' },
   { label: '职级', value: 'P6' },
   { label: '邮箱', value: 'zhangsan@example.com' },
-  { label: '入职日期', value: '2024-03-15' },
+  { label: '入职日期', value: formatTime('2024-03-15', 'day') },
   { label: '状态', value: '在职', tag: true },
   { label: '工号', value: 'D2024001' },
   { label: '手机', value: '138 0000 0000' },

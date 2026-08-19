@@ -63,6 +63,12 @@
 3. **操作区固定右侧、样式统一**：表格操作按钮一律 `<el-button class="table-operation">` + **图标（lucide）+ 文字**（如「✎ 编辑」，用约定类不用 text/link）；≥3 个操作时，主操作外露、其余收进 `el-dropdown`「更多」（下拉项走纯文字）。表格里操作列 `fixed="right"`。「更多」触发器同样走源头约定：`<el-dropdown class="table-operation">` + 内层 `<span class="table-operation__more"><MoreHorizontal :size="16" /></span>`（**纯图标形态**，与业务组件 `DataTable` 一致；对齐/间距/色号全在 `table.scss` 源头）——**纯图标入口必须外包 `el-tooltip content="更多操作" :show-after="300"`**；**危险操作**（删除等）在按钮上加 `.table-operation--danger`（常态即危险红、hover 加深，不手写 color）。
 4. **数值右对齐**：金额 / 数量等数值列右对齐，便于比较。
 5. **列宽与冻结**：关键信息区按内容给合理 `width` / `min-width`。
+   - ⚠️ **时间列按「最宽形态」留宽，不要按当前数据留**：`formatTime` 本年省年份（`03-10`，5 字符）、
+     跨年带年份（`2024-12-21`，10 字符），**同一列两种宽度**。若按本年数据把列压到刚好，
+     跨年数据一到就挤或截断。带时分的同理（`2024-12-21 13:00` 最宽）。
+     参考：纯日期列 **120**（本年 `03-10` 宽松；跨年 `2024-12-21` 约需 120px、
+     恰好装下无余量，若该列还要放排序图标或有跨年数据，留 **130** 更稳）；
+     带时分列 ≈ 180。
    - **默认冻结规则（无特殊情况即遵守）**：当**列内容总宽超出表格展示宽度（会触发横向滚动）时，默认必须启用首尾列冻结** <!-- @rule id=table-freeze-columns level=MUST cat=设计模式 detect=regex dtitle=表格横向滚动时，首列与操作列应固定不动 title=表格内容超宽触发横滚时，必须冻结主题列(fixed=left)与操作列(fixed=right) --> —— 主题区（姓名/名称）`fixed="left"`、操作区 `fixed="right"`。理由：横滚时用户仍需随时看到「这是谁（主题列）」和「能干什么（操作列）」，否则滚到中间就找不到行主体、够不到操作。
    - 列不多、不横滚（内容宽 ≤ 容器宽）时无需冻结。
    - **用 DataTable 时已自动**：DataTable 内置 `auto-freeze`（默认开），会测量列总宽 vs 容器宽，**超宽即自动给主题列补 `fixed:left`**（操作列 `fixed:right` 本就内置）——无需手动传 fixed。特殊场景可 `:auto-freeze="false"` 关闭，或在 columns 里手动指定 fixed（优先于自动）。
@@ -115,7 +121,8 @@
         <el-tag :type="row.statusType" round>{{ row.status }}</el-tag>
       </template>
     </el-table-column>
-    <el-table-column prop="date" label="日期" width="150" sortable />
+    <!-- 时间列宽注意本年/跨年两种形态（见 §五.5）；展示走 formatTime -->
+    <el-table-column prop="date" label="日期" width="120" sortable />
     <el-table-column
       prop="amount" label="金额" width="120" align="right" sortable
       :formatter="(_r, _c, v) => `¥${v.toLocaleString()}`"

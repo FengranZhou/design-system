@@ -51,8 +51,9 @@ import { DataTable, type DataTableColumn } from '../../../../design-spec/compone
 const columns: DataTableColumn[] = [
   { prop: 'name', label: '姓名', width: 120 },
   { prop: 'status', label: '状态', kind: 'tag', width: 100 },
-  { prop: 'date', label: '日期', kind: 'date', width: 180 },
-  { prop: 'amount', label: '金额', kind: 'amount', width: 150 },
+  // 「日期」列无时点语义（不是提交/更新时刻），按文案规范「时间根据需求展示」只到日期
+  { prop: 'date', label: '日期', kind: 'date', timePrecision: 'day', width: 120 },
+  { prop: 'amount', label: '金额', kind: 'amount', width: 120 },
   { prop: 'department', label: '部门', width: 150 },
   { prop: 'position', label: '职位', width: 180 },
   // 长文本列：单行截断 + hover 补全（见 list-item-pattern §四.7）
