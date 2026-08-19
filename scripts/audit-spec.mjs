@@ -19,6 +19,7 @@
  *   C6  源头有约定 class 但 references 无对应条目（对账纪律）
  *   C7  组件三态覆盖率（有条目 / 勿用清单 / 无额外规矩，三者都不在＝下游查不到）
  *   C8  强制规则未进评判标准（漏打 @rule 标记＝该规则不进清单、评分时查不到）
+ *   C9  新增组件漏补 catalog 骨架（扩展面板拿不到代码骨架，不报错但 prompt 变弱）
  *   C9  标了 detect=regex/ast 却没写检测器（承诺自动检测却没实现）
  */
 
@@ -434,6 +435,40 @@ let suspendSectionText = '' // C3 需据此跳过清单自身
           '\n    → 这些条目会静默落进「需人工确认」，自动检测的承诺落空。\n' +
           '      要么补检测器，要么把该条改回 detect=manual 并说明原因',
       )
+    }
+  }
+}
+
+// ── C9：新增组件是否补了 catalog 条目 ───────────────────────────
+//    demo 导航加一行组件即视为启用，但扩展面板需要的 snippet（代码骨架）
+//    和 mustRules（硬约束）是**语义**，脚本提不出来、只能手写。
+//    漏补的后果不报错也不崩：组件照样出现在面板里，只是复制出的 prompt
+//    少一段可照抄的代码——下游 CC 得自己去读 references 才知道怎么写。
+//    正因为「不报错」，才必须有这条检查兜底。
+{
+  const catalogPath = join(ROOT, 'scripts/catalog.json')
+  if (existsSync(catalogPath)) {
+    try {
+      const cat = JSON.parse(readFileSync(catalogPath, 'utf8'))
+      const missing = (cat.components || [])
+        .filter((c) => !c.snippetSrc)
+        .map((c) => c.name)
+      if (missing.length) {
+        problems.push({
+          check: 'C9 组件目录骨架缺失',
+          msg: `${missing.length} 个已启用组件还没有代码骨架（snippet）`,
+          detail:
+            '   ' + missing.join('、') + '\n' +
+            '   → 在 scripts/component-catalog.mjs 补条目（snippet + mustRules + anchor）\n' +
+            '     mustRules 直接抄 design-spec/CLAUDE.md 触发表该组件那行的说明列，别重写',
+        })
+      }
+    } catch (e) {
+      problems.push({
+        check: 'C9 组件目录解析失败',
+        msg: 'scripts/catalog.json 不是合法 JSON',
+        detail: '   → 跑一次 node scripts/build-catalog.mjs 重新生成',
+      })
     }
   }
 }

@@ -1,0 +1,23 @@
+#!/bin/sh
+# 推送前确保 catalog.json 与设计系统一致。
+#
+# 为什么必须自动：catalog.json 是扩展经 GitHub 拉取的产物——推了旧的，
+# 所有同事的扩展面板就是旧的，而且没人会收到任何警告。
+# 这跟 rules.generated.json 挂进 pnpm build 是同一个道理：生成物不能靠人记得跑。
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "⚠ 未找到 node，跳过 catalog 检查"
+  exit 0
+fi
+
+if ! node scripts/build-catalog.mjs --check >/dev/null 2>&1; then
+  echo ""
+  echo "✗ catalog.json 与当前设计系统不一致，已阻止推送"
+  echo ""
+  node scripts/build-catalog.mjs
+  echo ""
+  echo "  已自动重新生成。请 git add scripts/catalog.json 并提交后再推送。"
+  echo ""
+  exit 1
+fi
+exit 0

@@ -104,6 +104,11 @@ node <设计系统路径>/scripts/audit-page.mjs ./src --quiet  # 只要结论
 | `template-ast.mjs` | 轻量 Vue 模板解析器（不依赖 compiler-sfc） | 被 detectors 调用 |
 | `audit-spec.mjs` | 规范自身的九类一致性检查 | 改完规范跑一次 |
 | `audit-precision.mjs` | 多档位体系的取值精度检查 | 新增令牌档位后跑 |
+| `component-catalog.mjs` | 组件目录：供「复制到 CC 使用」消费的组件清单 + 配置项 | 新增/改组件规则时同步 |
+| `build-prompt.mjs` | 把「组件 + 配置 + 落点」拼成粘贴进下游 CC 的 prompt | 被扩展面板调用 |
+
+> 后两个属于**「复制到 CC 使用」**功能（浏览器扩展里挑组件 → 页面上选落点 →
+> 复制 prompt → 粘进下游项目 CC 窗口）。用法与维护纪律见 **`组件复制到CC.md`**。
 
 **本地 vs CI 的构建差异**（`demo/package.json`）：
 
