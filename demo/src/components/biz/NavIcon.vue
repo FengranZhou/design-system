@@ -3,7 +3,14 @@
      （源头渲染 item.icon 时传 :active，使用方无需够组件内部 class）。
      两张同时渲染、叠放同一格，切换靠 opacity 交叉渐变——若用 v-html 换内容，
      DOM 是整体替换、没有可过渡的中间态，只能硬切。
-     svg 已洗成单色 currentColor，颜色由 PageFrame 源头的图标色令牌赋值（见 __item-icon）。 -->
+     svg 已洗成单色 currentColor，颜色由 PageFrame 源头的图标色令牌赋值（见 __item-icon）。
+
+     ⚠️ 选中态（实心）图标的**负形**（图形内部镂空处，如加号、圆点）：
+        能用 fill="none" 真透出底色的就用 none；确实需要填色时**必须填
+        var(--iflyv-bg-page)**（侧栏底色令牌），不可写死 #FFFFFF——
+        亮色下主体是深色、填白正好，暗色下主体转白，负形还是白就整块糊成白方块。
+        （establish / progress 两张曾因此翻车。）
+        注意 <defs> 里 mask 与渐变的 #FFFFFF 是遮罩/透明度语义，不是视觉颜色，不要改。 -->
 <template>
   <span class="nav-icon">
     <span class="nav-icon__img" :class="{ 'is-on': !active }" v-html="normal" />
