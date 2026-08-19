@@ -1093,6 +1093,50 @@ export const DETECTORS = {
     },
     hint: '必须按固定顺序引入样式三层，顺序错了覆盖会失效',
   },
+
+  /**
+   * 时间双重格式化：DataTable 的 kind:'date' 列，其数据源又被 formatTime() 包了一次。
+   *
+   * ⚠️ 为什么必须查：双重格式化**不报错**。formatTime 本年省年份输出 '08-20 23:59'，
+   *    该串再喂 new Date() 被解析到 2001 年 → 页面显示 '2001-08-20 23:59'。
+   *    出问题的页面此前照样拿 100 分（真实翻车，接入方反馈发现）。
+   *
+   * 做法：先从 columns 定义里收集所有 kind:'date' 的 prop，
+   *      再扫数据里 `<prop>: formatTime(` 形式的赋值。
+   *      只查 script 段 —— 列定义与数据都在那里。
+   */
+  'time-no-double-format': {
+    custom: (ctx) => {
+      const body = ctx.script || ''
+      if (!body || !body.includes('formatTime')) return []
+
+      // 1) 收集 kind:'date' 列的 prop 名（对象字面量内 prop 与 kind 同现即可，不限顺序）
+      const dateProps = new Set()
+      for (const m of body.matchAll(/\{[^{}]*\}/g)) {
+        const obj = m[0]
+        if (!/kind\s*:\s*['"]date['"]/.test(obj)) continue
+        const pm = obj.match(/prop\s*:\s*['"]([^'"]+)['"]/)
+        if (pm) dateProps.add(pm[1])
+      }
+      if (!dateProps.size) return []
+
+      // 2) 扫这些 prop 的赋值是否被 formatTime 包裹
+      const hits = []
+      body.split('\n').forEach((line, i) => {
+        for (const prop of dateProps) {
+          const re = new RegExp(`\\b${prop}\\s*:\\s*formatTime\\s*\\(`)
+          if (re.test(line)) {
+            hits.push({
+              line: i + 1 + (ctx.scriptOffset || 0),
+              text: `${prop} 已由 DataTable 内部格式化，数据层不应再调 formatTime`,
+            })
+          }
+        }
+      })
+      return hits
+    },
+    hint: "DataTable 的 kind:'date' 列由组件内部调 formatTime；数据层传原始时间串即可。只到日期用列上的 timePrecision:'day'，见 copywriting/time.md §3",
+  },
 }
 
 /** 有检测器且能真正执行的条目 id（find 为 null 表示暂未实现） */

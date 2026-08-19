@@ -10,7 +10,10 @@ import type { Component } from 'vue'
 export type ColumnKind =
   | 'text'    // 纯文字（名称 / 备注 / 部门…）
   | 'tag'     // 状态 / 分类标签 → el-tag（走状态语义色）
-  | 'date'    // 日期时间 → 纯文本（走 formatTime 统一格式；精度见列的 timePrecision）
+  // 日期时间 → 纯文本。⚠️ 组件内部已调 formatTime，使用方传**原始时间串**
+  // （如 '2026-08-20 23:59'），禁止在数据层预先格式化 —— 会双重格式化并把年份错成 2001。
+  // 精度用列上的 timePrecision，不要自己调 formatTime(t,'day')。
+  | 'date'
   | 'amount'  // 数值 / 金额 → 右对齐 + 千分位
 
 /** 单个列定义 */
@@ -22,7 +25,8 @@ export interface DataTableColumn {
   /** 单元格元素类型，默认 'text' */
   kind?: ColumnKind
   /**
-   * kind='date' 时的展示精度（文案规范「时间根据需求展示」）：
+   * kind='date' 时的展示精度（文案规范「时间根据需求展示」）。
+   * ⚠️ 用本字段控制精度，**不要**在数据层自行 formatTime(t, 'day') —— 组件内部会再格式化一次。
    *   'minute'（默认）带时分，如 03-25 13:00 —— 用于创建/提交/更新时间等需要时点的场景；
    *   'day'   只到日期，如 03-25 —— 用于入职日期/截止日期等本就无时分语义的场景。
    * ⚠️ 数据源只有日期（如 '2024-03-15'）时必须传 'day'，

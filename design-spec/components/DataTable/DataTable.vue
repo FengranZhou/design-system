@@ -8,9 +8,17 @@
     - 主题区 / 关键信息区：columns[].kind 决定单元格元素类型
         text  → 纯文字
         tag   → el-tag（状态语义色，round 胶囊）
-        date  → 纯文本
-        amount→ 右对齐 + 千分位
+        date  → 纯文本，**组件内部已调 formatTime 渲染**（见下方「时间列契约」）
+        amount→ 右对齐 + 千分位（内部已调 formatAmount）
     - 操作区：actions（外露操作，用源头约定类 .table-operation）+ moreActions（收进「更多」下拉），固定右侧
+
+  ⚠️ 时间列契约（kind:'date'）——**使用方传原始时间串，禁止在数据层预先 formatTime**：
+     · 传 '2026-08-20 23:59' 这样的原始值，组件内部负责格式化（DataTable.vue 的 date 分支）。
+     · 若数据层先调一次 formatTime，会**双重格式化**：本年省年份后的 '08-20 23:59'
+       被 new Date() 二次解析成 **2001 年**，页面显示 '2001-08-20 23:59' —— 不报错、不告警。
+       （formatTime 自 v1.5.2 起对该形态幂等、可兜住此错，但正确写法仍是数据层不格式化。）
+     · 只到日期的字段：用列上的 `timePrecision: 'day'`，**不要**自己调 formatTime(t, 'day')。
+     · 一句话：**谁渲染谁格式化**。DataTable 负责渲染，格式化就归它。
 
   长文本列：加 showOverflowTooltip: true（标题 / 备注 / 简介等长度不可预期的列）
            → 单行截断 + hover 补全，不要在使用方自写 text-overflow。

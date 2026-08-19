@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 88,
-  "totalWeight": 253,
+  "total": 89,
+  "totalWeight": 256,
   "byLevel": {
-    "MUST": 77,
+    "MUST": 78,
     "SHOULD": 11,
     "MAY": 0
   },
   "byDetect": {
     "regex": 60,
-    "ast": 6,
+    "ast": 7,
     "manual": 22
   },
   "byView": {
-    "design": 69,
-    "impl": 80
+    "design": 70,
+    "impl": 81
   },
   "categoryOrder": [
     "单一数据源",
@@ -995,7 +995,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/list-item-pattern.md",
-      "line": 66
+      "line": 72
     },
     {
       "id": "table-use-sortable",
@@ -1010,7 +1010,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/list-item-pattern.md",
-      "line": 96
+      "line": 102
     },
     {
       "id": "search-use-searchmini",
@@ -1190,6 +1190,21 @@
       "weight": 3,
       "source": "design-spec/references/copywriting/time.md",
       "line": 45
+    },
+    {
+      "id": "time-no-double-format",
+      "title": "组件内部已调 formatTime 的字段，数据层禁止预先 formatTime",
+      "designTitle": "时间不要格式化两次（会把年份错成 2001）",
+      "level": "MUST",
+      "cat": "文案规范",
+      "detect": "ast",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/copywriting/time.md",
+      "line": 69
     },
     {
       "id": "form-error-two-parts",
