@@ -79,7 +79,11 @@
         >{{ row[col.prop] }}</el-tag>
         <!-- amount：右对齐 + 千分位 -->
         <span v-else-if="col.kind === 'amount'">{{ formatAmount(row[col.prop]) }}</span>
-        <!-- text / date：纯文本 -->
+        <!-- date：走文案规范唯一实现 formatTime（本年省年份 / 跨年带年 / 不带秒），
+             使用方只管把原始时间放进行数据，不在外面自行格式化。
+             详见 references/copywriting/time.md -->
+        <span v-else-if="col.kind === 'date'">{{ formatTime(row[col.prop], col.timePrecision ?? 'minute') }}</span>
+        <!-- text：纯文本 -->
         <span v-else>{{ row[col.prop] }}</span>
       </template>
     </el-table-column>
@@ -139,6 +143,7 @@ import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import { MoreHorizontal } from 'lucide-vue-next'
 import type { TableInstance } from 'element-plus'
 import type { DataTableColumn, DataTableAction } from './types'
+import { formatTime } from '../../utils/format-time'
 
 const props = withDefaults(
   defineProps<{
