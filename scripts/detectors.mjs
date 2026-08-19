@@ -24,11 +24,38 @@ import { parseTemplate, findAll, hasDescendant, closest, childrenOf } from './te
 // ── 令牌类：裸值检测 ─────────────────────────────────────────────
 // 共同点：只查 <style> 段；注释行与令牌定义行需排除
 
-/** 十六进制色值。排除：注释、令牌定义自身、data-uri（svg mask 里合法） */
+/**
+ * 十六进制色值。排除：注释、令牌定义自身、data-uri（svg mask 里合法）。
+ *
+ * ⚠️ 必须同时查 <style> 段与 template 的**行内 style 属性** ——
+ *    曾只查 style 段，于是 `<div style="color:#fff">` 这种行内硬编码拿到满分，
+ *    分数虚高比不查更危险（用户会以为已经合规）。
+ */
+const HEX_RE = /(?:color|background|background-color|border-color|fill|stroke)\s*:\s*[^;]*#[0-9a-fA-F]{3,8}\b/
+const HEX_SKIP = /^\s*(\/\/|\/\*|\*)|url\(|data:image/
+
 const HEX_COLOR = {
-  scope: 'style',
-  find: /(?:color|background|background-color|border-color|fill|stroke)\s*:\s*[^;]*#[0-9a-fA-F]{3,8}\b/,
-  skip: /^\s*(\/\/|\/\*|\*)|url\(|data:image/,
+  custom: (ctx) => {
+    const hits = []
+    const scan = (body, offset, tag) => {
+      if (!body) return
+      body.split('\n').forEach((line, i) => {
+        if (HEX_SKIP.test(line)) return
+        if (HEX_RE.test(line)) hits.push({ line: i + 1 + offset, text: `${tag}${line.trim().slice(0, 80)}` })
+      })
+    }
+    scan(ctx.style, ctx.styleOffset, '')
+    // 行内 style 属性：只看 style="..." 内部，避免把模板里的普通文本误判
+    if (ctx.template) {
+      ctx.template.split('\n').forEach((line, i) => {
+        if (HEX_SKIP.test(line)) return
+        for (const m of line.matchAll(/\bstyle\s*=\s*["']([^"']*)["']/g)) {
+          if (HEX_RE.test(m[1])) hits.push({ line: i + 1 + ctx.templateOffset, text: `行内 style：${m[1].slice(0, 80)}` })
+        }
+      })
+    }
+    return hits
+  },
   hint: '改用颜色令牌 var(--iflyv-brand-primary) / var(--iflyv-text-1) 等，见 foundations.md 色板用途表',
 }
 
