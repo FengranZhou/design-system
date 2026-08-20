@@ -46,6 +46,16 @@ const OUT = join(ROOT, 'scripts/catalog.json')
 /** 导航里存在、但不是可插入组件的条目 */
 const SKIP_ANCHORS = new Set(['other', 'data-display'])
 
+/**
+ * demo 有、但**插入场景用不上**的配置项。
+ *
+ * demo 的开关回答「这个组件有哪些样子可以看」，插入面板问的是「你这次要插的
+ * 这个实例怎么配」。有些开关只属于前者：
+ *   searchCollapsed —— SearchMini 的展开/收起形态，插普通输入框时无意义
+ * 排除比"硬接进 snippet"诚实：与其生成一段用户没要的代码，不如不问。
+ */
+const EXCLUDE_FIELDS = new Set(['searchCollapsed'])
+
 /** demo 左侧导航的分组 key → catalog 分组 key */
 const NAV_GROUP_MAP = {
   通用: 'general',
@@ -123,6 +133,7 @@ export function buildCatalog() {
 
   const components = []
   const missingSnippet = []
+  const deadFields = []
 
   for (const item of nav) {
     const hw = handwritten.get(item.anchor)
@@ -131,7 +142,12 @@ export function buildCatalog() {
     // 配置项 = demo 提取的形态开关 + 手写的实例参数（文案/标签/宽度…）
     // 两者性质不同：前者是"组件有哪些样子"（demo 演示的），后者是"这次插入
     // 的实例怎么配"（demo 不需要问，因为它写死了）。合并而非替换。
-    const demoFields = dc ? dc.fields : []
+    // demo 的重复形态组不进面板：Select 有 5 张 config-card（单选/多选/分组/
+    // 树形/级联各一套「可清除·可搜索」），插入一个实例只需要一套。
+    // 带数字后缀的 label（「可清除 2」）就是 extract 加的去重标记，一律丢弃。
+    const demoFields = (dc ? dc.fields : [])
+      .filter((f) => !/ \d+$/.test(f.label))
+      .filter((f) => !EXCLUDE_FIELDS.has(f.key))
     const instanceFields = hw ? (hw.instanceFields || []) : []
     const seen = new Set(demoFields.map((f) => f.key))
     const fields = [
@@ -153,6 +169,17 @@ export function buildCatalog() {
       snippetSrc: hw && hw.snippet ? hw.snippet.toString() : null,
     }
     if (!entry.snippetSrc) missingSnippet.push(item.name)
+
+    // 配置项必须真的影响产物。开关开了、代码里却没有 —— 用户会以为生效了，
+    // 这比"没有这个开关"更糟：配置界面说了谎，而且只有对着生成的代码逐字
+    // 核对才能发现。所以在生成阶段就报出来。
+    if (entry.snippetSrc) {
+      const dead = fields
+        .filter((f) => entry.snippetSrc.indexOf(f.key) < 0)
+        .map((f) => `${f.key}(${f.label})`)
+      if (dead.length) deadFields.push({ name: item.name, dead })
+    }
+
     components.push(entry)
   }
 
@@ -161,7 +188,7 @@ export function buildCatalog() {
     generatedFrom: 'FengranZhou/design-system',
     groups: GROUPS,
     components,
-    _stats: { total: components.length, missingSnippet },
+    _stats: { total: components.length, missingSnippet, deadFields },
   }
 }
 
@@ -184,6 +211,15 @@ if (isMain) {
   } else {
     writeFileSync(OUT, json)
     console.log(`✓ 已生成 scripts/catalog.json —— ${stats.total} 个组件`)
+    if (stats.deadFields.length) {
+      console.log(`\n⚠ ${stats.deadFields.length} 个组件有「不影响产物」的配置项：`)
+      for (const d of stats.deadFields) {
+        console.log(`  ${d.name}：${d.dead.join('、')}`)
+      }
+      console.log('  用户开了这些开关，生成的代码却不变 —— 配置界面在说谎。')
+      console.log('  修法：让 component-catalog.mjs 的 snippet 读这些 key，')
+      console.log('       或确认该开关不该出现在插入场景（demo 演示用，非实例参数）。')
+    }
     if (stats.missingSnippet.length) {
       console.log(`\n⚠ ${stats.missingSnippet.length} 个组件还没有代码骨架（snippet）：`)
       console.log('  ' + stats.missingSnippet.join('、'))

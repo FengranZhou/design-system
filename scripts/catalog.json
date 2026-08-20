@@ -104,7 +104,7 @@
         "按钮组间距一律父容器 flex+gap，禁写 margin（源头已清零 EP 相邻 margin）",
         "异步操作用 el-button loading 防重复提交，不要给整个区域套遮罩"
       ],
-      "snippetSrc": "({ text, type, loading }) => {\n      const t = type === 'default' ? '' : type === 'text' ? ' text' : ` type=\"${type}\"`\n      return `<el-button${t}${loading ? ' :loading=\"submitting\"' : ''} @click=\"handleClick\">${text || '按钮'}</el-button>`\n    }"
+      "snippetSrc": "({ text, type, loading, showIcon, showCaret }) => {\n      const t = type === 'default' ? '' : type === 'text' ? ' text' : ` type=\"${type}\"`\n      const parts = []\n      if (showIcon) parts.push('  <template #icon><Plus /></template>')\n      parts.push('  ' + (text || '按钮') + (showCaret ? '<span class=\"btn-caret\" />' : ''))\n      return `<el-button${t}${loading ? ' :loading=\"submitting\"' : ''} @click=\"handleClick\">\n${parts.join('\\n')}\n</el-button>`\n    }"
     },
     {
       "id": "breadcrumb",
@@ -220,7 +220,7 @@
         "三档选型：页面级 .tabs-page / 模块级裸 el-tabs / 组件级 .tabs-sub",
         "禁用 el-tabs 做表单分节（表单各段是同一条记录的不同部分）"
       ],
-      "snippetSrc": "({ items, level }) => {\n      const cls = level === 'page' ? ' class=\"tabs-page\"' : level === 'sub' ? ' class=\"tabs-sub\"' : ''\n      const list = (items || '标签一,标签二').split(/[,，]/).map((s) => s.trim()).filter(Boolean)\n      const panes = list.map((s, i) => `  <el-tab-pane label=\"${s}\" name=\"${i + 1}\" />`).join('\\n')\n      return `<el-tabs v-model=\"activeTab\"${cls}>\n${panes}\n</el-tabs>`\n    }"
+      "snippetSrc": "({ items, level, tabsLevel, tabsShowCount }) => {\n      // level 来自手写实例参数，tabsLevel 来自 demo 形态开关——两者同义，\n      // demo 的优先（它才是设计系统演示的档位口径）\n      const lv = tabsLevel || level\n      const cls = lv === 'page' ? ' class=\"tabs-page\"' : lv === 'sub' ? ' class=\"tabs-sub\"' : ''\n      const list = (items || '标签一,标签二').split(/[,，]/).map((s) => s.trim()).filter(Boolean)\n      // 带计数用约定 class .tab-label-count + .tab-count（源头已定，禁 scoped 复刻）\n      const panes = list.map((s, i) => tabsShowCount\n        ? `  <el-tab-pane name=\"${i + 1}\">\\n` +\n          `    <template #label><span class=\"tab-label-count\">${s}` +\n          `<span class=\"tab-count\">12</span></span></template>\\n  </el-tab-pane>`\n        : `  <el-tab-pane label=\"${s}\" name=\"${i + 1}\" />`).join('\\n')\n      return `<el-tabs v-model=\"activeTab\"${cls}>\n${panes}\n</el-tabs>`\n    }"
     },
     {
       "id": "pagination",
@@ -260,7 +260,7 @@
         "总数文本不走分页器——外层 flex + space-between，左侧放「共 N 条」、右侧放分页器",
         "窄容器加 small 且必须同时把 layout 精简为 prev, pager, next（只加 small 不精简会挤出换行）"
       ],
-      "snippetSrc": "({ size }) => {\n      const small = size === 'small'\n      return `<div style=\"display:flex; justify-content:space-between; align-items:center;\">\n  <span>共 {{ total }} 条</span>\n  <el-pagination\n    v-model:current-page=\"page\"\n    v-model:page-size=\"pageSize\"\n    :total=\"total\"${small ? '\\n    small\\n    layout=\"prev, pager, next\"' : '\\n    :page-sizes=\"[10, 20, 50, 100]\"\\n    layout=\"prev, pager, next, sizes, jumper\"'}\n  />\n</div>`\n    }"
+      "snippetSrc": "({ paginationSize }) => {\n      const small = paginationSize === 'small'\n      return `<div style=\"display:flex; justify-content:space-between; align-items:center;\">\n  <span>共 {{ total }} 条</span>\n  <el-pagination\n    v-model:current-page=\"page\"\n    v-model:page-size=\"pageSize\"\n    :total=\"total\"${small ? '\\n    small\\n    layout=\"prev, pager, next\"' : '\\n    :page-sizes=\"[10, 20, 50, 100]\"\\n    layout=\"prev, pager, next, sizes, jumper\"'}\n  />\n</div>`\n    }"
     },
     {
       "id": "anchor",
@@ -374,7 +374,7 @@
         "触发器尾部箭头用约定 class .dropdown-caret + @visible-change 绑 .is-expanded（展开翻转在源头，禁自写旋转动效）",
         "分组抬头用约定 class .dropdown-group-title + 裸 <li> 承载（禁用 el-dropdown-item 冒充——会带 hover 底色让用户误以为可点）"
       ],
-      "snippetSrc": "({ trigger, items }) => {\n      const list = (items || '编辑,删除').split(/[,，]/).map((x) => x.trim()).filter(Boolean)\n      const lis = list.map((x) => `      <el-dropdown-item>${x}</el-dropdown-item>`).join('\\n')\n      return `<el-dropdown @visible-change=\"(v) => (expanded = v)\">\n  <el-button>${trigger || '更多操作'}<span class=\"dropdown-caret\" :class=\"{ 'is-expanded': expanded }\" /></el-button>\n  <template #dropdown>\n    <el-dropdown-menu>\n${lis}\n    </el-dropdown-menu>\n  </template>\n</el-dropdown>`\n    }"
+      "snippetSrc": "({ trigger, items, grouped }) => {\n      const list = (items || '编辑,删除').split(/[,，]/).map((x) => x.trim()).filter(Boolean)\n      // 分组抬头必须用裸 <li> + .dropdown-group-title，禁用 el-dropdown-item\n      // 冒充（会带 hover 底色让用户误以为可点）\n      const lis = grouped\n        ? '      <li class=\"dropdown-group-title\">分组一</li>\\n' +\n          list.map((x) => `      <el-dropdown-item>${x}</el-dropdown-item>`).join('\\n')\n        : list.map((x) => `      <el-dropdown-item>${x}</el-dropdown-item>`).join('\\n')\n      return `<el-dropdown @visible-change=\"(v) => (expanded = v)\">\n  <el-button>${trigger || '更多操作'}<span class=\"dropdown-caret\" :class=\"{ 'is-expanded': expanded }\" /></el-button>\n  <template #dropdown>\n    <el-dropdown-menu>\n${lis}\n    </el-dropdown-menu>\n  </template>\n</el-dropdown>`\n    }"
     },
     {
       "id": "form-item-input",
@@ -452,18 +452,6 @@
           "label": "字数提示",
           "type": "switch",
           "default": false
-        },
-        {
-          "key": "searchCollapsed",
-          "label": "默认收起",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "textareaWordLimit",
-          "label": "字数提示 2",
-          "type": "switch",
-          "default": false
         }
       ],
       "readRefs": [
@@ -476,7 +464,7 @@
         "表单一律单列，禁多列 Z 字动线",
         "本地可判的校验失焦即报，错误提示放输入域下方、文案两段式（错在哪+怎么改）"
       ],
-      "snippetSrc": "({ label, placeholder, width, required, textarea }) => {\n      const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`\n      const type = textarea ? '\\n    type=\"textarea\"\\n    :rows=\"3\"' : ''\n      return `<el-form-item label=\"${label || '标签'}\"${required ? ' prop=\"field\" :rules=\"[{ required: true, message: \\'请输入' + (label || '') + '\\', trigger: \\'blur\\' }]\"' : ''}>\n  <el-input\n    v-model=\"form.field\"${type}\n    placeholder=\"${placeholder || '请输入' + (label || '')}\"\n    style=\"${w}\"\n  />\n</el-form-item>`\n    }"
+      "snippetSrc": "({ label, placeholder, width, required, textarea, clearable, showWordLimit }) => {\n      const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`\n      const type = textarea ? '\\n    type=\"textarea\"\\n    :rows=\"3\"' : ''\n      const extra = (clearable ? '\\n    clearable' : '') +\n        (showWordLimit ? '\\n    maxlength=\"50\"\\n    show-word-limit' : '')\n      return `<el-form-item label=\"${label || '标签'}\"${required ? ' prop=\"field\" :rules=\"[{ required: true, message: \\'请输入' + (label || '') + '\\', trigger: \\'blur\\' }]\"' : ''}>\n  <el-input\n    v-model=\"form.field\"${type}\n    placeholder=\"${placeholder || '请输入' + (label || '')}\"${extra}\n    style=\"${w}\"\n  />\n</el-form-item>`\n    }"
     },
     {
       "id": "form-item-select",
@@ -545,68 +533,8 @@
           "default": false
         },
         {
-          "key": "multiClearable",
-          "label": "可清除 2",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "multiFilterable",
-          "label": "可搜索 2",
-          "type": "switch",
-          "default": false
-        },
-        {
           "key": "groupMultiple",
           "label": "多选",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "groupClearable",
-          "label": "可清除 3",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "groupFilterable",
-          "label": "可搜索 3",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "treeMultiple",
-          "label": "多选 2",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "treeClearable",
-          "label": "可清除 4",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "treeFilterable",
-          "label": "可搜索 4",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "cascaderMultiple",
-          "label": "多选 3",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "cascaderClearable",
-          "label": "可清除 5",
-          "type": "switch",
-          "default": false
-        },
-        {
-          "key": "cascaderFilterable",
-          "label": "可搜索 5",
           "type": "switch",
           "default": false
         }
@@ -620,7 +548,7 @@
         "有默认语义项 → 不可清除；无默认值 → 可清除",
         "多选默认加 collapse-tags collapse-tags-tooltip :max-collapse-tags=\"2\""
       ],
-      "snippetSrc": "({ label, placeholder, multiple, clearable, filterable, width }) => {\n      const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`\n      const attrs = [\n        multiple ? 'multiple\\n    collapse-tags\\n    collapse-tags-tooltip\\n    :max-collapse-tags=\"2\"' : '',\n        clearable ? 'clearable' : '',\n        filterable ? 'filterable' : '',\n      ].filter(Boolean).join('\\n    ')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-select\n    v-model=\"form.field\"\n    placeholder=\"${placeholder || '请选择' + (label || '')}\"${attrs ? '\\n    ' + attrs : ''}\n    style=\"${w}\"\n  >\n    <el-option label=\"选项一\" value=\"1\" />\n    <el-option label=\"选项二\" value=\"2\" />\n  </el-select>\n</el-form-item>`\n    }"
+      "snippetSrc": "({ label, placeholder, multiple, clearable, filterable, width, groupMultiple }) => {\n      multiple = multiple || groupMultiple\n      const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`\n      const attrs = [\n        multiple ? 'multiple\\n    collapse-tags\\n    collapse-tags-tooltip\\n    :max-collapse-tags=\"2\"' : '',\n        clearable ? 'clearable' : '',\n        filterable ? 'filterable' : '',\n      ].filter(Boolean).join('\\n    ')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-select\n    v-model=\"form.field\"\n    placeholder=\"${placeholder || '请选择' + (label || '')}\"${attrs ? '\\n    ' + attrs : ''}\n    style=\"${w}\"\n  >\n    <el-option label=\"选项一\" value=\"1\" />\n    <el-option label=\"选项二\" value=\"2\" />\n  </el-select>\n</el-form-item>`\n    }"
     },
     {
       "id": "form-item-date",
@@ -693,12 +621,6 @@
           "label": "时间",
           "type": "switch",
           "default": false
-        },
-        {
-          "key": "withTime",
-          "label": "时间 2",
-          "type": "switch",
-          "default": false
         }
       ],
       "readRefs": [
@@ -710,7 +632,7 @@
         "禁传 prefix-icon，图标按 type 自动分流 Calendar/Clock，传了会被源头 mask 盖住",
         "展示已选日期走 formatTime（utils/format-time.ts）"
       ],
-      "snippetSrc": "({ label, type, width }) => {\n      const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`\n      const fmt = type === 'datetime' ? 'YYYY-MM-DD HH:mm:ss' : type === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD'\n      const range = type === 'daterange'\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-date-picker\n    v-model=\"form.field\"\n    type=\"${type}\"\n    value-format=\"${fmt}\"${range ? '\\n    start-placeholder=\"开始日期\"\\n    end-placeholder=\"结束日期\"' : '\\n    placeholder=\"选择日期\"'}\n    style=\"${w}\"\n  />\n</el-form-item>`\n    }"
+      "snippetSrc": "({ label, type, width, withDateTime }) => {\n      const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`\n      // demo 的「时间」开关＝要不要精确到时分秒，等价于 date → datetime\n      if (withDateTime && type === 'date') type = 'datetime'\n      const fmt = type === 'datetime' ? 'YYYY-MM-DD HH:mm:ss' : type === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD'\n      const range = type === 'daterange'\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-date-picker\n    v-model=\"form.field\"\n    type=\"${type}\"\n    value-format=\"${fmt}\"${range ? '\\n    start-placeholder=\"开始日期\"\\n    end-placeholder=\"结束日期\"' : '\\n    placeholder=\"选择日期\"'}\n    style=\"${w}\"\n  />\n</el-form-item>`\n    }"
     },
     {
       "id": "form-item-radio",
@@ -752,7 +674,7 @@
         ">5 个选项不建议 Radio，改用 Select",
         "多个 Radio 必须用 el-radio-group 包裹"
       ],
-      "snippetSrc": "({ label, options }) => {\n      const opts = (options || '选项一,选项二').split(/[,，]/).map((o) => o.trim()).filter(Boolean)\n      const items = opts.map((o, i) => `    <el-radio value=\"${i + 1}\">${o}</el-radio>`).join('\\n')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-radio-group v-model=\"form.field\">\n${items}\n  </el-radio-group>\n</el-form-item>`\n    }"
+      "snippetSrc": "({ label, options, radioShowText }) => {\n      const opts = (options || '选项一,选项二').split(/[,，]/).map((o) => o.trim()).filter(Boolean)\n      // 关掉文字＝只留选钮（极少用，但 demo 演示了这一形态）\n      const items = opts.map((o, i) => radioShowText === false\n        ? `    <el-radio value=\"${i + 1}\" />`\n        : `    <el-radio value=\"${i + 1}\">${o}</el-radio>`).join('\\n')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-radio-group v-model=\"form.field\">\n${items}\n  </el-radio-group>\n</el-form-item>`\n    }"
     },
     {
       "id": "checkbox",
@@ -797,7 +719,7 @@
         "半选用 indeterminate（不受 v-model 控制，须自算）",
         "文字不要在 checkbox 外套 span 手拼——字号/间距/禁用取色全在源头"
       ],
-      "snippetSrc": "({ label, options }) => {\n      const list = (options || '选项一,选项二').split(/[,，]/).map((x) => x.trim()).filter(Boolean)\n      const boxes = list.map((x, i) => `    <el-checkbox label=\"${x}\" value=\"${i + 1}\" />`).join('\\n')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-checkbox-group v-model=\"form.field\">\n${boxes}\n  </el-checkbox-group>\n</el-form-item>`\n    }"
+      "snippetSrc": "({ label, options, checkboxShowText }) => {\n      const list = (options || '选项一,选项二').split(/[,，]/).map((x) => x.trim()).filter(Boolean)\n      // 文案传 label、值传 value（EP 2.6+ 语义）；关掉文字则只留勾选框\n      const boxes = list.map((x, i) => checkboxShowText === false\n        ? `    <el-checkbox value=\"${i + 1}\" />`\n        : `    <el-checkbox label=\"${x}\" value=\"${i + 1}\" />`).join('\\n')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-checkbox-group v-model=\"form.field\">\n${boxes}\n  </el-checkbox-group>\n</el-form-item>`\n    }"
     },
     {
       "id": "form-item-switch",
@@ -858,7 +780,7 @@
         "inactive-text（置左）仅当\"开关左侧无内容、右侧有其他内容\"时用，与 active-text 互斥",
         "inline-prompt 未启用"
       ],
-      "snippetSrc": "({ label, activeText }) => `<el-form-item label=\"${label || '标签'}\">\n  <el-switch v-model=\"form.field\"${activeText ? `\\n    active-text=\"${activeText}\"` : ''} />\n</el-form-item>`"
+      "snippetSrc": "({ label, activeText, switchShowText, switchTextPosition }) => {\n      // 文字默认走 active-text（右侧）；仅当「开关左侧无内容、右侧有其他内容」\n      // 才用 inactive-text 置左。两者互斥、只配一个。\n      const txt = activeText || (switchShowText ? '启用' : '')\n      const attr = !txt ? ''\n        : switchTextPosition === 'left'\n          ? `\\n    inactive-text=\"${txt}\"`\n          : `\\n    active-text=\"${txt}\"`\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-switch v-model=\"form.field\"${attr} />\n</el-form-item>`\n    }"
     },
     {
       "id": "slider",
@@ -920,7 +842,7 @@
         "离散值必须同时传 step + show-stops",
         "须有定宽容器，否则宽度塌陷"
       ],
-      "snippetSrc": "({ label, showInput, range }) => `<el-form-item label=\"${label || '标签'}\">\n  <div style=\"width: 320px;\">\n    <el-slider v-model=\"form.field\"${range ? ' range' : ''}${showInput ? ' show-input' : ''} />\n  </div>\n</el-form-item>`"
+      "snippetSrc": "({ label, showInput, range, isRange, discrete, showMarks }) => {\n      // 离散值必须 step + show-stops 同时给，只给一个不生效\n      const attrs = [\n        (range || isRange) ? 'range' : '',\n        showInput ? 'show-input' : '',\n        discrete ? ':step=\"10\"\\n      show-stops' : '',\n        showMarks ? ':marks=\"{ 0: \\'低\\', 50: \\'中\\', 100: \\'高\\' }\"' : '',\n      ].filter(Boolean).join('\\n      ')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <div style=\"width: 320px;\">\n    <el-slider\n      v-model=\"form.field\"${attrs ? '\\n      ' + attrs : ''}\n    />\n  </div>\n</el-form-item>`\n    }"
     },
     {
       "id": "rate",
@@ -966,7 +888,7 @@
         "档位固定 5 星别改 :max",
         "星色/尺寸全在源头 rate.scss，禁在使用方改 --el-rate-* 变量"
       ],
-      "snippetSrc": "({ label, readonly, half }) => `<el-form-item label=\"${label || '评分'}\">\n  <el-rate v-model=\"form.field\"${half ? ' allow-half' : ''}${readonly ? ' disabled show-score' : ''} />\n</el-form-item>`"
+      "snippetSrc": "({ label, readonly, allowHalf }) => `<el-form-item label=\"${label || '评分'}\">\n  <el-rate v-model=\"form.field\"${allowHalf ? ' allow-half' : ''}${readonly ? ' disabled show-score' : ''} />\n</el-form-item>`"
     },
     {
       "id": "tag",
@@ -1122,7 +1044,7 @@
         "一律默认红色，勿传 type",
         "包裸宿主定位；挂 tab 走约定 class .badge-tabs + .tab-badge"
       ],
-      "snippetSrc": "({ value }) => `<el-badge :value=\"${value || 5}\">\n  <el-button>消息</el-button>\n</el-badge>`"
+      "snippetSrc": "({ value, badgeType }) => {\n      // 徽标包裸宿主定位；挂 tab 要走约定 class .badge-tabs + .tab-badge\n      const host = {\n        avatar: '<UserAvatar role=\"teacher-male\" />',\n        button: '<el-button>消息</el-button>',\n        icon: '<el-button text><template #icon><Bell /></template></el-button>',\n        tab: null,\n      }[badgeType || 'button']\n      if (host === null) {\n        return `<el-tabs v-model=\"activeTab\" class=\"badge-tabs\">\n  <el-tab-pane name=\"1\">\n    <template #label>待批改<el-badge class=\"tab-badge\" :value=\"${value || 5}\" /></template>\n  </el-tab-pane>\n</el-tabs>`\n      }\n      return `<el-badge :value=\"${value || 5}\">\n  ${host}\n</el-badge>`\n    }"
     },
     {
       "id": "descriptions",
@@ -1167,7 +1089,7 @@
         "size 三档字号源头已成套定义，不在使用方覆盖",
         "空值补「—」不留空白；时间走 formatTime"
       ],
-      "snippetSrc": "({ items, 列: col }) => {\n      const list = (items || '姓名,学号').split(/[,，]/).map((x) => x.trim()).filter(Boolean)\n      const rows = list.map((x) => `  <el-descriptions-item label=\"${x}\">—</el-descriptions-item>`).join('\\n')\n      return `<el-descriptions border :column=\"${col || 3}\">\n${rows}\n</el-descriptions>`\n    }"
+      "snippetSrc": "({ items, descCols, descRows }) => {\n      const col = descCols\n      const list = (items || '姓名,学号').split(/[,，]/).map((x) => x.trim()).filter(Boolean)\n      const rows = list.map((x) => `  <el-descriptions-item label=\"${x}\">—</el-descriptions-item>`).join('\\n')\n      return `<el-descriptions border :column=\"${col || 3}\">\n${rows}\n</el-descriptions>`\n    }"
     },
     {
       "id": "avatar",
@@ -1251,7 +1173,7 @@
         "内置教师/学生男女四款角色图，传 role=\"teacher-male\" 等命中；自定义图传 src",
         "尺寸只用三档 40（默认）/ 24 / 20 保持全站一致"
       ],
-      "snippetSrc": "({ role, 尺寸: size }) => `<UserAvatar role=\"${role || 'teacher-male'}\"${size && size !== 40 ? ` :size=\"${size}\"` : ''} />\n\n<!-- 脚本 -->\nimport { UserAvatar } from '<path>/design-spec/components'`"
+      "snippetSrc": "({ role, avatarSize, avatarMode }) => {\n      // 尺寸只用三档保持全站一致；组合形态＝多个头像并排\n      const sz = avatarSize && Number(avatarSize) !== 40 ? ` :size=\"${avatarSize}\"` : ''\n      const one = `<UserAvatar role=\"${role || 'teacher-male'}\"${sz} />`\n      const body = avatarMode === 'group'\n        ? `<div style=\"display:flex; gap:var(--iflyv-spacing-2);\">\n  ${one}\n  <UserAvatar role=\"student-female\"${sz} />\n  <UserAvatar role=\"student-male\"${sz} />\n</div>`\n        : one\n      return body + `\n\n<!-- 脚本 -->\nimport { UserAvatar } from '<path>/design-spec/components'`\n    }"
     },
     {
       "id": "empty",
@@ -1273,22 +1195,6 @@
           "type": "text",
           "placeholder": "如：暂无课程",
           "default": ""
-        },
-        {
-          "key": "size",
-          "label": "档位",
-          "type": "select",
-          "default": "empty-block",
-          "options": [
-            {
-              "value": "empty-page",
-              "label": "整页"
-            },
-            {
-              "value": "empty-block",
-              "label": "卡片区块"
-            }
-          ]
         },
         {
           "key": "action",
@@ -1369,7 +1275,7 @@
         "两样缺一即落回 EP 默认纸盒图 = 没接设计系统",
         "底部按钮放默认插槽、用默认态不用 primary"
       ],
-      "snippetSrc": "({ desc, size, action }) => {\n      const open = `<el-empty\n  :image=\"emptyImg\"\n  description=\"${desc || '暂无数据'}\"\n  class=\"${size}\"`\n      const body = action ? `\\n>\\n  <el-button>${action}</el-button>\\n</el-empty>` : '\\n/>'\n      return `${open}${body}\n\n<!-- 脚本：按场景从 el-theme/assets/empty/ 选一张（暗色用 dark/ 变体） -->\nimport emptyImg from '<path>/design-spec/el-theme/assets/empty/no-data.png'`\n    }"
+      "snippetSrc": "({ desc, action, typeKey, withButton, container }) => {\n      // 插画按场景选（typeKey 对应 el-theme/assets/empty/ 下的文件名）\n      const img = typeKey || 'data'\n      const cls = container === 'block' ? 'empty-block' : 'empty-page'\n      const open = `<el-empty\n  :image=\"emptyImg\"\n  description=\"${desc || '暂无数据'}\"\n  class=\"${cls}\"`\n      const body = (withButton && action) || action\n        ? `\\n>\\n  <el-button>${action || '立即创建'}</el-button>\\n</el-empty>`\n        : withButton ? `\\n>\\n  <el-button>立即创建</el-button>\\n</el-empty>` : '\\n/>'\n      return `${open}${body}\n\n<!-- 脚本：按场景从 el-theme/assets/empty/ 选一张（暗色用 dark/ 变体） -->\nimport emptyImg from '<path>/design-spec/el-theme/assets/empty/${img}.png'`\n    }"
     },
     {
       "id": "dialog",
@@ -1470,7 +1376,7 @@
         "危险操作加 class=\"is-danger\"",
         "footer 主按钮在右（右对齐→主按钮贴右）"
       ],
-      "snippetSrc": "({ title, width, danger, confirmText }) => `<el-dialog\n  v-model=\"visible\"\n  title=\"${title || '标题'}\"\n  width=\"${width}px\"${danger ? '\\n  class=\"is-danger\"' : ''}\n>\n  <!-- 内容放默认插槽 -->\n\n  <template #footer>\n    <el-button @click=\"visible = false\">取消</el-button>\n    <el-button type=\"${danger ? 'danger' : 'primary'}\" @click=\"handleConfirm\">${confirmText || '确定'}</el-button>\n  </template>\n</el-dialog>`"
+      "snippetSrc": "({ title, danger, confirmText, dialogScene, dialogShowTip, dialogMultiTitle }) => {\n      // 宽度由场景决定（三档，禁非档位值）：确认 400 / 表单 640 / 富内容 800\n      const width = { confirm: 400, form: 640, rich: 800 }[dialogScene] || 640\n      const tip = dialogShowTip\n        ? '\\n  <el-alert title=\"提交后不可修改\" class=\"alert-neutral\" show-icon :closable=\"false\" />\\n'\n        : ''\n      const titles = dialogMultiTitle\n        ? '\\n  <div class=\"dialog-titles\"><span class=\"is-active\">基本信息</span><span>高级设置</span></div>\\n'\n        : ''\n      return `<el-dialog\n  v-model=\"visible\"\n  title=\"${title || '标题'}\"\n  width=\"${width}px\"${danger ? '\\n  class=\"is-danger\"' : ''}\n>${titles}${tip}\n  <!-- 内容放默认插槽 -->\n\n  <template #footer>\n    <el-button @click=\"visible = false\">取消</el-button>\n    <el-button type=\"${danger ? 'danger' : 'primary'}\" @click=\"handleConfirm\">${confirmText || '确定'}</el-button>\n  </template>\n</el-dialog>`\n    }"
     },
     {
       "id": "drawer",
@@ -1539,7 +1445,7 @@
         "宽度 400px（轻量）或 600px（详细）",
         "有按钮时放 #footer，主按钮在右（与对话框一致）"
       ],
-      "snippetSrc": "({ title, width, 底部按钮: withFooter }) => `<el-drawer v-model=\"visible\" title=\"${title || '标题'}\" size=\"${width || 600}px\">\n  <!-- 内容 -->${withFooter !== false ? `\n\n  <template #footer>\n    <el-button @click=\"visible = false\">取消</el-button>\n    <el-button type=\"primary\" @click=\"handleConfirm\">确定</el-button>\n  </template>` : ''}\n</el-drawer>`"
+      "snippetSrc": "({ title, width, drawerHasFooter: withFooter, drawerFooterLayout }) => `<el-drawer v-model=\"visible\" title=\"${title || '标题'}\" size=\"${width || 600}px\">\n  <!-- 内容 -->${withFooter !== false ? `\n\n  <template #footer>\n    <el-button @click=\"visible = false\">取消</el-button>\n    <el-button type=\"primary\" @click=\"handleConfirm\">确定</el-button>\n  </template>` : ''}\n</el-drawer>`"
     },
     {
       "id": "message",
@@ -1667,7 +1573,7 @@
         "默认带 show-icon",
         "禁用 el-alert 做确认/删除确认（需要用户决策的用 Dialog）"
       ],
-      "snippetSrc": "({ title, type, closable }) =>\n      type === 'neutral'\n        ? `<el-alert\n  title=\"${title || '提示文案'}\"\n  class=\"alert-neutral\"\n  show-icon\n  :closable=\"${closable}\"\n/>`\n        : `<el-alert\n  title=\"${title || '提示文案'}\"\n  type=\"${type}\"\n  show-icon\n  :closable=\"${closable}\"\n/>`"
+      "snippetSrc": "({ title, type, closable, alertShowDesc }) =>\n      type === 'neutral'\n        ? `<el-alert\n  title=\"${title || '提示文案'}\"\n  class=\"alert-neutral\"\n  show-icon\n  :closable=\"${closable}\"\n/>`\n        : `<el-alert\n  title=\"${title || '提示文案'}\"\n  type=\"${type}\"\n  show-icon\n  :closable=\"${closable}\"\n/>`"
     },
     {
       "id": "notification",
@@ -1717,7 +1623,7 @@
         "带操作按钮必须用 h() 渲染 message + 按钮行套约定 class .notify-actions（右对齐/间距在源头）",
         "按钮「一退路+一进路」，点击调 handle.close()，禁手撸浮层/行内布局 style"
       ],
-      "snippetSrc": "({ title, text, 操作按钮: withAction }) => withAction\n      ? `const handle = ElNotification({\n  title: '${title || '通知'}',\n  duration: 0,\n  message: h('div', [\n    h('p', '${text || '正文内容'}'),\n    h('div', { class: 'notify-actions' }, [\n      h(ElButton, { onClick: () => handle.close() }, () => '忽略'),\n      h(ElButton, { type: 'primary', onClick: () => handle.close() }, () => '查看'),\n    ]),\n  ]),\n})`\n      : `ElNotification({\n  title: '${title || '通知'}',\n  message: '${text || '正文内容'}',\n  duration: 0,\n})`"
+      "snippetSrc": "({ title, text, notifyActions: withAction, notifyPersist }) => withAction\n      ? `const handle = ElNotification({\n  title: '${title || '通知'}',\n  duration: 0,\n  message: h('div', [\n    h('p', '${text || '正文内容'}'),\n    h('div', { class: 'notify-actions' }, [\n      h(ElButton, { onClick: () => handle.close() }, () => '忽略'),\n      h(ElButton, { type: 'primary', onClick: () => handle.close() }, () => '查看'),\n    ]),\n  ]),\n})`\n      : `ElNotification({\n  title: '${title || '通知'}',\n  message: '${text || '正文内容'}',\n  duration: 0,\n})`"
     },
     {
       "id": "popconfirm",
@@ -1779,30 +1685,6 @@
           "default": ""
         },
         {
-          "key": "placement",
-          "label": "方位",
-          "type": "select",
-          "default": "top",
-          "options": [
-            {
-              "value": "top",
-              "label": "top 上方"
-            },
-            {
-              "value": "bottom",
-              "label": "bottom 下方"
-            },
-            {
-              "value": "left",
-              "label": "left 左侧"
-            },
-            {
-              "value": "right",
-              "label": "right 右侧"
-            }
-          ]
-        },
-        {
           "key": "tooltipPlacement",
           "label": "方向",
           "type": "select",
@@ -1837,7 +1719,7 @@
         "气泡外观全在源头 tooltip.scss，禁 popper-class/:deep 改；effect=\"dark\" 未启用",
         "必读信息不进 tooltip（用 el-alert），可交互内容也不进（用 el-dropdown / el-popconfirm / el-dialog）"
       ],
-      "snippetSrc": "({ content, placement }) => `<el-tooltip content=\"${content || '提示文案'}\" placement=\"${placement || 'top'}\" :show-after=\"300\">\n  <el-button text>\n    <template #icon><Download /></template>\n  </el-button>\n</el-tooltip>`"
+      "snippetSrc": "({ content, tooltipPlacement: placement }) => `<el-tooltip content=\"${content || '提示文案'}\" placement=\"${placement || 'top'}\" :show-after=\"300\">\n  <el-button text>\n    <template #icon><Download /></template>\n  </el-button>\n</el-tooltip>`"
     },
     {
       "id": "loading",
@@ -1895,7 +1777,7 @@
         "版式已知的内容加载 → 骨架屏",
         "v-loading 禁自拼转圈图标/遮罩——源头已把 EP 默认 spinner 换成四圆点动画，文案走 element-loading-text"
       ],
-      "snippetSrc": "({ form, text }) => {\n      if (form === 'button') return `<el-button type=\"primary\" :loading=\"submitting\" @click=\"handleSubmit\">提交</el-button>`\n      if (form === 'fullscreen') return `const loading = ElLoading.service({ text: '${text || '加载中'}' })\n// 完成后 loading.close()`\n      return `<div v-loading=\"loading\" element-loading-text=\"${text || '加载中'}\">\n  <!-- 内容 -->\n</div>`\n    }"
+      "snippetSrc": "({ form, text, showLoadingText }) => {\n      if (showLoadingText === false) text = ''\n      if (form === 'button') return `<el-button type=\"primary\" :loading=\"submitting\" @click=\"handleSubmit\">提交</el-button>`\n      if (form === 'fullscreen') return `const loading = ElLoading.service({ text: '${text || '加载中'}' })\n// 完成后 loading.close()`\n      return `<div v-loading=\"loading\" element-loading-text=\"${text || '加载中'}\">\n  <!-- 内容 -->\n</div>`\n    }"
     },
     {
       "id": "skeleton",
@@ -1990,7 +1872,7 @@
         "icon 仅 success / error 两个合法值——源头只适配这两类，传 warning/info 得到无色图标＝越界违规",
         "结构固定 title + sub-title + #extra"
       ],
-      "snippetSrc": "({ title, subTitle, 场景: scene }) => {\n      const icon = scene === 'error' ? 'error' : 'success'\n      return `<el-result icon=\"${icon}\" title=\"${title || '操作成功'}\" sub-title=\"${subTitle || ''}\">\n  <template #extra>\n    <el-button type=\"primary\">返回列表</el-button>\n  </template>\n</el-result>`\n    }"
+      "snippetSrc": "({ title, subTitle, 场景: scene, showSubtitle, showButton }) => {\n      const icon = scene === 'error' ? 'error' : 'success'\n      return `<el-result icon=\"${icon}\" title=\"${title || '操作成功'}\" sub-title=\"${subTitle || ''}\">\n  <template #extra>\n    <el-button type=\"primary\">返回列表</el-button>\n  </template>\n</el-result>`\n    }"
     },
     {
       "id": "page-frame",
@@ -2081,7 +1963,7 @@
         "一律用业务组件 StepBar，禁手写 div 拼步骤条、禁用 el-steps 复刻这套观感",
         "import { StepBar } from '<path>/design-spec/components'"
       ],
-      "snippetSrc": "({ steps, current }) => {\n      const list = (steps || '步骤一,步骤二,步骤三').split(/[,，]/).map((s) => s.trim()).filter(Boolean)\n      // 模板属性用双引号包裹，数组内的字符串必须用单引号，否则引号嵌套会让 Vue 编译崩\n      const arr = `[${list.map((s) => `'${s}'`).join(', ')}]`\n      return `<StepBar :steps=\"${arr}\" :current=\"${current || 1}\" />\n\n<!-- 脚本 -->\nimport { StepBar } from '<path>/design-spec/components'`\n    }"
+      "snippetSrc": "({ steps, current, stepCount, finished }) => {\n      const list = (steps || '步骤一,步骤二,步骤三').split(/[,，]/).map((s) => s.trim()).filter(Boolean)\n      // 模板属性用双引号包裹，数组内的字符串必须用单引号，否则引号嵌套会让 Vue 编译崩\n      const arr = `[${list.map((s) => `'${s}'`).join(', ')}]`\n      return `<StepBar :steps=\"${arr}\" :current=\"${current || 1}\" />\n\n<!-- 脚本 -->\nimport { StepBar } from '<path>/design-spec/components'`\n    }"
     },
     {
       "id": "ai-button",
