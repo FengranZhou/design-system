@@ -1137,6 +1137,32 @@ export const DETECTORS = {
     },
     hint: "DataTable 的 kind:'date' 列由组件内部调 formatTime；数据层传原始时间串即可。只到日期用列上的 timePrecision:'day'，见 copywriting/time.md §3",
   },
+
+  /**
+   * 点击行无联动却开了 highlight-current-row —— 留下无意义的常驻高亮。
+   * 判据：模板里有 highlight-current-row，但同一个 el-table 上没有 @row-click / @current-change。
+   * 只查 template 段。
+   */
+  'table-no-idle-current-row': {
+    scope: 'template',
+    custom: (ctx) => {
+      const body = ctx.template || ''
+      if (!body.includes('highlight-current-row')) return []
+      // 有行级联动事件即视为合理用法（主从布局）
+      if (/@row-click|@current-change|v-on:row-click/.test(body)) return []
+      const hits = []
+      body.split('\n').forEach((line, i) => {
+        if (line.includes('highlight-current-row')) {
+          hits.push({
+            line: i + 1 + (ctx.templateOffset || 0),
+            text: '开了 highlight-current-row 但无 @row-click / @current-change 联动',
+          })
+        }
+      })
+      return hits
+    },
+    hint: '点击行不产生业务联动时不要开 highlight-current-row（常驻高亮＝噪音）；做主从布局才开，并配 @row-click / @current-change。见 patterns/list-item-pattern.md §五.5',
+  },
 }
 
 /** 有检测器且能真正执行的条目 id（find 为 null 表示暂未实现） */

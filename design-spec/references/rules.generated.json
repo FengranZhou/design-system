@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 89,
-  "totalWeight": 256,
+  "total": 90,
+  "totalWeight": 259,
   "byLevel": {
-    "MUST": 78,
+    "MUST": 79,
     "SHOULD": 11,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 60,
+    "regex": 61,
     "ast": 7,
     "manual": 22
   },
   "byView": {
-    "design": 70,
-    "impl": 81
+    "design": 71,
+    "impl": 82
   },
   "categoryOrder": [
     "单一数据源",
@@ -983,6 +983,21 @@
       "line": 49
     },
     {
+      "id": "table-no-idle-current-row",
+      "title": "表格点击行若无业务联动，禁止开 highlight-current-row",
+      "designTitle": "点击行没有联动效果时，不应留下常驻高亮",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/list-item-pattern.md",
+      "line": 66
+    },
+    {
       "id": "table-freeze-columns",
       "title": "表格内容超宽触发横滚时，必须冻结主题列(fixed=left)与操作列(fixed=right)",
       "designTitle": "表格横向滚动时，首列与操作列应固定不动",
@@ -995,7 +1010,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/list-item-pattern.md",
-      "line": 72
+      "line": 79
     },
     {
       "id": "table-use-sortable",
@@ -1010,7 +1025,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/list-item-pattern.md",
-      "line": 102
+      "line": 109
     },
     {
       "id": "search-use-searchmini",

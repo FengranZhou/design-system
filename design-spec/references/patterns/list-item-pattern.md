@@ -63,6 +63,13 @@
 3. **操作区固定右侧、样式统一**：表格操作按钮一律 `<el-button class="table-operation">` + **图标（lucide）+ 文字**（如「✎ 编辑」，用约定类不用 text/link）；≥3 个操作时，主操作外露、其余收进 `el-dropdown`「更多」（下拉项走纯文字）。表格里操作列 `fixed="right"`。「更多」触发器同样走源头约定：`<el-dropdown class="table-operation">` + 内层 `<span class="table-operation__more"><MoreHorizontal :size="16" /></span>`（**纯图标形态**，与业务组件 `DataTable` 一致；对齐/间距/色号全在 `table.scss` 源头）——**纯图标入口必须外包 `el-tooltip content="更多操作" :show-after="300"`**；**危险操作**（删除等）在按钮上加 `.table-operation--danger`（常态即危险红、hover 加深，不手写 color）。
 4. **数值右对齐**：金额 / 数量等数值列右对齐，便于比较。
 5. **列宽与冻结**：关键信息区按内容给合理 `width` / `min-width`。
+   - ⚠️ **默认不开 `highlight-current-row`** <!-- @rule id=table-no-idle-current-row level=MUST cat=设计模式 detect=regex dtitle=点击行没有联动效果时，不应留下常驻高亮 title=表格点击行若无业务联动，禁止开 highlight-current-row -->：
+     EP 会在点击后给该行挂 `.current-row` 并常驻底色。**若点击行不产生任何业务联动**
+     （无 `row-click` 跳转 / 无右侧详情面板），这个高亮就是纯噪音 ——
+     用户会以为自己"选中"了什么，鼠标移开后那行仍与 hover 同样式，分不清是选中还是没刷新。
+     **判据：点这一行会发生什么？** 什么都不发生 → 不开；右侧联动出详情 → 才开，
+     且此时选中底色必须与 hover 可区分（源头已用品牌浅底 `brand-bg`，与中性灰 hover 分离）。
+     · 勾选记录用 `type="selection"` 复选框，不是靠点行高亮 —— 两者语义不同，别混。
    - ⚠️ **时间列按「最宽形态」留宽，不要按当前数据留**：`formatTime` 本年省年份（`03-10`，5 字符）、
      跨年带年份（`2024-12-21`，10 字符），**同一列两种宽度**。若按本年数据把列压到刚好，
      跨年数据一到就挤或截断。带时分的同理（`2024-12-21 13:00` 最宽）。
@@ -108,7 +115,9 @@
 
 ```vue
 <template>
-  <el-table :data="rows" highlight-current-row style="width: 100%">
+  <!-- 默认不开 highlight-current-row：点击行若不产生业务联动，常驻高亮会让用户
+       误以为"选中了什么"。只在做「点行 → 右侧联动详情」的主从布局时才开。 -->
+  <el-table :data="rows" style="width: 100%">
     <!-- 01 全局功能区：勾选 -->
     <el-table-column type="selection" width="48" />
 

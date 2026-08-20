@@ -92,9 +92,14 @@
     line-height: var(--iflyv-line-height-24);
   }
 
-  /* ==================== 选中行 Selected Row ==================== */
+  /* ==================== 选中行 Selected Row ====================
+     仅在使用方显式开启 highlight-current-row 时才出现（做「点行→右侧联动详情」
+     这类主从布局才该开；DataTable 默认不开，见其模板注释）。
+     ⚠️ 底色必须与 hover 可区分 —— 曾与 hover 同为 bg-inset，导致点击后
+        鼠标移开，那行仍是 hover 的样子、看不出是"选中"还是"没刷新"（真实反馈）。
+        改用品牌浅底：选中是操作结果，用品牌色表达，与中性灰的 hover 天然分离。 */
   .el-table__body tr.current-row > td.el-table__cell {
-    background-color: var(--iflyv-bg-inset);
+    background-color: var(--iflyv-brand-bg);
   }
 
   /* 统一外框处理：去除 EP 默认伪元素描边（EP 用 ::before/::after 画表格外围横竖线），

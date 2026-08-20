@@ -52,10 +52,12 @@
     />
 -->
 <template>
+  <!-- ⚠️ 不开 highlight-current-row：本组件不提供 row-click 事件，点击行不产生任何业务效果，
+       常驻高亮只会让用户以为"选中了什么"。行的视觉区分由 hover 承担（表格不用斑马纹）。
+       若将来要做「点行 → 右侧联动详情」的主从布局，那时才该开，并需同时提供 row-click。 -->
   <el-table
     ref="tableRef"
     :data="data"
-    highlight-current-row
     style="width: 100%"
     @selection-change="(rows: any[]) => emit('selection-change', rows)"
   >
