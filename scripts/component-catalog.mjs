@@ -86,13 +86,15 @@ export const COMPONENTS = [
       { key: 'required', label: '必填', type: 'switch', default: false },
       { key: 'textarea', label: '多行文本域', type: 'switch', default: false },
     ],
-    snippet: ({ label, placeholder, width, required, textarea }) => {
+    snippet: ({ label, placeholder, width, required, textarea, clearable, showWordLimit }) => {
       const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`
       const type = textarea ? '\n    type="textarea"\n    :rows="3"' : ''
+      const extra = (clearable ? '\n    clearable' : '') +
+        (showWordLimit ? '\n    maxlength="50"\n    show-word-limit' : '')
       return `<el-form-item label="${label || '标签'}"${required ? ' prop="field" :rules="[{ required: true, message: \'请输入' + (label || '') + '\', trigger: \'blur\' }]"' : ''}>
   <el-input
     v-model="form.field"${type}
-    placeholder="${placeholder || '请输入' + (label || '')}"
+    placeholder="${placeholder || '请输入' + (label || '')}"${extra}
     style="${w}"
   />
 </el-form-item>`
@@ -139,7 +141,8 @@ export const COMPONENTS = [
         ],
       },
     ],
-    snippet: ({ label, placeholder, multiple, clearable, filterable, width }) => {
+    snippet: ({ label, placeholder, multiple, clearable, filterable, width, groupMultiple }) => {
+      multiple = multiple || groupMultiple
       const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`
       const attrs = [
         multiple ? 'multiple\n    collapse-tags\n    collapse-tags-tooltip\n    :max-collapse-tags="2"' : '',
@@ -189,8 +192,10 @@ export const COMPONENTS = [
       },
       { key: 'width', label: '宽度', type: 'number', default: 320, suggestions: [{ value: 200, label: '200' }, { value: 320, label: '320' }, { value: 0, label: '撑满' }] },
     ],
-    snippet: ({ label, type, width }) => {
+    snippet: ({ label, type, width, withDateTime }) => {
       const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`
+      // demo 的「时间」开关＝要不要精确到时分秒，等价于 date → datetime
+      if (withDateTime && type === 'date') type = 'datetime'
       const fmt = type === 'datetime' ? 'YYYY-MM-DD HH:mm:ss' : type === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD'
       const range = type === 'daterange'
       return `<el-form-item label="${label || '标签'}">
@@ -220,9 +225,12 @@ export const COMPONENTS = [
       { key: 'label', label: '标签', type: 'text', placeholder: '如：课程类型', default: '' },
       { key: 'options', label: '选项', type: 'text', placeholder: '逗号分隔，如：必修,选修', default: '' },
     ],
-    snippet: ({ label, options }) => {
+    snippet: ({ label, options, radioShowText }) => {
       const opts = (options || '选项一,选项二').split(/[,，]/).map((o) => o.trim()).filter(Boolean)
-      const items = opts.map((o, i) => `    <el-radio value="${i + 1}">${o}</el-radio>`).join('\n')
+      // 关掉文字＝只留选钮（极少用，但 demo 演示了这一形态）
+      const items = opts.map((o, i) => radioShowText === false
+        ? `    <el-radio value="${i + 1}" />`
+        : `    <el-radio value="${i + 1}">${o}</el-radio>`).join('\n')
       return `<el-form-item label="${label || '标签'}">
   <el-radio-group v-model="form.field">
 ${items}
@@ -248,9 +256,18 @@ ${items}
       { key: 'label', label: '标签', type: 'text', placeholder: '如：是否公开', default: '' },
       { key: 'activeText', label: '开关文字', type: 'text', placeholder: '如：公开', default: '' },
     ],
-    snippet: ({ label, activeText }) => `<el-form-item label="${label || '标签'}">
-  <el-switch v-model="form.field"${activeText ? `\n    active-text="${activeText}"` : ''} />
-</el-form-item>`,
+    snippet: ({ label, activeText, switchShowText, switchTextPosition }) => {
+      // 文字默认走 active-text（右侧）；仅当「开关左侧无内容、右侧有其他内容」
+      // 才用 inactive-text 置左。两者互斥、只配一个。
+      const txt = activeText || (switchShowText ? '启用' : '')
+      const attr = !txt ? ''
+        : switchTextPosition === 'left'
+          ? `\n    inactive-text="${txt}"`
+          : `\n    active-text="${txt}"`
+      return `<el-form-item label="${label || '标签'}">
+  <el-switch v-model="form.field"${attr} />
+</el-form-item>`
+    },
   },
 
   // ── 通用 ──────────────────────────────────────────────────────────────────
@@ -287,9 +304,14 @@ ${items}
       },
       { key: 'loading', label: '带 loading', type: 'switch', default: false, hint: '异步操作防重复点击' },
     ],
-    snippet: ({ text, type, loading }) => {
+    snippet: ({ text, type, loading, showIcon, showCaret }) => {
       const t = type === 'default' ? '' : type === 'text' ? ' text' : ` type="${type}"`
-      return `<el-button${t}${loading ? ' :loading="submitting"' : ''} @click="handleClick">${text || '按钮'}</el-button>`
+      const parts = []
+      if (showIcon) parts.push('  <template #icon><Plus /></template>')
+      parts.push('  ' + (text || '按钮') + (showCaret ? '<span class="btn-caret" />' : ''))
+      return `<el-button${t}${loading ? ' :loading="submitting"' : ''} @click="handleClick">
+${parts.join('\n')}
+</el-button>`
     },
   },
 
@@ -387,28 +409,23 @@ ${colDefs}
     ],
     instanceFields: [
       { key: 'desc', label: '描述', type: 'text', placeholder: '如：暂无课程', default: '' },
-      {
-        key: 'size',
-        label: '档位',
-        type: 'select',
-        default: 'empty-block',
-        options: [
-          { value: 'empty-page', label: '整页' },
-          { value: 'empty-block', label: '卡片区块' },
-        ],
-      },
       { key: 'action', label: '按钮文案', type: 'text', placeholder: '留空则不要按钮', default: '' },
     ],
-    snippet: ({ desc, size, action }) => {
+    snippet: ({ desc, action, typeKey, withButton, container }) => {
+      // 插画按场景选（typeKey 对应 el-theme/assets/empty/ 下的文件名）
+      const img = typeKey || 'data'
+      const cls = container === 'block' ? 'empty-block' : 'empty-page'
       const open = `<el-empty
   :image="emptyImg"
   description="${desc || '暂无数据'}"
-  class="${size}"`
-      const body = action ? `\n>\n  <el-button>${action}</el-button>\n</el-empty>` : '\n/>'
+  class="${cls}"`
+      const body = (withButton && action) || action
+        ? `\n>\n  <el-button>${action || '立即创建'}</el-button>\n</el-empty>`
+        : withButton ? `\n>\n  <el-button>立即创建</el-button>\n</el-empty>` : '\n/>'
       return `${open}${body}
 
 <!-- 脚本：按场景从 el-theme/assets/empty/ 选一张（暗色用 dark/ 变体） -->
-import emptyImg from '<path>/design-spec/el-theme/assets/empty/no-data.png'`
+import emptyImg from '<path>/design-spec/el-theme/assets/empty/${img}.png'`
     },
   },
 
@@ -478,10 +495,18 @@ import emptyImg from '<path>/design-spec/el-theme/assets/empty/no-data.png'`
         ],
       },
     ],
-    snippet: ({ items, level }) => {
-      const cls = level === 'page' ? ' class="tabs-page"' : level === 'sub' ? ' class="tabs-sub"' : ''
+    snippet: ({ items, level, tabsLevel, tabsShowCount }) => {
+      // level 来自手写实例参数，tabsLevel 来自 demo 形态开关——两者同义，
+      // demo 的优先（它才是设计系统演示的档位口径）
+      const lv = tabsLevel || level
+      const cls = lv === 'page' ? ' class="tabs-page"' : lv === 'sub' ? ' class="tabs-sub"' : ''
       const list = (items || '标签一,标签二').split(/[,，]/).map((s) => s.trim()).filter(Boolean)
-      const panes = list.map((s, i) => `  <el-tab-pane label="${s}" name="${i + 1}" />`).join('\n')
+      // 带计数用约定 class .tab-label-count + .tab-count（源头已定，禁 scoped 复刻）
+      const panes = list.map((s, i) => tabsShowCount
+        ? `  <el-tab-pane name="${i + 1}">\n` +
+          `    <template #label><span class="tab-label-count">${s}` +
+          `<span class="tab-count">12</span></span></template>\n  </el-tab-pane>`
+        : `  <el-tab-pane label="${s}" name="${i + 1}" />`).join('\n')
       return `<el-tabs v-model="activeTab"${cls}>
 ${panes}
 </el-tabs>`
@@ -504,7 +529,7 @@ ${panes}
       { key: 'steps', label: '步骤', type: 'text', placeholder: '逗号分隔，如：填写要求,生成清单,生成内容', default: '' },
       { key: 'current', label: '当前步（1-based）', type: 'number', default: 1 },
     ],
-    snippet: ({ steps, current }) => {
+    snippet: ({ steps, current, stepCount, finished }) => {
       const list = (steps || '步骤一,步骤二,步骤三').split(/[,，]/).map((s) => s.trim()).filter(Boolean)
       // 模板属性用双引号包裹，数组内的字符串必须用单引号，否则引号嵌套会让 Vue 编译崩
       const arr = `[${list.map((s) => `'${s}'`).join(', ')}]`
@@ -551,18 +576,28 @@ import { StepBar } from '<path>/design-spec/components'`
       { key: 'danger', label: '危险操作', type: 'switch', default: false },
       { key: 'confirmText', label: '主按钮文案', type: 'text', placeholder: '如：确定', default: '确定' },
     ],
-    snippet: ({ title, width, danger, confirmText }) => `<el-dialog
+    snippet: ({ title, danger, confirmText, dialogScene, dialogShowTip, dialogMultiTitle }) => {
+      // 宽度由场景决定（三档，禁非档位值）：确认 400 / 表单 640 / 富内容 800
+      const width = { confirm: 400, form: 640, rich: 800 }[dialogScene] || 640
+      const tip = dialogShowTip
+        ? '\n  <el-alert title="提交后不可修改" class="alert-neutral" show-icon :closable="false" />\n'
+        : ''
+      const titles = dialogMultiTitle
+        ? '\n  <div class="dialog-titles"><span class="is-active">基本信息</span><span>高级设置</span></div>\n'
+        : ''
+      return `<el-dialog
   v-model="visible"
   title="${title || '标题'}"
   width="${width}px"${danger ? '\n  class="is-danger"' : ''}
->
+>${titles}${tip}
   <!-- 内容放默认插槽 -->
 
   <template #footer>
     <el-button @click="visible = false">取消</el-button>
     <el-button type="${danger ? 'danger' : 'primary'}" @click="handleConfirm">${confirmText || '确定'}</el-button>
   </template>
-</el-dialog>`,
+</el-dialog>`
+    },
   },
 
   {
@@ -596,7 +631,7 @@ import { StepBar } from '<path>/design-spec/components'`
       },
       { key: 'closable', label: '可关闭', type: 'switch', default: false },
     ],
-    snippet: ({ title, type, closable }) =>
+    snippet: ({ title, type, closable, alertShowDesc }) =>
       type === 'neutral'
         ? `<el-alert
   title="${title || '提示文案'}"
@@ -650,8 +685,8 @@ import { Breadcrumb, type BreadcrumbItem } from '<path>/design-spec/components'`
       '窄容器加 small 且必须同时把 layout 精简为 prev, pager, next（只加 small 不精简会挤出换行）',
     ],
     instanceFields: [],
-    snippet: ({ size }) => {
-      const small = size === 'small'
+    snippet: ({ paginationSize }) => {
+      const small = paginationSize === 'small'
       return `<div style="display:flex; justify-content:space-between; align-items:center;">
   <span>共 {{ total }} 条</span>
   <el-pagination
@@ -697,9 +732,14 @@ ${items}
       { key: 'trigger', label: '触发器文案', type: 'text', placeholder: '如：更多操作', default: '' },
       { key: 'items', label: '菜单项', type: 'text', placeholder: '逗号分隔，如：编辑,复制,删除', default: '' },
     ],
-    snippet: ({ trigger, items }) => {
+    snippet: ({ trigger, items, grouped }) => {
       const list = (items || '编辑,删除').split(/[,，]/).map((x) => x.trim()).filter(Boolean)
-      const lis = list.map((x) => `      <el-dropdown-item>${x}</el-dropdown-item>`).join('\n')
+      // 分组抬头必须用裸 <li> + .dropdown-group-title，禁用 el-dropdown-item
+      // 冒充（会带 hover 底色让用户误以为可点）
+      const lis = grouped
+        ? '      <li class="dropdown-group-title">分组一</li>\n' +
+          list.map((x) => `      <el-dropdown-item>${x}</el-dropdown-item>`).join('\n')
+        : list.map((x) => `      <el-dropdown-item>${x}</el-dropdown-item>`).join('\n')
       return `<el-dropdown @visible-change="(v) => (expanded = v)">
   <el-button>${trigger || '更多操作'}<span class="dropdown-caret" :class="{ 'is-expanded': expanded }" /></el-button>
   <template #dropdown>
@@ -725,9 +765,12 @@ ${lis}
       { key: 'label', label: '标签', type: 'text', placeholder: '如：选修方向', default: '' },
       { key: 'options', label: '选项', type: 'text', placeholder: '逗号分隔，如：语文,数学', default: '' },
     ],
-    snippet: ({ label, options }) => {
+    snippet: ({ label, options, checkboxShowText }) => {
       const list = (options || '选项一,选项二').split(/[,，]/).map((x) => x.trim()).filter(Boolean)
-      const boxes = list.map((x, i) => `    <el-checkbox label="${x}" value="${i + 1}" />`).join('\n')
+      // 文案传 label、值传 value（EP 2.6+ 语义）；关掉文字则只留勾选框
+      const boxes = list.map((x, i) => checkboxShowText === false
+        ? `    <el-checkbox value="${i + 1}" />`
+        : `    <el-checkbox label="${x}" value="${i + 1}" />`).join('\n')
       return `<el-form-item label="${label || '标签'}">
   <el-checkbox-group v-model="form.field">
 ${boxes}
@@ -750,11 +793,22 @@ ${boxes}
       { key: 'showInput', label: '带数值输入', type: 'switch', default: false },
       { key: 'range', label: '区间选择', type: 'switch', default: false },
     ],
-    snippet: ({ label, showInput, range }) => `<el-form-item label="${label || '标签'}">
+    snippet: ({ label, showInput, range, isRange, discrete, showMarks }) => {
+      // 离散值必须 step + show-stops 同时给，只给一个不生效
+      const attrs = [
+        (range || isRange) ? 'range' : '',
+        showInput ? 'show-input' : '',
+        discrete ? ':step="10"\n      show-stops' : '',
+        showMarks ? ':marks="{ 0: \'低\', 50: \'中\', 100: \'高\' }"' : '',
+      ].filter(Boolean).join('\n      ')
+      return `<el-form-item label="${label || '标签'}">
   <div style="width: 320px;">
-    <el-slider v-model="form.field"${range ? ' range' : ''}${showInput ? ' show-input' : ''} />
+    <el-slider
+      v-model="form.field"${attrs ? '\n      ' + attrs : ''}
+    />
   </div>
-</el-form-item>`,
+</el-form-item>`
+    },
   },
 
   {
@@ -771,8 +825,8 @@ ${boxes}
       { key: 'label', label: '标签', type: 'text', placeholder: '如：课程评分', default: '' },
       { key: 'readonly', label: '只读展示', type: 'switch', default: false },
     ],
-    snippet: ({ label, readonly, half }) => `<el-form-item label="${label || '评分'}">
-  <el-rate v-model="form.field"${half ? ' allow-half' : ''}${readonly ? ' disabled show-score' : ''} />
+    snippet: ({ label, readonly, allowHalf }) => `<el-form-item label="${label || '评分'}">
+  <el-rate v-model="form.field"${allowHalf ? ' allow-half' : ''}${readonly ? ' disabled show-score' : ''} />
 </el-form-item>`,
   },
 
@@ -787,9 +841,25 @@ ${boxes}
     instanceFields: [
       { key: 'value', label: '数值', type: 'number', default: 5 },
     ],
-    snippet: ({ value }) => `<el-badge :value="${value || 5}">
-  <el-button>消息</el-button>
-</el-badge>`,
+    snippet: ({ value, badgeType }) => {
+      // 徽标包裸宿主定位；挂 tab 要走约定 class .badge-tabs + .tab-badge
+      const host = {
+        avatar: '<UserAvatar role="teacher-male" />',
+        button: '<el-button>消息</el-button>',
+        icon: '<el-button text><template #icon><Bell /></template></el-button>',
+        tab: null,
+      }[badgeType || 'button']
+      if (host === null) {
+        return `<el-tabs v-model="activeTab" class="badge-tabs">
+  <el-tab-pane name="1">
+    <template #label>待批改<el-badge class="tab-badge" :value="${value || 5}" /></template>
+  </el-tab-pane>
+</el-tabs>`
+      }
+      return `<el-badge :value="${value || 5}">
+  ${host}
+</el-badge>`
+    },
   },
 
   {
@@ -805,7 +875,8 @@ ${boxes}
     instanceFields: [
       { key: 'items', label: '字段', type: 'text', placeholder: '逗号分隔，如：姓名,学号,班级', default: '' },
     ],
-    snippet: ({ items, 列: col }) => {
+    snippet: ({ items, descCols, descRows }) => {
+      const col = descCols
       const list = (items || '姓名,学号').split(/[,，]/).map((x) => x.trim()).filter(Boolean)
       const rows = list.map((x) => `  <el-descriptions-item label="${x}">—</el-descriptions-item>`).join('\n')
       return `<el-descriptions border :column="${col || 3}">
@@ -832,10 +903,22 @@ ${rows}
           { value: 'student-female', label: '学生（女）' },
         ] },
     ],
-    snippet: ({ role, 尺寸: size }) => `<UserAvatar role="${role || 'teacher-male'}"${size && size !== 40 ? ` :size="${size}"` : ''} />
+    snippet: ({ role, avatarSize, avatarMode }) => {
+      // 尺寸只用三档保持全站一致；组合形态＝多个头像并排
+      const sz = avatarSize && Number(avatarSize) !== 40 ? ` :size="${avatarSize}"` : ''
+      const one = `<UserAvatar role="${role || 'teacher-male'}"${sz} />`
+      const body = avatarMode === 'group'
+        ? `<div style="display:flex; gap:var(--iflyv-spacing-2);">
+  ${one}
+  <UserAvatar role="student-female"${sz} />
+  <UserAvatar role="student-male"${sz} />
+</div>`
+        : one
+      return body + `
 
 <!-- 脚本 -->
-import { UserAvatar } from '<path>/design-spec/components'`,
+import { UserAvatar } from '<path>/design-spec/components'`
+    },
   },
 
   {
@@ -852,7 +935,7 @@ import { UserAvatar } from '<path>/design-spec/components'`,
       { key: 'width', label: '宽度', type: 'select', default: '600',
         options: [{ value: '400', label: '400 · 轻量' }, { value: '600', label: '600 · 详细' }] },
     ],
-    snippet: ({ title, width, 底部按钮: withFooter }) => `<el-drawer v-model="visible" title="${title || '标题'}" size="${width || 600}px">
+    snippet: ({ title, width, drawerHasFooter: withFooter, drawerFooterLayout }) => `<el-drawer v-model="visible" title="${title || '标题'}" size="${width || 600}px">
   <!-- 内容 -->${withFooter !== false ? `
 
   <template #footer>
@@ -901,7 +984,7 @@ import { UserAvatar } from '<path>/design-spec/components'`,
       { key: 'title', label: '标题', type: 'text', placeholder: '如：导出完成', default: '' },
       { key: 'text', label: '正文', type: 'text', placeholder: '如：文件已生成', default: '' },
     ],
-    snippet: ({ title, text, 操作按钮: withAction }) => withAction
+    snippet: ({ title, text, notifyActions: withAction, notifyPersist }) => withAction
       ? `const handle = ElNotification({
   title: '${title || '通知'}',
   duration: 0,
@@ -953,7 +1036,7 @@ import { UserAvatar } from '<path>/design-spec/components'`,
     ],
     instanceFields: [
       { key: 'content', label: '提示文案', type: 'text', placeholder: '如：导出为 Excel', default: '' },
-      { key: 'placement', label: '方位', type: 'select', default: 'top',
+      { key: 'tooltipPlacement', label: '方位', type: 'select', default: 'top',
         options: [
           { value: 'top', label: 'top 上方' },
           { value: 'bottom', label: 'bottom 下方' },
@@ -961,7 +1044,7 @@ import { UserAvatar } from '<path>/design-spec/components'`,
           { value: 'right', label: 'right 右侧' },
         ] },
     ],
-    snippet: ({ content, placement }) => `<el-tooltip content="${content || '提示文案'}" placement="${placement || 'top'}" :show-after="300">
+    snippet: ({ content, tooltipPlacement: placement }) => `<el-tooltip content="${content || '提示文案'}" placement="${placement || 'top'}" :show-after="300">
   <el-button text>
     <template #icon><Download /></template>
   </el-button>
@@ -987,7 +1070,8 @@ import { UserAvatar } from '<path>/design-spec/components'`,
         ] },
       { key: 'text', label: '提示文字', type: 'text', placeholder: '如：加载中', default: '' },
     ],
-    snippet: ({ form, text }) => {
+    snippet: ({ form, text, showLoadingText }) => {
+      if (showLoadingText === false) text = ''
       if (form === 'button') return `<el-button type="primary" :loading="submitting" @click="handleSubmit">提交</el-button>`
       if (form === 'fullscreen') return `const loading = ElLoading.service({ text: '${text || '加载中'}' })
 // 完成后 loading.close()`
@@ -1027,7 +1111,7 @@ import { UserAvatar } from '<path>/design-spec/components'`,
       { key: 'title', label: '标题', type: 'text', placeholder: '如：提交成功', default: '' },
       { key: 'subTitle', label: '副标题', type: 'text', placeholder: '如：作业已发布给学生', default: '' },
     ],
-    snippet: ({ title, subTitle, 场景: scene }) => {
+    snippet: ({ title, subTitle, 场景: scene, showSubtitle, showButton }) => {
       const icon = scene === 'error' ? 'error' : 'success'
       return `<el-result icon="${icon}" title="${title || '操作成功'}" sub-title="${subTitle || ''}">
   <template #extra>
