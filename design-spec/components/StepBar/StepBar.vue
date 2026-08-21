@@ -50,12 +50,9 @@
         </div>
         <span class="step-bar__label">{{ step }}</span>
       </div>
-      <!-- 连接线：末步之后不渲染 -->
-      <div
-        v-if="index < steps.length - 1"
-        class="step-bar__line"
-        :style="{ '--seg-delay': `${lineDelay(index)}s` }"
-      />
+      <!-- 连接线：末步之后不渲染。全部纯灰、无状态区分——
+           连接线只表达"步骤之间的连接关系"，进度由圆内的勾与当前步的绿环/绿文字表达。 -->
+      <div v-if="index < steps.length - 1" class="step-bar__line" />
     </template>
   </div>
 </template>
@@ -93,10 +90,14 @@ const maskStyle = computed(() => ({
 }))
 
 /* ───────── 跨步切换的串行接力时序 ─────────
-   纯 CSS 的固定 transition-delay 只能编排「相邻单步」；跨多步（如 1→5）时多段线/多个圆
+   纯 CSS 的固定 transition-delay 只能编排「相邻单步」；跨多步（如 1→5）时多个圆
    会同时点亮 = 并发。改为按元素在「本次变化区间」内的空间次序，动态算递增延迟：
-   第 k 个变化的元素延迟 k×STEP_T，从而逐段接力（前进从左到右、回退从右到左）。 */
-const STEP_T = 0.28  // 单段/单圆点亮时长（秒），与 scss 里过渡时长同量级
+   第 k 个变化的元素延迟 k×STEP_T，从而逐个接力（前进从左到右、回退从右到左）。
+
+   ⚠ 连接线已全部改为纯灰、无状态变化，节奏中不再有「等线填充」这一环：
+   单步切换时圆/序号/文字立即变色（scss 里各 transition 的固定前置延迟已清零），
+   STEP_T 只在跨多步时起作用，用于拉开逐个节点的接力次序。 */
+const STEP_T = 0.12  // 跨多步时相邻两个节点点亮的间隔（秒）；单步切换不经过它
 
 // 上一个 current（用于判断本次变化方向与区间）
 const prev = ref(props.current)
@@ -117,25 +118,11 @@ function circleOrder(circlePos: number): number {
     : changeHi.value - circlePos        // 回退：区间内靠右先退
 }
 
-// 线（0-based index，连接第 index+1 与 index+2 步，跨越 1-based 边界 index+1）在区间里的接力次序。
-// 变化的线是段序 [changeLo, changeHi) 边界，即 0-based index ∈ [changeLo-1, changeHi-1)。
-// 前进：靠左的段先填；回退：靠右的段先退。区间外返回 0。
-function lineOrder(index: number): number {
-  const boundary = index + 1  // 该线跨越的 1-based 边界（左圆的序号）
-  if (boundary < changeLo.value || boundary >= changeHi.value) return 0
-  return forward.value
-    ? boundary - changeLo.value        // 前进：靠左段先填（changeLo 段次序 0）
-    : changeHi.value - 1 - boundary     // 回退：靠右段先退（最右段次序 0）
-}
-
 // 圆 i（0-based）的接力延迟行内变量：圆位于 1-based 的 index+1
 function circleDelay(index: number): number {
   return circleOrder(index + 1) * STEP_T
 }
-// 线 i（0-based）的接力延迟
-function lineDelay(index: number): number {
-  return lineOrder(index) * STEP_T
-}
+
 </script>
 
 <style scoped lang="scss">
@@ -157,7 +144,8 @@ function lineDelay(index: number): number {
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  /* 跨步接力延迟（行内 --seg-delay 覆盖，默认 0）：跨多步时按空间次序递增，逐段接力点亮 */
+  /* 跨步接力延迟（行内 --seg-delay 覆盖，默认 0）：跨多步时按空间次序递增，逐个节点接力点亮；
+     单步切换时为 0s，即时变色 */
   --seg-delay: 0s;
   /* 标签绝对定位后节点宽度恒为 40px 圆本身，与文字长短彻底解耦；
      连接线负 margin 钻入圆下 → 圆的不透明白底需盖在线头之上，抬高层级 */
@@ -182,22 +170,27 @@ function lineDelay(index: number): number {
   align-items: center;
   justify-content: center;
   color: var(--iflyv-text-2);
-  /* 回退（失去 active）时走此基态熄灭：叠加接力延迟 --seg-delay，从右向左依次熄灭 */
-  transition: all 0.25s cubic-bezier(0, 0, 0.2, 1) calc(0.1s + var(--seg-delay));
+  /* 回退（失去 active）时走此基态熄灭：仅叠加跨多步的接力延迟，从右向左依次熄灭 */
+  transition: all 0.25s cubic-bezier(0, 0, 0.2, 1) var(--seg-delay);
 }
 
-/* 当前 / 已完成步骤：环变品牌色；内容色（完成态勾图标继承此 color）用强调黑。
-   前进时延迟 0.35s 点亮（接在左侧线段填充之后，形成从左到右的节奏）；
-   失去 active 时走基态无延迟 transition，回退即时还原。 */
+/* 当前 / 已完成步骤：环变品牌色。此处的 color 是圆内内容的兜底基色，
+   实际两种状态各自覆盖：进行中序号 → 品牌绿（见 __num）、完成态勾 → icon-1（见下条）。
+   连接线已全灰无动画，故不再等线填充：单步切换即时点亮；
+   跨多步时只叠加 --seg-delay 的接力次序，逐个节点从左到右亮起。 */
 .step-bar__item.is-active .step-bar__circle {
   border-color: var(--iflyv-brand-primary);
   color: var(--iflyv-text-1);
-  transition: all 0.2s cubic-bezier(0, 0, 0.2, 1) calc(0.35s + var(--seg-delay));
+  transition: all 0.2s cubic-bezier(0, 0, 0.2, 1) var(--seg-delay);
 }
 
-/* 已完成步骤：圆内勾图标随文字同为品牌绿（同特异性，靠顺序覆盖 is-active） */
+/* 已完成步骤：圆环退回灰（border-default），圆内勾用 icon-1 深色（#12151A）。
+   主题色现在只标记"当前进行到哪一步"——当前步的圆环、序号、文字标签三者是全条唯一的绿；
+   已完成只靠深色勾表达（走过了但不再抢视线），未开始则是浅灰序号。
+   同特异性，靠书写顺序覆盖上面 is-active 的绿环与兜底 color。 */
 .step-bar__item.is-completed .step-bar__circle {
-  color: var(--iflyv-brand-primary);
+  border-color: var(--iflyv-border-default);
+  color: var(--iflyv-icon-1);
 }
 
 /* 圆内序号（01/02/03）：body-sub 14/20；未开始 text-3 */
@@ -206,14 +199,16 @@ function lineDelay(index: number): number {
   /* body-sub token 自带 weight 400，按设计覆盖为 Semibold */
   font-weight: var(--iflyv-font-weight-semibold);
   color: var(--iflyv-text-3);
-  /* 回退熄灭基态：叠加接力延迟，从右向左依次还原 */
-  transition: color 0.25s cubic-bezier(0, 0, 0.2, 1) calc(0.1s + var(--seg-delay));
+  /* 回退熄灭基态：仅叠加跨多步的接力延迟，从右向左依次还原 */
+  transition: color 0.25s cubic-bezier(0, 0, 0.2, 1) var(--seg-delay);
 }
 
-/* 激活 / 完成步骤的序号：text-1；与圆环同节奏延迟点亮 */
+/* 当前（进行中）步骤的序号：品牌绿——与该步文字标签同色，
+   把"当前进行到这一步"的强调统一收在品牌色上；与圆环同节奏点亮。
+   （已完成步骤圆内是勾不是序号，本条只对进行中步生效。） */
 .step-bar__item.is-active .step-bar__num {
-  color: var(--iflyv-text-1);
-  transition: color 0.2s cubic-bezier(0, 0, 0.2, 1) calc(0.35s + var(--seg-delay));
+  color: var(--iflyv-brand-primary);
+  transition: color 0.2s cubic-bezier(0, 0, 0.2, 1) var(--seg-delay);
 }
 
 /* 完成态勾图标进场：轻缩放淡入 */
@@ -232,38 +227,39 @@ function lineDelay(index: number): number {
   white-space: nowrap;
   font: var(--iflyv-font-body-sub);
   color: var(--iflyv-text-3);
-  /* 回退熄灭基态：叠加接力延迟，从右向左依次还原 */
-  transition: color 0.25s cubic-bezier(0, 0, 0.2, 1) calc(0.1s + var(--seg-delay));
+  /* 回退熄灭基态：仅叠加跨多步的接力延迟，从右向左依次还原 */
+  transition: color 0.25s cubic-bezier(0, 0, 0.2, 1) var(--seg-delay);
 }
 
-/* 当前步骤文字：text-1 + Semibold；前进时与圆环同节奏延迟点亮 */
+/* 当前（进行中）步骤文字：品牌绿 + Semibold——唯一被强调的一步，与圆环同节奏点亮 */
 .step-bar__item.is-active .step-bar__label {
-  color: var(--iflyv-text-1);
+  color: var(--iflyv-brand-primary);
   font-weight: var(--iflyv-font-weight-semibold);
-  transition: color 0.2s cubic-bezier(0, 0, 0.2, 1) calc(0.35s + var(--seg-delay));
+  transition: color 0.2s cubic-bezier(0, 0, 0.2, 1) var(--seg-delay);
 }
 
-/* 已完成步骤文字：品牌绿（与圆环、勾图标同色）+ Semibold。
-   is-completed 同时带 is-active，靠书写顺序覆盖上面的 text-1。 */
+/* 已完成步骤文字：text-1 深色（#12151A）+ 常规字重，与圆内勾图标同色。
+   三态由此拉开梯度：已完成 = 深色常规（走过了，但仍可读）、
+   进行中 = 品牌绿 Semibold（唯一强调）、未开始 = text-3 常规（尚未涉及）。
+   is-completed 同时带 is-active，靠书写顺序覆盖上面的品牌绿 + Semibold。 */
 .step-bar__item.is-completed .step-bar__label {
-  color: var(--iflyv-brand-primary);
+  color: var(--iflyv-text-1);
+  font-weight: var(--iflyv-font-weight-regular);
 }
 
 /* 连接线：形状由三张切图拼接（两端弧头 line-cap-left/right + 中段 line-mid），用 mask 取形、background 上色。
    两端弧头固定 12px 不拉伸、中段弹性拉伸 → 任意线宽下弧头都不变形（整张图 mask 会随宽度拉平，故切三段）。
    高度与节点圆同为 48px，顶部对齐即与圆垂直居中；负 margin 让弧口贴到圆轮廓。
-   底色固定为未到段灰（border-default），品牌色进度用两层伪元素叠加（渐变层 + 纯色层），
-   background-image 渐变无法补间 → 伪元素 transform 做过渡动效。 */
+
+   配色：一律纯灰（border-default），不分状态、无渐变。
+   连接线只表达"步骤之间的连接关系"，不承担进度表达——进度全部交给节点：
+   已完成 = 圆内深色勾、进行中 = 绿环+绿序号+绿文字、未开始 = 灰序号。
+   ⛔ 别再往线上加品牌色渐变：线是贯穿全条的大面积元素，一旦上色就会压过
+   真正需要被看见的"当前步"，且渐变与灰底交界处发灰发脏。 */
 .step-bar__line {
   flex: 1;
   height: 48px;
-  position: relative;
-  /* z-index:0 建立自身层叠上下文，把 ::before/::after 收纳在内，
-     防止伪元素逃逸到与节点（z-index:1）同级竞争层叠 */
-  z-index: 0;
   background: var(--iflyv-border-default);
-  /* 跨步接力延迟（行内 --seg-delay 覆盖，默认 0） */
-  --seg-delay: 0s;
   /* -4px = 纯塞入量：标签已绝对定位、节点宽度恒为 40px 圆，线端钻入圆下 4px 保证无缝衔接，
      12px 弧头露出 8px 贴合圆轮廓。勿改回合成魔法数字（旧 -12px 隐式依赖标签宽度，文字一长就断缝） */
   margin: 0 -4px;
@@ -277,72 +273,6 @@ function lineDelay(index: number): number {
   -webkit-mask-repeat: no-repeat, no-repeat, no-repeat;
   -webkit-mask-position: left center, right center, center center;
   -webkit-mask-size: 12px 48px, 12px 48px, calc(100% - 24px) 48px;
-
-  /* 两层品牌色填充（都被父级 mask 裁成线形）：::before 进行中渐变层，::after 完成纯色层 */
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transform: scaleX(0);
-    transform-origin: left center;
-    /* 基态（回退退回灰）：叠加接力延迟，从右向左依次退去 */
-    transition:
-      opacity 0.35s cubic-bezier(0.5, 0, 1, 1) var(--seg-delay),
-      transform 0.35s cubic-bezier(0.5, 0, 1, 1) var(--seg-delay);
-  }
-
-  /* 进行中：品牌绿 → 透明渐变，50% 处已完全淡出（透出底灰，与未到段自然衔接）。
-     品牌绿统一 40% 不透明度（用 color-mix 从品牌色派生，不硬编码 hex）。 */
-  &::before {
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--iflyv-brand-primary) 40%, transparent) 0%,
-      transparent 50%
-    );
-  }
-
-  /* 完成：品牌绿纯色 */
-  &::after {
-    background: var(--iflyv-brand-primary);
-  }
-}
-
-/* 回退时（左节点保持 active）：纯色层延迟 0.4s 从右向左退去，
-   与 ::before 渐变层的恢复同步交叉，避免露出全灰 */
-.step-bar__item.is-active + .step-bar__line::after {
-  transition:
-    opacity 0.45s cubic-bezier(0, 0, 0.2, 1) calc(0.4s + var(--seg-delay)),
-    transform 0.45s cubic-bezier(0, 0, 0.2, 1) calc(0.4s + var(--seg-delay));
-}
-
-/* 当前步骤右侧的线：渐变层从左向右展开。
-   前进时延迟 0.4s（左侧线填充 → 圆点亮 → 本段展开的链式节奏收尾） */
-.step-bar__item.is-active + .step-bar__line::before {
-  opacity: 1;
-  transform: scaleX(1);
-  transition:
-    opacity 0.5s cubic-bezier(0, 0, 0.2, 1) calc(0.4s + var(--seg-delay)),
-    transform 0.5s cubic-bezier(0, 0, 0.2, 1) calc(0.4s + var(--seg-delay));
-}
-
-/* 已完成段：纯色层从左向右填满，渐变层淡出（交叉过渡，无跳色） */
-.step-bar__item.is-completed + .step-bar__line::before {
-  opacity: 0;
-  /* 渐变层随本段接力次序交叉淡出（与 ::after 同延迟），无跳色 */
-  transition:
-    opacity 0.35s cubic-bezier(0.5, 0, 1, 1) var(--seg-delay),
-    transform 0.35s cubic-bezier(0.5, 0, 1, 1) var(--seg-delay);
-}
-
-.step-bar__item.is-completed + .step-bar__line::after {
-  opacity: 1;
-  transform: scaleX(1);
-  /* 已完成段填充：按本段接力次序延迟（--seg-delay），跨多步时逐段接力从左往右填 */
-  transition:
-    opacity 0.35s cubic-bezier(0.5, 0, 1, 1) var(--seg-delay),
-    transform 0.35s cubic-bezier(0.5, 0, 1, 1) var(--seg-delay);
 }
 
 @keyframes step-bar-check-in {
