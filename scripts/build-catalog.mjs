@@ -40,6 +40,15 @@ import { fileURLToPath } from 'url'
 import { extractAll } from './extract-demo-configs.mjs'
 import { COMPONENTS, GROUPS } from './component-catalog.mjs'
 
+/**
+ * 组件示意图（base64 webp），由 scripts/shoot-components.mjs 拍 demo 生成。
+ * 缺失不报错——图是锦上添花，没有也不该挡住 catalog 生成。
+ */
+const SHOTS_FILE = join(dirname(fileURLToPath(import.meta.url)), 'component-shots.json')
+const SHOTS = existsSync(SHOTS_FILE)
+  ? (JSON.parse(readFileSync(SHOTS_FILE, 'utf8')).shots || {})
+  : {}
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, 'scripts/catalog.json')
 
@@ -133,27 +142,30 @@ export function buildCatalog() {
 
   const components = []
   const missingSnippet = []
+  const missingShot = []
   const deadFields = []
 
   for (const item of nav) {
     const hw = handwritten.get(item.anchor)
     const dc = demoConfigs[demoKeyOf(item.anchor)]
 
-    // 配置项 = demo 提取的形态开关 + 手写的实例参数（文案/标签/宽度…）
-    // 两者性质不同：前者是"组件有哪些样子"（demo 演示的），后者是"这次插入
-    // 的实例怎么配"（demo 不需要问，因为它写死了）。合并而非替换。
+    // 配置项 **只取 demo 的形态开关** —— 设计系统里「配置项」有严格定义：
+    // 按 CLAUDE.md「配置式组件设计范式」，互斥选一的是**类型**（次/主/危险），
+    // 可自由叠加的才是**配置项**（带图标、带下拉箭头…）。demo 右侧那张
+    // 「配置项」卡片列的就是后者，那就是这个组件配置项的全集。
+    //
+    // 曾经额外并入过 component-catalog.mjs 里手写的 instanceFields
+    // （文案/类型/loading 之类"这次插入的实例怎么配"），结果面板里的配置项
+    // 比 demo 多出好几项，与设计系统对不上。现在一律以 demo 为准，
+    // 文案、类型这些让用户在需求描述里自己说（"右上角加个【Button】，
+    // 主按钮，写'导出'"）—— 描述比表单更自然，也不会跟规范打架。
+    //
     // demo 的重复形态组不进面板：Select 有 5 张 config-card（单选/多选/分组/
     // 树形/级联各一套「可清除·可搜索」），插入一个实例只需要一套。
     // 带数字后缀的 label（「可清除 2」）就是 extract 加的去重标记，一律丢弃。
-    const demoFields = (dc ? dc.fields : [])
+    const fields = (dc ? dc.fields : [])
       .filter((f) => !/ \d+$/.test(f.label))
       .filter((f) => !EXCLUDE_FIELDS.has(f.key))
-    const instanceFields = hw ? (hw.instanceFields || []) : []
-    const seen = new Set(demoFields.map((f) => f.key))
-    const fields = [
-      ...instanceFields.filter((f) => !seen.has(f.key)),
-      ...demoFields,
-    ]
 
     const entry = {
       id: hw ? hw.id : item.anchor,
@@ -167,8 +179,11 @@ export function buildCatalog() {
       mustRules: hw ? hw.mustRules : [],
       // snippet 是函数，JSON 里存不了 —— 存源码字符串，扩展侧用 new Function 还原
       snippetSrc: hw && hw.snippet ? hw.snippet.toString() : null,
+      // 示意图：随 catalog 一起分发，扩展不用额外请求
+      shot: SHOTS[item.anchor] || null,
     }
     if (!entry.snippetSrc) missingSnippet.push(item.name)
+    if (!entry.shot) missingShot.push(item.name)
 
     // 配置项必须真的影响产物。开关开了、代码里却没有 —— 用户会以为生效了，
     // 这比"没有这个开关"更糟：配置界面说了谎，而且只有对着生成的代码逐字
@@ -188,7 +203,7 @@ export function buildCatalog() {
     generatedFrom: 'FengranZhou/design-system',
     groups: GROUPS,
     components,
-    _stats: { total: components.length, missingSnippet, deadFields },
+    _stats: { total: components.length, missingSnippet, missingShot, deadFields },
   }
 }
 
@@ -219,6 +234,11 @@ if (isMain) {
       console.log('  用户开了这些开关，生成的代码却不变 —— 配置界面在说谎。')
       console.log('  修法：让 component-catalog.mjs 的 snippet 读这些 key，')
       console.log('       或确认该开关不该出现在插入场景（demo 演示用，非实例参数）。')
+    }
+    if (stats.missingShot.length) {
+      console.log(`\n⚠ ${stats.missingShot.length} 个组件还没有示意图：`)
+      console.log('  ' + stats.missingShot.join('、'))
+      console.log('  补法：cd demo && pnpm build，然后 node scripts/shoot-components.mjs --missing')
     }
     if (stats.missingSnippet.length) {
       console.log(`\n⚠ ${stats.missingSnippet.length} 个组件还没有代码骨架（snippet）：`)

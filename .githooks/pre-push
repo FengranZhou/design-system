@@ -10,13 +10,28 @@ if ! command -v node >/dev/null 2>&1; then
   exit 0
 fi
 
+# ── ① 组件示意图：按指纹增量重拍 ──────────────────────────────────
+# 图是扩展组件列表的"脸"，改了 demo 或 el-theme 却没重拍，列表里显示的
+# 就还是旧样子。脚本内部按「demo 文件 + 主题样式」的指纹判断谁需要重拍，
+# 没动过时是 0.1 秒的空跑，所以可以无脑挂在这里。
+#
+# 拍图要起 Chrome，失败（没装 / 没 build demo）不阻止推送——图缺了只是
+# 列表里那个组件难认一点，不该因此推不上去。
+if [ -d demo/dist ]; then
+  node scripts/shoot-components.mjs 2>/dev/null || \
+    echo "⚠ 组件示意图未能更新（不影响推送）"
+else
+  echo "⚠ demo/dist 不存在，跳过示意图更新（需要时先 cd demo && pnpm build）"
+fi
+
+# ── ② catalog 一致性 ─────────────────────────────────────────────
 if ! node scripts/build-catalog.mjs --check >/dev/null 2>&1; then
   echo ""
   echo "✗ catalog.json 与当前设计系统不一致，已阻止推送"
   echo ""
   node scripts/build-catalog.mjs
   echo ""
-  echo "  已自动重新生成。请 git add scripts/catalog.json 并提交后再推送。"
+  echo "  已自动重新生成。请 git add scripts/catalog.json scripts/component-shots.json 并提交后再推送。"
   echo ""
   exit 1
 fi
