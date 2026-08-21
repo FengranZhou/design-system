@@ -20,6 +20,7 @@
  *   C7  组件三态覆盖率（有条目 / 勿用清单 / 无额外规矩，三者都不在＝下游查不到）
  *   C8  强制规则未进评判标准（漏打 @rule 标记＝该规则不进清单、评分时查不到）
  *   C9  新增组件漏补 catalog 骨架（扩展面板拿不到代码骨架，不报错但 prompt 变弱）
+ *   C10 新增组件漏补示意图（扩展列表里那个组件比别人难认，不报错）
  *   C9  标了 detect=regex/ast 却没写检测器（承诺自动检测却没实现）
  */
 
@@ -461,6 +462,25 @@ let suspendSectionText = '' // C3 需据此跳过清单自身
             '   ' + missing.join('、') + '\n' +
             '   → 在 scripts/component-catalog.mjs 补条目（snippet + mustRules + anchor）\n' +
             '     mustRules 直接抄 design-spec/CLAUDE.md 触发表该组件那行的说明列，别重写',
+        })
+      }
+
+      // C10：新增组件漏补示意图。
+      // 扩展的组件列表靠图认脸，缺图的会退化成灰色示意图形 —— 不报错、
+      // 不影响功能，但那个组件在列表里就比别人难认。同样属于「不报错所以
+      // 必须有检查兜底」的一类。
+      const noShot = (cat.components || [])
+        .filter((c) => !c.shot)
+        .map((c) => c.name)
+      if (noShot.length) {
+        problems.push({
+          check: 'C10 组件示意图缺失',
+          msg: `${noShot.length} 个已启用组件还没有示意图`,
+          detail:
+            '   ' + noShot.join('、') + '\n' +
+            '   → cd demo && pnpm build\n' +
+            '     node scripts/shoot-components.mjs --missing\n' +
+            '     node scripts/build-catalog.mjs',
         })
       }
     } catch (e) {

@@ -56,7 +56,7 @@ export const COMPONENTS = [
     name: 'Input 输入框',
     group: 'input',
     desc: '表单里的文本输入字段（含标签）',
-    keywords: ['输入框', 'input', '文本框', '表单项', 'form-item'],
+    keywords: ['输入框', 'input', '文本框', '表单项', 'form-item', '搜索', '搜索框', 'search'],
     readRefs: [
       'references/patterns/form-pattern.md',
       'references/component-interaction.md（按钮图标 / 输入框图标 段）',
