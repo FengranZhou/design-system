@@ -1,0 +1,629 @@
+{
+  "version": 1,
+  "generatedFrom": "FengranZhou/design-system",
+  "semanticColors": [
+    {
+      "name": "brand-primary",
+      "value": "var(--iflyv-accent-6)"
+    },
+    {
+      "name": "brand-text",
+      "value": "var(--iflyv-brand-primary)"
+    },
+    {
+      "name": "brand-hover",
+      "value": "var(--iflyv-accent-5)"
+    },
+    {
+      "name": "brand-pressed",
+      "value": "var(--iflyv-accent-7)"
+    },
+    {
+      "name": "brand-disabled",
+      "value": "var(--iflyv-accent-4)"
+    },
+    {
+      "name": "brand-bg",
+      "value": "var(--iflyv-accent-1)"
+    },
+    {
+      "name": "success-primary",
+      "value": "var(--iflyv-green-6)"
+    },
+    {
+      "name": "success-hover",
+      "value": "var(--iflyv-green-5)"
+    },
+    {
+      "name": "success-pressed",
+      "value": "var(--iflyv-green-7)"
+    },
+    {
+      "name": "success-disabled",
+      "value": "var(--iflyv-green-4)"
+    },
+    {
+      "name": "success-bg",
+      "value": "var(--iflyv-green-1)"
+    },
+    {
+      "name": "danger-primary",
+      "value": "var(--iflyv-red-6)"
+    },
+    {
+      "name": "danger-hover",
+      "value": "var(--iflyv-red-5)"
+    },
+    {
+      "name": "danger-pressed",
+      "value": "var(--iflyv-red-7)"
+    },
+    {
+      "name": "danger-disabled",
+      "value": "var(--iflyv-red-4)"
+    },
+    {
+      "name": "danger-bg",
+      "value": "var(--iflyv-red-1)"
+    },
+    {
+      "name": "warning-primary",
+      "value": "var(--iflyv-orange-6)"
+    },
+    {
+      "name": "warning-hover",
+      "value": "var(--iflyv-orange-5)"
+    },
+    {
+      "name": "warning-pressed",
+      "value": "var(--iflyv-orange-7)"
+    },
+    {
+      "name": "warning-disabled",
+      "value": "var(--iflyv-orange-4)"
+    },
+    {
+      "name": "warning-bg",
+      "value": "var(--iflyv-orange-1)"
+    },
+    {
+      "name": "info-primary",
+      "value": "var(--iflyv-blue-6)"
+    },
+    {
+      "name": "info-hover",
+      "value": "var(--iflyv-blue-5)"
+    },
+    {
+      "name": "info-pressed",
+      "value": "var(--iflyv-blue-7)"
+    },
+    {
+      "name": "info-disabled",
+      "value": "var(--iflyv-blue-4)"
+    },
+    {
+      "name": "info-bg",
+      "value": "var(--iflyv-blue-1)"
+    },
+    {
+      "name": "bg-page",
+      "value": "var(--iflyv-gray-1)"
+    },
+    {
+      "name": "bg-page-white",
+      "value": "var(--iflyv-gray-0)"
+    },
+    {
+      "name": "bg-panel",
+      "value": "var(--iflyv-gray-0)"
+    },
+    {
+      "name": "bg-inset",
+      "value": "var(--iflyv-gray-1)"
+    },
+    {
+      "name": "bg-segment-active",
+      "value": "var(--iflyv-gray-0)"
+    },
+    {
+      "name": "bg-card",
+      "value": "linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%)"
+    },
+    {
+      "name": "bg-back",
+      "value": "#{$bg-back}"
+    },
+    {
+      "name": "text-1",
+      "value": "var(--iflyv-gray-10)"
+    },
+    {
+      "name": "text-2",
+      "value": "var(--iflyv-gray-7)"
+    },
+    {
+      "name": "text-3",
+      "value": "var(--iflyv-gray-5)"
+    },
+    {
+      "name": "text-4",
+      "value": "var(--iflyv-gray-3)"
+    },
+    {
+      "name": "text-on-dark",
+      "value": "var(--iflyv-gray-0)"
+    },
+    {
+      "name": "text-on-light",
+      "value": "var(--iflyv-gray-10)"
+    },
+    {
+      "name": "border-subtle",
+      "value": "rgba(21, 21, 21, 0.06)"
+    },
+    {
+      "name": "border-subtle",
+      "value": "color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)"
+    },
+    {
+      "name": "border-default",
+      "value": "#{$border-default-fallback}"
+    },
+    {
+      "name": "border-default",
+      "value": "color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent)"
+    },
+    {
+      "name": "border-strong",
+      "value": "rgba(21, 21, 21, 0.2)"
+    },
+    {
+      "name": "border-strong",
+      "value": "color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent)"
+    },
+    {
+      "name": "border-on-dark",
+      "value": "#{$border-on-dark-fallback}"
+    },
+    {
+      "name": "border-on-dark",
+      "value": "color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent)"
+    },
+    {
+      "name": "mask-primary",
+      "value": "#{$mask-primary-fallback}"
+    },
+    {
+      "name": "mask-primary",
+      "value": "color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent)"
+    },
+    {
+      "name": "mask-on-dark",
+      "value": "#{$mask-on-dark-fallback}"
+    },
+    {
+      "name": "mask-on-dark",
+      "value": "color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent)"
+    }
+  ],
+  "semanticColorGroups": {
+    "brand": [
+      {
+        "name": "brand-primary",
+        "value": "var(--iflyv-accent-6)"
+      },
+      {
+        "name": "brand-text",
+        "value": "var(--iflyv-brand-primary)"
+      },
+      {
+        "name": "brand-hover",
+        "value": "var(--iflyv-accent-5)"
+      },
+      {
+        "name": "brand-pressed",
+        "value": "var(--iflyv-accent-7)"
+      },
+      {
+        "name": "brand-disabled",
+        "value": "var(--iflyv-accent-4)"
+      },
+      {
+        "name": "brand-bg",
+        "value": "var(--iflyv-accent-1)"
+      }
+    ],
+    "success": [
+      {
+        "name": "success-primary",
+        "value": "var(--iflyv-green-6)"
+      },
+      {
+        "name": "success-hover",
+        "value": "var(--iflyv-green-5)"
+      },
+      {
+        "name": "success-pressed",
+        "value": "var(--iflyv-green-7)"
+      },
+      {
+        "name": "success-disabled",
+        "value": "var(--iflyv-green-4)"
+      },
+      {
+        "name": "success-bg",
+        "value": "var(--iflyv-green-1)"
+      }
+    ],
+    "danger": [
+      {
+        "name": "danger-primary",
+        "value": "var(--iflyv-red-6)"
+      },
+      {
+        "name": "danger-hover",
+        "value": "var(--iflyv-red-5)"
+      },
+      {
+        "name": "danger-pressed",
+        "value": "var(--iflyv-red-7)"
+      },
+      {
+        "name": "danger-disabled",
+        "value": "var(--iflyv-red-4)"
+      },
+      {
+        "name": "danger-bg",
+        "value": "var(--iflyv-red-1)"
+      }
+    ],
+    "warning": [
+      {
+        "name": "warning-primary",
+        "value": "var(--iflyv-orange-6)"
+      },
+      {
+        "name": "warning-hover",
+        "value": "var(--iflyv-orange-5)"
+      },
+      {
+        "name": "warning-pressed",
+        "value": "var(--iflyv-orange-7)"
+      },
+      {
+        "name": "warning-disabled",
+        "value": "var(--iflyv-orange-4)"
+      },
+      {
+        "name": "warning-bg",
+        "value": "var(--iflyv-orange-1)"
+      }
+    ],
+    "info": [
+      {
+        "name": "info-primary",
+        "value": "var(--iflyv-blue-6)"
+      },
+      {
+        "name": "info-hover",
+        "value": "var(--iflyv-blue-5)"
+      },
+      {
+        "name": "info-pressed",
+        "value": "var(--iflyv-blue-7)"
+      },
+      {
+        "name": "info-disabled",
+        "value": "var(--iflyv-blue-4)"
+      },
+      {
+        "name": "info-bg",
+        "value": "var(--iflyv-blue-1)"
+      }
+    ],
+    "bg": [
+      {
+        "name": "bg-page",
+        "value": "var(--iflyv-gray-1)"
+      },
+      {
+        "name": "bg-page-white",
+        "value": "var(--iflyv-gray-0)"
+      },
+      {
+        "name": "bg-panel",
+        "value": "var(--iflyv-gray-0)"
+      },
+      {
+        "name": "bg-inset",
+        "value": "var(--iflyv-gray-1)"
+      },
+      {
+        "name": "bg-segment-active",
+        "value": "var(--iflyv-gray-0)"
+      },
+      {
+        "name": "bg-card",
+        "value": "linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%)"
+      },
+      {
+        "name": "bg-back",
+        "value": "#{$bg-back}"
+      }
+    ],
+    "text": [
+      {
+        "name": "text-1",
+        "value": "var(--iflyv-gray-10)"
+      },
+      {
+        "name": "text-2",
+        "value": "var(--iflyv-gray-7)"
+      },
+      {
+        "name": "text-3",
+        "value": "var(--iflyv-gray-5)"
+      },
+      {
+        "name": "text-4",
+        "value": "var(--iflyv-gray-3)"
+      },
+      {
+        "name": "text-on-dark",
+        "value": "var(--iflyv-gray-0)"
+      },
+      {
+        "name": "text-on-light",
+        "value": "var(--iflyv-gray-10)"
+      }
+    ],
+    "border": [
+      {
+        "name": "border-subtle",
+        "value": "rgba(21, 21, 21, 0.06)"
+      },
+      {
+        "name": "border-subtle",
+        "value": "color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)"
+      },
+      {
+        "name": "border-default",
+        "value": "#{$border-default-fallback}"
+      },
+      {
+        "name": "border-default",
+        "value": "color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent)"
+      },
+      {
+        "name": "border-strong",
+        "value": "rgba(21, 21, 21, 0.2)"
+      },
+      {
+        "name": "border-strong",
+        "value": "color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent)"
+      },
+      {
+        "name": "border-on-dark",
+        "value": "#{$border-on-dark-fallback}"
+      },
+      {
+        "name": "border-on-dark",
+        "value": "color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent)"
+      }
+    ],
+    "mask": [
+      {
+        "name": "mask-primary",
+        "value": "#{$mask-primary-fallback}"
+      },
+      {
+        "name": "mask-primary",
+        "value": "color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent)"
+      },
+      {
+        "name": "mask-on-dark",
+        "value": "#{$mask-on-dark-fallback}"
+      },
+      {
+        "name": "mask-on-dark",
+        "value": "color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent)"
+      }
+    ]
+  },
+  "fontScale": [
+    {
+      "name": "font-family-base",
+      "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-family-number",
+      "value": "\"douyinNum\""
+    },
+    {
+      "name": "font-family-emphasis",
+      "value": "\"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
+    },
+    {
+      "name": "font-size-12",
+      "value": "0.75rem"
+    },
+    {
+      "name": "font-size-13",
+      "value": "0.8125rem"
+    },
+    {
+      "name": "font-size-14",
+      "value": "0.875rem"
+    },
+    {
+      "name": "font-size-16",
+      "value": "1rem"
+    },
+    {
+      "name": "font-size-18",
+      "value": "1.125rem"
+    },
+    {
+      "name": "font-size-22",
+      "value": "1.375rem"
+    },
+    {
+      "name": "font-size-26",
+      "value": "1.625rem"
+    },
+    {
+      "name": "font-size-40",
+      "value": "2.5rem"
+    },
+    {
+      "name": "font-weight-regular",
+      "value": "400"
+    },
+    {
+      "name": "font-weight-semibold",
+      "value": "600"
+    },
+    {
+      "name": "font-weight-bold",
+      "value": "700"
+    },
+    {
+      "name": "font-weight-extrabold",
+      "value": "800"
+    },
+    {
+      "name": "font-title-page",
+      "value": "800 1.625rem / 3rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
+    },
+    {
+      "name": "font-title-page-multiline",
+      "value": "800 1.625rem / 3.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
+    },
+    {
+      "name": "font-tab-active",
+      "value": "800 1.625rem / 2.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
+    },
+    {
+      "name": "font-title-module",
+      "value": "600 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-tab-active-sub",
+      "value": "600 1.125rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-tab-default",
+      "value": "400 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-title-component",
+      "value": "600 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-body-primary",
+      "value": "400 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-body-primary-multiline",
+      "value": "400 1rem / 2rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-body-sub",
+      "value": "400 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-body-sub-multiline",
+      "value": "400 0.875rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-body-min",
+      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-body-min-multiline",
+      "value": "400 0.75rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-label-primary",
+      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+    },
+    {
+      "name": "font-number-display",
+      "value": "700 1.625rem / 2.5rem \"douyinNum\""
+    },
+    {
+      "name": "font-number-display-sm",
+      "value": "700 1.375rem / 2.125rem \"douyinNum\""
+    }
+  ],
+  "spacing": [
+    {
+      "name": "spacing-0_5",
+      "value": "2px"
+    },
+    {
+      "name": "spacing-1",
+      "value": "4px"
+    },
+    {
+      "name": "spacing-1_5",
+      "value": "6px"
+    },
+    {
+      "name": "spacing-2",
+      "value": "8px"
+    },
+    {
+      "name": "spacing-3",
+      "value": "12px"
+    },
+    {
+      "name": "spacing-4",
+      "value": "16px"
+    },
+    {
+      "name": "spacing-5",
+      "value": "20px"
+    },
+    {
+      "name": "spacing-6",
+      "value": "24px"
+    },
+    {
+      "name": "spacing-8",
+      "value": "32px"
+    },
+    {
+      "name": "spacing-10",
+      "value": "40px"
+    }
+  ],
+  "radius": [
+    {
+      "name": "radius-xs",
+      "value": "4px",
+      "comment": "Tag、Checkbox、Select item、Dropdown item"
+    },
+    {
+      "name": "radius-sm",
+      "value": "8px",
+      "comment": "Button、Input、小卡片、Table、大多数组件默认"
+    },
+    {
+      "name": "radius-md",
+      "value": "10px",
+      "comment": "大卡片"
+    },
+    {
+      "name": "radius-lg",
+      "value": "12px",
+      "comment": "页面级容器、Dialog、Drawer"
+    },
+    {
+      "name": "radius-full",
+      "value": "999px",
+      "comment": "胶囊按钮、全圆角 Tag"
+    }
+  ]
+}
