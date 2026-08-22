@@ -162,6 +162,15 @@ if (!matched.length) process.exit(1)
 function has(cmd) {
   try { execFileSync('which', [cmd], { stdio: 'ignore' }); return true } catch (_) { return false }
 }
+
+/** 读源图像素尺寸 —— 缩放比例要靠它算，不能只按长边缩。 */
+function srcSize(file) {
+  const out = execFileSync('sips', ['-g', 'pixelWidth', '-g', 'pixelHeight', file], { encoding: 'utf8' })
+  const w = Number(out.match(/pixelWidth:\s*(\d+)/)?.[1])
+  const h = Number(out.match(/pixelHeight:\s*(\d+)/)?.[1])
+  if (!w || !h) throw new Error('读不到尺寸：' + basename(file))
+  return [w, h]
+}
 const hasWebp = has('cwebp')
 if (!hasWebp) console.log('\n⚠ 未找到 cwebp（brew install webp），退回 jpg —— 体积会大一些')
 
