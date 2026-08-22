@@ -62,12 +62,33 @@ const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const PORT = 8933
 const CDP_PORT = 9333
 
-/** 取景画布（大一些拍全，之后按内容裁切） */
-const W = 820
-const H = 460
+/** 浏览器视口（比舞台大一点，避免舞台贴边被滚动条之类影响） */
+const W = 900
+const H = 520
 /** 最终出图尺寸（扩展列表里的缩略图，2x） */
 const OUT_W = 260
 const OUT_H = 140
+
+/**
+ * 「舞台」—— 拍照用的固定取景框，**比例与出图完全一致**（260:140 = 780:420）。
+ *
+ * 之前的做法是：把 section 铺开、量出内容范围、再按 260:140 把长边裁掉。
+ * 那是 cover，对"很宽很矮"的组件是灾难：分页器内容 380×40，按高度算出
+ * 74px 宽的窄条，再拉到 520px 输出 —— 于是又放大又截断，就是"配图歪"。
+ *
+ * 换成 contain：舞台尺寸写死，内容等比缩放**整体装进去**并居中，clip 直接
+ * 取舞台矩形。这样永远不会切掉东西，宽高比也天生正确。
+ */
+const STAGE_W = 780
+const STAGE_H = 420
+/** 舞台内边距，别让组件贴着图的边缘 */
+const STAGE_PAD = 28
+/**
+ * 允许的最大放大倍数。小组件（开关、单个 Tag）按 contain 算能放大到 8 倍，
+ * 那样一个开关会占满整张缩略图，反而认不出是什么。封顶后小组件就是
+ * "居中的一个小东西"，符合它在真实界面里的样子。
+ */
+const MAX_UPSCALE = 1.8
 
 /**
  * 一个组件的"长相指纹"。
@@ -94,6 +115,10 @@ function themeHash() {
     const td = join(ROOT, 'design-spec/design-token')
     walk(td)
   } catch (_) {}
+  // ③ **本脚本自身**：取景与裁切逻辑（容器宽度、居中方式、输出比例）同样
+  // 决定长相。曾漏掉这一项 —— 修好了「配图歪」却因为指纹没变而全部跳过
+  // 重拍，只能手动 --force。把自己也算进去，改了算法就自动全量重拍。
+  try { h.update(readFileSync(new URL(import.meta.url), 'utf8')) } catch (_) {}
   return h.digest('hex').slice(0, 12)
 }
 
@@ -222,10 +247,17 @@ function framingScript(anchor) {
       if (old) old.remove();
       var s = document.getElementById(${JSON.stringify(anchor)});
       if (!s) return JSON.stringify({ ok: false });
+      // 舞台：尺寸写死且比例 == 出图比例，内容稍后等比缩放居中装进来。
+      // 它就是最终画面本身，所以 clip 直接取它的矩形，不再做二次裁切。
       var host = document.createElement('div');
       host.id = '__shot_host';
-      host.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:#fff;' +
-        'padding:20px;box-sizing:border-box;overflow:hidden;';
+      host.style.cssText = 'position:fixed;left:0;top:0;' +
+        'width:${STAGE_W}px;height:${STAGE_H}px;' +
+        'z-index:2147483647;background:#fff;overflow:hidden;';
+      // 内层负责"量尺寸"：给一个宽松的排版宽度让组件自然换行，
+      // 量完再整体缩放。它是 absolute，不受舞台高度约束。
+      var fit = document.createElement('div');
+      fit.style.cssText = 'position:absolute;left:0;top:0;width:${STAGE_W}px;';
       var clone = s.cloneNode(true);
       // 下面这些都不是"组件长什么样"，一律剥掉：
       //   demo-section__title  区块大标题（列表里已有组件名）
@@ -242,26 +274,60 @@ function framingScript(anchor) {
         for (var i = blocks.length - 1; i >= 1; i--) blocks[i].remove();
       }
       clone.style.cssText = 'margin:0;padding:0;width:100%;';
-      host.appendChild(clone);
+      fit.appendChild(clone);
+      host.appendChild(fit);
       document.body.appendChild(host);
-      // 返回内容实际占的范围，交给 CDP 按 clip 精确裁切 ——
-      // 固定尺寸拍会留一大片白，缩略图里组件就变得很小
+
+      // ── contain：量出内容真实占的墨迹范围，等比缩放整体装进舞台并居中 ──
+      // 量的是 clone 的**内容边界**而不是 fit 的宽度：fit 宽 780 是给排版用的，
+      // 分页器只占其中 380，按 780 算会把一大片空白也算成内容，组件就变小了。
+      var pad = 24;   // 舞台内边距，四周留一点呼吸，缩放时一并计入
       var r = clone.getBoundingClientRect();
+      var cw = Math.max(1, r.width);
+      var ch = Math.max(1, r.height);
+      var availW = ${STAGE_W} - pad * 2;
+      var availH = ${STAGE_H} - pad * 2;
+      // 取两个方向里更紧的那个倍率 → 长边刚好贴住可用区，短边留白。
+      // 不放大超过 1：小组件（开关、复选框）拉大会糊，宁可四周多留白。
+      var k = Math.min(availW / cw, availH / ch, 1);
+      var scaledW = cw * k;
+      var scaledH = ch * k;
+      // transform 缩放不改变布局盒，所以偏移量要按缩放后的尺寸算。
+      // 以左上为原点缩放，再平移到居中位置。
+      var offX = (${STAGE_W} - scaledW) / 2 - r.left * k;
+      var offY = (${STAGE_H} - scaledH) / 2 - r.top * k;
+      fit.style.transformOrigin = '0 0';
+      fit.style.transform = 'translate(' + offX + 'px,' + offY + 'px) scale(' + k + ')';
+
+      // 舞台就是最终画面，clip 直接取它 —— 不再做任何二次裁切
       return JSON.stringify({
         ok: true,
-        x: Math.max(0, r.left - 12),
-        y: Math.max(0, r.top - 12),
-        w: Math.min(${W} - 8, r.width + 24),
-        h: Math.min(${H} - 8, r.height + 24),
+        x: 0, y: 0, w: ${STAGE_W}, h: ${STAGE_H},
+        k: k, cw: cw, ch: ch,
       });
     })();
   `
 }
 
+/**
+ * 手工导入图的指纹标记。
+ *
+ * 与 scripts/import-component-shots.mjs 里的同名常量必须一致 —— 它写、这里读。
+ * 之所以不是真指纹而是一个固定字符串：手工图的"新旧"不由 demo 或主题决定，
+ * 而由人什么时候换图决定，算指纹没有意义。
+ */
+const MANUAL_MARK = 'manual'
+
 // ── main ────────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2)
 const only = args.filter((a) => !a.startsWith('--'))
 const missingOnly = args.includes('--missing')
+/**
+ * 指名重拍手工图。手工图默认受保护（见下方 MANUAL_MARK），
+ * 只有同时给出组件名和 `--force` 才会被自动拍的覆盖 ——
+ * 两个条件都要，是因为"覆盖人工挑好的图"应当是一个明确动作，不能顺手发生。
+ */
+const forced = args.includes('--force') ? only : []
 
 if (!existsSync(DIST)) {
   console.error('✗ demo/dist 不存在 —— 先跑：cd demo && pnpm build')
@@ -277,7 +343,18 @@ const marks = prev.marks || {}      // anchor → 拍那张图时的指纹
 // 这样 pre-push 里挂着跑也不心疼 —— 没动过组件时是零成本。
 const todo = []
 const skipped = []
+const manual = []
 for (const it of items) {
+  // ── 手工图一律不动 ──────────────────────────────────────────────
+  // 指纹为 MANUAL_MARK 的图是人挑好角度、截好范围导进来的
+  // （见 scripts/import-component-shots.mjs）。自动拍的取景是通用规则，
+  // 拍不出人工那种取舍，覆盖掉就是**用差的换掉好的**，而且没人会收到提示。
+  // 所以这里连指纹都不算：改了主题色也不重拍 —— 真需要更新时，
+  // 换一张新图重新 import，或显式 `--force <anchor>` 指名重拍。
+  if (marks[it.anchor] === MANUAL_MARK && !forced.includes(it.anchor)) {
+    manual.push(it)
+    continue
+  }
   if (missingOnly && shots[it.anchor]) { skipped.push(it); continue }
   const fp = fingerprint(it.anchor)
   if (shots[it.anchor] && marks[it.anchor] === fp && !only.includes(it.anchor)) {
@@ -390,23 +467,17 @@ for (const it of todo) {
 
   await sleep(450)   // 等字体与过渡稳定
 
-  // 统一裁成缩略图的比例，避免每张高矮不一（列表里会参差不齐）。
-  // 内容比目标比例扁就按宽取、高就按高取，多余部分裁掉而不是压扁。
-  const ratio = OUT_W / OUT_H
-  let cw = box.w
-  let ch = box.h
-  if (cw / ch > ratio) cw = ch * ratio   // 太宽 → 裁两边
-  else ch = cw / ratio                    // 太高 → 裁下半（组件通常在上部）
-
+  // 舞台已经是 260:140 且内容居中装好了，这里不再做任何裁切 ——
+  // 只把 780×420 的舞台整体缩到出图尺寸。
   // scale 是 CSS 像素 → 输出像素的倍率。deviceScaleFactor 已是 2，
-  // 这里再按目标宽度折算，最终得到 OUT_W*2 宽的高清图。
-  const scale = (OUT_W * 2) / cw / 2
+  // 所以除以 2 抵掉，最终得到 OUT_W*2 宽的高清图。
+  const scale = (OUT_W * 2) / box.w / 2
 
   const shot = await pcall('Page.captureScreenshot', {
     format: 'webp',
     quality: 82,
     captureBeyondViewport: true,
-    clip: { x: box.x, y: box.y, width: cw, height: ch, scale: scale },
+    clip: { x: box.x, y: box.y, width: box.w, height: box.h, scale: scale },
   })
   if (!shot || !shot.data) { console.log('✗ 截图失败'); fail.push(it.name); continue }
 
