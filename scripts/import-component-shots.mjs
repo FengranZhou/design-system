@@ -28,10 +28,13 @@
  *
  * ## 尺寸处理
  *
- * 目标 260×140（扩展列表里按 130×70 显示，2x）。用 sips 两步：
- *   ① `-Z` 等比缩放，让长边贴住画布 —— 绝不裁切，宁可留白
+ * 目标 260×140（扩展列表里按 130×70 显示，2x）。**整张图必须完整进画布，一律不裁**
+ * —— 图是人挑好取景截的，裁掉哪一块都不是脚本该替人做的决定。用 sips 两步：
+ *   ① `-z` 等比缩放到 `min(260/w, 140/h)`，两边都不超画布
  *   ② `-p` 补齐到精确画布，`--padColor FFFFFF` 白底
  * 顺序不能反：先补边再缩放会把白边也一起缩掉，得不到精确尺寸。
+ *
+ * ⚠️ 别改回 `-Z max(260,140)`：那样只保证长边贴边，短边溢出后会被 ② 裁掉。
  *
  * 依赖都是 macOS 自带 / brew 常见：`sips`（系统自带）、`cwebp`（brew webp）。
  * 缺 cwebp 时退回 jpg base64 —— 体积大些但不阻断。
@@ -173,10 +176,16 @@ console.log('')
 for (const { item, file } of matched) {
   const a = item.anchor
   try {
-    // ① 等比缩放：长边贴住画布。-Z 只缩不裁，短边留待第 ② 步补白。
+    // ① 等比缩放到「整张都进画布」：按宽高两个方向各算一次比例，取小的那个。
+    //    不能用 `-Z max(OUT_W, OUT_H)` —— 它只保证长边 ≤260，短边可能仍然超过 140，
+    //    第 ② 步 `-p` 就会把溢出的部分裁掉（`抽屉` 800×1654 缩成 126×260 后被切掉一半）。
+    const [sw, sh] = srcSize(file)
+    const k = Math.min(OUT_W / sw, OUT_H / sh)
     const step1 = join(tmp, a + '-1.png')
-    execFileSync('sips', ['-Z', String(Math.max(OUT_W, OUT_H)), file, '--out', step1], { stdio: 'ignore' })
-    // ② 补齐到精确画布 + 白底。顺序不能与 ① 反 —— 先补再缩会把白边一起缩掉。
+    execFileSync('sips', ['-z', String(Math.max(1, Math.round(sh * k))),
+      String(Math.max(1, Math.round(sw * k))), file, '--out', step1], { stdio: 'ignore' })
+    // ② 补齐到精确画布 + 白底。此时两边都 ≤ 画布，`-p` 只会补白、不会裁。
+    //    顺序不能与 ① 反 —— 先补再缩会把白边一起缩掉。
     const step2 = join(tmp, a + '-2.png')
     execFileSync('sips', ['-p', String(OUT_H), String(OUT_W), '--padColor', 'FFFFFF',
       step1, '--out', step2], { stdio: 'ignore' })
