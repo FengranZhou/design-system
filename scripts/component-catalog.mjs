@@ -102,6 +102,114 @@ export const COMPONENTS = [
   },
 
   {
+    id: 'search-mini',
+    anchor: 'search-mini',
+    variantOf: 'input',
+    name: 'SearchMini 搜索框',
+    group: 'input',
+    desc: '实时搜索输入框（常驻展开 / 收起态）',
+    keywords: ['搜索框', 'search', 'searchmini', '搜索', '查找'],
+    readRefs: [
+      'design-spec/components/SearchMini/SearchMini.vue（顶部速查注释）',
+    ],
+    mustRules: [
+      '一律用业务组件 SearchMini，禁 el-input prefix-icon 复刻',
+      '核心功能用常驻展开形态（collapsed=false），非核心用收起态（collapsed=true）',
+      '默认实时搜索；若因技术限制，则点击图标 / Enter 触发',
+    ],
+    instanceFields: [
+      { key: 'placeholder', label: '占位符', type: 'text', placeholder: '如：搜索课程', default: '搜索' },
+      { key: 'collapsed', label: '默认收起', type: 'switch', default: false, hint: '核心功能关闭，非核心功能开启' },
+    ],
+    snippet: ({ placeholder, collapsed, searchCollapsed }) => {
+      const c = collapsed || searchCollapsed
+      return `<SearchMini
+  v-model="searchQuery"
+  placeholder="${placeholder || '搜索'}"${c ? '\n  collapsed' : ''}
+  @search="handleSearch"
+/>
+
+<!-- 脚本 -->
+import { SearchMini } from '<path>/design-spec/components'`
+    },
+  },
+
+  {
+    id: 'form-item-input-number',
+    anchor: 'input-number',
+    variantOf: 'input',
+    name: 'InputNumber 数字输入框',
+    group: 'input',
+    desc: '数字输入（带增减按钮）',
+    keywords: ['数字输入框', 'inputnumber', '数字', '计数器', '数量'],
+    readRefs: ['references/patterns/form-pattern.md'],
+    mustRules: [
+      '一律用 el-input-number，禁 el-input type="number"',
+      '必传 :min / :max 限制范围',
+    ],
+    instanceFields: [
+      { key: 'label', label: '标签', type: 'text', placeholder: '如：数量', default: '' },
+      { key: 'min', label: '最小值', type: 'number', default: 1 },
+      { key: 'max', label: '最大值', type: 'number', default: 100 },
+    ],
+    snippet: ({ label, min, max }) => {
+      return `<el-form-item label="${label || '标签'}">
+  <el-input-number
+    v-model="form.field"
+    :min="${min ?? 1}"
+    :max="${max ?? 100}"
+    placeholder="请输入"
+  />
+</el-form-item>`
+    },
+  },
+
+  {
+    id: 'form-item-textarea',
+    anchor: 'textarea',
+    variantOf: 'input',
+    name: 'Textarea 文本域',
+    group: 'input',
+    desc: '多行文本输入',
+    keywords: ['文本域', 'textarea', '多行输入', '备注', '描述'],
+    readRefs: ['references/patterns/form-pattern.md'],
+    mustRules: [
+      '用 el-input type="textarea" :rows="3"，不是单独的 el-textarea',
+      '字数提示用 maxlength + show-word-limit 组合',
+    ],
+    instanceFields: [
+      { key: 'label', label: '标签', type: 'text', placeholder: '如：备注', default: '' },
+      { key: 'placeholder', label: '占位符', type: 'text', placeholder: '如：请输入备注', default: '' },
+      { key: 'showWordLimit', label: '字数提示', type: 'switch', default: false },
+      {
+        key: 'width',
+        label: '宽度',
+        type: 'number',
+        default: 400,
+        suggestions: [
+          { value: 320, label: '320 · 中' },
+          { value: 400, label: '400 · 宽' },
+          { value: 0, label: '撑满' },
+        ],
+      },
+    ],
+    snippet: ({ label, placeholder, showWordLimit, width, textareaWordLimit }) => {
+      const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`
+      const limit = showWordLimit || textareaWordLimit
+      const extra = limit ? '\n    maxlength="200"\n    show-word-limit' : ''
+      return `<el-form-item label="${label || '标签'}">
+  <el-input
+    v-model="form.field"
+    type="textarea"
+    :rows="3"
+    placeholder="${placeholder || '请输入多行文本'}"${extra}
+    style="${w}"
+  />
+</el-form-item>`
+    },
+  },
+
+  {
     id: 'form-item-select',
     anchor: 'select',
     name: 'Select 选择器',
@@ -163,6 +271,132 @@ export const COMPONENTS = [
   },
 
   {
+    id: 'form-item-select-group',
+    anchor: 'select-group',
+    variantOf: 'select',
+    name: 'SelectGroup 分组选择器',
+    group: 'input',
+    desc: '选项按类别分组的下拉选择',
+    keywords: ['分组选择', 'select', 'group', '选择器', '分组', '下拉'],
+    readRefs: [
+      'references/patterns/select-pattern.md',
+      'references/component-interaction.md（Select 多选 段）',
+    ],
+    mustRules: [
+      '用 el-select + el-option-group 结构',
+      '多选默认加 collapse-tags collapse-tags-tooltip :max-collapse-tags="2"',
+    ],
+    instanceFields: [
+      { key: 'label', label: '标签', type: 'text', placeholder: '如：所属部门', default: '' },
+      { key: 'multiple', label: '多选', type: 'switch', default: false },
+      { key: 'clearable', label: '可清除', type: 'switch', default: true },
+      { key: 'filterable', label: '可搜索', type: 'switch', default: false },
+    ],
+    snippet: ({ label, multiple, clearable, filterable, groupMultiple }) => {
+      const m = multiple || groupMultiple
+      const attrs = [
+        m ? 'multiple\n    collapse-tags\n    collapse-tags-tooltip\n    :max-collapse-tags="2"' : '',
+        clearable ? 'clearable' : '',
+        filterable ? 'filterable' : '',
+      ].filter(Boolean).join('\n    ')
+      return `<el-form-item label="${label || '标签'}">
+  <el-select
+    v-model="form.field"
+    placeholder="请选择"${attrs ? '\n    ' + attrs : ''}
+    style="width: 240px"
+  >
+    <el-option-group label="技术部门">
+      <el-option label="前端开发" value="fe" />
+      <el-option label="后端开发" value="be" />
+    </el-option-group>
+    <el-option-group label="业务部门">
+      <el-option label="产品设计" value="pd" />
+      <el-option label="运营管理" value="op" />
+    </el-option-group>
+  </el-select>
+</el-form-item>`
+    },
+  },
+
+  {
+    id: 'form-item-tree-select',
+    anchor: 'tree-select',
+    variantOf: 'select',
+    name: 'TreeSelect 树形选择器',
+    group: 'input',
+    desc: '树形结构选项的下拉选择',
+    keywords: ['树形选择器', 'treeselect', 'tree', '树形', '层级选择'],
+    readRefs: ['references/component-interaction.md（TreeSelect 段）'],
+    mustRules: [
+      '用 el-tree-select，必传 :data 和 check-strictly',
+      '多选必加 collapse-tags collapse-tags-tooltip',
+    ],
+    instanceFields: [
+      { key: 'label', label: '标签', type: 'text', placeholder: '如：组织架构', default: '' },
+      { key: 'multiple', label: '多选', type: 'switch', default: false },
+      { key: 'clearable', label: '可清除', type: 'switch', default: true },
+      { key: 'filterable', label: '可搜索', type: 'switch', default: false },
+    ],
+    snippet: ({ label, multiple, clearable, filterable, treeMultiple }) => {
+      const m = multiple || treeMultiple
+      const attrs = [
+        m ? ':multiple="true"' : '',
+        clearable ? 'clearable' : '',
+        filterable ? 'filterable' : '',
+        m ? 'collapse-tags\n    collapse-tags-tooltip' : '',
+      ].filter(Boolean).join('\n    ')
+      return `<el-form-item label="${label || '标签'}">
+  <el-tree-select
+    v-model="form.field"
+    :data="treeData"
+    check-strictly${attrs ? '\n    ' + attrs : ''}
+    placeholder="请选择"
+    style="width: 240px"
+  />
+</el-form-item>`
+    },
+  },
+
+  {
+    id: 'form-item-cascader',
+    anchor: 'cascader',
+    variantOf: 'select',
+    name: 'Cascader 级联选择器',
+    group: 'input',
+    desc: '多级联动选择（省市区 / 类目树）',
+    keywords: ['级联选择器', 'cascader', '级联', '联动', '省市区', '类目'],
+    readRefs: ['references/component-interaction.md（Cascader 段）'],
+    mustRules: [
+      '用 el-cascader，必传 :options',
+      '多选用 :props="{ multiple: true }" 而非直接传 multiple',
+      '多选必加 collapse-tags collapse-tags-tooltip :max-collapse-tags="1"',
+    ],
+    instanceFields: [
+      { key: 'label', label: '标签', type: 'text', placeholder: '如：所属类目', default: '' },
+      { key: 'multiple', label: '多选', type: 'switch', default: false },
+      { key: 'clearable', label: '可清除', type: 'switch', default: true },
+      { key: 'filterable', label: '可搜索', type: 'switch', default: false },
+    ],
+    snippet: ({ label, multiple, clearable, filterable, cascaderMultiple }) => {
+      const m = multiple || cascaderMultiple
+      const attrs = [
+        m ? ':props="{ multiple: true }"' : '',
+        clearable ? 'clearable' : '',
+        filterable ? 'filterable' : '',
+        m ? 'collapse-tags\n    collapse-tags-tooltip\n    :max-collapse-tags="1"' : '',
+      ].filter(Boolean).join('\n    ')
+      return `<el-form-item label="${label || '标签'}">
+  <el-cascader
+    v-model="form.field"
+    :options="cascaderOptions"${attrs ? '\n    ' + attrs : ''}
+    placeholder="请选择"
+    style="width: 280px"
+  />
+</el-form-item>`
+    },
+  },
+
+  {
     id: 'form-item-date',
     anchor: 'date-picker',
     name: 'DatePicker 日期选择',
@@ -210,6 +444,72 @@ export const COMPONENTS = [
   },
 
   {
+    id: 'form-item-daterange',
+    anchor: 'date-range',
+    variantOf: 'date-picker',
+    name: 'DateRange 日期范围选择器',
+    group: 'input',
+    desc: '选择起止日期区间（可带时间）',
+    keywords: ['日期范围', 'daterange', '区间', '起止日期', '时间段'],
+    readRefs: ['references/component-interaction.md（DatePicker 段）'],
+    mustRules: [
+      '必传 value-format，否则 v-model 拿到 Date 对象还要自己转',
+      '用 type="daterange" 一个组件搞定，禁拼两个 DatePicker（丢联动校验）',
+      '带时间用 type="datetimerange"',
+    ],
+    instanceFields: [
+      { key: 'label', label: '标签', type: 'text', placeholder: '如：报名时间', default: '' },
+      { key: 'withTime', label: '时间', type: 'switch', default: false, hint: '是否精确到时分秒' },
+    ],
+    snippet: ({ label, withTime }) => {
+      const type = withTime ? 'datetimerange' : 'daterange'
+      const fmt = withTime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'
+      const w = withTime ? '460px' : '360px'
+      const sp = withTime ? '开始时间' : '开始日期'
+      const ep = withTime ? '结束时间' : '结束日期'
+      return `<el-form-item label="${label || '标签'}">
+  <el-date-picker
+    v-model="form.field"
+    type="${type}"
+    value-format="${fmt}"
+    range-separator="至"
+    start-placeholder="${sp}"
+    end-placeholder="${ep}"
+    style="width: ${w}"
+  />
+</el-form-item>`
+    },
+  },
+
+  {
+    id: 'form-item-time',
+    anchor: 'time-picker',
+    variantOf: 'date-picker',
+    name: 'TimePicker 时间选择器',
+    group: 'input',
+    desc: '选择具体时间（时分秒）',
+    keywords: ['时间选择', 'timepicker', 'time', '时间', '时分秒'],
+    readRefs: ['references/component-interaction.md（DatePicker 段）'],
+    mustRules: [
+      '用 el-time-picker，必传 value-format="HH:mm:ss"',
+      '禁传 prefix-icon',
+    ],
+    instanceFields: [
+      { key: 'label', label: '标签', type: 'text', placeholder: '如：上课时间', default: '' },
+    ],
+    snippet: ({ label }) => {
+      return `<el-form-item label="${label || '标签'}">
+  <el-time-picker
+    v-model="form.field"
+    value-format="HH:mm:ss"
+    placeholder="选择时间"
+    style="width: 200px"
+  />
+</el-form-item>`
+    },
+  },
+
+  {
     id: 'form-item-radio',
     anchor: 'radio',
     name: 'Radio 单选框',
@@ -231,6 +531,34 @@ export const COMPONENTS = [
       const items = opts.map((o, i) => radioShowText === false
         ? `    <el-radio value="${i + 1}" />`
         : `    <el-radio value="${i + 1}">${o}</el-radio>`).join('\n')
+      return `<el-form-item label="${label || '标签'}">
+  <el-radio-group v-model="form.field">
+${items}
+  </el-radio-group>
+</el-form-item>`
+    },
+  },
+
+  {
+    id: 'form-item-radio-button',
+    anchor: 'radio-button',
+    variantOf: 'radio',
+    name: 'RadioButton 单选按钮组',
+    group: 'input',
+    desc: '以切换按钮形式呈现（一般不默认使用）',
+    keywords: ['单选按钮组', 'radiobutton', '按钮组', '切换按钮', '分段控件'],
+    readRefs: ['references/patterns/select-pattern.md'],
+    mustRules: [
+      '用 el-radio-group + el-radio-button',
+      '一般不默认使用，适合工具栏切换场景（如对齐方式）',
+    ],
+    instanceFields: [
+      { key: 'label', label: '标签', type: 'text', placeholder: '如：对齐方式', default: '' },
+      { key: 'options', label: '选项', type: 'text', placeholder: '逗号分隔，如：左对齐,居中,右对齐', default: '' },
+    ],
+    snippet: ({ label, options }) => {
+      const opts = (options || '左对齐,居中,右对齐').split(/[,，]/).map((o) => o.trim()).filter(Boolean)
+      const items = opts.map((o, i) => `    <el-radio-button value="${i + 1}">${o}</el-radio-button>`).join('\n')
       return `<el-form-item label="${label || '标签'}">
   <el-radio-group v-model="form.field">
 ${items}
@@ -595,6 +923,66 @@ import { StepBar } from '<path>/design-spec/components'`
   <template #footer>
     <el-button @click="visible = false">取消</el-button>
     <el-button type="${danger ? 'danger' : 'primary'}" @click="handleConfirm">${confirmText || '确定'}</el-button>
+  </template>
+</el-dialog>`
+    },
+  },
+
+  {
+    id: 'tip-dialog',
+    anchor: 'tip-dialog',
+    variantOf: 'dialog',
+    name: 'TipDialog 提示弹窗',
+    group: 'feedback',
+    desc: '系统提醒用户的四类语义弹窗（警告/危险/成功/信息）',
+    keywords: ['提示弹窗', 'tip', 'dialog', '警告', '危险', '成功', '信息', 'messagebox'],
+    readRefs: [
+      'references/patterns/dialog-pattern.md',
+      'references/component-interaction.md（Dialog 段 / 按钮个数 段）',
+    ],
+    mustRules: [
+      '一律用 el-dialog + 语义 class（is-warning/is-danger/is-success/is-info）',
+      '禁 ElMessageBox —— 它不是组件、定制能力弱、与设计系统割裂',
+      '按钮个数：成功=纯告知单钮；其余=一退路+一进路两钮',
+      'footer 主按钮在右',
+    ],
+    instanceFields: [
+      {
+        key: 'scene',
+        label: '场景',
+        type: 'select',
+        default: 'warning',
+        options: [
+          { value: 'warning', label: '警告 · 离开未保存等' },
+          { value: 'danger', label: '危险 · 删除等不可撤销操作' },
+          { value: 'success', label: '成功 · 操作完成告知' },
+          { value: 'info', label: '信息 · 版本更新等中性提醒' },
+        ],
+      },
+      { key: 'title', label: '标题', type: 'text', placeholder: '如：离开未保存页面', default: '' },
+      { key: 'body', label: '正文', type: 'text', placeholder: '如：当前页有 3 处修改未保存', default: '' },
+    ],
+    snippet: ({ scene, title, body, tipScene }) => {
+      const s = scene || tipScene || 'warning'
+      const configs = {
+        warning: { class: 'is-warning', title: '离开未保存页面', body: '当前页有 3 处修改未保存，离开后将丢失。', btn1: '取消', btn2: '保存并离开', type2: 'primary' },
+        danger: { class: 'is-danger', title: '删除用户「张三」', body: '此操作不可撤销，张三的所有数据将被永久删除。', btn1: '取消', btn2: '确认删除', type2: 'danger' },
+        success: { class: 'is-success', title: '操作完成', body: '批量启用已成功完成，共影响 32 条数据。', btn1: '', btn2: '知道了', type2: 'primary' },
+        info: { class: 'is-info', title: '新版本可用', body: 'v0.5.0 已发布，包含若干 bug 修复和新功能，建议更新。', btn1: '稍后', btn2: '立即更新', type2: 'primary' },
+      }
+      const cfg = configs[s]
+      const buttons = cfg.btn1
+        ? `    <el-button @click="visible = false">${cfg.btn1}</el-button>\n    <el-button type="${cfg.type2}" @click="handleConfirm">${cfg.btn2}</el-button>`
+        : `    <el-button type="${cfg.type2}" @click="visible = false">${cfg.btn2}</el-button>`
+      return `<el-dialog
+  v-model="visible"
+  class="${cfg.class}"
+  title="${title || cfg.title}"
+  width="400px"
+>
+  <p>${body || cfg.body}</p>
+  <template #footer>
+${buttons}
   </template>
 </el-dialog>`
     },
