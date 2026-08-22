@@ -67,6 +67,14 @@ const MANUAL_MARK = 'manual'
 /** 出图尺寸，必须与 shoot-components.mjs 的 OUT_W/OUT_H 一致 */
 const OUT_W = 260
 const OUT_H = 140
+/**
+ * 四周留白（画布内边距）。
+ *
+ * 不留的话，contain 的长边正好顶满画布 —— 对竖图（下拉菜单 302×404 缩成
+ * 105×140）就是上下贴边，面板边缘被画布切断，肉眼看仍然是「被裁了」。
+ * 留出这一圈后每张图四周都有白边，才真的像「完整放进去」。
+ */
+const PAD = 6
 
 const args = process.argv.slice(2)
 const dry = args.includes('--dry')
@@ -189,7 +197,10 @@ for (const { item, file } of matched) {
     //    不能用 `-Z max(OUT_W, OUT_H)` —— 它只保证长边 ≤260，短边可能仍然超过 140，
     //    第 ② 步 `-p` 就会把溢出的部分裁掉（`抽屉` 800×1654 缩成 126×260 后被切掉一半）。
     const [sw, sh] = srcSize(file)
-    const k = Math.min(OUT_W / sw, OUT_H / sh)
+    //    缩放目标是「画布减去四周留白」而不是整块画布：contain 的长边本来
+    //    刚好顶满画布，对竖图（下拉菜单 302×404 → 105×140）就是上下贴边、
+    //    面板边缘直接被画布切断，看着仍然像被裁了。留出 PAD 后四周都有白边。
+    const k = Math.min((OUT_W - PAD * 2) / sw, (OUT_H - PAD * 2) / sh)
     const step1 = join(tmp, a + '-1.png')
     execFileSync('sips', ['-z', String(Math.max(1, Math.round(sh * k))),
       String(Math.max(1, Math.round(sw * k))), file, '--out', step1], { stdio: 'ignore' })
