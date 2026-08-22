@@ -310,6 +310,158 @@
       "shot": "data:image/webp;base64,UklGRiwCAABXRUJQVlA4ICACAACQFgCdASoEAYwAPmEukkgkIiGhoRzIsIAMCWlu3V66+CDM3Ayy9L00mBnb6qfFBzYPpqm1U+KDmwdD+aehh5lWxDfeXDJRPfE52QJQnBaypWwTYIaFUkd3TL+5T30NP6J8qFL0lR7hSRHYLz9U/vADM91jFwWh3X5/9TyewBX7lK1xMEnD9/ZRdOOkflhMCVu28Gsae+fPixbfmO+lLfB5i5GxDkmnv5KNBqJRLT8APpqm1U+KDmwfTVNqpgAA/vxKAAAAAAACxuioSfreAkUXRmfVM0zYPNvT1WWjePQfosoIEKJD3iV3WDt04CkA0TBChcwtjUtdVcPRbQ64hQZk9xbLXYTe4ZXkrTDMnb/zMl5cERWYtKaAOJ5Pnv7cVN+QqT96+icl08MiEQe/kQFAnNeqJeYR5RNaSOJ73ZAWgLRSDb8oKQHTga6+PPAmanV8qlQxpsNn5m8qnXeZ8OGMrGshEKlrtu1oFJVlUiwDvGos/K7+uF9/w5v6pc7IQur+Cbwl5VVVmfPxBbWkjUf5rh3D1vJI1xtYFtDtal2z+yQL9LYH7u/HPiuOymT5z+wtkC5AEb5w570mtJM76lXit9fjFd7XM5wsYsprLnr6xXk6529KgwlEL20mXXYwb1oI72j2oSG4IoAYyjqJyAqE3k62Zrz+qe2z90uIby3bMBei5EQQ08JcWd9XAKBiDYhQTIwVVIhHUwAAAAAAAAAA"
     },
     {
+      "id": "search-mini",
+      "anchor": "search-mini",
+      "name": "SearchMini 搜索框",
+      "group": "input",
+      "desc": "实时搜索输入框（常驻展开 / 收起态）",
+      "keywords": [
+        "搜索框",
+        "search",
+        "searchmini",
+        "搜索",
+        "查找"
+      ],
+      "fields": [
+        {
+          "key": "placeholder",
+          "label": "占位符",
+          "type": "text",
+          "placeholder": "如：搜索课程",
+          "default": "搜索"
+        },
+        {
+          "key": "collapsed",
+          "label": "默认收起",
+          "type": "switch",
+          "default": false,
+          "hint": "核心功能关闭，非核心功能开启"
+        }
+      ],
+      "readRefs": [
+        "design-spec/components/SearchMini/SearchMini.vue（顶部速查注释）"
+      ],
+      "mustRules": [
+        "一律用业务组件 SearchMini，禁 el-input prefix-icon 复刻",
+        "核心功能用常驻展开形态（collapsed=false），非核心用收起态（collapsed=true）",
+        "默认实时搜索；若因技术限制，则点击图标 / Enter 触发"
+      ],
+      "snippetSrc": "({ placeholder, collapsed, searchCollapsed }) => {\n      const c = collapsed || searchCollapsed\n      return `<SearchMini\n  v-model=\"searchQuery\"\n  placeholder=\"${placeholder || '搜索'}\"${c ? '\\n  collapsed' : ''}\n  @search=\"handleSearch\"\n/>\n\n<!-- 脚本 -->\nimport { SearchMini } from '<path>/design-spec/components'`\n    }",
+      "shot": "data:image/webp;base64,UklGRgACAABXRUJQVlA4IPQBAACwFQCdASoEAYwAPmEwlUikIqIiILqoOIAMCWlu8p8doqgiT3WfKy/RRLHDhw4cOHDhw4cOHDhw4QKMrUAQCAQCAQB+h7uhdx0pEjIbJtKGouiaTWaiQJuLBlST4YsVs5CGR6fTJTHQAbDqPFtcZ0zs2bHkcG0zJsR5oHrkWjqA+U8Zt0AR2pGQNZqC+meeb9pg6nx2x6Nh+UJVwjiT0Mk5JZpkPKES3Dhw4cOHDhw4cOHDhw4a4AD+/ukAAAAAACuvY3Nt1WSg3G39lHNj3bwr273w9qpH+6YPODc4GfPwHZZBhtrQYFX8Sudn+mofFofbLIDU17mwGCul6KJvlHfqBG/l1ErZoI38uMm888ZCjaDsO1ZmoJ6nSzMjfKOzB9eCRkSbZ7UU2QPijdEAVvzzjTZs7diHH98jyqwO8nhH6chDm2QWZpgQHkolMvN2jgkRFsXP9OCZlhn4MjnuuGSksfOpWeWUyROSnImUhzHoAH0Krz8xouzNBqprhvvC5kv73SCQ156VD0EtHRuiCn8gn4hg9TOSIc9av5XaTqVuUC/8unXMiuGKUibyhVCtsyxbuFq1xFtncfiyOi1ZwDcfZdrAlO64Z84/1GaHIQRnFZmLVWYl3h/Zq/JXvm5hZC6m14OmubdokAWIzqSpwAAAAAAAAA==",
+      "variantOf": "input"
+    },
+    {
+      "id": "form-item-input-number",
+      "anchor": "input-number",
+      "name": "InputNumber 数字输入框",
+      "group": "input",
+      "desc": "数字输入（带增减按钮）",
+      "keywords": [
+        "数字输入框",
+        "inputnumber",
+        "数字",
+        "计数器",
+        "数量"
+      ],
+      "fields": [
+        {
+          "key": "label",
+          "label": "标签",
+          "type": "text",
+          "placeholder": "如：数量",
+          "default": ""
+        },
+        {
+          "key": "min",
+          "label": "最小值",
+          "type": "number",
+          "default": 1
+        },
+        {
+          "key": "max",
+          "label": "最大值",
+          "type": "number",
+          "default": 100
+        }
+      ],
+      "readRefs": [
+        "references/patterns/form-pattern.md"
+      ],
+      "mustRules": [
+        "一律用 el-input-number，禁 el-input type=\"number\"",
+        "必传 :min / :max 限制范围"
+      ],
+      "snippetSrc": "({ label, min, max }) => {\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-input-number\n    v-model=\"form.field\"\n    :min=\"${min ?? 1}\"\n    :max=\"${max ?? 100}\"\n    placeholder=\"请输入\"\n  />\n</el-form-item>`\n    }",
+      "shot": "data:image/webp;base64,UklGRg4CAABXRUJQVlA4IAICAADQGACdASoEAYwAPmEwkkgkIyGhIZSZiIAMCWlu3rrOMK21a01edpgI4pKnnp96xu6+pMm4ksWXhmF28mtTlzQjn13xeSNgqENMqlCUz4jAYDyE5n0J8BTjW0hxWpNChW/Uced49zBeIF4LfZKYrwmacxf0LFCHbeT0USyqd+fRaMiMyzZLYj00tkuBL2UCuZJoaTUcH7nFr0tKTi/U8RviWuLQydudhdM11kOgsghLEgqJ9UMwjVWYSijUu9ahtTg9xJlmSoTjvPT71jd6w0AA/vv2AAAChJpLAAAnJ724x6PPJftGih/6b3p6/AKggQo1l1hp0OF3gvuA9P4vkTnz2+Cg7TQAFwW7z6ga2FTi6E2mhavj+mD/gBgDzCshFo5tXACBkieVm4qxzRn5vJ8ozi0IQWfPPYA9oME5mtwe/Zz5wurcwG5xD8z6CQK93QXK4aDzLAnyGGONlMO80/2uOAvf8uT/69ZvTbrBnKGBO4C5iuM72Wx1FF3q27Vu/dl/S20V/wQ+UmFy/N2bfSn1/yAiTrgERW7m/XuBS/8yCjGYZhOikleo3eT4nf/ew7AEIBzPkqjhE72gRNOxbXQItqk9XJng5a85wKTPlXYtk17sb/xPOPTukUZL4OzPbxOEDfJNP/OBxYqWUbO9/YEngdOPrEZZWPRhWGwkAAAAAAAA",
+      "variantOf": "input"
+    },
+    {
+      "id": "form-item-textarea",
+      "anchor": "textarea",
+      "name": "Textarea 文本域",
+      "group": "input",
+      "desc": "多行文本输入",
+      "keywords": [
+        "文本域",
+        "textarea",
+        "多行输入",
+        "备注",
+        "描述"
+      ],
+      "fields": [
+        {
+          "key": "label",
+          "label": "标签",
+          "type": "text",
+          "placeholder": "如：备注",
+          "default": ""
+        },
+        {
+          "key": "placeholder",
+          "label": "占位符",
+          "type": "text",
+          "placeholder": "如：请输入备注",
+          "default": ""
+        },
+        {
+          "key": "showWordLimit",
+          "label": "字数提示",
+          "type": "switch",
+          "default": false
+        },
+        {
+          "key": "width",
+          "label": "宽度",
+          "type": "number",
+          "default": 400,
+          "suggestions": [
+            {
+              "value": 320,
+              "label": "320 · 中"
+            },
+            {
+              "value": 400,
+              "label": "400 · 宽"
+            },
+            {
+              "value": 0,
+              "label": "撑满"
+            }
+          ]
+        }
+      ],
+      "readRefs": [
+        "references/patterns/form-pattern.md"
+      ],
+      "mustRules": [
+        "用 el-input type=\"textarea\" :rows=\"3\"，不是单独的 el-textarea",
+        "字数提示用 maxlength + show-word-limit 组合"
+      ],
+      "snippetSrc": "({ label, placeholder, showWordLimit, width, textareaWordLimit }) => {\n      const w = Number(width) === 0 ? 'width: 100%' : `width: ${width}px`\n      const limit = showWordLimit || textareaWordLimit\n      const extra = limit ? '\\n    maxlength=\"200\"\\n    show-word-limit' : ''\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-input\n    v-model=\"form.field\"\n    type=\"textarea\"\n    :rows=\"3\"\n    placeholder=\"${placeholder || '请输入多行文本'}\"${extra}\n    style=\"${w}\"\n  />\n</el-form-item>`\n    }",
+      "shot": "data:image/webp;base64,UklGRqIBAABXRUJQVlA4IJYBAABwFACdASoEAYwAPmEwl0gkIyIhIVgIEIAMCWlu4W5V7l9WsEJ52IeYkpAtjhw4cOHDhw4cOHDhw4cIFGWHiDifI5JZp6GSL8jwbBbYDI1BKMmKh0VS0v45Uh9bDDPb1yY4yGxA5oKsOPxSk7uvdWIJiIQBIkSJF1Tin1MNUSBOJxOItFhdmeYqokXmgPnM9U/CZUT98s1VlF/Nt4ffv379+/fv379+/fv379uAAP7+1EAAArd5PaAALfM0/2SmBGl04o8TfePWG74TWCbNfcHGnDEqngT6T6gzfzv3Yh1E1Bpn6G9cFV3Kloyblzsz6YQDnNKJvGmXFLjfKZ5kG7Ub54U8bV4ym6fNSEJO8NTM4m1LWChvWJS0tr55X1iQr0JVUrWVnBHfmsV9vuZvjn00PIhpFy10Fmb7C5yzu+Vkin9wuimT1acMZDc0REy9Ay890vNx2XGtEAhulo4QA+tANjBVldIVbBE/N9o9wmXhOXZdkhDSh5HkmLjXf0oATLZ2X11tINDzB+/TmLeQQCFCsOAAAAAA",
+      "variantOf": "input"
+    },
+    {
       "id": "form-item-select",
       "anchor": "select",
       "name": "Select 选择器",
@@ -355,6 +507,163 @@
       "shot": "data:image/webp;base64,UklGRsYCAABXRUJQVlA4ILoCAAAQGQCdASoEAYwAPmEwlUikIqIiIHgIQIAMCWlu4WsAygPU/mdcT9eyXsvVw87Bjr8YH+O+4D4zc8f1AB2KZMmTJkyZMmTJkyZMmSw3VAbyriyTGb/ThFgT12zIKSLN300MmmpGmYPrakWcvOotA1dzJTDnq6+UcgiQXIy2DfYqPEQo9ErmZzgIBsFPIliWylcDOBCGAQUgmdOQmeNgWi9kTmtjVxGugUsBKggvgrnRHYI8w2kA3sYhhgeHZXArLAu9Xr169evXr169evXr169VAAD+/sgAAAAAAC4SXPbicYxgr0zMqknOnfo72gdKGFM0bi6AFzE+ZP6mmPYcGGpR+W54BnigjEsfZtwV0PQxMSFr2wesUTrzEJibwEo6ADV6FgNSxq/T5tol8InSpvNPwRpy/LK5Kj1qXugTz9bK3PcEbhJCiHCD3wPCJdW20Du1hwf8bP9D/TuwmXu+BIcPW23pNzmv1UjifSWsZIWvYMxMeFexgqjQ9n8S/8YpnDzlD/PY9eqPq57829U+VQoTve/qW5RVuxfAUFTqtBfaD0UzW8L1Z5Ee55hmbif3VtlfU8xaH8+cW5V3A3aR7SfhAbEB8L2zeLT/E0JwV7w60IjpC+gg9r2BdOL/2gZJ/2sFNrWULPAANHEptG9mK3HsLHVgHpLD/9rtWCTBMvvLH9dKAESO+YzLtza+ajimn6g6mciGQad92WzdScuX01Wc6SYJ4vsnT4KFY+wys5S6/YsYjm8+3VuZXjIAe/jyfW8TjYHi9Yxr4vMTqG18N5ysSFLii+zbYDkvlHqKTJGzPsHTcxCZ/aoxrugHi/cXXu1PT7bTPdjve39eallOGfiDwETn1nT2OvUUtmCuK0ruvpd5ryuVjjIZPjznQEBghV3E9P1N8IuuhtLPyVs/E5QcEl0gAAAAAAAAAA=="
     },
     {
+      "id": "form-item-select-group",
+      "anchor": "select-group",
+      "name": "SelectGroup 分组选择器",
+      "group": "input",
+      "desc": "选项按类别分组的下拉选择",
+      "keywords": [
+        "分组选择",
+        "select",
+        "group",
+        "选择器",
+        "分组",
+        "下拉"
+      ],
+      "fields": [
+        {
+          "key": "label",
+          "label": "标签",
+          "type": "text",
+          "placeholder": "如：所属部门",
+          "default": ""
+        },
+        {
+          "key": "multiple",
+          "label": "多选",
+          "type": "switch",
+          "default": false
+        },
+        {
+          "key": "clearable",
+          "label": "可清除",
+          "type": "switch",
+          "default": true
+        },
+        {
+          "key": "filterable",
+          "label": "可搜索",
+          "type": "switch",
+          "default": false
+        }
+      ],
+      "readRefs": [
+        "references/patterns/select-pattern.md",
+        "references/component-interaction.md（Select 多选 段）"
+      ],
+      "mustRules": [
+        "用 el-select + el-option-group 结构",
+        "多选默认加 collapse-tags collapse-tags-tooltip :max-collapse-tags=\"2\""
+      ],
+      "snippetSrc": "({ label, multiple, clearable, filterable, groupMultiple }) => {\n      const m = multiple || groupMultiple\n      const attrs = [\n        m ? 'multiple\\n    collapse-tags\\n    collapse-tags-tooltip\\n    :max-collapse-tags=\"2\"' : '',\n        clearable ? 'clearable' : '',\n        filterable ? 'filterable' : '',\n      ].filter(Boolean).join('\\n    ')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-select\n    v-model=\"form.field\"\n    placeholder=\"请选择\"${attrs ? '\\n    ' + attrs : ''}\n    style=\"width: 240px\"\n  >\n    <el-option-group label=\"技术部门\">\n      <el-option label=\"前端开发\" value=\"fe\" />\n      <el-option label=\"后端开发\" value=\"be\" />\n    </el-option-group>\n    <el-option-group label=\"业务部门\">\n      <el-option label=\"产品设计\" value=\"pd\" />\n      <el-option label=\"运营管理\" value=\"op\" />\n    </el-option-group>\n  </el-select>\n</el-form-item>`\n    }",
+      "shot": "data:image/webp;base64,UklGRgoDAABXRUJQVlA4IP4CAACwGwCdASoEAYwAPmEuk0gkIiGhIlF5AIAMCWlu4W3BDbO1kA2jPgCnruF1YrekUCievHjj3UyweSSoy5YKN9WJ2qFlJeBRS8NQvuO/R+s5UNryDDpZqdpI3Y8jDizvzUbfmtjy9EaIBOkFszHIcWd+ahgz+60vqQxQ6YNYjXekA162+1Y+Oe9dyHUWpIGsfjUHL/TjkrZrkOLO4dkyaF9au7yRMW3cfPxy32jY+tFtpxshJP0hzHiAXCtRvLWzf/waIZqx9aJrBx19GxPxK/hRlpiE1yPrRbfVcWxYiNrohtAAoy0gAAD+/xnJTTHUi9sKYauGmjVsyDLqu2gA6ewc6klV9pi1yD9jSgepX97Dp4ZwgB9PCHKnZx6wMsMn54N0LNO0MwG0udvA/8XVgbBvetMVpJOrPBHnsFwwCET8oj1KFwD0uPGEs2hW3KnLygA6pABpQHHa3xA4mbHHt1IREbIYg0Azp5GnqmWWONcKiUiY8nPlkPeSXLkyfNYFtTAFgNBcxOfh/UFVrHDu3MglYTkApyvDfXY1WOTklC7eMyKm/yTcVfhKlTJnY8eC4bZUcWP1Va9tnlByg/mkY/NvaUw4vT+cQ/yesd0ww7KE9+i/xUj/80PrIHrCq7907gR4i4MCK2POppnZiK5KFgbUDgEL4m+fo3c2YcV6vPmhP721UUu5JbDkpaNuahYKQBxoGyfTdP6n6ykabdZevVNTi155eix7iGKVPw6lWJpBLJqbRhH0Rc2qpkLu5U7nHNdGHmHxF4VRGLfG7g+NfwU4eAq2MYy7E3Q21ZESgVn1W6WtAmI55RLJQ/yoqRl6DOQuVOgHUIMnEui8gnqzH9Ji7nfd68c7W9vuyhFPfthYl7qXAmicCC7fNaQeyk8juavrGS1y34LSH3xO0V2s6z52J4GEBZsZWz/bz5AUCMvP6ocwC7tox1rnGLK/yZFanvuvJo3GFd6ch8IeDMhR8GxUyBSPYgJGcdJ7dQjfW54JY95vlC6+rakSWE/GVAAA",
+      "variantOf": "select"
+    },
+    {
+      "id": "form-item-tree-select",
+      "anchor": "tree-select",
+      "name": "TreeSelect 树形选择器",
+      "group": "input",
+      "desc": "树形结构选项的下拉选择",
+      "keywords": [
+        "树形选择器",
+        "treeselect",
+        "tree",
+        "树形",
+        "层级选择"
+      ],
+      "fields": [
+        {
+          "key": "label",
+          "label": "标签",
+          "type": "text",
+          "placeholder": "如：组织架构",
+          "default": ""
+        },
+        {
+          "key": "multiple",
+          "label": "多选",
+          "type": "switch",
+          "default": false
+        },
+        {
+          "key": "clearable",
+          "label": "可清除",
+          "type": "switch",
+          "default": true
+        },
+        {
+          "key": "filterable",
+          "label": "可搜索",
+          "type": "switch",
+          "default": false
+        }
+      ],
+      "readRefs": [
+        "references/component-interaction.md（TreeSelect 段）"
+      ],
+      "mustRules": [
+        "用 el-tree-select，必传 :data 和 check-strictly",
+        "多选必加 collapse-tags collapse-tags-tooltip"
+      ],
+      "snippetSrc": "({ label, multiple, clearable, filterable, treeMultiple }) => {\n      const m = multiple || treeMultiple\n      const attrs = [\n        m ? ':multiple=\"true\"' : '',\n        clearable ? 'clearable' : '',\n        filterable ? 'filterable' : '',\n        m ? 'collapse-tags\\n    collapse-tags-tooltip' : '',\n      ].filter(Boolean).join('\\n    ')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-tree-select\n    v-model=\"form.field\"\n    :data=\"treeData\"\n    check-strictly${attrs ? '\\n    ' + attrs : ''}\n    placeholder=\"请选择\"\n    style=\"width: 240px\"\n  />\n</el-form-item>`\n    }",
+      "shot": "data:image/webp;base64,UklGRtoDAABXRUJQVlA4IM4DAAAQHgCdASoEAYwAPmEwlUgkIqIhIjM4oIAMCWlu4Wuhxv0k5ozFcO5XKywZun1BQyBRr6rW7q7ljZp8HI6XwgfSOZWsNX9+6Kj8gKp/ytD8WiD4Kv2qz0WKDSkUqBlMq3uo0Z4mO2Dw4rCtfjdhEvjJBBStCdR//H9tnYPQAjbh7hYh81MHrCpyt5YznPGWxkRwH4dg6Y1SvyAqlRd2hoy/EkGVlyF2rUb6ycwYVUOi3MOEMKEHm3mAWO6BQHTGqV+QFUqMtNHoJvsAuezwX7IToZw10wcuyYPYRc14WtOYJj1FXQzmFIdsmDzOtBfHd2+PmNPL3W/4UQAA/v7eEUJUDSoEewARlLmCZir4C1LlAP1aluAMLOqvqwTnjVFf3uMErdAAE0gQfJzZDff127PUiZDsp9C/9FDz32hXV6wQ8AhJLfdS1mwKq2OMtXug3LS8Tu+/pnDIMS81xlA8zctsyHYCMhcrO0rZdn9D0PfO+kQc8QO1N1jmgeyLLSiv/AbMlOzhFjveSOM182FK5AiSbc6DAuF3LSK9r103K0zeeRO40wmk29Meb4MKW1HSmspxp6i2UEoZBQY22k+Ae+pVTQLgsgH8HtjT1E0cLmt8mtk3VatTtWOyHzLeeO5rZdoR5lTFhlIE781mVVnpjPe0mjfIOKv8PvkyVrChFgAlWgjB/KpKBitbCYOCZnj+JIhkzoqdxQEr5lxseBYER4y0OKN+FvKX/ywS++692y87smoCIPFSdUrDA77wgzNlc5EioFKcKxt8HSpEUD+/wttpbmocX4rHFPHFGAgXLqAbV2HeQ6mSSSmtXmHxmaHV93RE89xGiYluCpLDMgNa7oJwpRrWQYSpoAddc4b4pl5MeYvn4+xnqdV9aMv114zd0H6rVckj4mJftYYxu5Qy7xBb9bC0wMyJX5HftKlKsTPTmMRFJMQxQ7BbTg7iryGwpkkCZ1ZA3IxiW3+L685TVITHEBanEMd+mR3+aBmf44MU61MEn68UvHFbmtc3iGD25Klq3BN1gvN+9RWmLQRw3fxEBbkr3uwIqRQqO4sBGozAT+XmW3ofPVEF8P1nHs6aRXFfqIIwZES2poXXcuYVui/rEBHrjbEhN+gYB2nlQSU6Bp0s31P6zsevQOHi3S/v6+XnShTwJEhdN4d1ENVOie5BfKHuLlA/hDGy+jRoPl2au54bjN+83S0XS+gNZ3bIN63np30N/IyIZ5xfnlSfK4fRVoOfxpMBSita7ak3AIQo+uvzzFLQ0vbqfxEnNpycruLKUq2wMWXFWvfGbHAAAA==",
+      "variantOf": "select"
+    },
+    {
+      "id": "form-item-cascader",
+      "anchor": "cascader",
+      "name": "Cascader 级联选择器",
+      "group": "input",
+      "desc": "多级联动选择（省市区 / 类目树）",
+      "keywords": [
+        "级联选择器",
+        "cascader",
+        "级联",
+        "联动",
+        "省市区",
+        "类目"
+      ],
+      "fields": [
+        {
+          "key": "label",
+          "label": "标签",
+          "type": "text",
+          "placeholder": "如：所属类目",
+          "default": ""
+        },
+        {
+          "key": "multiple",
+          "label": "多选",
+          "type": "switch",
+          "default": false
+        },
+        {
+          "key": "clearable",
+          "label": "可清除",
+          "type": "switch",
+          "default": true
+        },
+        {
+          "key": "filterable",
+          "label": "可搜索",
+          "type": "switch",
+          "default": false
+        }
+      ],
+      "readRefs": [
+        "references/component-interaction.md（Cascader 段）"
+      ],
+      "mustRules": [
+        "用 el-cascader，必传 :options",
+        "多选用 :props=\"{ multiple: true }\" 而非直接传 multiple",
+        "多选必加 collapse-tags collapse-tags-tooltip :max-collapse-tags=\"1\""
+      ],
+      "snippetSrc": "({ label, multiple, clearable, filterable, cascaderMultiple }) => {\n      const m = multiple || cascaderMultiple\n      const attrs = [\n        m ? ':props=\"{ multiple: true }\"' : '',\n        clearable ? 'clearable' : '',\n        filterable ? 'filterable' : '',\n        m ? 'collapse-tags\\n    collapse-tags-tooltip\\n    :max-collapse-tags=\"1\"' : '',\n      ].filter(Boolean).join('\\n    ')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-cascader\n    v-model=\"form.field\"\n    :options=\"cascaderOptions\"${attrs ? '\\n    ' + attrs : ''}\n    placeholder=\"请选择\"\n    style=\"width: 280px\"\n  />\n</el-form-item>`\n    }",
+      "shot": "data:image/webp;base64,UklGRvQCAABXRUJQVlA4IOgCAACQGwCdASoEAYwAPmEwlUgkIyIhIZSY4IAMCWlu3V/KKY+vZiXBjSptEhcgQuoapN3poSbiHswFZNYRpAmDyBaBRR1xDkDIfczFBtYQCjOT0rUH5zUznMd450W/HIiXn2WHprRiEE8uUP1fQB/jAuaSjC5/oT95ahp1YwRoYIvuWCJDGePjU6x1+dgt1cMlmVbYuKsFeqwNCZuBIRkvgSthFndiv9eBPhFK81QBzfcugdzvI0uU2RHA6MUgSh4xMEm1Tn/uIOxvt1GUqP2yex0SZrjSnPnJ/T3xMeOGrRKexPhh1fYAAP78qD6i3yfvYHcwjcAVHGLGf0qxmhCZoOwdrmDTasE/j3nRlmwFC3ePb5uRK+tBwjBS3VYzDDtaTxfEA2FffXQNnqCgpE8qo2YbdqlDQQfviCemO6blvG7HCosNarEcxgIsKP5v4NAzL8cN+fTwP77CgXaXpkwE4pvgb2qBXWe+G2jpymcBkckypVoeb0GETEuWbrZP8zONOOgOk69DoRKXUjtLjG/DVTBpEaWd2ELZD0JGkwht4biRzlV4zlgTHRLECc7O23ELaasJCw3goHwXKGYZXDm9MPdrT5AxaA2GLmKgLj80cTKUCSrsWY39xDfjj+YVyKq/E+p+LOI+8uyXbfI+BiaXNXx5Xoa2MYIsuPPQ5K6iFLRh2PhUfeny6XKp8JgZhKhsIA/gCPWc3uVblgTUT4psEE7BRbmcj1Tf243XOqZsm8n7X+BEUE1DiAVe+S9NBg4SPlvuk7jiCePDkwdHUzfO+V62gVtmfX25h+KZMqlUm9B1LiRI5+EQF80TyyWmWwPeYQ/m0/aU8nfOqBlF3tggWaYyfO1mDFtv5vm+3f6fZY38kVp01ITSi0PBgC/PiZnXV7j3mjPpZVB49uewpVkBVCXtO1mL1xDn/32AoZA0gKdlP73lO7nUAAAc0AbhQAUV2fZ35dGq+nMNaiSgmEZANSfuA/pfK5AAAAA=",
+      "variantOf": "select"
+    },
+    {
       "id": "form-item-date",
       "anchor": "date-picker",
       "name": "Picker 时间/日期选择器",
@@ -389,6 +698,80 @@
       "shot": "data:image/webp;base64,UklGRhQCAABXRUJQVlA4IAgCAABwFACdASoEAYwAPmEwl0ikIyIyIRZoEkAMCWlu3V67HcX35PSpGq7b9gx86dOnTp06dOnTp06dOnQP67mDeVZIE4F7hcbYwGDD2m3WqrMg90PARvq0p9P5P6s5oCzPCEqRglj6kbEgzAYXCtw1gI4F4HGPraukGCwIFM6tY3C/GfAT/Qao/9es+fNmO5d/GDpuJ4CliU2KibAOyrl5FnVq1atWrVq1atWrVpoAAP78SgAAAAAAARhd21JStgAp6F8N4N5vkgFrojxkUX/0SWc2HiznDXyRFmzGVaSkhwblCJ5unnVyrj7Zx/M7zOG0ObL+BEdQpcQokuA6b3gV9mBFFkJICz8TAzjnAs6gZSMC2pxrTfi8FHPa/PyhXLW7ueq9xYMwflTPap764gMMs3eBPj5araFFCk+wsYiFMpGoJAeWfM5Vr2WESHdXkY6SJzDpZZnpeIY59b9w5Z1ixOFJOj1LkLlzHT7Rs2OHu/WynLqrwpa3mHbeE+jiZhOlhwYtQV7fAZzzvMdwiVVMUAiaPepSKiK+5PxLKEd2jMXfDGx5YEgVlvOvChVdKYU0+ZZMlKo8si5jpgec5m8sHXsaWzgSNAB5VCWwsEBnf8+KEH1oJRt9STXI4a6dYAIHSputKxC7zYiLcm6Mi1Ii9E1qRJMAEH+0PQhIH0lBUkG/9IAAAAAAAAAA"
     },
     {
+      "id": "form-item-daterange",
+      "anchor": "date-range",
+      "name": "DateRange 日期范围选择器",
+      "group": "input",
+      "desc": "选择起止日期区间（可带时间）",
+      "keywords": [
+        "日期范围",
+        "daterange",
+        "区间",
+        "起止日期",
+        "时间段"
+      ],
+      "fields": [
+        {
+          "key": "label",
+          "label": "标签",
+          "type": "text",
+          "placeholder": "如：报名时间",
+          "default": ""
+        },
+        {
+          "key": "withTime",
+          "label": "时间",
+          "type": "switch",
+          "default": false,
+          "hint": "是否精确到时分秒"
+        }
+      ],
+      "readRefs": [
+        "references/component-interaction.md（DatePicker 段）"
+      ],
+      "mustRules": [
+        "必传 value-format，否则 v-model 拿到 Date 对象还要自己转",
+        "用 type=\"daterange\" 一个组件搞定，禁拼两个 DatePicker（丢联动校验）",
+        "带时间用 type=\"datetimerange\""
+      ],
+      "snippetSrc": "({ label, withTime }) => {\n      const type = withTime ? 'datetimerange' : 'daterange'\n      const fmt = withTime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'\n      const w = withTime ? '460px' : '360px'\n      const sp = withTime ? '开始时间' : '开始日期'\n      const ep = withTime ? '结束时间' : '结束日期'\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-date-picker\n    v-model=\"form.field\"\n    type=\"${type}\"\n    value-format=\"${fmt}\"\n    range-separator=\"至\"\n    start-placeholder=\"${sp}\"\n    end-placeholder=\"${ep}\"\n    style=\"width: ${w}\"\n  />\n</el-form-item>`\n    }",
+      "shot": "data:image/webp;base64,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",
+      "variantOf": "date-picker"
+    },
+    {
+      "id": "form-item-time",
+      "anchor": "time-picker",
+      "name": "TimePicker 时间选择器",
+      "group": "input",
+      "desc": "选择具体时间（时分秒）",
+      "keywords": [
+        "时间选择",
+        "timepicker",
+        "time",
+        "时间",
+        "时分秒"
+      ],
+      "fields": [
+        {
+          "key": "label",
+          "label": "标签",
+          "type": "text",
+          "placeholder": "如：上课时间",
+          "default": ""
+        }
+      ],
+      "readRefs": [
+        "references/component-interaction.md（DatePicker 段）"
+      ],
+      "mustRules": [
+        "用 el-time-picker，必传 value-format=\"HH:mm:ss\"",
+        "禁传 prefix-icon"
+      ],
+      "snippetSrc": "({ label }) => {\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-time-picker\n    v-model=\"form.field\"\n    value-format=\"HH:mm:ss\"\n    placeholder=\"选择时间\"\n    style=\"width: 200px\"\n  />\n</el-form-item>`\n    }",
+      "shot": "data:image/webp;base64,UklGRgoFAABXRUJQVlA4IP4EAABQIwCdASoEAYwAPmEwlUgkIqIho5HouIAMCWlu4W5hxk/GPRlD62KV1G+TP/M8CZy7sgPRT6sa15QA/R3oQ54Xpr2Aul5+s3sl/sOKK1D6NE6A4Dj7s+/9pVMnoaPZX17XLUOjfmCbzIqQr3tAGFAffFRXgmyjV25z9cEefTN0p0+wlFWnDFn2uWoaR1ip/QMkJ/bMkbQFf4aNGDBp+FpPqwva5g2qd9BoPVeDneN82UXvkiiHFnmM3EDBfGi2fVgP6YOt/4af74d2fa5aiRnsA9OBUBJs7BxJv1zL861EvPmHXnI+5FKIa/FDdNDpk76sL2tnDJNPbSjPjdJ4kGYxOM46ehapBJaU6npRYTfOUUel+dahBO5Wtx5MLSMoFmVBqBgA/v8qCJCBWEdoOreFCGdFl1J86rdwD2r14yhOpe/khYEjNj63aMAoBWK2kCjQ/voQGqvm6DT5Q2KJemakB7ATdnWDfxt/j0dKs2U6ZHlx2K2gnKmBLF3Vh0Y9+7TIze+U+1p3xMjbsHjLVGPJ/s3lmTZFdEwG3QSOfP2u2Uc7e6Cov6AW2/U+EreB0w1BNFDzBWlBcgA1R03qRslJ1alI0yww2vHQr+25rM7ZIe9VzBRiXtB8BFcQtdpjQE7egod8IXtkQfKWTD9/SLDXfwd6jA/99xFPbysO3Te0Txigycmx40RNd6F/96abVmoq+XaQrcAIpglqkDZlDcwYMcINoPuYdJc5nB9IhiFjwp4Hp1vLBkIqCOu7LD7qASakMW3d8GWcc60bDUkl31G2tWx1mBbn4WjQMubTJlHLhEjQWCvBIqaryQhEzo93dxFztCseCbVbXogkAHT/2A4AvUmr63Lm4qyZpKA83gHs/LGBboG3MQ/jpmX+2JYjZm8Htq+Q4pt2HSOOkiM2vgeItJbXBUjRefzB+US44FGB/kMjGte18RYhRm4R2RnJiiz81notEWpbrmbfY04XXalreNS/6CLuZO9bxx/pLZKAmblFGXD5RVZ2vkOlH8IXPf7/xyxXonrWzjdf3+iMlSBRQrwEJhb/ON4GJB3XV4zfywrrv+ibFONx5lvhTWiUqE/W0o5EtD1m5ni5aUX+BDWidBZxovirsqAFrxhjzNI/OOdQxuhAAl/3yDrFynyBMET1niWRjEW6zpJsCdD9dXW770YpmTfVfJ/Va4algELruPybXSJwcXprX7etUVm5QdHoqxF/GJjhCyOcGIS8rqxlGE9kv3xt5FFx9oyrO4E48AcA83XwszRzO2otEAdFIOq81b7br3bNwznblhoqr7thFboI+iGu+gNqn9PbRuhc/5HYbP6P8sOuApyoU/OmGLA+M20mNvlCOrsgExSuVL6c3V0rdNsW3EnGGvmpoOsbOWfi7Yoz/tBwAvJSMmyqkKsCUKW/cmqb6b33SF04+zqDPs37OwLLaThguR2HKPmPP4d6jTY6yLLNFNNz6coJgdyF9ToKqqaZ3iC+Us9/e36RYzqAhLqd6reQEZux4C4S7E8ijoZqRkwalUcZz/RNFFLcNwYLX/TofISwkIwt35pBI8hQlYvTD1v+RA60fU7MtJ0OB++HVkDinFGX0b+eZmNkGR828DzUrc7ZxjeBcdUWmVo12davEge+hbrwmr2PGiJrUhi8qii/MD4uR2D5l//LDsBa3DYByf+h4kn2uyCNpwrbHFbWUs2AT7AAAAA=",
+      "variantOf": "date-picker"
+    },
+    {
       "id": "form-item-radio",
       "anchor": "radio",
       "name": "Radio 单选框",
@@ -416,6 +799,46 @@
       ],
       "snippetSrc": "({ label, options, radioShowText }) => {\n      const opts = (options || '选项一,选项二').split(/[,，]/).map((o) => o.trim()).filter(Boolean)\n      // 关掉文字＝只留选钮（极少用，但 demo 演示了这一形态）\n      const items = opts.map((o, i) => radioShowText === false\n        ? `    <el-radio value=\"${i + 1}\" />`\n        : `    <el-radio value=\"${i + 1}\">${o}</el-radio>`).join('\\n')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-radio-group v-model=\"form.field\">\n${items}\n  </el-radio-group>\n</el-form-item>`\n    }",
       "shot": "data:image/webp;base64,UklGRooFAABXRUJQVlA4IH4FAAAQIwCdASoEAYwAPmEwlEgkIqIhIVgIwIAMCWlu/HyYw98tctof8ttUGALxF698cxl/+G9hX2zfir557Wf9c+z7hmOI/0j/VeqP7zxH/+S40WZP/Tv+x6kmfV6E/6HuCfy7+mf8L7XPBZ6PAYceW6GkjHjNJGPGaSMeM0T1NGSOdQ5vg6kkGlHcb/cDOjR6YHQ9TjMQ0ypgPcARrEyCv7BSeC0fWLy6HJ6Tnw57U/5joBzEcIQiWzal8SsjbeDUMdzAPTYgsEoCo34WsDa/cdcEYo64InnlCaqZgGhKV7HqzQqFHrnVg9NfUDW5MqVJlaOKacMEb9Zm9H1d+9FLdG43Ik5YiETlqhXe/tLZ1V/T9BheCJiRjxmkjHjNJGPGaSKgAP7/TQAAAAACjH9cA2kLTmIJkewdB7B0HsLq19qCQzrNlj2DoJNzLzLPJHsGoOUiolNpoo1T9wXoxAY9EVYb79uGjbOy1AZPm0cfAcxj64cPwAcGPCr2GuFTBeO3/29/mTylZn+41jDC34PsKf3yo133wK1gJjbxJW2eb4wB0MvuGLjfo9T2sKu3+UJnHZ28Jhv9Kjwq5oCc/uv8a9fW23dGBdyyRH1lF1BRE7+yZKy2MU/CLqXgALrkhF9J+0HQnycrYfsSUmR+3oDDKLoUftKdQYXIf5cqfAu2lB+50r+9V9GYgUUUN4diVIakDJeS2V3GLlyfIcG/qV1V5Xqt6zdEkVlA+yuNi/HC/ENMYcq3MR4rrkLRTnnxp0QypyXcz4wwa2g9VnQbQKaygAYr/PjCGZYi/hVGhyXT8dHx1T1j3XgcjXvZalcutitxFA5SbwIpBS+ASFUZPu6AVzL105eQ/jCwXIFMqVSNMaDd6rYshkGocsCtafmJAFVJQfAVT/V46DuhRXs7HvUF2OouGzh8L6ZxZieic1zjo3C2lPDKNEPiSvGpvmklzZJXTfzN4n1nWd1wI/C4OfP2Po6iMA2oNLmyAlDHp1p2X9NmOM3eiU361g2ajN2wFbKuZhGHyde5eu+bcmC2dPgJIutiBrr7JW0IriCRTeNcsP2UYPu0meHLTxjGKaV1UwAHSeoJQG5ApK/70y0HOZN06WIdkmiIlpg6/kkwrBpPh5TY3WXQeEgUPxoOMZ5++yGmON1jMP5FrLqv950a5UcFrlT/jh0P8eD9NrOnpLku91ZC3A6/oN7pD7Pth+PQVObcZiJB1gsw15j1dlX3KCI97w0j5PaM+7u4uUSGATbw9RIx9Ca8tTeBTcEfjukdGsMW+FwwalIzZVwF4wbsCO8onwbVAW+7kEcF+TgTePbGjcEycwCT/slXClKo6YK3KBZvP0FQx7TmtZvZ3SZ+w7DgcPluyC5lpoZJku2TGTkE1ghAeKQEhShWfRod6SQXcDTXj7IEKCtqqFdo9sCzkKowHNhh3dapQEFq3ckmyVX21xYcUKRBe8W/PDV5GD94tnqZxQBBrWbgKLmb/lwrRbFDco91of+WqePDQmUksf1r2/wpQ1KaLkNW1e/l+g1t4S/hqMAMzz31mPgmu8NbJCikrrqJZuoOqeTianhmfaKGpI1LQcz83pnecHyNIBKWsdAp6+7H5GH/ZsRt4uIhuZrN1AHc1NRgP74X1MymCfpLDdeBWDbk35OrvWU1PqYVN8/qh/ZicvG2Yq88dDXqVR3ZxOTXexkUySgbXfJ9KhldyPyqJT7z06lsG5GAUun4/54vwqGQ0MsZgF3FXbXuf4F8CcMIdkvuHqvzLY8n+EYLnt3anjIhO34HEKGojWfIfYu3oCapuRMN9K4272RRP1w95w0TZ84M5ebkHvhyEzlJBWKgdplAPKZVVIzBSbcvNjIm2LmtdrLax5T9wAAAAAAAAA=="
+    },
+    {
+      "id": "form-item-radio-button",
+      "anchor": "radio-button",
+      "name": "RadioButton 单选按钮组",
+      "group": "input",
+      "desc": "以切换按钮形式呈现（一般不默认使用）",
+      "keywords": [
+        "单选按钮组",
+        "radiobutton",
+        "按钮组",
+        "切换按钮",
+        "分段控件"
+      ],
+      "fields": [
+        {
+          "key": "label",
+          "label": "标签",
+          "type": "text",
+          "placeholder": "如：对齐方式",
+          "default": ""
+        },
+        {
+          "key": "options",
+          "label": "选项",
+          "type": "text",
+          "placeholder": "逗号分隔，如：左对齐,居中,右对齐",
+          "default": ""
+        }
+      ],
+      "readRefs": [
+        "references/patterns/select-pattern.md"
+      ],
+      "mustRules": [
+        "用 el-radio-group + el-radio-button",
+        "一般不默认使用，适合工具栏切换场景（如对齐方式）"
+      ],
+      "snippetSrc": "({ label, options }) => {\n      const opts = (options || '左对齐,居中,右对齐').split(/[,，]/).map((o) => o.trim()).filter(Boolean)\n      const items = opts.map((o, i) => `    <el-radio-button value=\"${i + 1}\">${o}</el-radio-button>`).join('\\n')\n      return `<el-form-item label=\"${label || '标签'}\">\n  <el-radio-group v-model=\"form.field\">\n${items}\n  </el-radio-group>\n</el-form-item>`\n    }",
+      "shot": "data:image/webp;base64,UklGRloFAABXRUJQVlA4IE4FAADwIgCdASoEAYwAPmEwlUgkIyIholXZAIAMCWdu1V+6hb+yx7Rp6BfROegpUtIH+M4hdrTeosocTGka0AP43/ePQb0MPTH7GB4uQ4s78+1Y+tFt9qx9aLb1dM5xNFfh9cLc9pGh796dAnmBXMBKOHUsC6+8zxY+AumUsH9dm0wYaqVIfV6qwHwJgWm86a+F2uhyrDyuPp7gOj383c3L1vyY4zGa4nOSyoPj20oYN8bm6z97rQxkaTv0F4F6q4YRnYcvVUiL7VGhph6wCQ+DQS+phU9oNmLXQpqDJjsY8X6FQTqzbd3I5Of6e9lphtqjWKup8gLobNsuU7mGF5UXMFmoNRxrvIsYXKmc+9mmna7BGHGnP6KbdBCKXuLO/PtWPiAA/vyoAAAAAAAAAOE8eAARV/KVqcqcoq+gkJxt9ckULNyAeJWizwr7CdTB55/A1xsjw70XCk94v2Y6anoEuQT2mNkxynONzlKKrG9zHGYNvm8NTMcfW9Ss5gCZOO8uPaf+54XhHsEcf4ErPdZhqDbQlVx0APzf6zn8OxJhGQYPVSAQ7920atKrUv8JQ8AAXRpzGTBgx/1LqvvED9Dm//P2vLHD0Ml2B73zsCaGUFWIdAsLoxuwbxXowBq26QpClS1lpztQtyh7hOkN1al60sMvxDQqxDUYcpyA6af3O3h6i45B8Prz+coLwGtDYkizsIcs9VC9AUh9p/owliq7DrEzJgDOUGh93A35frHXinv1gclZt8O0S2hwMhCtuje3Eqf0V3OhRQN4lZSzLsg/lRNeblf0GfzkzKnSmNZjsmx9c+l+nshgYpLJh6EQbuizWN4vDH+x7tWLIvmadYiPuyl9Gw9+dWChXTRL0e1EZITnKAFY/VT/SE65wmpyEAh9ADZwqfyhn7S8A5os49FV5i0I/4TBuw3pnVycCW8FN9vd85RLTIM1J5O/vrfFmPhiK111XBsDnQVh//2EqIoNEDLKrywWGMgZdqeRSVIMvp9dYkFgvB/fyY3VRwdSE0frzRX3r7kwbUmgF7gdvPemJAXqpLb4qyp9S+Qli7e2vr1Nt+mOZX2h9mOFqpV4t5YFMaL0UgJPnMMm9fH+GxuRPRUTXHrdLIRbClOO90KBmFihzT32jOwpoMiGGC+tuBM2e7TYb9A4hSNEJvMTdsWt4wXMAO/yJ34zqeweJNZXIvgDn9SDUXJyvuWVejnqrgTZrXXSLOQ9XyzCw/DvgITDgwX0JFVRqJ92MkpHVUmxOpz6MNocmg8JO/P7ejUuuFMuH/BulfF11FwtR8fF3zy8hN7hGfgKhbPXWey5q5ZaSKFyiBt9qBLIY28mDqL1zQzKBTxD0xq9xyKjdJx//qcimLOPtQ2gXVz4+r9KAH8WJKt3kH7DfU4oH39sj9YhF2yF+sLWFY1QJ/VF00Umf/lLniVdLc8FC5Wtbskc/pWKXZS7S+PuplltiEu8tv4hbXqjv6AyxL9dNP37I/OvcWPlIvA5uhaWcfO7iS1SiDZkzFF4JxtKW780X7/8Sm/LbQ9xD0Kcsrbu/51Y5fs/STog1xUt/oeY+rkZ6XVWe+9xKO9f2szrxU8ffi482+4WHRdHUID1AbXClavbVJ9nogeZ/qU2OmABqNnAF018bwsQaYzC5AY3y7VRNzFLgdSm6aRITA7JombtOWFJozgv2HWIM3rlUgIxTV50B2SuxwI+YZ2E6QCIik+5mUC4kjaEEnj0fAuPeUgFyAxvqnIWJYCv5URV3fU/arr9/wyk20xIZsblgq+SAxNCfr4P+paS9qc0MhLkET0YAAAAAAAAAAAAAA==",
+      "variantOf": "radio"
     },
     {
       "id": "checkbox",
@@ -927,6 +1350,76 @@
       ],
       "snippetSrc": "({ title, danger, confirmText, dialogScene, dialogShowTip, dialogMultiTitle }) => {\n      // 宽度由场景决定（三档，禁非档位值）：确认 400 / 表单 640 / 富内容 800\n      const width = { confirm: 400, form: 640, rich: 800 }[dialogScene] || 640\n      const tip = dialogShowTip\n        ? '\\n  <el-alert title=\"提交后不可修改\" class=\"alert-neutral\" show-icon :closable=\"false\" />\\n'\n        : ''\n      const titles = dialogMultiTitle\n        ? '\\n  <div class=\"dialog-titles\"><span class=\"is-active\">基本信息</span><span>高级设置</span></div>\\n'\n        : ''\n      return `<el-dialog\n  v-model=\"visible\"\n  title=\"${title || '标题'}\"\n  width=\"${width}px\"${danger ? '\\n  class=\"is-danger\"' : ''}\n>${titles}${tip}\n  <!-- 内容放默认插槽 -->\n\n  <template #footer>\n    <el-button @click=\"visible = false\">取消</el-button>\n    <el-button type=\"${danger ? 'danger' : 'primary'}\" @click=\"handleConfirm\">${confirmText || '确定'}</el-button>\n  </template>\n</el-dialog>`\n    }",
       "shot": "data:image/webp;base64,UklGRpIDAABXRUJQVlA4IIYDAAAwHgCdASoEAYwAPmEwlUckIyIhIlXaiIAMCWlu+F8U+jbXfr3HIYwyGlWiN7ldJCaGYVIiA7Ryrxul8R3hJBbZA5w66GaCOfmKtQ1xeTkULfm+OACqiyNR7GscPelsKbGgnv+pW4vA07bt+xQsOq/RsnQR8mTMrHxXZ9Z0ZRjvf/4u7u+nTGi1bSfOyadcvYwAEApilC2kt0U62M0PlHrmyBerKhvrR8KFHxWnYUMFilbVDHVxRQxVGrAZq75Ogj4/CjofVBM/eNOqI0jqVDuFGpImDzK8e0NTYg1aU+Sws9+sYAB8n034iklOKzsFKOAoefaasVpfXA0AAP78qCu/pJ/+S9f/GBA5UaXxowKdloOBOaowhymA3gjv3iOj++MBem8FwfNw7eo2VfQ6PtZN+3/0J/zbOAntyOVP9H/j3mezfsMF8KtwZsnnYS5bzhGA+o00664O42Lb4hfepDECQ8OOkC7iWu4y/r5DVf/hqU70JAu6Y2LGKu7k0YjK7pTGbyMq2pv31obC1LyXJGuC5Mub/doZb8HI9FSksjWicOzblxUz2uTM3XAwxv+v5p9+qaxyiOUounu8iLStHKkO9PUqVLIgXcLrBQmdsQFG9SsAlqiO6pkXHYkeuWxqz3xkUuSah0lRAuGR6CfXF6T63dXc/zUjOlELSXfwqWYEHQvUgTpMFCLdjqwz93p5UGLmpcofv5Zf55MQVk0zIov2+mtFxj+Gxfs5bXULywAQAN//wcMUu5HMH4Pq2ti+8+pg5OF2LnpryASU9swhwcSVx7uUvDSkIAMRgVjprzrJB/zToQpcRlpRc6AlzZGThYxeCTCSU9VW6QcNQ7SGwviJEyV1Y7Slt1AxEiH9+YQb0fJqcHqtiVDySBqqleZ+Xw0AF9FLiWhYSMe4p0QX2WVPRhI5uIVNGkIIeu/aGyu18H/4MhrB4eYS679uOAs+q7oI0Oipk0Kt4cxB2U2hiMFJv06Uhe+mgDhzh0MU0fCm7NgXy4ZoG2sQ+34yapr8GqD/fD6VkLM1PY8UBdbGqjucq5oTgDKV/gYoIeb7mNPLaVx32ZGQPDS79Wihqv4NuVFUXw5xmGN543R2guNABrBUUI/+Urf+gyf1xXCUeBWDlUf5koxJmpR6NqyWNqKpymsnwA705fb774/uHyMcvKzFQchwnVDOXxG7kAs2O3rcEt1Y0AAAAA=="
+    },
+    {
+      "id": "tip-dialog",
+      "anchor": "tip-dialog",
+      "name": "TipDialog 提示弹窗",
+      "group": "feedback",
+      "desc": "系统提醒用户的四类语义弹窗（警告/危险/成功/信息）",
+      "keywords": [
+        "提示弹窗",
+        "tip",
+        "dialog",
+        "警告",
+        "危险",
+        "成功",
+        "信息",
+        "messagebox"
+      ],
+      "fields": [
+        {
+          "key": "scene",
+          "label": "场景",
+          "type": "select",
+          "default": "warning",
+          "options": [
+            {
+              "value": "warning",
+              "label": "警告 · 离开未保存等"
+            },
+            {
+              "value": "danger",
+              "label": "危险 · 删除等不可撤销操作"
+            },
+            {
+              "value": "success",
+              "label": "成功 · 操作完成告知"
+            },
+            {
+              "value": "info",
+              "label": "信息 · 版本更新等中性提醒"
+            }
+          ]
+        },
+        {
+          "key": "title",
+          "label": "标题",
+          "type": "text",
+          "placeholder": "如：离开未保存页面",
+          "default": ""
+        },
+        {
+          "key": "body",
+          "label": "正文",
+          "type": "text",
+          "placeholder": "如：当前页有 3 处修改未保存",
+          "default": ""
+        }
+      ],
+      "readRefs": [
+        "references/patterns/dialog-pattern.md",
+        "references/component-interaction.md（Dialog 段 / 按钮个数 段）"
+      ],
+      "mustRules": [
+        "一律用 el-dialog + 语义 class（is-warning/is-danger/is-success/is-info）",
+        "禁 ElMessageBox —— 它不是组件、定制能力弱、与设计系统割裂",
+        "按钮个数：成功=纯告知单钮；其余=一退路+一进路两钮",
+        "footer 主按钮在右"
+      ],
+      "snippetSrc": "({ scene, title, body, tipScene }) => {\n      const s = scene || tipScene || 'warning'\n      const configs = {\n        warning: { class: 'is-warning', title: '离开未保存页面', body: '当前页有 3 处修改未保存，离开后将丢失。', btn1: '取消', btn2: '保存并离开', type2: 'primary' },\n        danger: { class: 'is-danger', title: '删除用户「张三」', body: '此操作不可撤销，张三的所有数据将被永久删除。', btn1: '取消', btn2: '确认删除', type2: 'danger' },\n        success: { class: 'is-success', title: '操作完成', body: '批量启用已成功完成，共影响 32 条数据。', btn1: '', btn2: '知道了', type2: 'primary' },\n        info: { class: 'is-info', title: '新版本可用', body: 'v0.5.0 已发布，包含若干 bug 修复和新功能，建议更新。', btn1: '稍后', btn2: '立即更新', type2: 'primary' },\n      }\n      const cfg = configs[s]\n      const buttons = cfg.btn1\n        ? `    <el-button @click=\"visible = false\">${cfg.btn1}</el-button>\\n    <el-button type=\"${cfg.type2}\" @click=\"handleConfirm\">${cfg.btn2}</el-button>`\n        : `    <el-button type=\"${cfg.type2}\" @click=\"visible = false\">${cfg.btn2}</el-button>`\n      return `<el-dialog\n  v-model=\"visible\"\n  class=\"${cfg.class}\"\n  title=\"${title || cfg.title}\"\n  width=\"400px\"\n>\n  <p>${body || cfg.body}</p>\n  <template #footer>\n${buttons}\n  </template>\n</el-dialog>`\n    }",
+      "shot": "data:image/webp;base64,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",
+      "variantOf": "dialog"
     },
     {
       "id": "drawer",

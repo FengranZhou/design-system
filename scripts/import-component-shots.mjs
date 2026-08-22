@@ -51,6 +51,7 @@ import { join, dirname, basename, extname } from 'path'
 import { fileURLToPath } from 'url'
 import { tmpdir, homedir } from 'os'
 import { execFileSync } from 'child_process'
+import { COMPONENTS } from './component-catalog.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, 'scripts/component-shots.json')
@@ -82,6 +83,11 @@ const srcDir = args.find((a) => !a.startsWith('--')) || join(homedir(), 'Desktop
 
 // ── 组件清单：与 shoot-components / build-catalog 同一数据源 ────────────
 // demo 左侧导航就是「哪些组件正式启用」的唯一声明处。
+//
+// 变体（`variantOf`，如「文本域」挂在 input 下）在导航里没有自己的行 ——
+// 导航的粒度是「一页 demo」，而变体是同一页里的另一个可插入物料。它们同样
+// 需要示意图，所以这里把 component-catalog.mjs 里父组件在导航中的变体一并
+// 收进来。父不在导航里（=停用）时变体也不收，与 build-catalog.mjs 一致。
 function navItems() {
   const src = readFileSync(join(ROOT, 'demo/src/App.vue'), 'utf8')
   const out = []
@@ -96,6 +102,13 @@ function navItems() {
         out.push({ anchor: m[1], name: m[2].trim(), tab })
       }
     }
+  }
+
+  const navAnchors = new Set(out.map((o) => o.anchor))
+  const byAnchor = new Map(out.map((o) => [o.anchor, o]))
+  for (const c of COMPONENTS) {
+    if (!c.variantOf || !navAnchors.has(c.variantOf)) continue
+    out.push({ anchor: c.anchor, name: c.name, tab: byAnchor.get(c.variantOf).tab })
   }
   return out
 }

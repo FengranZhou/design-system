@@ -135,9 +135,39 @@ function handwrittenIndex() {
   return idx
 }
 
+/**
+ * 变体索引：父 anchor → 该父下的变体条目数组。
+ *
+ * ## 为什么需要「变体」这个概念
+ *
+ * demo 一个页面里常演示同一物料的多个**独立形态**：InputDemo 里的搜索框 /
+ * 数字输入框 / 文本域，SelectDemo 里的分组 / 树形 / 级联。它们各自是插入时
+ * 要单独挑的东西（用户打「/文本域」应该能搜到），但在 demo 导航里只有一个
+ * 「Input 输入框」条目 —— 导航的粒度是「一页 demo」，不是「一个可插入物料」。
+ *
+ * 早先这些变体在 component-catalog.mjs 里复用父 anchor（`anchor: 'input'`），
+ * 结果被 handwrittenIndex 的 Map 覆盖成只剩最后一个，且 name 被导航名盖掉。
+ * 现在改为：变体有自己的 anchor，并用 `variantOf` 显式声明父 anchor。
+ *
+ * ## 为什么不直接放行所有手写条目
+ *
+ * 「导航是启用清单」这条纪律要留着 —— 停用一个组件只需注释掉导航行，变体
+ * 应该跟着一起消失。挂在父 anchor 下天然满足：父不在导航里，变体也不会出现。
+ */
+function variantIndex() {
+  const idx = new Map()
+  for (const c of COMPONENTS) {
+    if (!c.variantOf) continue
+    if (!idx.has(c.variantOf)) idx.set(c.variantOf, [])
+    idx.get(c.variantOf).push(c)
+  }
+  return idx
+}
+
 export function buildCatalog() {
   const demoConfigs = extractAll()
   const handwritten = handwrittenIndex()
+  const variants = variantIndex()
   const nav = navComponents()
 
   const components = []
@@ -196,6 +226,49 @@ export function buildCatalog() {
     }
 
     components.push(entry)
+
+    // 紧跟父组件之后插入它的变体（搜索框 / 文本域 / 树形选择器…）。
+    // 排在父后面而不是集中在末尾：面板列表按数组顺序渲染，同族物料挨着
+    // 出现，用户扫列表时「Input 系」是连续一段，不用来回跳。
+    for (const v of (variants.get(item.anchor) || [])) {
+      // 变体的配置项走手写 instanceFields，不取 demo。demo 那张 config-card
+      // 是挂在父块上的（「可清除 2」这类去重后缀就是同页多块的痕迹），
+      // 按 anchor 分不出哪几项属于哪个变体 —— 硬分只会分错。
+      const vFields = (v.instanceFields || []).filter((f) => !EXCLUDE_FIELDS.has(f.key))
+      const vEntry = {
+        id: v.id,
+        anchor: v.anchor,
+        name: v.name,
+        group: v.group || item.group,
+        desc: v.desc || '',
+        keywords: v.keywords || [v.name],
+        fields: vFields,
+        readRefs: v.readRefs || [],
+        mustRules: v.mustRules || [],
+        snippetSrc: v.snippet ? v.snippet.toString() : null,
+        shot: SHOTS[v.anchor] || null,
+        // 声明父子关系，供扩展侧分组展示 / 溯源用
+        variantOf: v.variantOf,
+      }
+      if (!vEntry.snippetSrc) missingSnippet.push(v.name)
+      if (!vEntry.shot) missingShot.push(v.name)
+      if (vEntry.snippetSrc) {
+        const dead = vFields
+          .filter((f) => vEntry.snippetSrc.indexOf(f.key) < 0)
+          .map((f) => `${f.key}(${f.label})`)
+        if (dead.length) deadFields.push({ name: v.name, dead })
+      }
+      components.push(vEntry)
+    }
+  }
+
+  // 变体的父 anchor 必须真的在导航里，否则它静默消失 —— 这类「写了但没生效」
+  // 最难发现（面板里就是少一项，没人会注意）。在生成阶段直接报出来。
+  const navAnchors = new Set(nav.map((n) => n.anchor))
+  const orphanVariants = []
+  for (const [parent, list] of variants) {
+    if (navAnchors.has(parent)) continue
+    for (const v of list) orphanVariants.push(`${v.name}（variantOf: ${parent}）`)
   }
 
   return {
@@ -203,7 +276,7 @@ export function buildCatalog() {
     generatedFrom: 'FengranZhou/design-system',
     groups: GROUPS,
     components,
-    _stats: { total: components.length, missingSnippet, missingShot, deadFields },
+    _stats: { total: components.length, missingSnippet, missingShot, deadFields, orphanVariants },
   }
 }
 
@@ -234,6 +307,11 @@ if (isMain) {
       console.log('  用户开了这些开关，生成的代码却不变 —— 配置界面在说谎。')
       console.log('  修法：让 component-catalog.mjs 的 snippet 读这些 key，')
       console.log('       或确认该开关不该出现在插入场景（demo 演示用，非实例参数）。')
+    }
+    if (stats.orphanVariants.length) {
+      console.log(`\n✗ ${stats.orphanVariants.length} 个变体的父组件不在 demo 导航里，已被丢弃：`)
+      console.log('  ' + stats.orphanVariants.join('、'))
+      console.log('  variantOf 必须指向 demo/src/App.vue 导航里真实存在的 anchor。')
     }
     if (stats.missingShot.length) {
       console.log(`\n⚠ ${stats.missingShot.length} 个组件还没有示意图：`)
