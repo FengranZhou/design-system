@@ -196,7 +196,8 @@ function extractColorSemantics() {
 }
 
 function extractSemanticColors() {
-  const all = extractCSSVars(SEMANTIC_FILE, /--iflyv-([\w-]+):\s*(.+)/)
+  // 传 sassVars：border/mask 组的兜底行写作 #{$border-default-fallback}，不解就漏成裸插值
+  const all = extractCSSVars(SEMANTIC_FILE, /--iflyv-([\w-]+):\s*(.+)/, extractSassVars(SEMANTIC_FILE))
   const palette = buildPaletteMap()
   const demoSem = extractColorSemantics()
 
@@ -222,15 +223,39 @@ function extractSemanticColors() {
   const lookup = { get: k => selfMap.has(k) ? selfMap.get(k) : palette.get(k), has: () => true }
   for (const v of semantic) {
     v.value = resolveVarChain(v.value, lookup)
-    // 描边/遮罩组用 color(srgb r g b / a) 写带透明度的色 —— 拆成 hex + alpha 两个
-    // 字段：消费方（扩展）的宿主面板是「hex 框 + 透明度框」两个输入，对应写入。
-    const cm = /^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\/\s*([\d.]+)\)$/.exec(v.value)
-    if (cm) {
-      const h = x => Math.round(parseFloat(x) * 255).toString(16).padStart(2, '0')
-      v.value = ('#' + h(cm[1]) + h(cm[2]) + h(cm[3])).toUpperCase()
-      v.alpha = Math.round(parseFloat(cm[4]) * 100)
+    // 带透明度的色统一拆成 hex + alpha 两个字段 —— 消费方（扩展）的宿主面板是
+    // 「hex 框 + 透明度框」两个输入，对应写入。三种源码形态：
+    //   color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)   ← 权威定义
+    //   rgba(21, 21, 21, 0.06)                                     ← 兜底行
+    //   color(srgb 0.07 0.08 0.10 / 0.06)                          ← 浏览器计算形态
+    const h255 = x => Math.round(parseFloat(x) * 255).toString(16).padStart(2, '0')
+    const mix = /^color-mix\(in srgb,\s*var\(--iflyv-([\w-]+)\)\s+([\d.]+)%\s*,\s*transparent\)$/.exec(v.value)
+    if (mix) {
+      const base = resolveVarChain('var(--iflyv-' + mix[1] + ')', lookup)
+      if (/^#[0-9a-fA-F]{6}$/.test(base)) {
+        v.value = base.toUpperCase()
+        v.alpha = Math.round(parseFloat(mix[2]))
+      }
+    }
+    const rgba = /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/.exec(v.value)
+    if (rgba) {
+      const h = x => Number(x).toString(16).padStart(2, '0')
+      v.value = ('#' + h(rgba[1]) + h(rgba[2]) + h(rgba[3])).toUpperCase()
+      v.alpha = Math.round(parseFloat(rgba[4]) * 100)
+    }
+    const srgb = /^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\/\s*([\d.]+)\)$/.exec(v.value)
+    if (srgb) {
+      v.value = ('#' + h255(srgb[1]) + h255(srgb[2]) + h255(srgb[3])).toUpperCase()
+      v.alpha = Math.round(parseFloat(srgb[4]) * 100)
     }
   }
+
+  // 同名去重，保留**最后**一条：CSS 里后声明覆盖先声明，
+  // border/mask 的「rgba 兜底 + color-mix 覆盖」双写以覆盖行为准。
+  const byName = new Map()
+  for (const v of semantic) byName.set(v.name, v)
+  semantic.length = 0
+  semantic.push(...byName.values())
 
   // 分组：按前缀（brand/success/...）
   const groups = {}
