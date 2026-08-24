@@ -494,71 +494,88 @@
     },
     {
       "name": "font-title-page",
-      "value": "800 1.625rem / 3rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
+      "value": "800 1.625rem / 3rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "comment": "页面标题"
     },
     {
       "name": "font-title-page-multiline",
-      "value": "800 1.625rem / 3.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
+      "value": "800 1.625rem / 3.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "comment": "页面标题（多行）"
     },
     {
       "name": "font-tab-active",
-      "value": "800 1.625rem / 2.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
+      "value": "800 1.625rem / 2.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "comment": "页面级选中 Tab 项"
     },
     {
       "name": "font-title-module",
-      "value": "600 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "600 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "模块标题"
     },
     {
       "name": "font-title-regular",
-      "value": "600 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "600 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "常规标题"
     },
     {
       "name": "font-tab-active-sub",
-      "value": "600 1.125rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "600 1.125rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "模块级选中 Tab 项"
     },
     {
       "name": "font-tab-default",
-      "value": "400 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "400 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "默认 Tab 项"
     },
     {
       "name": "font-title-component",
-      "value": "600 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "600 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "组件标题"
     },
     {
       "name": "font-body-primary",
-      "value": "400 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "400 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "常规正文"
     },
     {
       "name": "font-body-primary-multiline",
-      "value": "400 1rem / 2rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "400 1rem / 2rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "常规正文（多行）"
     },
     {
       "name": "font-body-sub",
-      "value": "400 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "400 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "次要正文"
     },
     {
       "name": "font-body-sub-multiline",
-      "value": "400 0.875rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "400 0.875rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "次要正文（多行）"
     },
     {
       "name": "font-body-min",
-      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "辅助信息"
     },
     {
       "name": "font-body-min-multiline",
-      "value": "400 0.75rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "400 0.75rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "辅助信息（多行）"
     },
     {
       "name": "font-label-primary",
-      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "常规标签"
     },
     {
       "name": "font-number-display",
-      "value": "700 1.625rem / 2.5rem \"douyinNum\""
+      "value": "700 1.625rem / 2.5rem \"douyinNum\"",
+      "comment": "展示型数字"
     },
     {
       "name": "font-number-display-sm",
-      "value": "700 1.375rem / 2.125rem \"douyinNum\""
+      "value": "700 1.375rem / 2.125rem \"douyinNum\"",
+      "comment": "展示型数字"
     }
   ],
   "spacing": [
@@ -587,7 +604,8 @@
       "name": "spacing-2",
       "value": "8px",
       "scenes": [
-        "列表项内子元素间距（标题与其描述、主信息与副信息）"
+        "列表项内子元素间距（标题与其描述、主信息与副信息；含横向的图标/标签与其同行文字）",
+        "常规标题与其下方内容之间（与「标题与其描述」同档）"
       ]
     },
     {
@@ -626,7 +644,7 @@
       "value": "24px",
       "scenes": [
         "表单项之间（label+控件为一组，组与组）",
-        "页面内容距页面左右内边距",
+        "页面内容距页面左右及底部内边距（顶部另按「页面级标题与页面顶部之间」取 spacing-4）",
         "面板内边距·左右（上下配 spacing-5）"
       ]
     },

@@ -178,6 +178,23 @@ function extractFontScale() {
   const sassVars = extractSassVars(FONT_FILE)
   const vars = []
 
+  // 中文语义名：声明前一行的 `/* 页面标题 - Title-Page - 说明 */` 注释。
+  // 逐行建 name → 中文名 映射；同一条注释服务紧随的多条声明（multiline 变体
+  // 与主条目共享），遇到下一条注释才换。分类行（「标题类型 Title」）不含
+  // 「 - 」分隔，不会误配。
+  const cnNames = new Map()
+  {
+    let pending = null
+    for (const line of content.split('\n')) {
+      const cm = line.match(/^\s*\/\*\s*(.+?)\s+-\s+\S+\s+-\s+/)
+      if (cm && !line.includes('--iflyv-')) { pending = cm[1].trim(); continue }
+      const dm = line.match(/--iflyv-(font-[\w-]+):/)
+      if (dm && pending) {
+        cnNames.set(dm[1], /-multiline$/.test(dm[1]) ? pending + '（多行）' : pending)
+      }
+    }
+  }
+
   // 提取所有 --iflyv-font-* CSS 变量
   const fontPattern = /--iflyv-(font-[\w-]+):\s*([^;]+);/g
   let match
@@ -193,7 +210,10 @@ function extractFontScale() {
     // 消费方（扩展的语义字阶解析）按单行匹配，多行值会整批匹配失败
     value = value.replace(/\s+/g, ' ').trim()
 
-    vars.push({ name, value })
+    const entry = { name, value }
+    const cn = cnNames.get(name)
+    if (cn) entry.comment = cn
+    vars.push(entry)
   }
 
   return vars
