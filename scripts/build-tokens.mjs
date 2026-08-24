@@ -24,6 +24,7 @@ const SEMANTIC_FILE = join(ROOT, 'design-spec/design-token/css/semantic.scss')
 const FONT_FILE = join(ROOT, 'design-spec/design-token/css/font.scss')
 const SPACING_FILE = join(ROOT, 'design-spec/design-token/css/spacing.scss')
 const SPACING_USAGE_FILE = join(ROOT, 'design-spec/design-token/spacing-usage.ts')
+const PALETTE_FILE = join(ROOT, 'design-spec/design-token/css/palette.scss')
 
 /**
  * 从 SCSS 文件提取 Sass 变量定义（$var-name: value;）
@@ -136,17 +137,92 @@ function extractCSSVars(filePath, pattern, sassVars = new Map()) {
  *
  * 排除 AI 渐变（复杂值，调整面板用不上）和组件桥接变量（input-focus-ring 等）
  */
+/**
+ * palette.scss 的 CSS 变量表（--iflyv-green-6 → #23B283 …），供 var() 链解析用。
+ *
+ * accent-N（品牌色）在构建期没有静态答案 —— 它按 [data-brand] 运行时切换，
+ * :root 里只有 geekblue 兜底。但 demo 的默认品牌是「品牌绿」，规范站展示的
+ * 也是绿；这里把 brand-N 预置成 green-N 别名，让 accent 链解析到绿。
+ * ⚠️ 默认品牌换了要同步这一行。
+ */
+function buildPaletteMap() {
+  const sass = extractSassVars(PALETTE_FILE)
+  const css = extractCSSVars(PALETTE_FILE, /--iflyv-([\w-]+):\s*(.+)/, sass)
+  const map = new Map(css.map(v => [v.name, v.value]))
+  for (let i = 1; i <= 10; i++) {
+    if (!map.has(`brand-${i}`)) map.set(`brand-${i}`, map.get(`green-${i}`))
+  }
+  return map
+}
+
+/** 迭代解析 var(--iflyv-x[, fallback]) 引用链，返回最终字面值（多为 hex） */
+function resolveVarChain(value, map, depth = 0) {
+  if (depth > 10 || typeof value !== 'string') return value
+  const m = /^var\(--iflyv-([\w-]+)(?:\s*,\s*(.+))?\)$/.exec(value.trim())
+  if (!m) return value
+  const target = map.get(m[1])
+  if (target !== undefined && target !== null) return resolveVarChain(target, map, depth + 1)
+  if (m[2]) return resolveVarChain(m[2].trim(), map, depth + 1)
+  return value
+}
+
+/**
+ * 从 demo SemanticColorDemo.vue 提取每条令牌的中文名与分组。
+ * 那是「主色 / 悬浮 / 点击 / 浅背景」这些语义的**唯一定义处**（scss 里只有组标题
+ * 注释、没有逐条中文），照单一数据源纪律现读现解析，不在本脚本手抄。
+ */
+function extractColorSemantics() {
+  const file = join(ROOT, 'demo/src/components/token/SemanticColorDemo.vue')
+  const out = { descs: new Map(), groupTitles: {}, groupOrder: [] }
+  if (!existsSync(file)) return out
+  const src = readFileSync(file, 'utf8')
+  const groupRe = /label:\s*'([^']+)'\s*,\s*tokens:\s*\[([\s\S]*?)\]/g
+  let g
+  while ((g = groupRe.exec(src)) !== null) {
+    const label = g[1]
+    let groupKey = null
+    const tokenRe = /name:\s*'--iflyv-([\w-]+)'\s*(?:,\s*desc:\s*'([^']*)')?/g
+    let t
+    while ((t = tokenRe.exec(g[2])) !== null) {
+      if (t[2]) out.descs.set(t[1], t[2])
+      if (!groupKey) groupKey = t[1].split('-')[0]
+    }
+    if (groupKey && !out.groupTitles[groupKey]) {
+      out.groupTitles[groupKey] = label
+      out.groupOrder.push(groupKey)
+    }
+  }
+  return out
+}
+
 function extractSemanticColors() {
   const all = extractCSSVars(SEMANTIC_FILE, /--iflyv-([\w-]+):\s*(.+)/)
+  const palette = buildPaletteMap()
+  const demoSem = extractColorSemantics()
 
   // 只取语义色板，排除 AI 渐变和组件桥接变量
-  const semantic = all.filter(v => {
-    const n = v.name
-    // 排除：ai-gradient*、input-*、avatar-*
-    if (n.startsWith('ai-') || n.startsWith('input-') || n.startsWith('avatar-')) return false
-    // 只保留：brand*/success*/danger*/warning*/info*/bg-*/text-*/border-*/fill-*/mask
-    return /^(brand|success|danger|warning|info|bg|text|border|fill|mask)-/.test(n)
-  })
+  const semantic = all
+    .filter(v => {
+      const n = v.name
+      // 排除：ai-gradient*、input-*、avatar-*
+      if (n.startsWith('ai-') || n.startsWith('input-') || n.startsWith('avatar-')) return false
+      // 只保留：brand*/success*/danger*/warning*/info*/bg-*/text-*/border-*/fill-*/mask
+      return /^(brand|success|danger|warning|info|bg|text|border|fill|mask)-/.test(n)
+    })
+    .map(v => {
+      // 语义层内部互引（brand-text → brand-primary）也要解 —— 先并入同层表
+      const entry = { name: v.name, value: v.value }
+      const cn = demoSem.descs.get(v.name)
+      if (cn) entry.comment = cn
+      return entry
+    })
+
+  // var() 链解析成最终字面值：palette 表 + 语义层自身（两层互引都存在）
+  const selfMap = new Map(semantic.map(v => [v.name, v.value]))
+  const lookup = { get: k => selfMap.has(k) ? selfMap.get(k) : palette.get(k), has: () => true }
+  for (const v of semantic) {
+    v.value = resolveVarChain(v.value, lookup)
+  }
 
   // 分组：按前缀（brand/success/...）
   const groups = {}
@@ -156,7 +232,10 @@ function extractSemanticColors() {
     groups[prefix].push(v)
   }
 
-  return { groups, all: semantic }
+  return {
+    groups, all: semantic,
+    groupTitles: demoSem.groupTitles, groupOrder: demoSem.groupOrder,
+  }
 }
 
 /**
@@ -276,6 +355,8 @@ export function buildTokens() {
     generatedFrom: 'FengranZhou/design-system',
     semanticColors: semanticColors.all,
     semanticColorGroups: semanticColors.groups,
+    semanticColorGroupTitles: semanticColors.groupTitles,
+    semanticColorGroupOrder: semanticColors.groupOrder,
     fontScale,
     spacing,
     radius,

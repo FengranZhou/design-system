@@ -4,131 +4,163 @@
   "semanticColors": [
     {
       "name": "brand-primary",
-      "value": "var(--iflyv-accent-6)"
+      "value": "#23B283",
+      "comment": "主色"
     },
     {
       "name": "brand-text",
-      "value": "var(--iflyv-brand-primary)"
+      "value": "#23B283",
+      "comment": "品牌文字"
     },
     {
       "name": "brand-hover",
-      "value": "var(--iflyv-accent-5)"
+      "value": "#45BF92",
+      "comment": "悬浮"
     },
     {
       "name": "brand-pressed",
-      "value": "var(--iflyv-accent-7)"
+      "value": "#158C68",
+      "comment": "点击"
     },
     {
       "name": "brand-disabled",
-      "value": "var(--iflyv-accent-4)"
+      "value": "#6ACCA5",
+      "comment": "禁用"
     },
     {
       "name": "brand-bg",
-      "value": "var(--iflyv-accent-1)"
+      "value": "#EBF7F1",
+      "comment": "浅背景"
     },
     {
       "name": "success-primary",
-      "value": "var(--iflyv-green-6)"
+      "value": "#23B283",
+      "comment": "主色"
     },
     {
       "name": "success-hover",
-      "value": "var(--iflyv-green-5)"
+      "value": "#45BF92",
+      "comment": "悬浮"
     },
     {
       "name": "success-pressed",
-      "value": "var(--iflyv-green-7)"
+      "value": "#158C68",
+      "comment": "点击"
     },
     {
       "name": "success-disabled",
-      "value": "var(--iflyv-green-4)"
+      "value": "#6ACCA5",
+      "comment": "禁用"
     },
     {
       "name": "success-bg",
-      "value": "var(--iflyv-green-1)"
+      "value": "#EBF7F1",
+      "comment": "浅背景"
     },
     {
       "name": "danger-primary",
-      "value": "var(--iflyv-red-6)"
+      "value": "#F53B3B",
+      "comment": "主色"
     },
     {
       "name": "danger-hover",
-      "value": "var(--iflyv-red-5)"
+      "value": "#FF6B66",
+      "comment": "悬浮"
     },
     {
       "name": "danger-pressed",
-      "value": "var(--iflyv-red-7)"
+      "value": "#CF272D",
+      "comment": "点击"
     },
     {
       "name": "danger-disabled",
-      "value": "var(--iflyv-red-4)"
+      "value": "#FF968F",
+      "comment": "禁用"
     },
     {
       "name": "danger-bg",
-      "value": "var(--iflyv-red-1)"
+      "value": "#FFF2F0",
+      "comment": "浅背景"
     },
     {
       "name": "warning-primary",
-      "value": "var(--iflyv-orange-6)"
+      "value": "#FC7819",
+      "comment": "主色"
     },
     {
       "name": "warning-hover",
-      "value": "var(--iflyv-orange-5)"
+      "value": "#FF9742",
+      "comment": "悬浮"
     },
     {
       "name": "warning-pressed",
-      "value": "var(--iflyv-orange-7)"
+      "value": "#D6590B",
+      "comment": "点击"
     },
     {
       "name": "warning-disabled",
-      "value": "var(--iflyv-orange-4)"
+      "value": "#FFB36B",
+      "comment": "禁用"
     },
     {
       "name": "warning-bg",
-      "value": "var(--iflyv-orange-1)"
+      "value": "#FFF4E6",
+      "comment": "浅背景"
     },
     {
       "name": "info-primary",
-      "value": "var(--iflyv-blue-6)"
+      "value": "#0077FF",
+      "comment": "主色"
     },
     {
       "name": "info-hover",
-      "value": "var(--iflyv-blue-5)"
+      "value": "#2994FF",
+      "comment": "悬浮"
     },
     {
       "name": "info-pressed",
-      "value": "var(--iflyv-blue-7)"
+      "value": "#005ED9",
+      "comment": "点击"
     },
     {
       "name": "info-disabled",
-      "value": "var(--iflyv-blue-4)"
+      "value": "#52AEFF",
+      "comment": "禁用"
     },
     {
       "name": "info-bg",
-      "value": "var(--iflyv-blue-1)"
+      "value": "#E6F6FF",
+      "comment": "浅背景"
     },
     {
       "name": "bg-page",
-      "value": "var(--iflyv-gray-1)"
+      "value": "#F2F5F7",
+      "comment": "灰页面底"
     },
     {
       "name": "bg-page-white",
-      "value": "var(--iflyv-gray-0)"
+      "value": "#FFFFFF",
+      "comment": "白页面底"
     },
     {
       "name": "bg-panel",
-      "value": "var(--iflyv-gray-0)"
+      "value": "#FFFFFF",
+      "comment": "面板"
     },
     {
       "name": "bg-inset",
-      "value": "var(--iflyv-gray-1)"
+      "value": "#F2F5F7",
+      "comment": "内嵌区域"
     },
     {
       "name": "bg-segment-active",
-      "value": "var(--iflyv-gray-0)"
+      "value": "#FFFFFF",
+      "comment": "分段选中"
     },
     {
       "name": "bg-card",
-      "value": "linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%)"
+      "value": "linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%)",
+      "comment": "卡片渐变"
     },
     {
       "name": "bg-back",
@@ -136,216 +168,265 @@
     },
     {
       "name": "text-1",
-      "value": "var(--iflyv-gray-10)"
+      "value": "#12151A",
+      "comment": "一级/标题"
     },
     {
       "name": "text-2",
-      "value": "var(--iflyv-gray-7)"
+      "value": "#4B535C",
+      "comment": "二级/正文"
     },
     {
       "name": "text-3",
-      "value": "var(--iflyv-gray-5)"
+      "value": "#7B838C",
+      "comment": "三级/辅助"
     },
     {
       "name": "text-4",
-      "value": "var(--iflyv-gray-3)"
+      "value": "#A9B0B8",
+      "comment": "四级/禁用"
     },
     {
       "name": "text-on-dark",
-      "value": "var(--iflyv-gray-0)"
+      "value": "#FFFFFF",
+      "comment": "深底文字"
     },
     {
       "name": "text-on-light",
-      "value": "var(--iflyv-gray-10)"
+      "value": "#12151A"
     },
     {
       "name": "border-subtle",
-      "value": "rgba(21, 21, 21, 0.06)"
+      "value": "rgba(21, 21, 21, 0.06)",
+      "comment": "轻量 6%"
     },
     {
       "name": "border-subtle",
-      "value": "color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)"
+      "value": "color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)",
+      "comment": "轻量 6%"
     },
     {
       "name": "border-default",
-      "value": "#{$border-default-fallback}"
+      "value": "#{$border-default-fallback}",
+      "comment": "常规 10%"
     },
     {
       "name": "border-default",
-      "value": "color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent)"
+      "value": "color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent)",
+      "comment": "常规 10%"
     },
     {
       "name": "border-strong",
-      "value": "rgba(21, 21, 21, 0.2)"
+      "value": "rgba(21, 21, 21, 0.2)",
+      "comment": "加重 20%"
     },
     {
       "name": "border-strong",
-      "value": "color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent)"
+      "value": "color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent)",
+      "comment": "加重 20%"
     },
     {
       "name": "border-on-dark",
-      "value": "#{$border-on-dark-fallback}"
+      "value": "#{$border-on-dark-fallback}",
+      "comment": "深底描边"
     },
     {
       "name": "border-on-dark",
-      "value": "color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent)"
+      "value": "color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent)",
+      "comment": "深底描边"
     },
     {
       "name": "mask-primary",
-      "value": "#{$mask-primary-fallback}"
+      "value": "#{$mask-primary-fallback}",
+      "comment": "遮罩"
     },
     {
       "name": "mask-primary",
-      "value": "color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent)"
+      "value": "color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent)",
+      "comment": "遮罩"
     },
     {
       "name": "mask-on-dark",
-      "value": "#{$mask-on-dark-fallback}"
+      "value": "#{$mask-on-dark-fallback}",
+      "comment": "深底遮罩"
     },
     {
       "name": "mask-on-dark",
-      "value": "color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent)"
+      "value": "color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent)",
+      "comment": "深底遮罩"
     }
   ],
   "semanticColorGroups": {
     "brand": [
       {
         "name": "brand-primary",
-        "value": "var(--iflyv-accent-6)"
+        "value": "#23B283",
+        "comment": "主色"
       },
       {
         "name": "brand-text",
-        "value": "var(--iflyv-brand-primary)"
+        "value": "#23B283",
+        "comment": "品牌文字"
       },
       {
         "name": "brand-hover",
-        "value": "var(--iflyv-accent-5)"
+        "value": "#45BF92",
+        "comment": "悬浮"
       },
       {
         "name": "brand-pressed",
-        "value": "var(--iflyv-accent-7)"
+        "value": "#158C68",
+        "comment": "点击"
       },
       {
         "name": "brand-disabled",
-        "value": "var(--iflyv-accent-4)"
+        "value": "#6ACCA5",
+        "comment": "禁用"
       },
       {
         "name": "brand-bg",
-        "value": "var(--iflyv-accent-1)"
+        "value": "#EBF7F1",
+        "comment": "浅背景"
       }
     ],
     "success": [
       {
         "name": "success-primary",
-        "value": "var(--iflyv-green-6)"
+        "value": "#23B283",
+        "comment": "主色"
       },
       {
         "name": "success-hover",
-        "value": "var(--iflyv-green-5)"
+        "value": "#45BF92",
+        "comment": "悬浮"
       },
       {
         "name": "success-pressed",
-        "value": "var(--iflyv-green-7)"
+        "value": "#158C68",
+        "comment": "点击"
       },
       {
         "name": "success-disabled",
-        "value": "var(--iflyv-green-4)"
+        "value": "#6ACCA5",
+        "comment": "禁用"
       },
       {
         "name": "success-bg",
-        "value": "var(--iflyv-green-1)"
+        "value": "#EBF7F1",
+        "comment": "浅背景"
       }
     ],
     "danger": [
       {
         "name": "danger-primary",
-        "value": "var(--iflyv-red-6)"
+        "value": "#F53B3B",
+        "comment": "主色"
       },
       {
         "name": "danger-hover",
-        "value": "var(--iflyv-red-5)"
+        "value": "#FF6B66",
+        "comment": "悬浮"
       },
       {
         "name": "danger-pressed",
-        "value": "var(--iflyv-red-7)"
+        "value": "#CF272D",
+        "comment": "点击"
       },
       {
         "name": "danger-disabled",
-        "value": "var(--iflyv-red-4)"
+        "value": "#FF968F",
+        "comment": "禁用"
       },
       {
         "name": "danger-bg",
-        "value": "var(--iflyv-red-1)"
+        "value": "#FFF2F0",
+        "comment": "浅背景"
       }
     ],
     "warning": [
       {
         "name": "warning-primary",
-        "value": "var(--iflyv-orange-6)"
+        "value": "#FC7819",
+        "comment": "主色"
       },
       {
         "name": "warning-hover",
-        "value": "var(--iflyv-orange-5)"
+        "value": "#FF9742",
+        "comment": "悬浮"
       },
       {
         "name": "warning-pressed",
-        "value": "var(--iflyv-orange-7)"
+        "value": "#D6590B",
+        "comment": "点击"
       },
       {
         "name": "warning-disabled",
-        "value": "var(--iflyv-orange-4)"
+        "value": "#FFB36B",
+        "comment": "禁用"
       },
       {
         "name": "warning-bg",
-        "value": "var(--iflyv-orange-1)"
+        "value": "#FFF4E6",
+        "comment": "浅背景"
       }
     ],
     "info": [
       {
         "name": "info-primary",
-        "value": "var(--iflyv-blue-6)"
+        "value": "#0077FF",
+        "comment": "主色"
       },
       {
         "name": "info-hover",
-        "value": "var(--iflyv-blue-5)"
+        "value": "#2994FF",
+        "comment": "悬浮"
       },
       {
         "name": "info-pressed",
-        "value": "var(--iflyv-blue-7)"
+        "value": "#005ED9",
+        "comment": "点击"
       },
       {
         "name": "info-disabled",
-        "value": "var(--iflyv-blue-4)"
+        "value": "#52AEFF",
+        "comment": "禁用"
       },
       {
         "name": "info-bg",
-        "value": "var(--iflyv-blue-1)"
+        "value": "#E6F6FF",
+        "comment": "浅背景"
       }
     ],
     "bg": [
       {
         "name": "bg-page",
-        "value": "var(--iflyv-gray-1)"
+        "value": "#F2F5F7",
+        "comment": "灰页面底"
       },
       {
         "name": "bg-page-white",
-        "value": "var(--iflyv-gray-0)"
+        "value": "#FFFFFF",
+        "comment": "白页面底"
       },
       {
         "name": "bg-panel",
-        "value": "var(--iflyv-gray-0)"
+        "value": "#FFFFFF",
+        "comment": "面板"
       },
       {
         "name": "bg-inset",
-        "value": "var(--iflyv-gray-1)"
+        "value": "#F2F5F7",
+        "comment": "内嵌区域"
       },
       {
         "name": "bg-segment-active",
-        "value": "var(--iflyv-gray-0)"
+        "value": "#FFFFFF",
+        "comment": "分段选中"
       },
       {
         "name": "bg-card",
-        "value": "linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%)"
+        "value": "linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%)",
+        "comment": "卡片渐变"
       },
       {
         "name": "bg-back",
@@ -355,82 +436,127 @@
     "text": [
       {
         "name": "text-1",
-        "value": "var(--iflyv-gray-10)"
+        "value": "#12151A",
+        "comment": "一级/标题"
       },
       {
         "name": "text-2",
-        "value": "var(--iflyv-gray-7)"
+        "value": "#4B535C",
+        "comment": "二级/正文"
       },
       {
         "name": "text-3",
-        "value": "var(--iflyv-gray-5)"
+        "value": "#7B838C",
+        "comment": "三级/辅助"
       },
       {
         "name": "text-4",
-        "value": "var(--iflyv-gray-3)"
+        "value": "#A9B0B8",
+        "comment": "四级/禁用"
       },
       {
         "name": "text-on-dark",
-        "value": "var(--iflyv-gray-0)"
+        "value": "#FFFFFF",
+        "comment": "深底文字"
       },
       {
         "name": "text-on-light",
-        "value": "var(--iflyv-gray-10)"
+        "value": "#12151A"
       }
     ],
     "border": [
       {
         "name": "border-subtle",
-        "value": "rgba(21, 21, 21, 0.06)"
+        "value": "rgba(21, 21, 21, 0.06)",
+        "comment": "轻量 6%"
       },
       {
         "name": "border-subtle",
-        "value": "color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)"
+        "value": "color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)",
+        "comment": "轻量 6%"
       },
       {
         "name": "border-default",
-        "value": "#{$border-default-fallback}"
+        "value": "#{$border-default-fallback}",
+        "comment": "常规 10%"
       },
       {
         "name": "border-default",
-        "value": "color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent)"
+        "value": "color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent)",
+        "comment": "常规 10%"
       },
       {
         "name": "border-strong",
-        "value": "rgba(21, 21, 21, 0.2)"
+        "value": "rgba(21, 21, 21, 0.2)",
+        "comment": "加重 20%"
       },
       {
         "name": "border-strong",
-        "value": "color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent)"
+        "value": "color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent)",
+        "comment": "加重 20%"
       },
       {
         "name": "border-on-dark",
-        "value": "#{$border-on-dark-fallback}"
+        "value": "#{$border-on-dark-fallback}",
+        "comment": "深底描边"
       },
       {
         "name": "border-on-dark",
-        "value": "color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent)"
+        "value": "color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent)",
+        "comment": "深底描边"
       }
     ],
     "mask": [
       {
         "name": "mask-primary",
-        "value": "#{$mask-primary-fallback}"
+        "value": "#{$mask-primary-fallback}",
+        "comment": "遮罩"
       },
       {
         "name": "mask-primary",
-        "value": "color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent)"
+        "value": "color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent)",
+        "comment": "遮罩"
       },
       {
         "name": "mask-on-dark",
-        "value": "#{$mask-on-dark-fallback}"
+        "value": "#{$mask-on-dark-fallback}",
+        "comment": "深底遮罩"
       },
       {
         "name": "mask-on-dark",
-        "value": "color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent)"
+        "value": "color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent)",
+        "comment": "深底遮罩"
       }
     ]
   },
+  "semanticColorGroupTitles": {
+    "brand": "主题色 Brand",
+    "success": "成功色 Success",
+    "danger": "危险色 Danger",
+    "warning": "警告色 Warning",
+    "info": "信息色 Info",
+    "text": "文本色 Text",
+    "icon": "图标色 Icon",
+    "bg": "背景色 Background",
+    "border": "描边色 Border",
+    "mask": "遮罩与滚动条 Mask / Scroller",
+    "message": "Message 描边",
+    "input": "组件桥接 Component Bridge"
+  },
+  "semanticColorGroupOrder": [
+    "brand",
+    "success",
+    "danger",
+    "warning",
+    "info",
+    "text",
+    "icon",
+    "bg",
+    "border",
+    "mask",
+    "message",
+    "input"
+  ],
   "fontScale": [
     {
       "name": "font-family-base",
