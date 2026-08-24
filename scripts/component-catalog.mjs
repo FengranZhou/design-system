@@ -712,13 +712,18 @@ ${colDefs}
           { value: 'danger', label: 'danger · 要补救（已驳回/失败）' },
           { value: 'info', label: 'info · 纯中性事实（未开始/草稿）' },
           { value: 'gray', label: 'gray · 已翻篇（已结束/已归档）' },
+          { value: 'outline', label: 'outline · 元信息角标（「来源」这类描边标签）' },
         ],
       },
     ],
-    snippet: ({ text, type }) =>
-      type === 'gray'
-        ? `<el-tag class="el-tag--gray">${text || '标签'}</el-tag>`
-        : `<el-tag type="${type}">${text || '标签'}</el-tag>`,
+    snippet: ({ text, type, showIcon }) => {
+      // 图标为正交配置项：置于内容前，图文间距在源头（Info 为占位，按语义换 lucide 图标）
+      const icon = showIcon ? '<Info :size="12" :stroke-width="2" />' : ''
+      const label = text || '标签'
+      if (type === 'gray') return `<el-tag class="el-tag--gray">${icon}${label}</el-tag>`
+      if (type === 'outline') return `<el-tag class="el-tag--outline">${icon}${label}</el-tag>`
+      return `<el-tag type="${type}">${icon}${label}</el-tag>`
+    },
   },
 
   {

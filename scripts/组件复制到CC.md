@@ -5,6 +5,58 @@
 
 ---
 
+## 两个入口，同一份数据
+
+| 入口 | 在哪 | 用户手里有什么 | 产物 |
+|---|---|---|---|
+| **扩展面板** | 下游项目页面 `Alt+Shift+D` | 落点（打点截图）+ 填好的配置 | `buildPrompt` —— "在这个位置插入这个东西"的完整指令 |
+| **demo 页按钮** | 规范展示页每个组件区块右上角「复制到 CC 去调用」 | 只有"我要用哪个组件" | `buildComponentRef` —— 组件标识块 |
+
+两者都吃 `catalog.json`、都在 `build-prompt.mjs` 里拼装，**小节形态一致**
+（可照抄骨架 / 硬约束 / 需要展开时读）—— 下游 CC 见到的是同一种结构。
+改其中一个小节的写法，另一个要一起改。
+
+### demo 页按钮怎么用
+
+1. 在 demo 里找到要用的组件，点标题行右上角「复制到 CC 去调用」
+   - 一个区块下挂着多个组件时（Input 系 / Select 系…）会先弹出来让你挑
+2. 到下游项目的 CC 窗口，**先用自己的话说落点**，再粘贴：
+
+   > 在标题的右侧增加一个 + `⌘V`
+
+**配置项跟着走**：右侧配置卡拨到什么样，复制出去就是什么样。拨开 SearchMini 的
+「默认收起」再复制，骨架里就带 `collapsed`，并多出一节写清楚你调了哪些。
+**只有你真正改动过的项才写进去**——全默认时那一节整个不出现，免得下游 CC 把
+出厂值也当成"特意指定的决定"、不敢按自己的场景调整。
+
+**落点不带**，由你那句话给出（"在标题的右侧增加一个"）。
+
+**代码在**：`demo/src/components/CopyToCC.vue`（按钮）+
+`demo/src/utils/component-ref.ts`（吃 catalog）。
+
+### 加新组件时要做什么
+
+按钮本身**不用管**——它按 section 的 `id` 去 catalog 取，catalog 里有就自动出现。
+
+**但如果这个组件有配置卡，要把配置卡的值传给它**：
+
+```vue
+<h2 class="demo-section__title">Xxx 组件
+  <CopyToCC anchor="xxx" :values="configForm" />
+</h2>
+```
+
+一个区块挂多个组件时（Input 系 / Select 系…）传 `{ 组件 id: 该组件的配置卡值 }`，
+范本见 `InputDemo.vue` / `SelectDemo.vue` 末尾的 `copyValues`。
+
+⚠️ **catalog 字段名与 demo 的 ref 名不一定同名**：demo 的 ref 按演示块加前缀避免
+同页撞名（`groupMultiple` / `treeMultiple`），catalog 用的是每个组件各自的视角
+（`multiple`）。两套命名各有各的道理，**在 `copyValues` 里对齐，别去改任何一边**。
+传错名字不报错——那一项就是悄悄不生效。**`audit-spec.mjs` 的 C12 检查会把这两种
+漏法都报出来**（没传 `:values` / key 对不上），不必靠人记得验。
+
+---
+
 ## 怎么用
 
 1. 在下游项目页面按 `Alt+Shift+D` 启动扩展面板
@@ -81,8 +133,29 @@ https://raw.githubusercontent.com/FengranZhou/design-system/main/scripts/catalog
   readRefs: [...],                    // ③ 怎么落地——要读哪份规范
   mustRules: [...],                   //    不读也必须遵守的硬约束
   snippet: (values) => '...',         //    可照抄骨架
+  snippetDefaults: {...},             //    snippet 的兜底取值（不是配置项，见下）
 }
 ```
+
+### snippetDefaults：不进面板，但骨架需要
+
+`fields`（面板要问用户的）只取 demo 的形态开关，所以 `component-catalog.mjs`
+里手写的 `instanceFields`（文案 / 类型 / 宽度…）**不进面板**——那是有意的，
+这些让用户在需求描述里自己说更自然。
+
+但 **snippet 仍然读这些 key**，它是按"全部配置都拿得到"写的。曾经的结果是
+Button 渲染出 `type="undefined"`，Tag、Alert 同样：**不报错、粘到下游照样编译**
+（Vue 只当它是字符串 `"undefined"`），只有逐字看生成的代码才能发现。
+
+所以把 `instanceFields` 的默认值单独发出来。消费方调 snippet 前先铺一层：
+
+```js
+snippet({ ...snippetDefaults, ...用户填的值 })
+```
+
+`build-catalog.mjs` 生成时会**渲染一遍每个 snippet**，产物里出现
+`undefined` / `NaN` 直接报错——与「配置项必须真的影响产物」防的是同一类
+问题：**产物在说谎，而且没有任何信号**。
 
 ### 配置项必须真的影响产物
 
@@ -105,6 +178,26 @@ https://raw.githubusercontent.com/FengranZhou/design-system/main/scripts/catalog
 
 **`mustRules` 必须能在 `references/` 里找到出处**，且口径一致。它是规范的投影，
 不是第二个源头。
+
+### mustRules 为什么不会随源头漂移（以及唯一会漂的那部分）
+
+mustRules 写的是**用法纪律和选型判据**，**刻意不复述源头的值**：
+
+> 星色/尺寸**全在源头** rate.scss，禁在使用方改 `--el-rate-*` 变量
+
+它没说星色是什么。所以你把星色从橙改成别的，这条规则**依然正确**——
+这是有意的，规则层不抄具体值才不会过期。全部 135 条里提到圆角/颜色/字重/阴影
+这类外观规格的**只有 1 条**，且是描述性的。
+
+**唯一会漂的是它点名的约定 class**（`.dropdown-caret` / `.notify-actions` /
+`.tab-badge`…）：源头改了类名或删了约定，规则里那个名字就指向不存在的东西，
+下游照抄 → class 不生效 → **样式静默丢失，不报错、页面照跑**。
+这类由 `audit-spec.mjs` 的 **C13 检查**兜底。
+
+**数值档位不做自动比对**（drawer 400/600、dialog 400/640/800）——源头可能写成
+裸值、变量或 prop 默认值，匹配不到时分不清是规则过期还是脚本没找着。
+**一个经常误报的检查比没有更糟**：人会习惯性忽略它，连带真问题一起漏掉。
+改这类档位时靠人同步。
 
 ---
 
@@ -153,18 +246,8 @@ append），结论是**不好用**：用户要表达的落点往往不等于某�
 2. 在 `component-catalog.mjs` 加条目：`anchor`（=导航锚点）+ `snippet` + `mustRules`
    - **组件名、分组、配置项开关不用写**，脚本从导航和 demo 自动提
    - `mustRules` 直接抄 `design-spec/CLAUDE.md` 触发表该组件那行的说明列，别重写
-3. 跑一次冒烟测试确认 `snippet` 不抛错、引号没嵌套错：
-
-```bash
-node -e "
-import('./scripts/component-catalog.mjs').then(m => {
-  for (const c of m.COMPONENTS) {
-    const v = {}; c.fields.forEach(f => v[f.key] = f.default ?? '')
-    try { c.snippet(v) } catch (e) { console.log('✗', c.id, e.message) }
-  }
-  console.log('✓', m.COMPONENTS.length, '个组件')
-})"
-```
+3. 跑一次 `node scripts/build-catalog.mjs` —— 它会渲染每个 snippet，
+   抛错、渲染出 `undefined` / `NaN`、配置项不影响产物，都会当场报出来
 
 > **引号是最容易踩的坑**：模板属性用双引号包裹时，数组内字符串必须用单引号，
 > 否则引号嵌套会让 Vue 编译崩（StepBar 的 `:steps` 踩过）。

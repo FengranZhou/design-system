@@ -22,6 +22,9 @@
  *   C9  新增组件漏补 catalog 骨架（扩展面板拿不到代码骨架，不报错但 prompt 变弱）
  *   C10 新增组件漏补示意图（扩展列表里那个组件比别人难认，不报错）
  *   C9  标了 detect=regex/ast 却没写检测器（承诺自动检测却没实现）
+ *       ↑ 与上面的 C9 编号重复（既有，未动它以免改动无关检查的输出）
+ *   C12 demo 的「复制到 CC 去调用」没把配置卡的值传出去 / key 对不上（拨了开关没反应）
+ *   C13 catalog 的 mustRules 点名了源头已不存在的约定 class（下游照抄不生效）
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
@@ -489,6 +492,183 @@ let suspendSectionText = '' // C3 需据此跳过清单自身
         msg: 'scripts/catalog.json 不是合法 JSON',
         detail: '   → 跑一次 node scripts/build-catalog.mjs 重新生成',
       })
+    }
+  }
+}
+
+// ── C12：demo 的「复制到 CC 去调用」有没有把配置卡的值真的传出去 ─────────
+//    按钮复制出的骨架应当反映用户此刻拨到的配置（拨开「默认收起」→ 骨架带
+//    collapsed）。这靠 demo 把配置卡的 model 传给 <CopyToCC :values>。
+//
+//    两种漏法**都不报错、页面照跑**：
+//      ① 忘了传 :values —— 复制出的永远是默认形态，用户拨了半天开关没反应
+//      ② 传了但 key 名对不上 —— catalog 字段名与 demo 的 ref 名不一定同名
+//         （demo 按演示块加前缀防撞名：groupMultiple；catalog 用组件自己的
+//         视角：multiple），对不上的那一项就是悄悄不生效
+//
+//    ② 尤其阴——大部分项生效、个别项不生效，肉眼几乎发现不了。
+{
+  const catalogPath = join(ROOT, 'scripts/catalog.json')
+  const demoDir = join(ROOT, 'demo/src/components')
+  if (existsSync(catalogPath) && existsSync(demoDir)) {
+    try {
+      const cat = JSON.parse(readFileSync(catalogPath, 'utf8'))
+      // anchor → 该区块下**有配置项**的组件
+      const byAnchor = new Map()
+      for (const c of cat.components || []) {
+        if (!c.fields?.length) continue
+        const k = c.variantOf || c.anchor
+        if (!byAnchor.has(k)) byAnchor.set(k, [])
+        byAnchor.get(k).push(c)
+      }
+
+      /** 取 `const <name> = ...` 后第一个 {...} 的完整文本（按括号配平） */
+      const bodyOf = (src, name) => {
+        const i = src.indexOf(`const ${name} = `)
+        if (i < 0) return null
+        const j = src.indexOf('{', i)
+        if (j < 0) return null
+        let d = 0
+        for (let k = j; k < src.length; k++) {
+          if (src[k] === '{') d++
+          else if (src[k] === '}' && --d === 0) return src.slice(j, k + 1)
+        }
+        return null
+      }
+
+      const walk = (dir, out = []) => {
+        for (const e of readdirSync(dir, { withFileTypes: true })) {
+          const p = join(dir, e.name)
+          if (e.isDirectory()) walk(p, out)
+          else if (e.name.endsWith('.vue')) out.push(p)
+        }
+        return out
+      }
+
+      const noValues = []
+      const badKeys = []
+      for (const f of walk(demoDir)) {
+        const src = readFileSync(f, 'utf8')
+        const m = src.match(/<CopyToCC anchor="([\w-]+)"(?:\s+:values="(\w+)")?\s*\/>/)
+        if (!m) continue
+        const comps = byAnchor.get(m[1])
+        if (!comps) continue
+        const short = f.slice(f.indexOf('demo/src/'))
+        if (!m[2]) {
+          noValues.push(`${short}（${comps.map((c) => c.id).join('、')}）`)
+          continue
+        }
+        const body = bodyOf(src, m[2])
+        if (!body) continue // 定义不在本文件 / 写法特殊，交给人工
+        const words = new Set(body.match(/[A-Za-z_$][\w$]*/g) || [])
+        for (const c of comps) {
+          // 多组件区块：该组件必须在 values 里有自己那一份，否则它拿不到配置
+          if (comps.length > 1 && !body.includes(`'${c.id}'`) && !body.includes(c.id)) continue
+          // 只查 switch / select ——它们对应配置卡上真实存在的控件。
+          // text / number 类字段（label 叫什么、占位符写什么）是**手写
+          // instanceFields**，demo 里根本没有对应控件，本来就传不出来，
+          // 由用户在 CC 窗口里自己交代。
+          const miss = c.fields
+            .filter((fl) => fl.type === 'switch' || fl.type === 'select')
+            .filter((fl) => !words.has(fl.key))
+            .map((fl) => fl.key)
+          if (miss.length) badKeys.push(`${short} ${c.id} → 缺 ${miss.join('、')}`)
+        }
+      }
+
+      if (noValues.length) {
+        problems.push({
+          check: 'C12 配置项没传给「复制到 CC 去调用」',
+          msg: `${noValues.length} 个 demo 区块有配置卡，但按钮没接 :values`,
+          detail:
+            '   ' + noValues.join('\n   ') + '\n' +
+            '   → 用户拨了开关，复制出的却永远是默认形态（不报错，所以只能靠这条查）\n' +
+            '     改法：<CopyToCC anchor="xxx" :values="configForm" />',
+        })
+      }
+      if (badKeys.length) {
+        problems.push({
+          check: 'C12 配置项 key 对不上',
+          msg: `${badKeys.length} 处传了 :values，但 catalog 字段名在其中找不到`,
+          detail:
+            '   ' + badKeys.join('\n   ') + '\n' +
+            '   → 对不上的那一项会悄悄不生效（大部分项正常、个别项失灵，最难发现）\n' +
+            '     demo 的 ref 名与 catalog 字段名不必相同，在传值处对齐即可',
+        })
+      }
+    } catch {
+      // catalog 解析失败已由 C9 报出，这里不重复
+    }
+  }
+}
+
+// ── C13：catalog 的 mustRules 提到的约定 class 在源头还在不在 ─────
+//    mustRules 大多是**用法纪律**（"禁写 margin"、"星色全在源头"），
+//    刻意不复述源头的值 —— 所以改了圆角、改了星色，这些规则依然成立，
+//    不会过期。这是有意的设计，不是漏洞。
+//
+//    唯一会随源头漂移的是**它点名的约定 class**（.dropdown-caret /
+//    .notify-actions / .tab-badge…）：源头把类名改了或删了，规则里那个
+//    名字就指向一个不存在的东西。下游照抄 → class 不生效 → 样式静默丢失，
+//    **不报错、页面照跑**，属于本仓库反复强调的那类"没有信号的失效"。
+//
+//    只查"在不在"，不查"值对不对" —— 数值档位（drawer 400/600、dialog
+//    400/640/800）在源头可能写成裸值、变量或 prop 默认值，匹配不到时
+//    分不清是规则过期还是脚本没找着。一个经常误报的检查比没有更糟。
+{
+  const catalogPath = join(ROOT, 'scripts/catalog.json')
+  if (existsSync(catalogPath)) {
+    try {
+      const cat = JSON.parse(readFileSync(catalogPath, 'utf8'))
+
+      // ⚠️ 必须先剥注释再匹配：源头注释里几乎总有该类的用法示例
+      //    （`<span class="dropdown-caret">` 这种），把注释算进证据的话，
+      //    类被删掉、注释还在 → 检查照样通过。实测踩过：只改选择器不改注释，
+      //    这条检查完全没反应。
+      const stripComments = (t) =>
+        t.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|\s)\/\/[^\n]*/g, ' ')
+
+      // 约定 class 的定义处：主题覆盖层 + 业务组件（后者也有自己的约定类）
+      const srcDirs = [join(SPEC, 'el-theme'), join(SPEC, 'components')]
+      let haystack = ''
+      const collect = (dir) => {
+        if (!existsSync(dir)) return
+        for (const e of readdirSync(dir, { withFileTypes: true })) {
+          const p = join(dir, e.name)
+          if (e.isDirectory()) collect(p)
+          else if (/\.(scss|vue|ts)$/.test(e.name)) haystack += stripComments(readFileSync(p, 'utf8')) + '\n'
+        }
+      }
+      srcDirs.forEach(collect)
+
+      // 只认「至少带一个连字符」的类名：单词类名（.success）多半是方法名/
+      // 普通英文，带连字符的才是本设计系统的约定类命名风格
+      const CLASS_RE = /\.([a-z][a-z0-9]*(?:-[a-z0-9]+)+)/g
+      const dangling = []
+      for (const c of cat.components || []) {
+        for (const rule of c.mustRules || []) {
+          let m
+          while ((m = CLASS_RE.exec(rule))) {
+            const cls = m[1]
+            // 源头里以 .cls / class="… cls …" 任一形式出现即算存在
+            const re = new RegExp(`[.\\s"'\`]${cls}\\b`)
+            if (!re.test(haystack)) dangling.push(`${c.id} → .${cls}`)
+          }
+        }
+      }
+
+      if (dangling.length) {
+        problems.push({
+          check: 'C13 mustRules 点名的约定 class 在源头找不到',
+          msg: `${dangling.length} 处规则指向了不存在的约定 class`,
+          detail:
+            '   ' + [...new Set(dangling)].join('\n   ') + '\n' +
+            '   → 下游照抄这个类名 → 不生效 → 样式静默丢失（不报错，所以只能靠这条查）\n' +
+            '     源头改了类名/删了约定，就同步改 scripts/component-catalog.mjs 的 mustRules',
+        })
+      }
+    } catch {
+      // catalog 解析失败已由 C9 报出，这里不重复
     }
   }
 }
