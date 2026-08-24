@@ -434,7 +434,7 @@
   "fontScale": [
     {
       "name": "font-family-base",
-      "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-family-number",
@@ -506,47 +506,51 @@
     },
     {
       "name": "font-title-module",
-      "value": "600 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "600 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+    },
+    {
+      "name": "font-title-regular",
+      "value": "600 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-tab-active-sub",
-      "value": "600 1.125rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "600 1.125rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-tab-default",
-      "value": "400 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "400 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-title-component",
-      "value": "600 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "600 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-body-primary",
-      "value": "400 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "400 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-body-primary-multiline",
-      "value": "400 1rem / 2rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "400 1rem / 2rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-body-sub",
-      "value": "400 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "400 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-body-sub-multiline",
-      "value": "400 0.875rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "400 0.875rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-body-min",
-      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-body-min-multiline",
-      "value": "400 0.75rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "400 0.75rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-label-primary",
-      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,\n'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC',\nsans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',\n'Noto Color Emoji'"
+      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
     },
     {
       "name": "font-number-display",
@@ -591,18 +595,20 @@
       "value": "12px",
       "scenes": [
         "模块级标题与其下方内容之间",
-        "按钮之间（水平，有底色/描边的按钮）"
+        "按钮之间（水平，有底色/描边的按钮）",
+        "小卡片内边距·上下（含横幅/条状容器；左右配 spacing-4）"
       ]
     },
     {
       "name": "spacing-4",
       "value": "16px",
       "scenes": [
-        "页面级标题与其下方内容之间",
-        "页面级标题与页面顶部之间",
+        "页面级标题与其下方内容之间（含 .tabs-page 充当页面标题层时）",
+        "页面级标题与页面顶部之间（含 .tabs-page 充当页面标题层时）",
         "卡片之间（同级卡片常规间距）",
         "栅格列间水槽",
-        "小卡片内边距（内容与卡片四周）",
+        "小卡片内边距·左右（含横幅/条状容器；上下配 spacing-3）",
+        "大卡片内边距·上下（左右配 spacing-5）",
         "按钮之间（水平，无底色的文本按钮 / 纯图标按钮）",
         "图标之间（一排图标彼此，无论是否可点）"
       ]
@@ -611,7 +617,8 @@
       "name": "spacing-5",
       "value": "20px",
       "scenes": [
-        "大卡片内边距（内容与卡片四周）"
+        "大卡片内边距·左右（上下配 spacing-4）",
+        "面板内边距·上下（左右配 spacing-6）"
       ]
     },
     {
@@ -620,7 +627,7 @@
       "scenes": [
         "表单项之间（label+控件为一组，组与组）",
         "页面内容距页面左右内边距",
-        "面板内边距（内容与底板四周）"
+        "面板内边距·左右（上下配 spacing-5）"
       ]
     },
     {

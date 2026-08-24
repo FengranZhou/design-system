@@ -189,6 +189,9 @@ function extractFontScale() {
     value = value.replace(/\/\*.*?\*\/\s*$/, '').trim()
     // 解析 Sass 变量引用
     value = resolveSassRefs(value, sassVars)
+    // 折叠空白：$font-family-base 是多行定义，展开后值里带换行 ——
+    // 消费方（扩展的语义字阶解析）按单行匹配，多行值会整批匹配失败
+    value = value.replace(/\s+/g, ' ').trim()
 
     vars.push({ name, value })
   }
