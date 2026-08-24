@@ -23,6 +23,7 @@ const OUT = join(__dirname, 'design-tokens.json')
 const SEMANTIC_FILE = join(ROOT, 'design-spec/design-token/css/semantic.scss')
 const FONT_FILE = join(ROOT, 'design-spec/design-token/css/font.scss')
 const SPACING_FILE = join(ROOT, 'design-spec/design-token/css/spacing.scss')
+const SPACING_USAGE_FILE = join(ROOT, 'design-spec/design-token/spacing-usage.ts')
 
 /**
  * 从 SCSS 文件提取 Sass 变量定义（$var-name: value;）
@@ -196,10 +197,42 @@ function extractFontScale() {
 }
 
 /**
- * 提取间距
+ * 从 spacing-usage.ts 读「该用哪个档位」的语义。
+ *
+ * 那个文件是应用场景的**唯一定义处**（见其文件头注释），所以这里现读现解析，
+ * 不在本脚本里另抄一份 —— 抄了就会长出「规范站写 A、扩展面板写 B」的裂缝。
+ * 用正则而不是 import：本脚本是纯 node，不值得为一张常量表引入 TS 运行时。
+ */
+function extractSpacingUsage() {
+  if (!existsSync(SPACING_USAGE_FILE)) return new Map()
+  const src = readFileSync(SPACING_USAGE_FILE, 'utf8')
+  const out = new Map()
+  // 每条形如 { name: '--iflyv-spacing-4', px: 16, scenes: [...] }。
+  // scenes 可能跨多行（spacing-4 有 7 条），所以先按 name 切块、再在块内取字面量。
+  const entryRe = /name:\s*'--iflyv-([\w_-]+)'[\s\S]*?scenes:\s*\[([\s\S]*?)\]/g
+  let m
+  while ((m = entryRe.exec(src)) !== null) {
+    const scenes = []
+    const strRe = /'((?:[^'\\]|\\.)*)'/g
+    let s
+    while ((s = strRe.exec(m[2])) !== null) scenes.push(s[1])
+    if (scenes.length) out.set(m[1], scenes)
+  }
+  return out
+}
+
+/**
+ * 提取间距（含应用场景）
  */
 function extractSpacing() {
-  return extractCSSVars(SPACING_FILE, /--iflyv-(spacing-[\w_]+):\s*(.+)/)
+  const vars = extractCSSVars(SPACING_FILE, /--iflyv-(spacing-[\w_]+):\s*(.+)/)
+  const usage = extractSpacingUsage()
+  // scenes 挂到令牌上：消费方（扩展的令牌选择器）据此显示应用场景，
+  // 设计师不必离开面板跑去规范站查「这一档到底该用在哪」。
+  return vars.map(function (v) {
+    const scenes = usage.get(v.name)
+    return scenes ? Object.assign({}, v, { scenes: scenes }) : v
+  })
 }
 
 /**

@@ -560,43 +560,82 @@
   "spacing": [
     {
       "name": "spacing-0_5",
-      "value": "2px"
+      "value": "2px",
+      "scenes": [
+        "紧贴元素微调（图标与其紧邻文字的视觉对齐补偿）"
+      ]
     },
     {
       "name": "spacing-1",
-      "value": "4px"
+      "value": "4px",
+      "scenes": [
+        "控件内图标与其紧邻文字之间（如按钮内 icon + 文字）"
+      ]
     },
     {
       "name": "spacing-1_5",
-      "value": "6px"
+      "value": "6px",
+      "scenes": [
+        "Tag / Badge 等小控件的左右内边距"
+      ]
     },
     {
       "name": "spacing-2",
-      "value": "8px"
+      "value": "8px",
+      "scenes": [
+        "列表项内子元素间距（标题与其描述、主信息与副信息）"
+      ]
     },
     {
       "name": "spacing-3",
-      "value": "12px"
+      "value": "12px",
+      "scenes": [
+        "模块级标题与其下方内容之间",
+        "按钮之间（水平，有底色/描边的按钮）"
+      ]
     },
     {
       "name": "spacing-4",
-      "value": "16px"
+      "value": "16px",
+      "scenes": [
+        "页面级标题与其下方内容之间",
+        "页面级标题与页面顶部之间",
+        "卡片之间（同级卡片常规间距）",
+        "栅格列间水槽",
+        "小卡片内边距（内容与卡片四周）",
+        "按钮之间（水平，无底色的文本按钮 / 纯图标按钮）",
+        "图标之间（一排图标彼此，无论是否可点）"
+      ]
     },
     {
       "name": "spacing-5",
-      "value": "20px"
+      "value": "20px",
+      "scenes": [
+        "大卡片内边距（内容与卡片四周）"
+      ]
     },
     {
       "name": "spacing-6",
-      "value": "24px"
+      "value": "24px",
+      "scenes": [
+        "表单项之间（label+控件为一组，组与组）",
+        "页面内容距页面左右内边距",
+        "面板内边距（内容与底板四周）"
+      ]
     },
     {
       "name": "spacing-8",
-      "value": "32px"
+      "value": "32px",
+      "scenes": [
+        "模块之间（垂直，区块与区块）"
+      ]
     },
     {
       "name": "spacing-10",
-      "value": "40px"
+      "value": "40px",
+      "scenes": [
+        "页面级 Section 之间（展示型页面的大留白）"
+      ]
     }
   ],
   "radius": [
