@@ -119,3 +119,126 @@ export function buildPrompt({ component, values, anchor = {}, shotPath = '' }) {
 
   return lines.join('\n')
 }
+
+/**
+ * 组件标识块 —— demo 页「复制组件标识」按钮的产物
+ * ============================================================================
+ *
+ * ## 与 buildPrompt 的分工
+ *
+ * `buildPrompt` 是**扩展面板**的产物：用户在下游页面上打了点、填了配置，所以它
+ * 带落点截图、带用户填的值，是一条"在这个位置插入这个东西"的完整指令。
+ *
+ * 本函数是 **demo 页**的产物：用户站在规范展示页上，手里没有落点也没有配置——
+ * 落点由用户自己在 CC 窗口里用一句话给出（"在标题右侧加一个 + 粘贴的内容"）。
+ * 所以这里只回答一个问题：**这一段指的是设计系统里的哪个组件、怎么用**。
+ *
+ * 两者共用同一套小节形态（骨架 / 硬约束 / 需要展开时读），改一处要一起改——
+ * 下游 CC 见到的应当是同一种结构，而不是两种排版。
+ *
+ * ## 配置项：拨到什么样，复制出去就是什么样
+ *
+ * demo 卡片右侧的开关是**活的**——用户拨开 SearchMini 的「默认收起」，页面上
+ * 那个搜索框就真的变成收起态。他此刻按下「复制到 CC 去调用」，期待的显然是收起态，
+ * 而不是组件的出厂默认形态。所以 `values` 传的是**该组件那张配置卡的实时值**，
+ * 既进骨架、也单列一节写清楚。
+ *
+ * 不传 `values` 时退化成默认形态（`snippetDefaults` + 各字段 default）。
+ *
+ * @param {object} opts
+ * @param {object} opts.component  catalog 里的组件条目（snippet 已 revive 成函数）
+ * @param {object} [opts.values]   该组件配置卡的实时值；不传则用默认形态
+ */
+export function buildComponentRef({ component, values = {} }) {
+  const lines = []
+
+  lines.push(
+    `使用 xiaoya 设计系统的「${component.name}」组件` +
+      (component.desc ? `（${component.desc}）` : '') +
+      '。'
+  )
+  lines.push('')
+
+  // 三层叠加，后者覆盖前者：
+  //   ① snippetDefaults —— snippet 读得到、但不进配置卡的 key（如 Button 的 type，
+  //      不铺这层会渲染出 type="undefined"）
+  //   ② 各字段的 default —— 配置卡的出厂值
+  //   ③ values —— 用户此刻真正拨到的位置
+  const resolved = { ...(component.snippetDefaults || {}) }
+  ;(component.fields || []).forEach((f) => {
+    if (resolved[f.key] === undefined) resolved[f.key] = f.default ?? ''
+  })
+  for (const [k, v] of Object.entries(values)) {
+    if (v !== undefined) resolved[k] = v
+  }
+
+  // ── 配置 ──────────────────────────────────────────────────────────────────
+  // 只写用户**改动过**的项：全默认时这一节整个不出现，避免把出厂值当成"用户的
+  // 决定"喂给下游 CC —— 那会让它以为每一项都是特意指定的，不敢按场景调整。
+  const changed = (component.fields || [])
+    .map((f) => {
+      const v = resolved[f.key]
+      if (v === undefined || v === '' || v === null) return null
+      if (v === (f.default ?? '')) return null
+      let display = v
+      if (f.type === 'switch') display = v ? '是' : '否'
+      if (f.type === 'select') {
+        const opt = (f.options || []).find((o) => String(o.value) === String(v))
+        if (opt) display = opt.label
+      }
+      return `- ${f.label}：${display}`
+    })
+    .filter(Boolean)
+
+  if (changed.length) {
+    lines.push('## 配置（我在规范页上调过的，请照此实现）')
+    lines.push('')
+    lines.push(...changed)
+    lines.push('')
+  }
+
+  // ── 代码骨架 ──────────────────────────────────────────────────────────────
+  if (component.snippet) {
+    let code = ''
+    try {
+      code = component.snippet(resolved)
+    } catch {
+      code = ''
+    }
+    if (code) {
+      lines.push('## 可照抄骨架')
+      lines.push('')
+      lines.push('```vue')
+      lines.push(code)
+      lines.push('```')
+      lines.push('')
+    }
+  }
+
+  // ── 硬约束 ────────────────────────────────────────────────────────────────
+  if (component.mustRules?.length) {
+    lines.push('## 硬约束（不读细则也必须遵守）')
+    lines.push('')
+    component.mustRules.forEach((r) => lines.push(`- ${r}`))
+    lines.push('')
+  }
+
+  // ── 必读 ──────────────────────────────────────────────────────────────────
+  if (component.readRefs?.length) {
+    lines.push('## 需要展开时读这些')
+    lines.push('')
+    lines.push('> 路径相对你项目根 `CLAUDE.md` 里 `@` 指向的 design-spec 目录')
+    lines.push('')
+    component.readRefs.forEach((r) => lines.push(`- \`${r}\``))
+    lines.push('')
+  }
+
+  lines.push('---')
+  lines.push('')
+  lines.push(
+    '骨架里的占位命名（`form.field` / `handleClick` 等）请按实际业务改；' +
+      '样式值一律走设计令牌，不要写裸值。'
+  )
+
+  return lines.join('\n')
+}

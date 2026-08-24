@@ -222,6 +222,14 @@ function extractSemanticColors() {
   const lookup = { get: k => selfMap.has(k) ? selfMap.get(k) : palette.get(k), has: () => true }
   for (const v of semantic) {
     v.value = resolveVarChain(v.value, lookup)
+    // 描边/遮罩组用 color(srgb r g b / a) 写带透明度的色 —— 拆成 hex + alpha 两个
+    // 字段：消费方（扩展）的宿主面板是「hex 框 + 透明度框」两个输入，对应写入。
+    const cm = /^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\/\s*([\d.]+)\)$/.exec(v.value)
+    if (cm) {
+      const h = x => Math.round(parseFloat(x) * 255).toString(16).padStart(2, '0')
+      v.value = ('#' + h(cm[1]) + h(cm[2]) + h(cm[3])).toUpperCase()
+      v.alpha = Math.round(parseFloat(cm[4]) * 100)
+    }
   }
 
   // 分组：按前缀（brand/success/...）

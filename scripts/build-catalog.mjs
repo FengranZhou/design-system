@@ -76,6 +76,53 @@ const NAV_GROUP_MAP = {
 }
 
 /**
+ * snippet 的兜底取值 —— instanceFields 的 default 集合
+ *
+ * `fields`（面板要问用户的）已按上文注释收敛为「只取 demo 的形态开关」，于是
+ * `component-catalog.mjs` 里手写的 instanceFields（文案 / 类型 / 宽度…）不再进
+ * 面板。但 **snippet 仍然读这些 key** —— 它是按"全部配置都拿得到"写的。
+ *
+ * 结果曾是：Button 的 `type` 没人传，snippet 渲染出 `type="undefined"`，
+ * Tag、Alert 同样。这段代码**不报错、粘到下游还能编译**（Vue 只当它是字符串
+ * "undefined"），只有对着生成的代码逐字看才能发现 —— 与上文「配置项必须真的
+ * 影响产物」防的是同一类问题：产物说了谎。
+ *
+ * 所以把 instanceFields 的默认值单独发出来，消费方（扩展面板 / demo 页按钮）
+ * 调 snippet 前先铺一层：`{ ...snippetDefaults, ...用户填的值 }`。
+ * 它**不是配置项**（不进面板、不问用户），只是让骨架有个像样的默认形态。
+ */
+function snippetDefaultsOf(hw) {
+  const out = {}
+  for (const f of hw?.instanceFields || []) {
+    if (f.default !== undefined && f.default !== '') out[f.key] = f.default
+  }
+  return out
+}
+
+/**
+ * 骨架自检 —— 用「兜底默认 + 配置项默认」渲染一次，看有没有渲染成 undefined
+ *
+ * `type="undefined"` 这类产物**不报错、粘到下游照样编译**（Vue 当它是普通字符串），
+ * 只有逐字看生成的代码才能发现。和上文「不影响产物的配置项」是同一类问题：
+ * 产物在说谎，而且没有任何信号。所以在生成阶段就渲染一遍验掉。
+ */
+function renderProbe(entry, comp) {
+  if (!entry.snippetSrc || !comp?.snippet) return null
+  const values = { ...entry.snippetDefaults }
+  for (const f of entry.fields || []) {
+    if (values[f.key] === undefined) values[f.key] = f.default ?? ''
+  }
+  let code
+  try {
+    code = comp.snippet(values)
+  } catch (e) {
+    return `骨架抛错：${e.message}`
+  }
+  const hit = code.match(/"undefined"|=undefined|>undefined<|NaN/)
+  return hit ? `骨架渲染出 ${hit[0]}` : null
+}
+
+/**
  * 从 demo 左侧导航提取启用的组件清单。
  *
  * 为什么以导航为准而不是扫 `el-theme/components/*.scss`：源头有 52 个 scss，
@@ -174,6 +221,7 @@ export function buildCatalog() {
   const missingSnippet = []
   const missingShot = []
   const deadFields = []
+  const brokenSnippet = []
 
   for (const item of nav) {
     const hw = handwritten.get(item.anchor)
@@ -209,6 +257,8 @@ export function buildCatalog() {
       mustRules: hw ? hw.mustRules : [],
       // snippet 是函数，JSON 里存不了 —— 存源码字符串，扩展侧用 new Function 还原
       snippetSrc: hw && hw.snippet ? hw.snippet.toString() : null,
+      // snippet 的兜底取值（见 snippetDefaultsOf）：不进面板，只保证骨架有默认形态
+      snippetDefaults: snippetDefaultsOf(hw),
       // 示意图：随 catalog 一起分发，扩展不用额外请求
       shot: SHOTS[item.anchor] || null,
     }
@@ -224,6 +274,8 @@ export function buildCatalog() {
         .map((f) => `${f.key}(${f.label})`)
       if (dead.length) deadFields.push({ name: item.name, dead })
     }
+    const probe = renderProbe(entry, hw)
+    if (probe) brokenSnippet.push(`${item.name}：${probe}`)
 
     components.push(entry)
 
@@ -246,6 +298,7 @@ export function buildCatalog() {
         readRefs: v.readRefs || [],
         mustRules: v.mustRules || [],
         snippetSrc: v.snippet ? v.snippet.toString() : null,
+        snippetDefaults: snippetDefaultsOf(v),
         shot: SHOTS[v.anchor] || null,
         // 声明父子关系，供扩展侧分组展示 / 溯源用
         variantOf: v.variantOf,
@@ -258,6 +311,8 @@ export function buildCatalog() {
           .map((f) => `${f.key}(${f.label})`)
         if (dead.length) deadFields.push({ name: v.name, dead })
       }
+      const vProbe = renderProbe(vEntry, v)
+      if (vProbe) brokenSnippet.push(`${v.name}：${vProbe}`)
       components.push(vEntry)
     }
   }
@@ -276,7 +331,14 @@ export function buildCatalog() {
     generatedFrom: 'FengranZhou/design-system',
     groups: GROUPS,
     components,
-    _stats: { total: components.length, missingSnippet, missingShot, deadFields, orphanVariants },
+    _stats: {
+      total: components.length,
+      missingSnippet,
+      missingShot,
+      deadFields,
+      brokenSnippet,
+      orphanVariants,
+    },
   }
 }
 
@@ -307,6 +369,13 @@ if (isMain) {
       console.log('  用户开了这些开关，生成的代码却不变 —— 配置界面在说谎。')
       console.log('  修法：让 component-catalog.mjs 的 snippet 读这些 key，')
       console.log('       或确认该开关不该出现在插入场景（demo 演示用，非实例参数）。')
+    }
+    if (stats.brokenSnippet.length) {
+      console.log(`\n✗ ${stats.brokenSnippet.length} 个组件的骨架渲染出了 undefined / NaN：`)
+      for (const b of stats.brokenSnippet) console.log(`  ${b}`)
+      console.log('  这段代码不报错、粘到下游照样编译，只有逐字看才发现 —— 必须修。')
+      console.log('  常见原因：snippet 读了某个 key，但它既不在 demo 配置项里、')
+      console.log('           instanceFields 里也没给 default。补上 default 即可。')
     }
     if (stats.orphanVariants.length) {
       console.log(`\n✗ ${stats.orphanVariants.length} 个变体的父组件不在 demo 导航里，已被丢弃：`)
