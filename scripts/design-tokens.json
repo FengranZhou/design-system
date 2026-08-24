@@ -197,63 +197,39 @@
     },
     {
       "name": "border-subtle",
-      "value": "rgba(21, 21, 21, 0.06)",
-      "comment": "轻量 6%"
-    },
-    {
-      "name": "border-subtle",
-      "value": "color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)",
-      "comment": "轻量 6%"
+      "value": "#12151A",
+      "comment": "轻量 6%",
+      "alpha": 6
     },
     {
       "name": "border-default",
-      "value": "#{$border-default-fallback}",
-      "comment": "常规 10%"
-    },
-    {
-      "name": "border-default",
-      "value": "color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent)",
-      "comment": "常规 10%"
+      "value": "#12151A",
+      "comment": "常规 10%",
+      "alpha": 10
     },
     {
       "name": "border-strong",
-      "value": "rgba(21, 21, 21, 0.2)",
-      "comment": "加重 20%"
-    },
-    {
-      "name": "border-strong",
-      "value": "color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent)",
-      "comment": "加重 20%"
+      "value": "#12151A",
+      "comment": "加重 20%",
+      "alpha": 20
     },
     {
       "name": "border-on-dark",
-      "value": "#{$border-on-dark-fallback}",
-      "comment": "深底描边"
-    },
-    {
-      "name": "border-on-dark",
-      "value": "color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent)",
-      "comment": "深底描边"
+      "value": "#FFFFFF",
+      "comment": "深底描边",
+      "alpha": 10
     },
     {
       "name": "mask-primary",
-      "value": "#{$mask-primary-fallback}",
-      "comment": "遮罩"
-    },
-    {
-      "name": "mask-primary",
-      "value": "color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent)",
-      "comment": "遮罩"
+      "value": "#12151A",
+      "comment": "遮罩",
+      "alpha": 60
     },
     {
       "name": "mask-on-dark",
-      "value": "#{$mask-on-dark-fallback}",
-      "comment": "深底遮罩"
-    },
-    {
-      "name": "mask-on-dark",
-      "value": "color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent)",
-      "comment": "深底遮罩"
+      "value": "#FFFFFF",
+      "comment": "深底遮罩",
+      "alpha": 60
     }
   ],
   "semanticColorGroups": {
@@ -467,65 +443,41 @@
     "border": [
       {
         "name": "border-subtle",
-        "value": "rgba(21, 21, 21, 0.06)",
-        "comment": "轻量 6%"
-      },
-      {
-        "name": "border-subtle",
-        "value": "color-mix(in srgb, var(--iflyv-gray-10) 6%, transparent)",
-        "comment": "轻量 6%"
+        "value": "#12151A",
+        "comment": "轻量 6%",
+        "alpha": 6
       },
       {
         "name": "border-default",
-        "value": "#{$border-default-fallback}",
-        "comment": "常规 10%"
-      },
-      {
-        "name": "border-default",
-        "value": "color-mix(in srgb, var(--iflyv-gray-10) 10%, transparent)",
-        "comment": "常规 10%"
+        "value": "#12151A",
+        "comment": "常规 10%",
+        "alpha": 10
       },
       {
         "name": "border-strong",
-        "value": "rgba(21, 21, 21, 0.2)",
-        "comment": "加重 20%"
-      },
-      {
-        "name": "border-strong",
-        "value": "color-mix(in srgb, var(--iflyv-gray-10) 20%, transparent)",
-        "comment": "加重 20%"
+        "value": "#12151A",
+        "comment": "加重 20%",
+        "alpha": 20
       },
       {
         "name": "border-on-dark",
-        "value": "#{$border-on-dark-fallback}",
-        "comment": "深底描边"
-      },
-      {
-        "name": "border-on-dark",
-        "value": "color-mix(in srgb, var(--iflyv-gray-0) 10%, transparent)",
-        "comment": "深底描边"
+        "value": "#FFFFFF",
+        "comment": "深底描边",
+        "alpha": 10
       }
     ],
     "mask": [
       {
         "name": "mask-primary",
-        "value": "#{$mask-primary-fallback}",
-        "comment": "遮罩"
-      },
-      {
-        "name": "mask-primary",
-        "value": "color-mix(in srgb, var(--iflyv-gray-10) 60%, transparent)",
-        "comment": "遮罩"
+        "value": "#12151A",
+        "comment": "遮罩",
+        "alpha": 60
       },
       {
         "name": "mask-on-dark",
-        "value": "#{$mask-on-dark-fallback}",
-        "comment": "深底遮罩"
-      },
-      {
-        "name": "mask-on-dark",
-        "value": "color-mix(in srgb, var(--iflyv-gray-0) 60%, transparent)",
-        "comment": "深底遮罩"
+        "value": "#FFFFFF",
+        "comment": "深底遮罩",
+        "alpha": 60
       }
     ]
   },
