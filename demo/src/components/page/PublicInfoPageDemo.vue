@@ -72,10 +72,11 @@
             </div>
           </template>
 
-          <!-- 其余 tab 不在演示范围：区块级空状态（设计系统插画 + 档位 class，缺一即落回 EP 默认） -->
+          <!-- 其余 tab 不在演示范围：空状态占据整个页面内容区 → 页面级档 empty-page
+               （档位判据：整页工作区 = 页面级 / 页内某卡片区块 = 模块级；插画 + 档位 class 缺一即落回 EP 默认） -->
           <el-empty
             v-else
-            class="empty-block"
+            class="empty-page"
             :image="isDark ? noDataDark : noData"
             description="该 Tab 内容不在本页演示范围"
           />
