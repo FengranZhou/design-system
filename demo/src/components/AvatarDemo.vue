@@ -1,6 +1,8 @@
 <template>
   <section id="avatar" class="demo-section">
-    <h2 class="demo-section__title">Avatar 头像</h2>
+    <h2 class="demo-section__title">Avatar 头像
+      <CopyToCC anchor="avatar" :values="configForm" />
+    </h2>
 
     <div class="demo-block avatar-showcase">
       <div class="avatar-showcase__main">
@@ -48,7 +50,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import CopyToCC from './CopyToCC.vue'
+import { ref, reactive } from 'vue'
 import { UserAvatar, AVATAR_LABEL, type AvatarRole } from '../../../design-spec/components'
 
 const roles = (Object.keys(AVATAR_LABEL) as AvatarRole[]).map((role) => ({
@@ -59,6 +62,9 @@ const roles = (Object.keys(AVATAR_LABEL) as AvatarRole[]).map((role) => ({
 // 配置项：展示方式（独立/组合）+ 尺寸
 const avatarMode = ref<'single' | 'group'>('single')
 const avatarSize = ref(28)
+
+// 配置卡的实时值，供标题右上角「复制到 CC 去调用」带出去
+const configForm = reactive({ avatarMode, avatarSize })
 </script>
 
 <style scoped>

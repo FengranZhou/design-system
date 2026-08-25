@@ -1,6 +1,8 @@
 <template>
   <section id="button" class="demo-section">
-    <h2 class="demo-section__title">Button 按钮</h2>
+    <h2 class="demo-section__title">Button 按钮
+      <CopyToCC anchor="button" :values="configForm" />
+    </h2>
 
     <div class="demo-block button-showcase">
       <!-- 左侧：6 类 × 3 状态网格；图标 / 箭头由右侧开关统一控制 -->
@@ -41,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive } from 'vue'
 import { Pencil, ChevronDown } from 'lucide-vue-next'
 

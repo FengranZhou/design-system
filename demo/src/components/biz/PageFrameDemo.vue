@@ -7,6 +7,7 @@
         <h2 class="demo-section__title">PageFrame 页面框架</h2>
       </div>
       <div class="toolbar__right">
+        <CopyToCC anchor="page-frame" />
         <!-- 次按钮（默认款）：带文字标签，不再是纯图标入口，故无需 tooltip 补全称 -->
         <el-button @click="toggleFullscreen">
           <template #icon>
@@ -151,6 +152,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from '../CopyToCC.vue'
 import { ref, computed, watch, onMounted, onBeforeUnmount, h } from 'vue'
 import { ElMessage } from 'element-plus'
 import { CirclePlus, Trash2, Maximize, Minimize } from 'lucide-vue-next'

@@ -1,6 +1,8 @@
 <template>
   <section id="slider" class="demo-section">
-    <h2 class="demo-section__title">Slider 滑块</h2>
+    <h2 class="demo-section__title">Slider 滑块
+      <CopyToCC anchor="slider" :values="configForm" />
+    </h2>
 
     <!-- 滑块：四个配置项（数值输入框 / 区间 / 离散值 / 刻度）自由叠加，
          不为组合穷举具名类型（见 CLAUDE.md「配置式组件设计范式」）。
@@ -44,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, watch } from 'vue'
 
 // 区间开关切换时 v-model 的形态要跟着变：单值 number ↔ 区间 [number, number]

@@ -1,6 +1,8 @@
 <template>
   <section id="tooltip" class="demo-section">
-    <h2 class="demo-section__title">Tooltip 文字提示</h2>
+    <h2 class="demo-section__title">Tooltip 文字提示
+      <CopyToCC anchor="tooltip" :values="tooltipConfigForm" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -52,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive } from 'vue'
 
 // —— 文字提示（Tooltip）：弹出方向作为配置项（上/右/下/左）——

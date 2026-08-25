@@ -1,6 +1,8 @@
 <template>
   <section id="alert" class="demo-section">
-    <h2 class="demo-section__title">Alert 警告</h2>
+    <h2 class="demo-section__title">Alert 警告
+      <CopyToCC anchor="alert" :values="alertConfigForm" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -33,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, computed } from 'vue'
 
 // —— 警告（Alert）：5 类语义场景，「场景」× 「辅助信息」两个正交配置项自由叠加（5×2=10 种组合）——

@@ -1,6 +1,8 @@
 <template>
   <section id="radio" class="demo-section">
-    <h2 class="demo-section__title">Radio 单选框</h2>
+    <h2 class="demo-section__title">Radio 单选框
+      <CopyToCC anchor="radio" :values="copyValues" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -49,7 +51,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import CopyToCC from './CopyToCC.vue'
+import { ref, reactive, computed } from 'vue'
 
 const radioValue = ref('2')
 const radioButtonValue = ref('center')
@@ -57,6 +60,12 @@ const radioButtonValue = ref('center')
 // 配置卡：文字是否显示（关闭则只留选择控件本体）
 const radioShowText = ref(true)
 const radioConfigForm = reactive({ radioShowText })
+
+// 标题右上角「复制到 CC 去调用」：本区块只有一张配置卡，且它只作用于基础单选；
+// 单选按钮组没有配置项，复制它时给默认形态即可。
+const copyValues = computed(() => ({
+  'form-item-radio': { radioShowText: radioShowText.value },
+}))
 </script>
 
 <style scoped>

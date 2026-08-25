@@ -1,6 +1,8 @@
 <template>
   <section id="checkbox" class="demo-section">
-    <h2 class="demo-section__title">Checkbox 多选框</h2>
+    <h2 class="demo-section__title">Checkbox 多选框
+      <CopyToCC anchor="checkbox" :values="checkboxConfigForm" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -34,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive } from 'vue'
 
 const checkboxValue = ref(['vue'])

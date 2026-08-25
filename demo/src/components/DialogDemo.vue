@@ -1,6 +1,8 @@
 <template>
   <section id="dialog" class="demo-section">
-    <h2 class="demo-section__title">Dialog 对话框</h2>
+    <h2 class="demo-section__title">Dialog 对话框
+      <CopyToCC anchor="dialog" :values="copyValues" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -95,6 +97,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, computed } from 'vue'
 
 const dialogVisible = ref(false)
@@ -148,6 +151,17 @@ const tipScenes: TipScene[] = [
 const tipScene = ref('warning')
 const tipConfigForm = reactive({ tipScene })
 const activeTip = computed(() => tipScenes.find(s => s.value === tipScene.value)!)
+
+// 标题右上角「复制到 CC 去调用」：两张配置卡分属操作弹窗与提示弹窗
+const copyValues = computed(() => ({
+  dialog: {
+    dialogScene: dialogScene.value,
+    dialogShowTip: dialogShowTip.value,
+    dialogMultiTitle: dialogMultiTitle.value,
+  },
+  // 提示弹窗的场景在 demo 里叫 tipScene，catalog 字段名是 scene
+  'tip-dialog': { scene: tipScene.value },
+}))
 </script>
 
 <style scoped>

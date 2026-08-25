@@ -1,6 +1,8 @@
 <template>
   <section id="result" class="demo-section">
-    <h2 class="demo-section__title">Result 结果页</h2>
+    <h2 class="demo-section__title">Result 结果页
+      <CopyToCC anchor="result" :values="configForm" />
+    </h2>
 
     <div class="demo-block">
       <p class="demo-desc">当有重要操作需告知用户处理结果，且反馈内容较为复杂/重要时使用。</p>
@@ -42,6 +44,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive } from 'vue'
 
 // 结果页配置：场景（正确/错误，互斥类型）+ 两个正交开关（描述 sub-title / 按钮 #extra）

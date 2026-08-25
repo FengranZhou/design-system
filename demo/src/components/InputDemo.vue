@@ -1,6 +1,8 @@
 <template>
   <section id="input" class="demo-section">
-    <h2 class="demo-section__title">Input 输入框</h2>
+    <h2 class="demo-section__title">Input 输入框
+      <CopyToCC anchor="input" :values="copyValues" />
+    </h2>
 
     <!-- 左列（标题+示例）+ 右列配置卡；两列均从块顶开始 → 配置卡顶与标题顶齐平。 -->
     <div class="demo-block input-showcase">
@@ -120,6 +122,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, computed } from 'vue'
 import { SearchMini } from '../../../design-spec/components'
 // ⏸ 放开「带图标」注释块时，一并放开下面这行 import：
@@ -149,6 +152,15 @@ const textareaValue = ref('')
 const textareaWordLimit = ref(false)
 const textareaConfigForm = reactive({ textareaWordLimit })
 const numberValue = ref(1)
+
+// 标题右上角「复制到 CC 去调用」：本区块挂着 4 个组件，各自对应页面上那张配置卡。
+// SearchMini 的开关在 demo 里叫 searchCollapsed，catalog 里的字段名是 collapsed
+// （变体字段走手写 instanceFields，与 demo ref 名不必同名）—— 在这里对齐。
+const copyValues = computed(() => ({
+  'form-item-input': { clearable: clearable.value, showWordLimit: showWordLimit.value },
+  'search-mini': { collapsed: searchCollapsed.value },
+  'form-item-textarea': { showWordLimit: textareaWordLimit.value },
+}))
 </script>
 
 <style scoped>

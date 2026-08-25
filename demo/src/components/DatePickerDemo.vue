@@ -1,6 +1,8 @@
 <template>
   <section id="date-picker" class="demo-section">
-    <h2 class="demo-section__title">Picker 时间/日期选择器</h2>
+    <h2 class="demo-section__title">Picker 时间/日期选择器
+      <CopyToCC anchor="date-picker" :values="copyValues" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -66,7 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import CopyToCC from './CopyToCC.vue'
+import { ref, reactive, watch, computed } from 'vue'
 
 const dateValue = ref('')
 const dateRange = ref([])
@@ -81,4 +84,10 @@ watch(withDateTime, () => { dateValue.value = '' })
 const withTime = ref(false)
 const rangeConfigForm = reactive({ withTime })
 watch(withTime, () => { dateRange.value = [] })
+
+// 标题右上角「复制到 CC 去调用」：两张配置卡分属日期选择与日期范围
+const copyValues = computed(() => ({
+  'form-item-date': { withDateTime: withDateTime.value },
+  'form-item-daterange': { withTime: withTime.value },
+}))
 </script>

@@ -1,6 +1,8 @@
 <template>
   <section id="notification" class="demo-section">
-    <h2 class="demo-section__title">Notification 通知</h2>
+    <h2 class="demo-section__title">Notification 通知
+      <CopyToCC anchor="notification" :values="notifyConfigForm" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -36,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, h } from 'vue'
 import { ElNotification, ElButton } from 'element-plus'
 import type { NotificationHandle } from 'element-plus'

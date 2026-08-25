@@ -1,6 +1,8 @@
 <template>
   <section id="breadcrumb" class="demo-section">
-    <h2 class="demo-section__title">Breadcrumb 面包屑</h2>
+    <h2 class="demo-section__title">Breadcrumb 面包屑
+      <CopyToCC anchor="breadcrumb" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -36,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, computed } from 'vue'
 import { Breadcrumb } from '../../../design-spec/components'
 

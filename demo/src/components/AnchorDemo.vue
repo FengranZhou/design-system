@@ -1,6 +1,8 @@
 <template>
   <section id="anchor" class="demo-section">
-    <h2 class="demo-section__title">Anchor 锚点</h2>
+    <h2 class="demo-section__title">Anchor 锚点
+      <CopyToCC anchor="anchor" />
+    </h2>
 
     <div class="demo-block">
       <p class="demo-desc">需要展现当前页面上可供跳转的锚点链接，以及快速在锚点之间跳转。</p>
@@ -19,4 +21,5 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 </script>

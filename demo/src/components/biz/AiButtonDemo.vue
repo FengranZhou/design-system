@@ -1,6 +1,8 @@
 <template>
   <section id="ai-button" class="demo-section">
-    <h2 class="demo-section__title">AiButton Ai按钮</h2>
+    <h2 class="demo-section__title">AiButton Ai按钮
+      <CopyToCC anchor="ai-button" />
+    </h2>
 
     <!-- 三形态（渐变实心 / 白底描边 / 行内文字链）× 三状态（常规 / 禁用 / 加载）矩阵 -->
     <div class="demo-block">
@@ -24,6 +26,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from '../CopyToCC.vue'
 import { AiButton } from '../../../../design-spec/components'
 </script>
 

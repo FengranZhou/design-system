@@ -1,20 +1,25 @@
 <template>
   <section id="dropdown" class="demo-section">
-    <h2 class="demo-section__title">Dropdown 下拉菜单</h2>
+    <h2 class="demo-section__title">Dropdown 下拉菜单
+      <CopyToCC anchor="dropdown" :values="configForm" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
         <p class="demo-desc">常与"触发器"（按钮、图标、下拉选择器等）组合使用，当页面上的操作命令过多时，用此组件可以收纳操作元素。</p>
         <div class="demo-row">
           <el-dropdown @visible-change="dropdownVisible = $event">
-            <span class="dropdown-trigger">
+            <!-- 轻量入口触发器：用 <el-button text> 承载，不用裸 span。
+                 文字色 / hover 变色 / inline-flex 全在源头 button.scss，
+                 且原生 <button> 自带键盘可聚焦与 role，使用方零 scoped。 -->
+            <el-button text>
               更多操作
               <ChevronDown
                 :size="14" :stroke-width="2"
                 class="dropdown-caret"
                 :class="{ 'is-expanded': dropdownVisible }"
               />
-            </span>
+            </el-button>
             <template #dropdown>
               <el-dropdown-menu>
                 <!-- 分组：开关打开后，每组前加一行抬头（约定类 .dropdown-group-title，
@@ -58,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 
@@ -77,17 +83,7 @@ const groupedItems: { title: string; items: { label: string; disabled?: boolean 
 
 <style scoped>
 
-/* Dropdown 轻量文字触发器（纯本页装扮：本 demo 的触发器排版，走令牌；面板外观归 el-theme 源头） */
-.dropdown-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--iflyv-spacing-1);
-  color: var(--iflyv-text-1);
-  cursor: pointer;
-}
-.dropdown-trigger:hover {
-  color: var(--iflyv-brand-primary);
-}
-/* 箭头翻转（展开时 180°+ 过渡）已归源头约定 .dropdown-caret（dropdown.scss），
-   demo 只传展开真值 .is-expanded，不在此重复定义。 */
+/* 本页无需任何触发器样式：轻量入口用 <el-button text>，
+   文字色 / hover / inline-flex 归源头 button.scss，箭头间距与翻转归
+   button.scss + dropdown.scss 的 .dropdown-caret —— demo 只传展开真值 .is-expanded。 */
 </style>
