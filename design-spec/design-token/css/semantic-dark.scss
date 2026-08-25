@@ -44,6 +44,8 @@ html[data-theme="dark"] {
   --iflyv-bg-page-white: var(--iflyv-gray-0);   /* 白底页面 — 暗色下同 bg-page */
   --iflyv-bg-panel: var(--iflyv-gray-1);  /* 卡片/面板 #1A1A1A */
   --iflyv-bg-inset: var(--iflyv-gray-2);  /* 嵌套区域 #262626 */
+  /* 灰 Tag 底色：与亮色镜像——亮色深色 6%，暗色纯白 6% */
+  --iflyv-tag-gray-bg: rgba(255, 255, 255, 0.06);
   --iflyv-bg-segment-active: var(--iflyv-gray-3); /* Segment 选中块 */
   /* 块卡：亮色下是「白面板 + 浅灰卡」两层，暗色必须同样分两层——
      若跟 bg-panel 同取 gray-1，卡片叠在面板上就与底同色、边界彻底消失。

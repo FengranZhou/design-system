@@ -126,6 +126,9 @@ $font-weight-extrabold: 800;   /* 阿里普惠 95 ExtraBold / 页面标题强调
   /* 模块标题 - Title-Module - 模块级标题 */
   --iflyv-font-title-module: #{$font-weight-semibold} 1.125rem / 2.25rem #{$font-family-base};              /* 18px/36px */
 
+  /* 常规标题 - Title-Regular - 内容卡片/信息组标题（介于模块标题与组件标题之间） */
+  --iflyv-font-title-regular: #{$font-weight-semibold} 1rem / 1.5rem #{$font-family-base};                  /* 16px/24px */
+
   /* 模块级选中 Tab 项 - Tab-Active-Sub - 模块级 Tabs 激活项 */
   --iflyv-font-tab-active-sub: #{$font-weight-semibold} 1.125rem / 1.75rem #{$font-family-base};
 
