@@ -18,14 +18,18 @@
   .el-message__content {
     color: var(--iflyv-text-1);
     font: var(--iflyv-font-body-sub);
+    /* 关闭按钮是绝对定位、不占宽度，多行文案会排到它底下造成重叠。
+       此处为按钮留出让位宽度（按钮 14px + 两侧各 12px 间距）。 */
+    padding-inline-end: 26px;
   }
 
   /* 关闭按钮：始终可见，靠右，Lucide X 图标替换 */
   .el-message__closeBtn {
     position: absolute;
     inset-inline-end: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+    /* 与首行文字垂直居中对齐（padding-block 10 + 行高 20 的一半 - 图标 14 的一半 = 13）。
+       改用贴顶而非 top:50%，否则多行时按钮掉到中间、与文字错位。 */
+    top: 13px;
     font-size: var(--iflyv-font-size-14);
     color: var(--iflyv-icon-3);
     opacity: 1;

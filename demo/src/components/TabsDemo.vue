@@ -1,6 +1,8 @@
 <template>
   <section id="tabs" class="demo-section">
-    <h2 class="demo-section__title">Tabs 标签页</h2>
+    <h2 class="demo-section__title">Tabs 标签页
+      <CopyToCC anchor="tabs" :values="tabsConfigForm" />
+    </h2>
 
     <!-- Tabs 三级（页面级 / 模块级 / 组件级）合并为一块，由「级别」分段切换 class。
          级别是三选一具名类型 → 用 radio-button；页面级=.tabs-page、模块级=默认、组件级=.tabs-sub。 -->
@@ -40,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, computed } from 'vue'
 
 // —— Tabs 三级合并：级别 → class 映射 ——
