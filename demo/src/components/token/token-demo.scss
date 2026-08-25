@@ -305,3 +305,40 @@
   background: var(--iflyv-brand-primary);
   transition-property: transform;
 }
+
+/* —— 图标四层级示例（IconDemo） —— */
+.token-icon-grid {
+  display: grid;
+  gap: var(--iflyv-spacing-3);
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+
+  &--l1 { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
+
+.token-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--iflyv-spacing-1);
+  padding: var(--iflyv-spacing-2);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-sm);
+}
+
+.token-icon-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img { object-fit: contain; }
+}
+
+.token-icon-name {
+  text-align: center;
+  word-break: break-all;
+}
+
+/* 四级图标直接渲染 lucide 组件，取图标常规色阶 */
+.token-icon-grid--l4 .token-icon-thumb svg {
+  color: var(--iflyv-icon-2);
+}
