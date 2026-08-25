@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 90,
-  "totalWeight": 259,
+  "total": 92,
+  "totalWeight": 264,
   "byLevel": {
-    "MUST": 79,
-    "SHOULD": 11,
+    "MUST": 80,
+    "SHOULD": 12,
     "MAY": 0
   },
   "byDetect": {
     "regex": 61,
     "ast": 7,
-    "manual": 22
+    "manual": 24
   },
   "byView": {
-    "design": 71,
-    "impl": 82
+    "design": 73,
+    "impl": 84
   },
   "categoryOrder": [
     "单一数据源",
@@ -124,7 +124,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 581
+      "line": 589
     },
     {
       "id": "color-no-hardcode",
@@ -286,7 +286,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 613
+      "line": 621
     },
     {
       "id": "breadcrumb-use-component",
@@ -301,7 +301,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 640
+      "line": 648
     },
     {
       "id": "anchor-vertical-ask-first",
@@ -315,7 +315,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 690
+      "line": 698
     },
     {
       "id": "dialog-no-messagebox",
@@ -330,7 +330,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1087
+      "line": 1095
     },
     {
       "id": "component-no-suspended",
@@ -345,7 +345,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1288
+      "line": 1296
     },
     {
       "id": "select-v2-over-200",
@@ -523,6 +523,21 @@
       "line": 424
     },
     {
+      "id": "dropdown-trigger-use-button",
+      "title": "el-dropdown 的触发器一律用 <el-button> 承载，禁裸 span/div + scoped 复刻",
+      "designTitle": "下拉的触发器应是真正的按钮，键盘能聚焦、读屏能识别，而不是一段看起来能点的文字",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 540
+    },
+    {
       "id": "dropdown-use-slots",
       "title": "下拉面板放 #dropdown 插槽的 <el-dropdown-menu>，禁手撸浮层",
       "designTitle": "下拉菜单的面板观感应与全站一致，不应是自己拼的浮层",
@@ -535,7 +550,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 544
+      "line": 550
     },
     {
       "id": "dropdown-caret-class",
@@ -550,7 +565,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 545
+      "line": 551
     },
     {
       "id": "anchor-select-scroll-top",
@@ -565,7 +580,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 698
+      "line": 706
     },
     {
       "id": "anchor-stale-hash",
@@ -579,7 +594,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 707
+      "line": 715
     },
     {
       "id": "pagination-small-layout",
@@ -594,7 +609,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 813
+      "line": 821
     },
     {
       "id": "message-show-close",
@@ -609,7 +624,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 870
+      "line": 878
     },
     {
       "id": "alert-title-prop",
@@ -623,7 +638,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 900
+      "line": 908
     },
     {
       "id": "loading-no-custom-spinner",
@@ -638,7 +653,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 945
+      "line": 953
     },
     {
       "id": "result-icon-two-values",
@@ -653,7 +668,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1008
+      "line": 1016
     },
     {
       "id": "notification-h-actions",
@@ -667,7 +682,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1040
+      "line": 1048
     },
     {
       "id": "scrollbar-no-raw-overflow",
@@ -682,7 +697,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1237
+      "line": 1245
     },
     {
       "id": "timepicker-disabled-range",
@@ -755,7 +770,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1249
+      "line": 1257
     },
     {
       "id": "grid-no-el-row",
@@ -1130,7 +1145,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 832
+      "line": 840
     },
     {
       "id": "skeleton-animated",
@@ -1145,7 +1160,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 974
+      "line": 982
     },
     {
       "id": "skeleton-on-panel",
@@ -1160,7 +1175,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 975
+      "line": 983
     },
     {
       "id": "loading-no-blank-screen",
@@ -1189,7 +1204,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1138
+      "line": 1146
     },
     {
       "id": "time-use-formattime",
@@ -1320,7 +1335,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 332
+      "line": 333
     },
     {
       "id": "gsap-display-only",
@@ -1334,7 +1349,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 436
+      "line": 440
     },
     {
       "id": "dark-surface-bordered",
@@ -1350,6 +1365,21 @@
       "weight": 2,
       "source": "design-spec/references/foundations.md",
       "line": 23
+    },
+    {
+      "id": "card-bleed-panel-inset",
+      "title": "> 卡内「通栏出血面板」写法（卡片内承载通栏长文本的白底内衬，如课程简介）：",
+      "designTitle": "卡内通栏内衬与卡缘应是均匀的 4px 细缝，标题与内衬留白略宽",
+      "level": "SHOULD",
+      "cat": "视觉呈现",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/foundations.md",
+      "line": 387
     }
   ]
 }

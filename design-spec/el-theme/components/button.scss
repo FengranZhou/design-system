@@ -14,6 +14,10 @@
      带图标   <el-button><template #icon><LucideIcon/></template>文字</el-button>
      带下拉箭头 <el-button>文字 <ChevronDown class="btn-caret"/></el-button>
               （箭头间距/hover 旋转/禁用不转 已由本文件统一处理，接入方只写这一行）
+     当 el-dropdown 触发器 <el-dropdown><el-button>文字 <ChevronDown class="dropdown-caret"
+              :class="{ 'is-expanded': open }"/></el-button>…</el-dropdown>
+              （换 .dropdown-caret：展开时转而非 hover 时转；间距本文件已补，
+                展开真值 .is-expanded 仍需使用方用 @visible-change 绑）
    → 任意组合（如 主按钮+禁用+图标+箭头）都已支持，无需在接入方写任何样式。
      改任何按钮外观 = 改本文件，所有接入项目自动同步。
    └────────────────────────────────────────────────────────────────────┘ */
@@ -65,6 +69,27 @@
   /* 仅可交互按钮 hover 才转箭头；禁用/加载态不可交互，箭头保持不动。 */
   &:hover:not(.is-disabled):not(.is-loading) .btn-caret {
     transform: rotate(180deg);
+  }
+
+  /* 按钮当 el-dropdown 触发器时的箭头间距
+     ------------------------------------------------------------------
+     两种 caret 各有分工（见 dropdown.scss）：.btn-caret 是「hover 按钮时」转，
+     .dropdown-caret 是「下拉展开时」转。**用 el-dropdown 就必须用后者**——
+     下拉展开后箭头要保持朝上，hover 翻转给不了这个语义。
+
+     但 .dropdown-caret 有意不自带 margin：它原本面向「裸 <span> + flex gap」
+     那种触发器，自带 margin 会与父容器 gap 叠加成双倍。
+     而按钮触发器（<el-dropdown><el-button>…）没有那个 gap —— .el-button 虽是
+     flex，间距却由 `.el-icon + span` 的 margin 提供，给按钮加 gap 会与之叠加。
+     结果就是箭头贴着文字。
+
+     所以在此**只为「按钮内的 dropdown-caret」补间距**，档位与 .btn-caret 同源，
+     两种 caret 在按钮里表现一致；裸 span 场景不受影响（选择器限定在 .el-button 内）。
+     使用方仍只写一行 class，不必在自己的 scoped 里补间距。
+     用法：<el-dropdown><el-button>文字 <ChevronDown class="dropdown-caret"
+           :class="{ 'is-expanded': open }" /></el-button>…</el-dropdown> */
+  .dropdown-caret {
+    margin-inline-start: var(--iflyv-spacing-1);
   }
 
   /* 图标尺寸与间距

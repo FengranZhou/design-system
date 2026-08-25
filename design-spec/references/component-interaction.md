@@ -386,7 +386,7 @@ const onCheckAll = (val: boolean) => {
   <el-descriptions-item label="课程名称">数据结构</el-descriptions-item>
   <el-descriptions-item label="授课教师">张三</el-descriptions-item>
   <el-descriptions-item label="状态">
-    <el-tag type="info" round>进行中</el-tag>
+    <el-tag type="info">进行中</el-tag>
   </el-descriptions-item>
   <!-- 长文本占满整行 -->
   <el-descriptions-item label="课程简介" :span="3">
@@ -468,7 +468,7 @@ const onCheckAll = (val: boolean) => {
 **选色约定（源头 `tag.scss`）**：本系统品牌色是绿色，与 success 语义绿撞色，普通标签用品牌绿易被误读为「成功态」。因此：
 
 - **无语义含义的普通标签，优先 `type="info"`（蓝色）作为默认色**；仅确需品牌强调时才用默认 / `type="primary"`（品牌绿）。
-- 另有两个源头扩展类型：`el-tag--gray`（灰色中性标签，text-2 + inset 底）与 `el-tag--ai`（AI 标识：蓝→绿渐变底 + 渐变文字，走 AI 渐变令牌）——AI 相关标签一律用 `--ai`，不自拼渐变。
+- 另有三个源头扩展类型：`el-tag--gray`（灰色中性标签，text-2 + gray-10 6% 透明底，暗色自动切纯白 6%）、`el-tag--outline`（描边标签：透明底 + `border-default` 细描边，用于「来源」这类元信息角标；内容可放 12px 小图标，图文间距源头已给，直接 `<el-tag class="el-tag--outline"><Info :size="12" :stroke-width="2" />来源</el-tag>`）与 `el-tag--ai`（AI 标识：蓝→绿渐变底 + 渐变文字，走 AI 渐变令牌）——AI 相关标签一律用 `--ai`，不自拼渐变。
 
 **状态标签选色：按「这个状态对用户意味着什么」对号入座**（不要凭状态名的字面感觉挑）：
 
@@ -537,10 +537,16 @@ const onCheckAll = (val: boolean) => {
 
 `el-dropdown` 由**两部分**组成：**下拉面板本身**（菜单项 / 分隔线 / 禁用项 / hover，样式归 `el-theme` 源头）+ **触发器**（用户点/hover 后弹出面板的那个元素）。
 
-- **触发器不是固定形态**：`el-dropdown` **常与「触发器」组合使用**——触发器可以是**按钮、图标、下拉选择器、轻量文字**等多种形态，按场景选，不写死成某一种。
-  - **主操作 / 显式入口** → 用**按钮**触发（`<el-button>`，图标 + 文字规范见按钮章节）。
+- **触发器不是固定形态**：`el-dropdown` **常与「触发器」组合使用**——触发器按场景选轻重，但**一律用 `<el-button>` 承载**，不写死成某一种形态。 <!-- @rule id=dropdown-trigger-use-button level=MUST cat=组件用法 detect=manual dtitle=下拉的触发器应是真正的按钮，键盘能聚焦、读屏能识别，而不是一段看起来能点的文字 title=el-dropdown 的触发器一律用 <el-button> 承载，禁裸 span/div + scoped 复刻 -->
+  - **主操作 / 显式入口** → 用**实心/次按钮**触发（`<el-button>` / `<el-button type="primary">`，图标 + 文字规范见按钮章节）。
   - **紧凑 / 操作列 / 工具栏** → 用**纯图标**触发（如 `MoreHorizontal` 更多，用 `<el-button text>` 或表格里的 `.table-operation__more`；纯图标必配 tooltip）。
-  - **次要 / 行内轻量入口**（如"更多操作 ⌄"）→ 用**轻量文字 + 箭头**触发。
+  - **次要 / 行内轻量入口**（如"更多操作 ⌄"）→ 用 **`<el-button text>` + 箭头**触发。
+
+  > ⛔ **不要用裸 `<span>` / `<div>` 当触发器。** <!-- @rule-skip dup 同 dropdown-trigger-use-button，本段是该规则的理由展开 --> 轻量入口看起来"只是一行字 + 箭头"，很容易顺手写个 span 再在 scoped 里补 `inline-flex` / `gap` / 文字色 / hover 变色——**那几行正是 `<el-button text>` 已经给你的东西**，属于「用私有 class 复刻已有标准组件」（见最高铁律第 3 条判据）。
+  >
+  > 更要紧的是**裸 span 不可聚焦、没有 button 语义**：键盘用户 Tab 不到、回车展不开，读屏也报不出这是个可操作项。`<el-button text>` 是原生 `<button>`，这些白拿。
+  >
+  > 观感上两者几乎无差（字号 14 / 色 `text-1` 完全一致，仅行高相差几 px），**没有理由为了那几 px 放弃可达性并多写一段 scoped**。
 - **强制做法**：触发器放在 `el-dropdown` 默认插槽、菜单放 `#dropdown` 插槽的 `<el-dropdown-menu>`；分隔用 `<el-dropdown-item divided>`；禁用项用 `disabled`；危险项文字走 `--iflyv-danger-primary`。 <!-- @rule id=dropdown-use-slots level=MUST cat=组件用法 detect=regex dtitle=下拉菜单的面板观感应与全站一致，不应是自己拼的浮层 title=下拉面板放 #dropdown 插槽的 <el-dropdown-menu>，禁手撸浮层 -->
 - **触发器尾部箭头必须用约定 class `.dropdown-caret`** <!-- @rule id=dropdown-caret-class level=MUST cat=组件用法 detect=regex dtitle=下拉触发器的箭头应在展开时翻转，动效与全站一致 title=下拉触发器箭头必须用约定 class .dropdown-caret + @visible-change 绑 .is-expanded -->（源头 `dropdown.scss`：垂直居中 + 展开时翻转 180° 带过渡）。EP 的 `el-dropdown` 展开态没有稳定纯 CSS 钩子，**展开 class `.is-expanded` 需由使用方用 `@visible-change` 绑定**——这是唯一要使用方做的事，翻转规则/过渡全在源头：
 
@@ -551,7 +557,9 @@ const onCheckAll = (val: boolean) => {
   </el-dropdown>
   ```
 
-  > 与按钮的 `.btn-caret` 区分：`.btn-caret` 是「hover 按钮时」转（纯 CSS，button.scss）；`.dropdown-caret` 是「下拉展开时」转。箭头与文字的间距由触发器父容器 flex gap 提供，不要在箭头上加 margin（会与 gap 叠加）。
+  > 与按钮的 `.btn-caret` 区分：`.btn-caret` 是「hover 按钮时」转（纯 CSS，button.scss）；`.dropdown-caret` 是「下拉展开时」转。**用 `el-dropdown` 就必须用后者**——下拉展开后箭头要保持朝上，hover 翻转给不了这个语义。
+  >
+  > **间距分两种场景，都不用使用方操心**：裸 `<span>` / 自定义元素当触发器时，间距由该元素自己的 flex gap 提供（`.dropdown-caret` 有意不自带 margin，避免与 gap 叠加成双倍）；**`<el-button>` 当触发器时，间距已由源头 `button.scss` 补好**（`.el-button .dropdown-caret` 补 `spacing-1`，与 `.btn-caret` 同档）——按钮虽是 flex，其内部间距靠 `.el-icon + span` 的 margin 提供而非 gap，所以需要单独补。**两种场景都只写一行 class，不要在使用方 scoped 里自己加间距。**
 
 - **配置项「分组」——菜单项按语义分段，每段前加一行抬头**（正交配置，可与触发器各形态自由叠加）：
   - **何时开**：选项较多（约 7 条以上）**且**能按语义归类时；选项少或归类牵强就别开，硬分组反而增加阅读负担。
@@ -571,7 +579,7 @@ const onCheckAll = (val: boolean) => {
   ```
 
   > **这个能力对所有 dropdown 使用方开放，谁要分组谁直接用**——业务组件 `PageFrame` 收起态的侧栏 hover 浮层就是纯使用方（抬头 = 一级导航名、选项 = 其下二级导航），它**完全继承本约定、没有自己另定一套分组标题样式**。这正是「配置式组件设计范式」的落法：能力沉在源头，使用方只写约定 class。
-- **反例**：手撸一个绝对定位的浮层当下拉；触发器和菜单不用 `el-dropdown` 组合而各写各的；把本该是按钮/图标的主入口硬做成裸文字（或反之）；「文字 + 箭头」触发器的箭头不用 `.dropdown-caret` 而在页面 scoped 里自写旋转动效；**分组抬头用 `el-dropdown-item` 冒充（带 hover 底色，用户会去点）或在使用方另写一套抬头样式（脱离源头，改源头它不动）**。
+- **反例**：手撸一个绝对定位的浮层当下拉；触发器和菜单不用 `el-dropdown` 组合而各写各的；**用裸 `<span>`/`<div>` 当触发器并在 scoped 里补 inline-flex/gap/文字色/hover（复刻 `<el-button text>` 已有的能力，且键盘不可达）**；把本该是按钮/图标的主入口硬做成轻量文字入口（或反之）；「文字 + 箭头」触发器的箭头不用 `.dropdown-caret` 而在页面 scoped 里自写旋转动效；**分组抬头用 `el-dropdown-item` 冒充（带 hover 底色，用户会去点）或在使用方另写一套抬头样式（脱离源头，改源头它不动）**。
 
 ### 按钮间距
 design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-left: 12px }`（见 `el-theme/components/button.scss`）。
