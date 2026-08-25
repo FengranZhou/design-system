@@ -54,14 +54,22 @@
       故展开态 class .is-expanded 需由使用方用 @visible-change 绑定：
 
         <el-dropdown @visible-change="open = $event">
-          <span>更多 <ChevronDown class="dropdown-caret" :class="{ 'is-expanded': open }" /></span>
+          <el-button text>更多 <ChevronDown class="dropdown-caret" :class="{ 'is-expanded': open }" /></el-button>
           <template #dropdown>…</template>
         </el-dropdown>
 
+   ⚠️ 触发器一律用 <el-button> 承载（轻量入口用 text 款），不要用裸 <span>：
+      裸 span 不可聚焦、无 button 语义（键盘 Tab 不到、回车展不开），
+      且文字色/hover/inline-flex 得在使用方 scoped 里复刻一遍 —— 那些 el-button
+      本来就给了。见 references/component-interaction.md「Dropdown」段。
+
    翻转规则/过渡在此源头统一；使用方只负责传 .is-expanded（展开真值）。 */
 .dropdown-caret {
-  /* 不自带左间距：箭头与文字的间距由触发器父容器的 flex gap 统一提供（与本设计系统"间距归父容器 gap、
-     不在子元素上叠加"一致）。若在此再加 margin，会与父级 gap 叠加成双倍间距。 */
+  /* 不自带左间距：留给触发器那一侧决定，避免与父级 gap 叠加成双倍。
+     标准触发器是 <el-button>，其内的间距已由 button.scss 的
+     `.el-button .dropdown-caret { margin-inline-start: spacing-1 }` 补好
+     （按钮内部间距靠 .el-icon+span 的 margin 而非 gap，故需单独补）。
+     若确有自定义 flex 容器当触发器，则由该容器的 gap 提供。 */
   vertical-align: middle;
   transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
 }
