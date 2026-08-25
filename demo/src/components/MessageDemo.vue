@@ -1,6 +1,8 @@
 <template>
   <section id="message" class="demo-section">
-    <h2 class="demo-section__title">Message 消息提示</h2>
+    <h2 class="demo-section__title">Message 消息提示
+      <CopyToCC anchor="message" />
+    </h2>
 
     <div class="demo-block">
       <p class="demo-desc">希望不打断用户操作，并给予轻量提示。</p>
@@ -15,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ElMessage } from 'element-plus'
 
 const messageTexts: Record<string, string> = {

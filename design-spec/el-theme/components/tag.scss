@@ -8,11 +8,9 @@
 
 .el-tag {
   --el-tag-font-size: var(--iflyv-font-size-12);
-  border-radius: var(--iflyv-radius-xs);
-
-  &.is-round {
-    border-radius: var(--iflyv-radius-full);
-  }
+  /* 全圆角是 tag 的唯一合法形态，直接固化为默认值——裸 el-tag 即标准观感，
+     不依赖调用方逐个传 round（曾因漏传 round 静默偏离标准）。round prop 仍可传，无害冗余。 */
+  border-radius: var(--iflyv-radius-full);
   font-size: var(--iflyv-font-size-12);
   /* 标签内文字：字号 12 / 行高 18（.el-tag__content 继承，避免被撑高） */
   line-height: var(--iflyv-line-height-18);
@@ -22,6 +20,14 @@
   height: 20px;
   /* 左右内边距走令牌：spacing-1_5 = 6px，对应「Tag/Badge 等小控件的左右内边距」场景 */
   padding: 0 var(--iflyv-spacing-1_5);
+
+  /* 内容区：内容可含小图标（如描边角标的 12px Info），图文间距走
+     「控件内图标与其紧邻文字之间」锚点；纯文字 tag 不受影响 */
+  .el-tag__content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-1);
+  }
 
   .el-tag__close {
     margin-left: 0; /* 清除 EP .el-tag .el-tag__close { margin-left: 6px }，防止 RTL 残留 */
@@ -86,10 +92,17 @@
   }
 
 
+  /* 描边：透明底 + 细描边（「来源」这类元信息角标，参考小雅原版来源 pill） */
+  &--outline {
+    color: var(--iflyv-text-2);
+    background-color: transparent;
+    border: 1px solid var(--iflyv-border-default);
+  }
+
   /* 灰色 */
   &--gray {
     color: var(--iflyv-text-2);
-    background-color: var(--iflyv-bg-inset);
+    background-color: var(--iflyv-tag-gray-bg);
   }
 
   /* AI 标识：蓝→绿渐变底 + 渐变文字（走 AI 渐变语义令牌，源自设计稿 MasterGo AI 标签）。
@@ -115,7 +128,8 @@
      上下 1px 为高度补偿（20 高 - 18 行高）÷2，非间距语义，故不走令牌 */
   padding: 1px var(--iflyv-spacing-2) !important;
   color: var(--iflyv-text-2) !important;
-  background-color: var(--iflyv-bg-inset) !important;
+  /* 底色与灰 Tag 统一走桥接令牌（亮 = gray-10 6%，暗 = 纯白 6%） */
+  background-color: var(--iflyv-tag-gray-bg) !important;
   border: none !important;
 }
 

@@ -105,7 +105,8 @@
 }
 .tabs-page {
   --el-tabs-header-height: auto;   /* 高度由内容自适应撑开（设计稿 适应×适应） */
-  .el-tabs__header { margin-bottom: var(--iflyv-spacing-2); }
+  /* tab 头下边距与模块级/组件级一致为 0（基础层已清零，此处不再补）；
+     tab 头与内容的间距交由使用方页面排版统一给 */
 
   /* nav：一行，子项按中线垂直居中对齐；高度由最高子项（激活项）自然撑开 */
   .el-tabs__nav {

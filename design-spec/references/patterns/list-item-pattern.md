@@ -46,7 +46,7 @@
 | 展开 | `el-table` 的 `type="expand"` | 全局功能区 |
 | 名称 / 纯文字 | 纯文本单元格（`prop` 直出 或 `formatter`） | 主题区 / 关键信息区最常见 |
 | 头像 | 业务组件 `UserAvatar`（`design-spec/components`） | 主题区 |
-| 状态 / 分类标签 | `el-tag`（状态语义色；`round` 胶囊） | 关键信息区，**状态一律用标签，不用裸文字** | <!-- @rule id=list-status-use-tag level=MUST cat=设计模式 detect=manual dtitle=列表里的状态应是彩色标签，不是一段裸文字 title=列表/表格的状态列一律用 el-tag，禁裸文字 -->
+| 状态 / 分类标签 | `el-tag`（状态语义色；胶囊全圆角已是源头默认，无需传 `round`） | 关键信息区，**状态一律用标签，不用裸文字** | <!-- @rule id=list-status-use-tag level=MUST cat=设计模式 detect=manual dtitle=列表里的状态应是彩色标签，不是一段裸文字 title=列表/表格的状态列一律用 el-tag，禁裸文字 -->
 | 日期 / 时间 | 纯文本（统一格式，见文案规范 Time 模块） | 关键信息区 |
 | 数值 / 金额 | 纯文本 + `formatter`（如 `¥1,200`），**右对齐** | 关键信息区 |
 | 进度 | ⏸ `el-progress` **当前暂停启用**（见 `component-interaction.md` 文末「勿用清单」）——需展示进度先与设计负责人确认 | 关键信息区 |
@@ -59,7 +59,7 @@
 ## 四、强制做法
 
 1. **先分区再落元素**：任何一行/条目，先按四区归位每个字段，再按上表选组件。不要字段平铺、不分主次。
-2. **状态必用标签**：状态 / 分类字段用 `el-tag`（走状态语义色 + `round`），**不要用纯文字**表示状态（无法一眼区分）。
+2. **状态必用标签**：状态 / 分类字段用 `el-tag`（走状态语义色；全圆角已是源头默认），**不要用纯文字**表示状态（无法一眼区分）。
 3. **操作区固定右侧、样式统一**：表格操作按钮一律 `<el-button class="table-operation">` + **图标（lucide）+ 文字**（如「✎ 编辑」，用约定类不用 text/link）；≥3 个操作时，主操作外露、其余收进 `el-dropdown`「更多」（下拉项走纯文字）。表格里操作列 `fixed="right"`。「更多」触发器同样走源头约定：`<el-dropdown class="table-operation">` + 内层 `<span class="table-operation__more"><MoreHorizontal :size="16" /></span>`（**纯图标形态**，与业务组件 `DataTable` 一致；对齐/间距/色号全在 `table.scss` 源头）——**纯图标入口必须外包 `el-tooltip content="更多操作" :show-after="300"`**；**危险操作**（删除等）在按钮上加 `.table-operation--danger`（常态即危险红、hover 加深，不手写 color）。
 4. **数值右对齐**：金额 / 数量等数值列右对齐，便于比较。
 5. **列宽与冻结**：关键信息区按内容给合理 `width` / `min-width`。
@@ -89,7 +89,7 @@
 7. **长文本列加 `show-overflow-tooltip`**：标题、备注、简介这类长度不可预期的列，给 `<el-table-column>` 加此属性——EP 原生能力，**自带单行截断 + hover 弹 tooltip 补全**，不要手动包 `el-tooltip`、也不要自写 `text-overflow: ellipsis`。
    - **用 DataTable 时**：在该列配置里写 `showOverflowTooltip: true`。
 8. **状态标签的灰色变体走 class 不走 type**：`el-tag--gray`（已结束 / 已归档等非活跃状态）是**约定类**，`type` 表达不了它。
-   - **手拼 el-table 时**：`<el-tag class="el-tag--gray" round>已结束</el-tag>`。
+   - **手拼 el-table 时**：`<el-tag class="el-tag--gray">已结束</el-tag>`。
    - **用 DataTable 时**：行数据里放 `${prop}Class` 字段（如状态列 `prop:'status'` → 行里写 `statusClass: 'el-tag--gray'`），组件自动透传；走语义色的行该字段留空即可，两者可在同一列共存。字段名要改用 `tagClassProp` 指定。
    - 选色判据见 `component-interaction.md` Tag 段的状态对照表。
 9. **拼装而非硬写**：把行看成"四区拼装"，同类记录复用同一套列定义；不要每个页面重写一版结构和样式。
@@ -127,7 +127,7 @@
     <!-- 03 关键信息区：状态用 el-tag / 日期纯文本 / 金额右对齐 formatter -->
     <el-table-column prop="status" label="状态" width="100">
       <template #default="{ row }">
-        <el-tag :type="row.statusType" round>{{ row.status }}</el-tag>
+        <el-tag :type="row.statusType">{{ row.status }}</el-tag>
       </template>
     </el-table-column>
     <!-- 时间列宽注意本年/跨年两种形态（见 §五.5）；展示走 formatTime -->
