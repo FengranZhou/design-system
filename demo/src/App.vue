@@ -92,6 +92,7 @@
           <li><a href="#token-radius" :class="{ 'is-active': activeSection === 'token-radius' }">Radius 圆角</a></li>
           <li><a href="#token-shadow" :class="{ 'is-active': activeSection === 'token-shadow' }">Shadow 阴影</a></li>
           <li><a href="#token-motion" :class="{ 'is-active': activeSection === 'token-motion' }">Motion 动效</a></li>
+          <li><a href="#token-icon" :class="{ 'is-active': activeSection === 'token-icon' }">Icon 图标</a></li>
         </ul>
         </template>
 
@@ -182,6 +183,12 @@
         </ul>
         </template>
 
+        <template v-if="currentTopTab === 'page'">
+        <ul class="app-sidebar__nav">
+          <li><a href="#page-public-info" :class="{ 'is-active': activeSection === 'page-public-info' }">公开信息设置</a></li>
+        </ul>
+        </template>
+
         <template v-if="currentTopTab === 'copywriting'">
         <ul class="app-sidebar__nav">
           <li><a href="#copywriting-time" :class="{ 'is-active': activeSection === 'copywriting-time' }">Time 通用时间</a></li>
@@ -207,6 +214,7 @@
       <RadiusDemo />
       <ShadowDemo />
       <MotionDemo />
+      <IconDemo />
       </div>
       <div v-show="currentTopTab === 'component'" class="no-title-divider">
       <ButtonDemo />
@@ -288,6 +296,9 @@
       <PatternFormDemo />
       <PatternListItemDemo />
       <PatternToolbarDemo />
+      </div>
+      <div v-show="currentTopTab === 'page'" class="no-title-divider">
+      <PublicInfoPageDemo />
       </div>
       <div v-show="currentTopTab === 'copywriting'">
       <CopywritingTimeDemo />
@@ -409,6 +420,7 @@ import FontBaseDemo from './components/token/FontBaseDemo.vue'
 import FontSemanticDemo from './components/token/FontSemanticDemo.vue'
 import ShadowDemo from './components/token/ShadowDemo.vue'
 import MotionDemo from './components/token/MotionDemo.vue'
+import IconDemo from './components/token/IconDemo.vue'
 import ButtonDemo from './components/ButtonDemo.vue'
 import InputDemo from './components/InputDemo.vue'
 import SelectDemo from './components/SelectDemo.vue'
@@ -449,6 +461,7 @@ import PatternFormOrgDemo from './components/pattern/PatternFormOrgDemo.vue'
 import PatternFormDemo from './components/pattern/PatternFormDemo.vue'
 import PatternListItemDemo from './components/pattern/PatternListItemDemo.vue'
 import PatternToolbarDemo from './components/pattern/PatternToolbarDemo.vue'
+import PublicInfoPageDemo from './components/page/PublicInfoPageDemo.vue'
 import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
 import JudgingIntroDemo from './components/JudgingIntroDemo.vue'
 import JudgingListDemo from './components/JudgingListDemo.vue'
@@ -467,7 +480,7 @@ import AiButtonDemo from './components/biz/AiButtonDemo.vue'
 const activeSection = ref('palette')
 
 const sectionIds = [
-  'palette', 'token-color', 'token-font-base', 'token-font-semantic', 'token-spacing', 'token-radius', 'token-shadow', 'token-motion',
+  'palette', 'token-color', 'token-font-base', 'token-font-semantic', 'token-spacing', 'token-radius', 'token-shadow', 'token-motion', 'token-icon',
   'button',
   'breadcrumb', 'tabs', 'pagination', 'anchor', 'steps', 'dropdown',
   'input', 'select', 'date-picker', 'radio', 'checkbox', 'switch', 'slider', 'rate',
@@ -475,6 +488,7 @@ const sectionIds = [
   'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
   'page-frame', 'step-bar', 'ai-button',
   'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
+  'page-public-info',
   'copywriting-time',
   'judging-intro', 'judging-list',
 ]
@@ -486,6 +500,7 @@ const firstSectionByTab: Record<string, string> = {
   component: 'button',
   business: 'page-frame',
   pattern: 'pattern-form-org',
+  page: 'page-public-info',
   copywriting: 'copywriting-time',
   judging: 'judging-intro',
 }

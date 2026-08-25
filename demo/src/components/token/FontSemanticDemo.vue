@@ -26,6 +26,7 @@ const semanticFontTokens = [
   // —— 标题 ——
   { name: '--iflyv-font-title-page', desc: '页面标题 26/48 阿里普惠 800', split: { family: 'emphasis', weight: 'extrabold', size: 26, lh: 48 } },
   { name: '--iflyv-font-title-module', desc: '模块标题 18/36 semibold' },
+  { name: '--iflyv-font-title-regular', desc: '常规标题 16/24 semibold' },
   { name: '--iflyv-font-title-component', desc: '组件标题 14/20 semibold' },
   // —— 正文 ——
   { name: '--iflyv-font-body-primary', desc: '常规正文 16/24' },

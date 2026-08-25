@@ -22,7 +22,7 @@ import { copyToken, useTokenValues } from './useTokens'
 
 const radiusTokens = [
   { name: '--iflyv-radius-xs', desc: 'Tag / 下拉项' },
-  { name: '--iflyv-radius-sm', desc: '按钮 / 输入框 / 小卡片' },
+  { name: '--iflyv-radius-sm', desc: '按钮 / 输入框 / 小卡片 / 卡内嵌套面板' },
   { name: '--iflyv-radius-md', desc: '大卡片' },
   { name: '--iflyv-radius-lg', desc: '页面 / 弹窗 / 抽屉' },
   { name: '--iflyv-radius-full', desc: '全圆角' },
