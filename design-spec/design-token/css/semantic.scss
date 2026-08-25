@@ -115,6 +115,10 @@
   --iflyv-scroller-hover: #{$scroller-hover-fallback};
   --iflyv-scroller-hover: color-mix(in srgb, var(--iflyv-gray-10) 30%, transparent);
 
+  /* ==================== Tag 桥接色 ==================== */
+  /* 灰 Tag 底色：gray-10 6% 透明（组件源头内部使用，下游不直接引用） */
+  --iflyv-tag-gray-bg: #{rgba($gray-10, 0.06)};
+
   /* ==================== Message 描边色 ==================== */
   --iflyv-message-border-success: var(--iflyv-green-3);
   --iflyv-message-border-danger: var(--iflyv-red-3);
