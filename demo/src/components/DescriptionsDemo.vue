@@ -1,6 +1,8 @@
 <template>
   <section id="descriptions" class="demo-section">
-    <h2 class="demo-section__title">Descriptions 描述列表</h2>
+    <h2 class="demo-section__title">Descriptions 描述列表
+      <CopyToCC anchor="descriptions" :values="configForm" />
+    </h2>
 
     <div class="demo-block descriptions-showcase">
       <div class="descriptions-showcase__main">
@@ -11,7 +13,7 @@
             :key="item.label"
             :label="item.label"
           >
-            <el-tag v-if="item.tag" type="success" round>{{ item.value }}</el-tag>
+            <el-tag v-if="item.tag" type="success">{{ item.value }}</el-tag>
             <template v-else>{{ item.value }}</template>
           </el-descriptions-item>
         </el-descriptions>
@@ -33,7 +35,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import CopyToCC from './CopyToCC.vue'
+import { ref, computed, reactive } from 'vue'
 // 时间展示走文案规范唯一实现；「入职日期」无时分语义，用 'day' 精度（见 copywriting/time.md）
 import { formatTime } from '../../../design-spec/utils/format-time'
 
@@ -66,6 +69,9 @@ const descItems = computed(() => {
     return i < descPool.length ? base : { ...base, label: `${base.label} ${Math.floor(i / descPool.length) + 1}` }
   })
 })
+
+// 配置卡的实时值，供标题右上角「复制到 CC 去调用」带出去
+const configForm = reactive({ descRows, descCols })
 </script>
 
 <style scoped>

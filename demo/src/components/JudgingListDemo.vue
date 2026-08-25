@@ -33,7 +33,7 @@
             <span v-if="item.title !== item.designTitle" class="jc-row__tech">{{ item.title }}</span>
           </span>
           <span>
-            <el-tag :type="levelTagType(item.level)" round>{{ levelText(item.level) }}</el-tag>
+            <el-tag :type="levelTagType(item.level)">{{ levelText(item.level) }}</el-tag>
           </span>
           <span class="jc-row__source">{{ specName(item.source) }}</span>
         </div>

@@ -12,7 +12,7 @@
            统一三层结构：标签 → 大数字+单位 → 说明；分级卡的数字取对应语义色 -->
       <div class="jc-cards">
         <div class="jc-card">
-          <el-tag class="el-tag--gray" round>检查类别</el-tag>
+          <el-tag class="el-tag--gray">检查类别</el-tag>
           <p class="jc-card__figure">
             <span class="jc-card__num">{{ categoryCount }}</span>
             <span class="jc-card__unit">个</span>
@@ -20,7 +20,7 @@
           <p class="jc-card__desc">覆盖令牌、组件、模式、文案各层。</p>
         </div>
         <div class="jc-card">
-          <el-tag class="el-tag--gray" round>检查标准</el-tag>
+          <el-tag class="el-tag--gray">检查标准</el-tag>
           <p class="jc-card__figure">
             <span class="jc-card__num">{{ data.total }}</span>
             <span class="jc-card__unit">条</span>
@@ -28,7 +28,7 @@
           <p class="jc-card__desc">全部来自已定义的规范条文。</p>
         </div>
         <div v-for="lv in levelCards" :key="lv.level" class="jc-card">
-          <el-tag :type="levelTagType(lv.level)" round>{{ levelText(lv.level) }}</el-tag>
+          <el-tag :type="levelTagType(lv.level)">{{ levelText(lv.level) }}</el-tag>
           <p class="jc-card__figure">
             <span class="jc-card__num" :class="`is-${lv.level.toLowerCase()}`">{{ countOf(lv.level) }}</span>
             <span class="jc-card__unit">条</span>

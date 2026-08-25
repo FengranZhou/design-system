@@ -1,6 +1,8 @@
 <template>
   <section id="pagination" class="demo-section">
-    <h2 class="demo-section__title">Pagination 分页</h2>
+    <h2 class="demo-section__title">Pagination 分页
+      <CopyToCC anchor="pagination" :values="configForm" />
+    </h2>
 
     <!-- 分页：常规 / 小型 二选一，由右侧配置项切换（small 属性 + layout 精简）。
          常规=页面/弹窗等多数场景（带 sizes/jumper 完整功能）；小型=内嵌子模块等较小容器（仅翻页）。 -->
@@ -38,7 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import CopyToCC from './CopyToCC.vue'
+import { ref, computed, reactive } from 'vue'
 
 const currentPage = ref(1)
 const pageSize = ref(20)
@@ -50,6 +53,9 @@ const paginationSizeHint = computed(() =>
     ? '适用于较小的容器内部，如内嵌子模块等'
     : '适用于多数场景，如页面、弹窗等'
 )
+
+// 配置卡的实时值，供标题右上角「复制到 CC 去调用」带出去
+const configForm = reactive({ paginationSize })
 </script>
 
 <style scoped>

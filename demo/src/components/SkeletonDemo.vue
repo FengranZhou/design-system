@@ -1,6 +1,8 @@
 <template>
   <section id="skeleton" class="demo-section">
-    <h2 class="demo-section__title">Skeleton 骨架屏</h2>
+    <h2 class="demo-section__title">Skeleton 骨架屏
+      <CopyToCC anchor="skeleton" />
+    </h2>
 
     <div class="demo-block">
       <p class="demo-desc">可以被「加载」完全代替，但是在可用的场景下可以比 Spin 提供更好的视觉效果和用户体验。</p>
@@ -31,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 // ⏸ 随「切换加载状态」骨架屏暂停（模板已注释），保留、需要时一并放开（放开时需 import { ref } from 'vue'）：
 // const skeletonLoading = ref(true)
 </script>

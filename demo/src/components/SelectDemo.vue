@@ -1,6 +1,8 @@
 <template>
   <section id="select" class="demo-section">
-    <h2 class="demo-section__title">Select 选择器</h2>
+    <h2 class="demo-section__title">Select 选择器
+      <CopyToCC anchor="select" :values="copyValues" />
+    </h2>
 
     <!-- 基础选择器：可清除 / 可搜索作为正交配置项（右侧开关），与 Input 一致 -->
     <div class="demo-block input-showcase">
@@ -161,6 +163,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, computed, watch } from 'vue'
 
 // 基础选择器配置项：可清除 clearable + 可搜索 filterable 正交开关（el-form 需要 model 对象）
@@ -274,6 +277,29 @@ const treeSelectData = [
     ],
   },
 ]
+
+// 标题右上角「复制到 CC 去调用」：本区块 5 张配置卡分属 4 个 catalog 组件。
+// demo 的 ref 按演示块加了前缀（groupMultiple / treeMultiple…）以免同页撞名，
+// catalog 的字段名则是每个组件各自的视角（multiple / clearable / filterable）——
+// 两套命名各有各的道理，在这里对齐，不去改任何一边。
+const copyValues = computed(() => ({
+  'form-item-select': { clearable: clearable.value, filterable: filterable.value },
+  'form-item-select-group': {
+    multiple: groupMultiple.value,
+    clearable: groupClearable.value,
+    filterable: groupFilterable.value,
+  },
+  'form-item-tree-select': {
+    multiple: treeMultiple.value,
+    clearable: treeClearable.value,
+    filterable: treeFilterable.value,
+  },
+  'form-item-cascader': {
+    multiple: cascaderMultiple.value,
+    clearable: cascaderClearable.value,
+    filterable: cascaderFilterable.value,
+  },
+}))
 </script>
 
 <style scoped>

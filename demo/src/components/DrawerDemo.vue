@@ -1,6 +1,8 @@
 <template>
   <section id="drawer" class="demo-section">
-    <h2 class="demo-section__title">Drawer 抽屉</h2>
+    <h2 class="demo-section__title">Drawer 抽屉
+      <CopyToCC anchor="drawer" :values="drawerConfigForm" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -43,6 +45,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive } from 'vue'
 
 // —— 抽屉（Drawer）：底部按钮有无 + 按钮布局（水平/垂直）作为配置项 ——

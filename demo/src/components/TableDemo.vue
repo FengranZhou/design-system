@@ -1,6 +1,8 @@
 <template>
   <section id="table" class="demo-section">
-    <h2 class="demo-section__title">Cell 单元格</h2>
+    <h2 class="demo-section__title">Cell 单元格
+      <CopyToCC anchor="table" />
+    </h2>
 
     <!-- 基础组件层只展示表格的「最小单元」——单元格有哪几类。用真实 el-table 渲染，
          排序箭头 / 表头底色 / 行线 / hover 全部 el-table 原生，零手画私货。
@@ -28,7 +30,7 @@
         <el-table-column prop="name" width="160" />
         <el-table-column width="160">
           <template #default="{ row }">
-            <el-tag :type="row.statusType" round>{{ row.status }}</el-tag>
+            <el-tag :type="row.statusType">{{ row.status }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column width="180"
@@ -69,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 // 基础组件层只演示单元格「类型」本身——用真实 el-table 渲染（表头单元格只留表头行、
 // 内容单元格 show-header=false 只留内容行），排序/边框/hover 皆 el-table 原生，无私货。
 import { SquarePen, Eye, MoreHorizontal } from 'lucide-vue-next'

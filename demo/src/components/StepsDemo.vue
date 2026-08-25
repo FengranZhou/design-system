@@ -1,6 +1,8 @@
 <template>
   <section id="steps" class="demo-section">
-    <h2 class="demo-section__title">Steps 轻量步骤条</h2>
+    <h2 class="demo-section__title">Steps 轻量步骤条
+      <CopyToCC anchor="steps" />
+    </h2>
 
     <!-- ⏸ 暂停展示：步骤条（align-center）。暂时不用，保留代码，需要时放开。
     <div class="demo-block">
@@ -36,4 +38,5 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 </script>

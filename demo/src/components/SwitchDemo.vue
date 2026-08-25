@@ -1,6 +1,8 @@
 <template>
   <section id="switch" class="demo-section">
-    <h2 class="demo-section__title">Switch 开关</h2>
+    <h2 class="demo-section__title">Switch 开关
+      <CopyToCC anchor="switch" :values="switchConfigForm" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -50,6 +52,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, computed } from 'vue'
 
 const switchValue1 = ref(true)

@@ -1,6 +1,8 @@
 <template>
   <section id="rate" class="demo-section">
-    <h2 class="demo-section__title">Rate 评分</h2>
+    <h2 class="demo-section__title">Rate 评分
+      <CopyToCC anchor="rate" :values="configForm" />
+    </h2>
 
     <div class="demo-block control-showcase">
       <div class="control-showcase__main">
@@ -38,6 +40,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { reactive, ref } from 'vue'
 
 const rateValue = ref(3)

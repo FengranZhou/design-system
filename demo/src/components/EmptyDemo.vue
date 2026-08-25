@@ -1,6 +1,8 @@
 <template>
   <section id="empty" class="demo-section">
-    <h2 class="demo-section__title">Empty 空状态</h2>
+    <h2 class="demo-section__title">Empty 空状态
+      <CopyToCC anchor="empty" :values="configForm" />
+    </h2>
 
     <div class="demo-block empty-showcase">
       <!-- 左侧：空状态预览，配置由右侧卡片控制 -->
@@ -45,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 // 亮色空状态插画
 import noData from '../../../design-spec/el-theme/assets/empty/no-data.png'

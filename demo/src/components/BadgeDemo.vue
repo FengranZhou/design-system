@@ -1,6 +1,8 @@
 <template>
   <section id="badge" class="demo-section">
-    <h2 class="demo-section__title">Badge 徽标</h2>
+    <h2 class="demo-section__title">Badge 徽标
+      <CopyToCC anchor="badge" :values="configForm" />
+    </h2>
 
     <!-- 徽标：四类载体（头像/按钮/图标/Tab）通过配置项切换，每类固定四状态（点 / 数字 / 上限 99+ / 英文） -->
     <div class="demo-block badge-showcase">
@@ -99,12 +101,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import CopyToCC from './CopyToCC.vue'
+import { ref, reactive } from 'vue'
 import { Bell, Mail, MessageSquare, Heart } from 'lucide-vue-next'
 import { UserAvatar } from '../../../design-spec/components'
 
 // 徽标载体类型：头像 / 按钮 / 图标 / tab 栏
 const badgeType = ref('avatar')
+
+// 配置卡的实时值，供标题右上角「复制到 CC 去调用」带出去
+const configForm = reactive({ badgeType })
 </script>
 
 <style scoped>

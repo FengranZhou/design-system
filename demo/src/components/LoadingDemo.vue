@@ -1,6 +1,8 @@
 <template>
   <section id="loading" class="demo-section">
-    <h2 class="demo-section__title">Loading 加载</h2>
+    <h2 class="demo-section__title">Loading 加载
+      <CopyToCC anchor="loading" :values="configForm" />
+    </h2>
 
     <!-- 区域加载：指令方式 v-loading；提示文字由右侧配置项控制——填了即带文字、清空即纯 spinner。 -->
     <div class="demo-block control-showcase">
@@ -32,8 +34,9 @@
 </template>
 
 <script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
 import { ElLoading } from 'element-plus'
-import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, ref, reactive } from 'vue'
 
 // 区域加载提示文字：开=显示"数据加载中..."，关=纯 spinner。
 const showLoadingText = ref(true)
@@ -58,6 +61,9 @@ onBeforeUnmount(() => {
   fullscreenLoading?.close()
   fullscreenLoading = null
 })
+
+// 配置卡的实时值，供标题右上角「复制到 CC 去调用」带出去
+const configForm = reactive({ showLoadingText })
 </script>
 
 <style scoped lang="scss">
