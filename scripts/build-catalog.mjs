@@ -134,12 +134,12 @@ function navComponents() {
   const out = []
 
   // 只取「基础组件」「业务组件」两个顶部 tab 的区块
-  for (const tab of ['component', 'business']) {
+  for (const tab of ['component', 'business', 'chart']) {
     const re = new RegExp(`currentTopTab === '${tab}'"[\\s\\S]*?</template>`, 'm')
     const block = src.match(re)
     if (!block) continue
 
-    let group = tab === 'business' ? 'business' : 'general'
+    let group = tab === 'business' ? 'business' : tab === 'chart' ? 'chart' : 'general'
     // 逐行扫：分组标题切换 group，li 行收组件（注释掉的行天然跳过）
     for (const line of block[0].split('\n')) {
       const g = line.match(/class="app-sidebar__group-label">([^<]+)</)

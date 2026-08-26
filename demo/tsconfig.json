@@ -22,7 +22,9 @@
       // design-spec 业务组件在 demo 之外，其裸包导入映射到 demo/node_modules，供 vue-tsc 解析
       "vue": ["./node_modules/vue"],
       "element-plus": ["./node_modules/element-plus"],
-      "lucide-vue-next": ["./node_modules/lucide-vue-next"]
+      "lucide-vue-next": ["./node_modules/lucide-vue-next"],
+      "echarts": ["./node_modules/echarts"],
+      "echarts/*": ["./node_modules/echarts/*"]
     }
   },
   // 纳入 design-spec 业务组件源头，使其 <script setup> 宏被正确识别、依赖类型可解析

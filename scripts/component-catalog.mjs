@@ -38,6 +38,7 @@ export const GROUPS = [
   { key: 'display', label: '数据展示' },
   { key: 'feedback', label: '反馈' },
   { key: 'business', label: '业务组件' },
+  { key: 'chart', label: '图表' },
 ]
 
 /**
@@ -608,11 +609,12 @@ ${items}
     keywords: ['按钮', 'button', '操作', '提交'],
     readRefs: [
       'references/foundations.md（主按钮贴边原则）',
-      'references/component-interaction.md（按钮图标 / 纯图标按钮 / 按钮间距 段）',
+      'references/component-interaction.md（按钮图标 / 纯图标按钮 / 入口引导按钮 / 按钮间距 段）',
     ],
     mustRules: [
       '主按钮贴近按钮组所在容器的对齐侧边缘：右对齐→主按钮贴右，左对齐→主按钮贴左',
       '按钮加图标一律 Lucide + #icon 插槽，禁 :icon 属性',
+      '入口引导箭头（「查看更多 ›」类导航入口）用 ChevronRight 挂约定 class .btn-entry，仅限 text 文本按钮，与下拉箭头互斥、尾部只挂其一',
       '按钮组间距一律父容器 flex+gap，禁写 margin（源头已清零 EP 相邻 margin）',
       '异步操作用 el-button loading 防重复提交，不要给整个区域套遮罩',
     ],
@@ -632,11 +634,14 @@ ${items}
       },
       { key: 'loading', label: '带 loading', type: 'switch', default: false, hint: '异步操作防重复点击' },
     ],
-    snippet: ({ text, type, loading, showIcon, showCaret }) => {
+    snippet: ({ text, type, loading, showIcon, showCaret, showEntry }) => {
       const t = type === 'default' ? '' : type === 'text' ? ' text' : ` type="${type}"`
       const parts = []
       if (showIcon) parts.push('  <template #icon><Plus /></template>')
-      parts.push('  ' + (text || '按钮') + (showCaret ? '<span class="btn-caret" />' : ''))
+      // 尾部箭头是互斥的同一维度：下拉（ChevronDown，全类型可用）/ 入口引导（ChevronRight，仅限 text）
+      const entry = showEntry && type === 'text' ? ' <ChevronRight class="btn-entry" :size="14" :stroke-width="2" />' : ''
+      const caret = showCaret ? ' <ChevronDown class="btn-caret" :size="14" :stroke-width="2" />' : ''
+      parts.push('  ' + (text || '按钮') + (caret || entry))
       return `<el-button${t}${loading ? ' :loading="submitting"' : ''} @click="handleClick">
 ${parts.join('\n')}
 </el-button>`
@@ -1075,6 +1080,7 @@ import { Breadcrumb, type BreadcrumbItem } from '<path>/design-spec/components'`
     mustRules: [
       'layout 固定顺序 prev, pager, next, sizes, jumper（不含 total）',
       '总数文本不走分页器——外层 flex + space-between，左侧放「共 N 条」、右侧放分页器',
+      '必传 hide-on-single-page：不足一页整个分页器不渲染（禁自己写 v-if 手算页数）',
       '窄容器加 small 且必须同时把 layout 精简为 prev, pager, next（只加 small 不精简会挤出换行）',
     ],
     instanceFields: [],
@@ -1085,7 +1091,8 @@ import { Breadcrumb, type BreadcrumbItem } from '<path>/design-spec/components'`
   <el-pagination
     v-model:current-page="page"
     v-model:page-size="pageSize"
-    :total="total"${small ? '\n    small\n    layout="prev, pager, next"' : '\n    :page-sizes="[10, 20, 50, 100]"\n    layout="prev, pager, next, sizes, jumper"'}
+    :total="total"
+    hide-on-single-page${small ? '\n    small\n    layout="prev, pager, next"' : '\n    :page-sizes="[10, 20, 50, 100]"\n    layout="prev, pager, next, sizes, jumper"'}
   />
 </div>`
     },
@@ -1583,6 +1590,85 @@ import { PageFrame, type PageFrameMenuGroup } from '<path>/design-spec/component
 
 <!-- 脚本 -->
 import { AiButton } from '<path>/design-spec/components'`,
+  },
+
+  // ── 图表（业务组件 Chart 的五种形态，形态 = 基础型 × 正交配置）─────────────
+  {
+    id: 'chart-donut', anchor: 'chart-donut', name: 'Donut 环形图', group: 'chart',
+    desc: '占比构成（扇区 ≤5）', keywords: ['环形图', '饼图', 'donut', 'pie', '占比', '构成'],
+    readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '扇区 ≤5，超过改用堆积条形，别硬塞',
+    ],
+    instanceFields: [
+      { key: 'centerTitle', label: '环心数字', type: 'text', placeholder: '如：104', default: '' },
+      { key: 'centerLabel', label: '环心说明', type: 'text', placeholder: '如：课程资源', default: '' },
+    ],
+    snippet: ({ centerTitle, centerLabel }) =>
+      `<Chart type="donut" :data="[{ name: '文档', value: 28 } /* …扇区 ≤5 */]"${centerTitle ? ` center-title="${centerTitle}"` : ''}${centerLabel ? ` center-label="${centerLabel}"` : ''} />`,
+  },
+  {
+    id: 'chart-bar', anchor: 'chart-bar', name: 'Bar 柱状图', group: 'chart',
+    desc: '类目比大小（类目 ≤8）', keywords: ['柱状图', 'bar', '柱图', '比大小'],
+    readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '类目 ≤8；别用折线连类目——类目间没有连续关系',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart type="bar" :data="[{ name: '一班', value: 86 } /* …类目 ≤8 */]" />`,
+  },
+  {
+    id: 'chart-bar-stack', anchor: 'chart-bar-stack', name: 'Stacked 堆积柱状图', group: 'chart',
+    desc: '比较多个对象的构成', keywords: ['堆积柱状图', '堆叠', 'stacked', '构成对比'],
+    readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '多序列传 categories + series，stacked 开关叠加，自动出图例——勿为组合造新类型',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart
+  type="bar"
+  stacked
+  :categories="['一班', '二班']"
+  :series="[
+    { name: '选择题', data: [32, 28] },
+    { name: '填空题', data: [24, 26] },
+  ]"
+/>`,
+  },
+  {
+    id: 'chart-bar-horizontal', anchor: 'chart-bar-horizontal', name: 'Horizontal 条形图', group: 'chart',
+    desc: '类目多 / 名称长时的比大小', keywords: ['条形图', '横向柱状图', 'horizontal', '横排'],
+    readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '类目多或名称长时用横排（horizontal 是正交配置，不是新类型）',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart type="bar" horizontal :data="[{ name: '多媒体教材', value: 46 } /* … */]" />`,
+  },
+  {
+    id: 'chart-line', anchor: 'chart-line', name: 'Line 折线图', group: 'chart',
+    desc: '随时间的变化趋势（≤4 条）', keywords: ['折线图', 'line', '趋势', '走势'],
+    readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '多序列 ≤4 条（同柱状图传 categories + series）；时间点多别用柱状——会挤成栅栏',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart type="line" :data="[{ name: '第1周', value: 92 } /* … */]" />`,
   },
 ]
 

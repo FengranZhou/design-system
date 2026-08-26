@@ -12,6 +12,7 @@ export { DataTable, type DataTableColumn, type DataTableAction, type ColumnKind 
 export { Breadcrumb, type BreadcrumbItem } from './Breadcrumb'
 export { StepBar } from './StepBar'
 export { AiButton } from './AiButton'
+export { Chart, type ChartType, type ChartDatum } from './Chart'
 export {
   PageFrame,
   type PageFrameMenuGroup,

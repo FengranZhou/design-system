@@ -13,11 +13,12 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     // 关键依赖去重：demo 与 design-spec 业务组件共用同一份实例
-    dedupe: ['vue', 'element-plus', 'lucide-vue-next'],
+    dedupe: ['vue', 'element-plus', 'lucide-vue-next', 'echarts'],
     alias: {
       vue: nm('vue'),
       'element-plus': nm('element-plus'),
       'lucide-vue-next': nm('lucide-vue-next'),
+      echarts: nm('echarts'),
     },
   },
 })

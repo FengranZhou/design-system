@@ -25,6 +25,10 @@
     {
       "key": "business",
       "label": "业务组件"
+    },
+    {
+      "key": "chart",
+      "label": "图表"
     }
   ],
   "components": [
@@ -52,19 +56,26 @@
           "label": "下拉",
           "type": "switch",
           "default": false
+        },
+        {
+          "key": "showEntry",
+          "label": "入口引导",
+          "type": "switch",
+          "default": false
         }
       ],
       "readRefs": [
         "references/foundations.md（主按钮贴边原则）",
-        "references/component-interaction.md（按钮图标 / 纯图标按钮 / 按钮间距 段）"
+        "references/component-interaction.md（按钮图标 / 纯图标按钮 / 入口引导按钮 / 按钮间距 段）"
       ],
       "mustRules": [
         "主按钮贴近按钮组所在容器的对齐侧边缘：右对齐→主按钮贴右，左对齐→主按钮贴左",
         "按钮加图标一律 Lucide + #icon 插槽，禁 :icon 属性",
+        "入口引导箭头（「查看更多 ›」类导航入口）用 ChevronRight 挂约定 class .btn-entry，仅限 text 文本按钮，与下拉箭头互斥、尾部只挂其一",
         "按钮组间距一律父容器 flex+gap，禁写 margin（源头已清零 EP 相邻 margin）",
         "异步操作用 el-button loading 防重复提交，不要给整个区域套遮罩"
       ],
-      "snippetSrc": "({ text, type, loading, showIcon, showCaret }) => {\n      const t = type === 'default' ? '' : type === 'text' ? ' text' : ` type=\"${type}\"`\n      const parts = []\n      if (showIcon) parts.push('  <template #icon><Plus /></template>')\n      parts.push('  ' + (text || '按钮') + (showCaret ? '<span class=\"btn-caret\" />' : ''))\n      return `<el-button${t}${loading ? ' :loading=\"submitting\"' : ''} @click=\"handleClick\">\n${parts.join('\\n')}\n</el-button>`\n    }",
+      "snippetSrc": "({ text, type, loading, showIcon, showCaret, showEntry }) => {\n      const t = type === 'default' ? '' : type === 'text' ? ' text' : ` type=\"${type}\"`\n      const parts = []\n      if (showIcon) parts.push('  <template #icon><Plus /></template>')\n      // 尾部箭头是互斥的同一维度：下拉（ChevronDown，全类型可用）/ 入口引导（ChevronRight，仅限 text）\n      const entry = showEntry && type === 'text' ? ' <ChevronRight class=\"btn-entry\" :size=\"14\" :stroke-width=\"2\" />' : ''\n      const caret = showCaret ? ' <ChevronDown class=\"btn-caret\" :size=\"14\" :stroke-width=\"2\" />' : ''\n      parts.push('  ' + (text || '按钮') + (caret || entry))\n      return `<el-button${t}${loading ? ' :loading=\"submitting\"' : ''} @click=\"handleClick\">\n${parts.join('\\n')}\n</el-button>`\n    }",
       "snippetDefaults": {
         "type": "primary",
         "loading": false
@@ -190,9 +201,10 @@
       "mustRules": [
         "layout 固定顺序 prev, pager, next, sizes, jumper（不含 total）",
         "总数文本不走分页器——外层 flex + space-between，左侧放「共 N 条」、右侧放分页器",
+        "必传 hide-on-single-page：不足一页整个分页器不渲染（禁自己写 v-if 手算页数）",
         "窄容器加 small 且必须同时把 layout 精简为 prev, pager, next（只加 small 不精简会挤出换行）"
       ],
-      "snippetSrc": "({ paginationSize }) => {\n      const small = paginationSize === 'small'\n      return `<div style=\"display:flex; justify-content:space-between; align-items:center;\">\n  <span>共 {{ total }} 条</span>\n  <el-pagination\n    v-model:current-page=\"page\"\n    v-model:page-size=\"pageSize\"\n    :total=\"total\"${small ? '\\n    small\\n    layout=\"prev, pager, next\"' : '\\n    :page-sizes=\"[10, 20, 50, 100]\"\\n    layout=\"prev, pager, next, sizes, jumper\"'}\n  />\n</div>`\n    }",
+      "snippetSrc": "({ paginationSize }) => {\n      const small = paginationSize === 'small'\n      return `<div style=\"display:flex; justify-content:space-between; align-items:center;\">\n  <span>共 {{ total }} 条</span>\n  <el-pagination\n    v-model:current-page=\"page\"\n    v-model:page-size=\"pageSize\"\n    :total=\"total\"\n    hide-on-single-page${small ? '\\n    small\\n    layout=\"prev, pager, next\"' : '\\n    :page-sizes=\"[10, 20, 50, 100]\"\\n    layout=\"prev, pager, next, sizes, jumper\"'}\n  />\n</div>`\n    }",
       "snippetDefaults": {},
       "shot": "data:image/webp;base64,UklGRqYCAABXRUJQVlA4IJoCAACQFgCdASoEAYwAPmEulkikIiIhIPQIeIAMCWlu4Wxg+j+vb+ahn4RZkXQxH5VjzafQmz2n0Js9p9CbPafQmz2n0JsqbtfvYPPuK2ndBMDkwILTAVcMSQRE6r51oehM3LAVXWTh3FSc1hRYutpFI+SYpQfdDdLV4Hg1+LuwKyslnW0QPjzVGunmE3bGDX6PgOAQ2Ixb7r+nFi9F57n/no2rREWBWCF0+hNntPoTZ7T6E2e0+hNntPoTZ7T6CwAA/v7MgAAAAATCxpMlGPtFtlvYAXL7H1rxgnGopT1n6VJOtu9a746SfymQhxR5Otc3T8rUEIfdJ/IA9BZmMDNtalTf5aI4cp8fsF0EufPLPjkccRhVIoW/ft1pgf+3uQIL785bRA2ipE5zEyAADgDYxECGjTvxXLIcSk/6oydPUgBj6oEHzUU9d6hCcS4ACTg8fTcxTa9Zf+yZyeZRzcHEPfrRTwF6yzL7z4CJ+RyWVWf6qYfVaLMTQhLxK5hGUFxZ5aVIifTCkIUDW+v8WSl8ZCZ/F3h5EAJ4LoKM762D5hv2N7xLpWjlwsNVYH/SOZbp0pavEfeJhO2lC9V4yn/2Kxaryi+rkkB5EjABSFoOSXu8QmMj/N4yJsAPvqwHRIIqzyLrm42N7OJdfrpV3W+2QfIkFDdnPLuSYENqyJ/rRh3EyXarFlXg30PXnpCWQy6GIAAiDQUcJEW6yN6skIbpFahmeFlGiua+HoxmKk0e5rOxJ6znOV03i8vZUBy7wHphhpK1A9I9XLXNGosExZKfOk5zwIBXaaiuXtCg/lqaMgjvRjE/Tj92EshsTKL4j2S7zFdx/Ll0ls925Zbrb8xDIsHAZWqhp+tbIDaX5K/eaMcFUiAAAAAAAAAAAAA="
     },
@@ -1982,6 +1994,143 @@
         "loading": false
       },
       "shot": "data:image/webp;base64,UklGRtYFAABXRUJQVlA4IMoFAACQJgCdASoEAYwAPmEskkekIiIhJVFKAIAMCWUvFjZYB9paZ4NCD49aNtw3zwj6dnzvsxlPfzf5Kcp8wQI/yHVgzfUp/0BUcgImm/IXzvx45R8WP+hxyqjfAaY3C2Gz/fSlUnUzrBdh99JXgWqrRyaymgMJpSWzJMXW5JSnfmQSYylQ5R32UHI3EbD+UduT248rk81UdCcvxXVwBoRZylWAtZZVmDIHJ/k1QUiKjpVQ+ulJuM2yhhEf3/7/v2hXOyEcK2Nhz3jEBwkU9uRytlmMYZ3LWL1Wq7+drs4Rm+SkW4jy0QVJmyCGh+EthICKAzXpReOc//FtLKF3hPWG8eU7efNXRvZDEBu1jqe5Jm0fP1B1K7jm7WZN7sr8XKForEZ+Ett59bubpbdzbhd49SloIzRfQjpckqlb75roAAD+/O47oDc4cAAoAA9DJg6ykDeVkBJ9b4F6HoKGcBihthbSLE8kA78Br/cZ+V9/M57tte9obzbvXwKQBS0ZttM4BpWeO00NJ1BylMHaXDsLaZnFjq/58+uf4lLjJTqBA+/bqMqZBEUYFZnakG9m9m5P0Db6wUuGpSalH/bK2nl5kDZdyToi2ATn9MYIXs95eNBzVuoHbFza6NqQ+2GkVqCeSOItxdBVXWg579QmGXtgwrUT8r0dycyH5aaaJo4pj+ZKYW75aAnZMXOPTsfwPjjw9tLAQS2afRAHWU50OT0HW4UsJuw6+xgciQ2XrU4y6lgI6aecT27edn7qgLorhrGvK7vzkGLvsqb25YSv7krTPiWAZmKtX0cHE4AvVIZeEPFBUScHwiNrckvc/2lZ3e64qJ7wMiThQq+6HoDZZlnyeMwkLtpvK2vW5C/NGFmN+bAIlp/BF7U1UBX/wPLsYAyHZEOLiNbvrw1a7HyHB+ukY++5osJ1J7qI2VuPtufZIswUjALm7fTJZbmCO/wfvD/o8YRjRj0QjPHiCmTedF217C2krvEWvUrGhxoK9mXgtGi+5dWcUL91k0GgJea+KYuDs9ZQ1xWwq4CZHni7jfbxiykncjVUdT5bqNnuqtMiAZoHM3W+TvYZa+mufNYm/I1PtYZnVKmpH7+RgBVFs019zeeYNiegFArNAxsJ9prXdLcirBBoIpNuJ6B9fEwi6tUeVLKPnQX827IHAYdivbwlWQDJjx/GP1os2Euma/+eXclX2bYmKO/rzI4Fx0/oDTgFjMUzU6mGkZRb8YCLwx/jgLytM7N6MeJYgizG9D4oeTWHnQ9fViFXg67IVPa7AcKqPL0uwkHEjKyMF8yd8i9Hh1ecmViwfxN2g/iDZCDYSnV43PnhOnMzedmC+Sz2q+RMnTdJad+eexj8dJ+Ntb1ulzpd2mYurk3ZMg/+L0PrlFqjY82a+wQzUcQZU513jUDejD5eAijTJ31CMGOZfxnetGo+/K04YrtxyJ+T87TDoJdN2cZndn6+Vs63zMgd3OrvGY4kYzA0jl0iwYN05ZazmZLnhJ1SztwnunaQeCU5h8W2i9K5OxAOcYklJJDGEsqyXdqFUs0/ddgMTGk4Fq3ufnG8VwuqzF/ccyAAPPSHP0RCDjLdZLePUgCyxBtvHySXc1o8poQDLPr4rJhrS1c2bHv90gFXTUxnCBZCk+ONrt4hTdiPX8kSXm96ZxLy9xHk2WsK6VrY9x/ZdLB45ETF0PRTuKTg1NrSXdKES+ceaa+xshl4qmSYKD3KdXs0CoyuOBKnPyUPS0/AhkKBcM+h4h+MkXi9P1wCAL/2Tp08xl0AaYgbAjaaC7/jP3g76e6oS3RDWqHzUGmgDJIj7t4OKkGkO7ZStIgY+BiGYNZX4qIN5ZoAW9GhEwNaka026b1tB8GOQsHy1c7HnW5/pLt6X8ObCbQVjUGsIkZ8aoUF5sdBjUYDlvxvJIwfHCPysmLTdkTZt7CM0PoBPNBXJ/FN5PEI484snAIxToN0c2GgVl1jA+thIAAAAAAAAAA="
+    },
+    {
+      "id": "chart-donut",
+      "anchor": "chart-donut",
+      "name": "Donut 环形图",
+      "group": "chart",
+      "desc": "占比构成（扇区 ≤5）",
+      "keywords": [
+        "环形图",
+        "饼图",
+        "donut",
+        "pie",
+        "占比",
+        "构成"
+      ],
+      "fields": [],
+      "readRefs": [
+        "references/display-guide.md（数据可视化 段）",
+        "components/Chart/Chart.vue（顶部速查注释）"
+      ],
+      "mustRules": [
+        "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
+        "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+        "只是一个核心数字→别画图，直接用 number-display 数字字阶",
+        "扇区 ≤5，超过改用堆积条形，别硬塞"
+      ],
+      "snippetSrc": "({ centerTitle, centerLabel }) =>\n      `<Chart type=\"donut\" :data=\"[{ name: '文档', value: 28 } /* …扇区 ≤5 */]\"${centerTitle ? ` center-title=\"${centerTitle}\"` : ''}${centerLabel ? ` center-label=\"${centerLabel}\"` : ''} />`",
+      "snippetDefaults": {},
+      "shot": "data:image/webp;base64,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"
+    },
+    {
+      "id": "chart-bar",
+      "anchor": "chart-bar",
+      "name": "Bar 柱状图",
+      "group": "chart",
+      "desc": "类目比大小（类目 ≤8）",
+      "keywords": [
+        "柱状图",
+        "bar",
+        "柱图",
+        "比大小"
+      ],
+      "fields": [],
+      "readRefs": [
+        "references/display-guide.md（数据可视化 段）",
+        "components/Chart/Chart.vue（顶部速查注释）"
+      ],
+      "mustRules": [
+        "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
+        "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+        "只是一个核心数字→别画图，直接用 number-display 数字字阶",
+        "类目 ≤8；别用折线连类目——类目间没有连续关系"
+      ],
+      "snippetSrc": "() => `<Chart type=\"bar\" :data=\"[{ name: '一班', value: 86 } /* …类目 ≤8 */]\" />`",
+      "snippetDefaults": {},
+      "shot": "data:image/webp;base64,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"
+    },
+    {
+      "id": "chart-bar-stack",
+      "anchor": "chart-bar-stack",
+      "name": "Stacked 堆积柱状图",
+      "group": "chart",
+      "desc": "比较多个对象的构成",
+      "keywords": [
+        "堆积柱状图",
+        "堆叠",
+        "stacked",
+        "构成对比"
+      ],
+      "fields": [],
+      "readRefs": [
+        "references/display-guide.md（数据可视化 段）",
+        "components/Chart/Chart.vue（顶部速查注释）"
+      ],
+      "mustRules": [
+        "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
+        "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+        "只是一个核心数字→别画图，直接用 number-display 数字字阶",
+        "多序列传 categories + series，stacked 开关叠加，自动出图例——勿为组合造新类型"
+      ],
+      "snippetSrc": "() => `<Chart\n  type=\"bar\"\n  stacked\n  :categories=\"['一班', '二班']\"\n  :series=\"[\n    { name: '选择题', data: [32, 28] },\n    { name: '填空题', data: [24, 26] },\n  ]\"\n/>`",
+      "snippetDefaults": {},
+      "shot": "data:image/webp;base64,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"
+    },
+    {
+      "id": "chart-bar-horizontal",
+      "anchor": "chart-bar-horizontal",
+      "name": "Horizontal 条形图",
+      "group": "chart",
+      "desc": "类目多 / 名称长时的比大小",
+      "keywords": [
+        "条形图",
+        "横向柱状图",
+        "horizontal",
+        "横排"
+      ],
+      "fields": [],
+      "readRefs": [
+        "references/display-guide.md（数据可视化 段）",
+        "components/Chart/Chart.vue（顶部速查注释）"
+      ],
+      "mustRules": [
+        "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
+        "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+        "只是一个核心数字→别画图，直接用 number-display 数字字阶",
+        "类目多或名称长时用横排（horizontal 是正交配置，不是新类型）"
+      ],
+      "snippetSrc": "() => `<Chart type=\"bar\" horizontal :data=\"[{ name: '多媒体教材', value: 46 } /* … */]\" />`",
+      "snippetDefaults": {},
+      "shot": "data:image/webp;base64,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"
+    },
+    {
+      "id": "chart-line",
+      "anchor": "chart-line",
+      "name": "Line 折线图",
+      "group": "chart",
+      "desc": "随时间的变化趋势（≤4 条）",
+      "keywords": [
+        "折线图",
+        "line",
+        "趋势",
+        "走势"
+      ],
+      "fields": [],
+      "readRefs": [
+        "references/display-guide.md（数据可视化 段）",
+        "components/Chart/Chart.vue（顶部速查注释）"
+      ],
+      "mustRules": [
+        "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
+        "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+        "只是一个核心数字→别画图，直接用 number-display 数字字阶",
+        "多序列 ≤4 条（同柱状图传 categories + series）；时间点多别用柱状——会挤成栅栏"
+      ],
+      "snippetSrc": "() => `<Chart type=\"line\" :data=\"[{ name: '第1周', value: 92 } /* … */]\" />`",
+      "snippetDefaults": {},
+      "shot": "data:image/webp;base64,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"
     }
   ]
 }
