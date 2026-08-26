@@ -281,14 +281,14 @@ $loading-path: '/frontend-static/static/localization/public/loading.svg';
 
   /* ==================== 主题强调色别名 Accent ==================== */
   /* 默认品牌色：GeekBlue。通过 var() fallback 保证无 data-brand 时也有值 */
-  --iflyv-accent-1: var(--iflyv-brand-1, var(--iflyv-geekblue-1));
-  --iflyv-accent-2: var(--iflyv-brand-2, var(--iflyv-geekblue-2));
-  --iflyv-accent-3: var(--iflyv-brand-3, var(--iflyv-geekblue-3));
-  --iflyv-accent-4: var(--iflyv-brand-4, var(--iflyv-geekblue-4));
-  --iflyv-accent-5: var(--iflyv-brand-5, var(--iflyv-geekblue-5));
-  --iflyv-accent-6: var(--iflyv-brand-6, var(--iflyv-geekblue-6));
-  --iflyv-accent-7: var(--iflyv-brand-7, var(--iflyv-geekblue-7));
-  --iflyv-accent-8: var(--iflyv-brand-8, var(--iflyv-geekblue-8));
-  --iflyv-accent-9: var(--iflyv-brand-9, var(--iflyv-geekblue-9));
-  --iflyv-accent-10: var(--iflyv-brand-10, var(--iflyv-geekblue-10));
+  --iflyv-accent-1: var(--iflyv-brand-1, var(--iflyv-green-1));
+  --iflyv-accent-2: var(--iflyv-brand-2, var(--iflyv-green-2));
+  --iflyv-accent-3: var(--iflyv-brand-3, var(--iflyv-green-3));
+  --iflyv-accent-4: var(--iflyv-brand-4, var(--iflyv-green-4));
+  --iflyv-accent-5: var(--iflyv-brand-5, var(--iflyv-green-5));
+  --iflyv-accent-6: var(--iflyv-brand-6, var(--iflyv-green-6));
+  --iflyv-accent-7: var(--iflyv-brand-7, var(--iflyv-green-7));
+  --iflyv-accent-8: var(--iflyv-brand-8, var(--iflyv-green-8));
+  --iflyv-accent-9: var(--iflyv-brand-9, var(--iflyv-green-9));
+  --iflyv-accent-10: var(--iflyv-brand-10, var(--iflyv-green-10));
 }
