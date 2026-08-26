@@ -1,28 +1,43 @@
 <!-- ============================================================================
   Chart 图表（业务组件）——接入方速查
   ----------------------------------------------------------------------------
-  何时用：数据看板 / 统计分析里的图表。选型先按 display-guide「图表选型」判据：
-         类目比大小→bar、随时间走势→line、占比构成→donut（扇区 ≤5）；
-         只是一个核心数字→别画图，直接用 --iflyv-font-number-display 数字字阶。
+  何时用：数据看板 / 统计分析里的图表。选型先按 display-guide「图表选型」判据 +
+         「各图型细则」（数量上限与硬判据）；只是一个核心数字→别画图，
+         直接用 --iflyv-font-number-display 数字字阶。
   引用：  import { Chart } from '<path>/design-spec/components'
          ⚠ 本组件依赖 echarts（按需引 echarts/core，不全量）——接入方需自装：pnpm add echarts
   用法（形态 = 基础型 × 正交配置，勿为组合造新类型）：
-    环形图：  <Chart type="donut" :data="[{ name: '文档', value: 28 }, …]"
-                     center-title="104" center-label="课程资源" />
-    柱状图：  <Chart type="bar" :data="[{ name: '本学期', value: 41 }, …]" />
-    条形图：  <Chart type="bar" horizontal :data="…" />          ← 类目多/名称长时横排
-    堆积柱：  <Chart type="bar" stacked :categories="['一班','二班']"
-                     :series="[{ name: '选择', data: [40, 35] }, …]" />
-    折线图：  <Chart type="line" :data="trend" />（多序列同柱状图传 categories + series）
+    环形图：  <Chart type="donut" :data="…" center-title="104" center-label="课程资源" />
+    饼状图：  <Chart type="pie" :data="…" />                  ← 环心无信息可放时用饼
+    柱状图：  <Chart type="bar" :data="…" series-name="平均分" unit="分" />
+    条形图：  <Chart type="bar" horizontal :data="…" />       ← 无序类别 / 类目多名称长
+    堆积柱：  <Chart type="bar" stacked :categories="…" :series="…" />
+    堆积条：  <Chart type="bar" stacked horizontal :categories="…" :series="…" />
+    百分比堆积：<Chart type="bar" stacked percent :categories="…" :series="…" />  ← 只放 2 个序列
+    双向柱/条：<Chart type="bar" diverging :categories="…" :series="…" />  ← 恰 2 序列（正负相对）
+    柱线图：  <Chart type="bar-line" :categories="…" unit="部" unit2="亿"
+                     :series="[{ name: '影片数', data: […] }, { name: '票房', data: […], kind: 'line' }]" />
+    瀑布图：  <Chart type="waterfall" :data="…" unit="万" />  ← data.value 为增量（可负），不支持多组
+    折线图：  <Chart type="line" :data="…" series-name="出勤率" unit="%" />
+    散点图：  <Chart type="scatter" x-unit="体重(kg)" unit="身高(cm)"
+                     :series="[{ name: '男生', data: [[62, 172], …] }]" />
+    雷达图：  <Chart type="radar" :indicators="[{ name: '出勤' }, …]" :series="…" />  ← 维度 ≥3
   props：
-    type          'bar' | 'line' | 'donut'   必填。
-    data          { name, value }[]          单序列数据（与 categories/series 二选一）。
+    type          基础型（见上）             必填。
+    data          { name, value }[]          单序列数据（与 categories/series 二选一；waterfall 专用）。
     categories    string[]                   多序列时的类目轴。
-    series        { name, data: number[] }[] 多序列数据（bar/line；自动出图例）。
-    horizontal    boolean（仅 bar）          横排 = 条形图（类目多或名称长时用）。
-    stacked       boolean（仅 bar 多序列）   堆积柱状图（比多个对象的构成时用）。
+    series        { name, data, kind? }[]    多序列数据（自动出图例）；散点 data 为 [x,y][]；
+                                             kind 仅 bar-line 用（'line' 走右轴）。
+    indicators    { name, max? }[]（radar）  雷达维度，≥3 个；max 缺省按数据自动放大。
+    horizontal    boolean（仅 bar）          横排 = 条形（无序类别 / 类目多名称长）。
+    stacked       boolean（仅 bar 多序列）   堆积（比多个对象的构成时用）。
+    percent       boolean（仅 stacked）      百分比堆积：各类目归一化到 100%——只放 2 个序列。
+    diverging     boolean（仅 bar 双序列）   双向柱/条：正负相对的数据（收入/支出），恰 2 个序列。
+    zoomable      boolean（竖排 bar/line）    横轴点位很多时开启：底部范围选择控件 + 滚轮缩放。
     series-name   string（单序列）           序列名：传了就展示图例（规范：单组数据也展示图例）。
-    unit          string                     数值单位（'%'/'万'…）：数值轴顶部 + 浮层数值后缀。
+    unit          string                     数值轴单位（'%'/'万'…）：轴顶部 + 浮层数值后缀。
+    unit2         string（仅 bar-line）      右轴（折线）单位——双轴两侧都必须标单位。
+    x-unit        string（仅 scatter）       横轴单位（散点两轴都必须标单位）。
     height        number，默认 240           图表高度 px；宽度撑满容器。
     center-title  string|number（仅 donut）  环心主数字（number-display-sm 字阶）。
     center-label  string（仅 donut）         环心说明文字。
@@ -34,7 +49,9 @@
     · 容器尺寸变化自动 resize；
     · 规范图形风格：细柱微圆角、环形留隙、网格虚线 border-subtle、轴标签/图例 text-3、
       序列配色（绿打头 + 扩展色板第 5 级）、tooltip 白底表格化浮层（bar 悬浮列高亮）、
-      环形图分类自动从大到小 12 点起顺时针排。
+      环形/饼分类自动从大到小 12 点起顺时针排、瀑布增减色走功能色语义（绿增红减）。
+  未纳入（确需使用先与设计负责人确认）：词云（需第三方插件依赖）、韦恩图（ECharts 无实现）、
+    热度地图（需地理数据与审图合规）。
   禁止：页内手拼 ECharts option 重写取色/重绘逻辑（Chart 自由度不够时先用 option 覆盖，
         再不够与设计负责人确认，勿绕过本组件另起炉灶）。
   改外观：回本文件源头改，改一次所有引用方同步。
@@ -55,12 +72,12 @@
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 // 按需注册（不全量 import echarts，控制接入方包体）
 import * as echarts from 'echarts/core'
-import { BarChart, LineChart, PieChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'
+import { BarChart, LineChart, PieChart, ScatterChart, RadarChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent, LegendComponent, DataZoomComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
-import type { ChartType, ChartDatum, ChartSeries } from './types'
+import type { ChartType, ChartDatum, ChartSeries, ChartIndicator } from './types'
 
-echarts.use([BarChart, LineChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer])
+echarts.use([BarChart, LineChart, PieChart, ScatterChart, RadarChart, GridComponent, TooltipComponent, LegendComponent, DataZoomComponent, CanvasRenderer])
 
 const props = withDefaults(
   defineProps<{
@@ -68,12 +85,21 @@ const props = withDefaults(
     data?: ChartDatum[]
     categories?: string[]
     series?: ChartSeries[]
+    indicators?: ChartIndicator[]
     horizontal?: boolean
     stacked?: boolean
+    percent?: boolean
+    diverging?: boolean
+    /** 横轴点位很多时开启：底部范围选择控件 + 滚轮缩放（仅竖排 bar/line/bar-line） */
+    zoomable?: boolean
     /** 单序列的序列名：传了就展示图例（规范：只有一组数据也展示图例，保持多图统一） */
     seriesName?: string
     /** 数值单位（如 '%'、'万'）：展示在数值轴顶部并拼进浮层数值 */
     unit?: string
+    /** 仅 bar-line：右轴（折线）单位 */
+    unit2?: string
+    /** 仅 scatter：横轴单位 */
+    xUnit?: string
     height?: number
     centerTitle?: string | number
     centerLabel?: string
@@ -101,16 +127,24 @@ const SERIES_COLOR_TOKENS = [
 
 function buildOption(): Record<string, unknown> {
   const colors = SERIES_COLOR_TOKENS.map(token)
-  // tooltip 统一白底浮层（跟随主题令牌）
+  const textColor = token('--iflyv-text-3')
+  const withUnit = (v: unknown) => `${v}${props.unit ?? ''}`
+  // tooltip 统一白底表格化浮层（跟随主题令牌；色点+名称左对齐、数值右对齐为 ECharts 默认结构）
   const tooltip = {
     backgroundColor: token('--iflyv-bg-panel'),
     borderColor: token('--iflyv-border-subtle'),
     textStyle: { color: token('--iflyv-text-1'), fontSize: 12 },
-    // 浮层数值右侧拼单位；结构沿用 ECharts 表格化默认（色点+名称左对齐、数值右对齐）
-    valueFormatter: (v: unknown) => `${v}${props.unit ?? ''}`,
+    valueFormatter: withUnit,
+  }
+  const legendStyle = {
+    icon: 'roundRect',
+    itemWidth: 10,
+    itemHeight: 10,
+    textStyle: { color: textColor, fontSize: 12 },
   }
 
-  if (props.type === 'donut') {
+  // ── 环形 / 饼状：单组占比 ─────────────────────────────────────────────
+  if (props.type === 'donut' || props.type === 'pie') {
     // 分类从大到小、12 点方向顺时针排（Web 图表设计指南硬规则，固化源头下游免记）
     const sorted = [...props.data].sort((a, b) => b.value - a.value)
     const total = sorted.reduce((s, d) => s + d.value, 0) || 1
@@ -123,11 +157,8 @@ function buildOption(): Record<string, unknown> {
         orient: 'vertical',
         right: 0,
         top: 'middle',
-        icon: 'roundRect',
-        itemWidth: 10,
-        itemHeight: 10,
         itemGap: 14,
-        textStyle: { color: token('--iflyv-text-3'), fontSize: 12 },
+        ...legendStyle,
         formatter: (name: string) => {
           const d = sorted.find((x) => x.name === name)
           if (!d) return name
@@ -137,8 +168,8 @@ function buildOption(): Record<string, unknown> {
       series: [
         {
           type: 'pie',
-          // 环形优先、扇区间留隙、微圆角（display-guide 图形风格）
-          radius: ['58%', '78%'],
+          // 环形优先、扇区间留隙、微圆角（display-guide 图形风格）；饼状 = 环心无信息可放时
+          radius: props.type === 'pie' ? [0, '72%'] : ['58%', '78%'],
           center: ['30%', '50%'],
           padAngle: 2,
           itemStyle: { borderRadius: 2 },
@@ -149,57 +180,228 @@ function buildOption(): Record<string, unknown> {
     }
   }
 
-  // bar / line 公共坐标系：只留类目轴线，网格虚线最轻档，标签 text-3。
-  // horizontal（条形图）时类目轴与数值轴互换
+  // ── 雷达：多维度比较（维度 ≥3）─────────────────────────────────────────
+  if (props.type === 'radar') {
+    const seriesList = props.series ?? []
+    const allValues = seriesList.flatMap((s) => s.data as number[])
+    const autoMax = Math.ceil((Math.max(...allValues, 1) * 1.2) / 10) * 10
+    return {
+      backgroundColor: 'transparent',
+      color: colors,
+      tooltip: { ...tooltip, trigger: 'item' },
+      legend: { top: 0, right: 0, ...legendStyle },
+      radar: {
+        indicator: (props.indicators ?? []).map((i) => ({ name: i.name, max: i.max ?? autoMax })),
+        radius: '62%',
+        center: ['50%', '55%'],
+        axisName: { color: textColor, fontSize: 12 },
+        axisLine: { lineStyle: { color: token('--iflyv-border-subtle') } },
+        splitLine: { lineStyle: { color: token('--iflyv-border-subtle') } },
+        splitArea: { show: false },
+      },
+      series: [
+        {
+          type: 'radar',
+          symbolSize: 4,
+          lineStyle: { width: 2 },
+          areaStyle: { opacity: 0.08 },
+          data: seriesList.map((s) => ({ name: s.name, value: s.data })),
+        },
+      ],
+    }
+  }
+
+  // ── 散点：变量相互影响程度（两轴都必须标单位）───────────────────────────
+  if (props.type === 'scatter') {
+    const seriesList = props.series ?? []
+    const showLegend = seriesList.length > 1 || !!seriesList[0]?.name
+    const numAxis = (unitName?: string) => ({
+      type: 'value',
+      scale: true,
+      ...(unitName ? { name: unitName, nameTextStyle: { color: textColor, fontSize: 12 } } : {}),
+      axisLine: { show: false },
+      axisLabel: { color: textColor, fontSize: 12 },
+      splitLine: { lineStyle: { color: token('--iflyv-border-subtle'), type: 'dashed' } },
+    })
+    return {
+      backgroundColor: 'transparent',
+      color: colors,
+      tooltip: { ...tooltip, trigger: 'item' },
+      ...(showLegend ? { legend: { top: 0, right: 0, ...legendStyle } } : {}),
+      xAxis: numAxis(props.xUnit),
+      yAxis: numAxis(props.unit),
+      grid: { left: 8, right: 16, top: showLegend ? 32 : 16, bottom: 0, containLabel: true },
+      series: seriesList.map((s) => ({ name: s.name, type: 'scatter', symbolSize: 8, itemStyle: { opacity: 0.75 }, data: s.data })),
+    }
+  }
+
+  // ── 直角坐标系公共部分（bar / line / bar-line / waterfall）──────────────
   const multi = !!(props.series && props.series.length)
-  const catNames = multi ? (props.categories ?? []) : props.data.map((d) => d.name)
+  const catNames = multi || props.type === 'bar-line' ? (props.categories ?? []) : props.data.map((d) => d.name)
   const categoryAxis = {
     type: 'category',
     data: catNames,
     axisLine: { lineStyle: { color: token('--iflyv-border-default') } },
     axisTick: { show: false },
-    axisLabel: { color: token('--iflyv-text-3'), fontSize: 12 },
+    axisLabel: { color: textColor, fontSize: 12 },
   }
   const valueAxis = {
     type: 'value',
     // 常规单位可不标；传 unit 则展示在数值轴顶部（双轴/特殊单位场景必标）
-    ...(props.unit ? { name: props.unit, nameTextStyle: { color: token('--iflyv-text-3'), fontSize: 12 } } : {}),
+    ...(props.unit || props.percent
+      ? { name: props.percent ? '%' : props.unit, nameTextStyle: { color: textColor, fontSize: 12 } }
+      : {}),
+    ...(props.percent ? { max: 100 } : {}),
+    // 双向图数值轴刻度取绝对值（第二序列内部取负只为方向，不是负数语义）
+    axisLabel: props.diverging
+      ? { color: textColor, fontSize: 12, formatter: (v: number) => `${Math.abs(v)}` }
+      : { color: textColor, fontSize: 12 },
     axisLine: { show: false },
-    axisLabel: { color: token('--iflyv-text-3'), fontSize: 12 },
     splitLine: { lineStyle: { color: token('--iflyv-border-subtle'), type: 'dashed' } },
   }
+  // 横轴点位很多时的范围控件：底部 slider + 滚轮缩放（仅竖排类目轴场景）
+  const zoomOn = props.zoomable && !props.horizontal
+  const dataZoom = zoomOn
+    ? {
+        dataZoom: [
+          {
+            type: 'slider',
+            height: 20,
+            bottom: 4,
+            borderColor: token('--iflyv-border-subtle'),
+            fillerColor: token('--iflyv-blue-1'),
+            handleStyle: { color: token('--iflyv-bg-panel'), borderColor: token('--iflyv-border-strong') },
+            dataBackground: {
+              lineStyle: { color: token('--iflyv-border-default') },
+              areaStyle: { color: token('--iflyv-border-subtle') },
+            },
+            textStyle: { color: textColor, fontSize: 11 },
+          },
+          { type: 'inside' },
+        ],
+      }
+    : {}
   const axes = {
     xAxis: props.horizontal ? valueAxis : categoryAxis,
     yAxis: props.horizontal ? categoryAxis : valueAxis,
-    // 多序列出顶部图例，网格给图例让位
-    grid: { left: 8, right: 8, top: multi || props.seriesName ? 32 : 16, bottom: 0, containLabel: true },
+    grid: { left: 8, right: 8, top: multi || props.seriesName ? 32 : 16, bottom: zoomOn ? 36 : 0, containLabel: true },
+    ...dataZoom,
   }
   // 图例：多序列必出；单序列传 seriesName 也出（规范：只有一组数据也展示图例）。统一顶部横排
   const showLegend = multi || !!props.seriesName
-  const cartesianLegend = showLegend
-    ? {
-        legend: {
-          top: 0,
-          right: 0,
-          icon: 'roundRect',
-          itemWidth: 10,
-          itemHeight: 10,
-          textStyle: { color: token('--iflyv-text-3'), fontSize: 12 },
-        },
-      }
-    : {}
+  const cartesianLegend = showLegend ? { legend: { top: 0, right: 0, ...legendStyle } } : {}
+  // 微圆角只给柱的"末端"：竖排在顶、横排在右
+  const capRadius = props.horizontal ? [0, 4, 4, 0] : [4, 4, 0, 0]
 
+  // ── 柱线图：不同性质数据的相关关系（双轴，柱=重要数据对应左轴）───────────
+  if (props.type === 'bar-line') {
+    const seriesList = props.series ?? []
+    const rightAxis = {
+      type: 'value',
+      // 双轴两侧顶部都必须标单位
+      ...(props.unit2 ? { name: props.unit2, nameTextStyle: { color: textColor, fontSize: 12 } } : {}),
+      axisLine: { show: false },
+      axisLabel: { color: textColor, fontSize: 12 },
+      splitLine: { show: false },
+    }
+    return {
+      backgroundColor: 'transparent',
+      color: colors,
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: tooltip.backgroundColor, borderColor: tooltip.borderColor, textStyle: tooltip.textStyle },
+      legend: { top: 0, right: 0, ...legendStyle },
+      xAxis: categoryAxis,
+      yAxis: [valueAxis, rightAxis],
+      grid: { left: 8, right: 8, top: 32, bottom: zoomOn ? 36 : 0, containLabel: true },
+      ...dataZoom,
+      series: seriesList.map((s) =>
+        s.kind === 'line'
+          ? { name: s.name, type: 'line', yAxisIndex: 1, lineStyle: { width: 2 }, symbolSize: 6, data: s.data }
+          : { name: s.name, type: 'bar', barWidth: 16, itemStyle: { borderRadius: capRadius, opacity: 0.9 }, data: s.data },
+      ),
+    }
+  }
+
+  // ── 瀑布图：增量趋势 + 总量（不支持多组；增减走功能色语义：绿增红减）─────
+  if (props.type === 'waterfall') {
+    const inc = props.data.map((d) => d.value)
+    const bases: number[] = []
+    let cum = 0
+    for (const v of inc) {
+      bases.push(v >= 0 ? cum : cum + v)
+      cum += v
+    }
+    let cum2 = 0
+    const cumulative = inc.map((v) => (cum2 += v))
+    const green = token('--iflyv-green-5')
+    const red = token('--iflyv-red-5')
+    return {
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        backgroundColor: tooltip.backgroundColor,
+        borderColor: tooltip.borderColor,
+        textStyle: tooltip.textStyle,
+        // 浮层展示 增量 + 累计（跳过透明垫底序列）
+        formatter: (params: { dataIndex: number }[]) => {
+          const i = params[0]?.dataIndex ?? 0
+          const v = inc[i]
+          return `${props.data[i]?.name ?? ''}<br/>增量：${v >= 0 ? '+' : '-'}${withUnit(Math.abs(v))}<br/>累计：${withUnit(cumulative[i])}`
+        },
+      },
+      xAxis: categoryAxis,
+      yAxis: valueAxis,
+      grid: { left: 8, right: 8, top: 16, bottom: 0, containLabel: true },
+      series: [
+        // 透明垫底：把增量柱抬到累计位置
+        { type: 'bar', stack: 'wf', silent: true, itemStyle: { color: 'transparent' }, emphasis: { itemStyle: { color: 'transparent' } }, data: bases },
+        {
+          type: 'bar',
+          stack: 'wf',
+          barWidth: 16,
+          data: inc.map((v) => ({
+            value: Math.abs(v),
+            itemStyle: { color: v >= 0 ? green : red, borderRadius: capRadius, opacity: 0.9 },
+          })),
+        },
+      ],
+    }
+  }
+
+  // ── 柱状 / 条形 / 堆积 / 百分比堆积 / 双向 ─────────────────────────────
   if (props.type === 'bar') {
-    // 微圆角只给柱的"末端"：竖排在顶、横排在右；堆积时只有最外层序列有末端
-    const capRadius = props.horizontal ? [0, 4, 4, 0] : [4, 4, 0, 0]
+    let seriesData = props.series ?? []
+    // 百分比堆积：各类目归一化到 100%（只关心比例不关心总量；只放 2 个序列）
+    if (multi && props.stacked && props.percent) {
+      const totals = catNames.map((_, i) => seriesData.reduce((s, sr) => s + ((sr.data as number[])[i] ?? 0), 0) || 1)
+      seriesData = seriesData.map((sr) => ({ ...sr, data: (sr.data as number[]).map((v, i) => +((v / totals[i]) * 100).toFixed(1)) }))
+    }
+    // 双向：恰 2 个序列，第二序列取负从零轴反向展开
+    if (multi && props.diverging) {
+      seriesData = seriesData.map((sr, i) => (i === 1 ? { ...sr, data: (sr.data as number[]).map((v) => -v) } : sr))
+    }
+    const stackOn = props.stacked || props.diverging
+    const pctUnit = (v: unknown) => (props.percent ? `${v}%` : withUnit(v))
+    const divAbs = (v: unknown) => pctUnit(Math.abs(Number(v)))
     const barSeries = multi
-      ? props.series!.map((sr, i) => ({
+      ? seriesData.map((sr, i) => ({
           name: sr.name,
           type: 'bar',
           barWidth: 16,
-          stack: props.stacked ? 'total' : undefined,
+          stack: stackOn ? 'total' : undefined,
           itemStyle: {
-            borderRadius: props.stacked ? (i === props.series!.length - 1 ? capRadius : 0) : capRadius,
+            // 堆积时只有最外层序列有"末端"圆角；双向两端各自有末端
+            borderRadius: props.diverging
+              ? i === 0
+                ? capRadius
+                : props.horizontal
+                  ? [4, 0, 0, 4]
+                  : [0, 0, 4, 4]
+              : stackOn
+                ? i === seriesData.length - 1
+                  ? capRadius
+                  : 0
+                : capRadius,
             opacity: 0.9,
           },
           data: sr.data,
@@ -208,9 +410,9 @@ function buildOption(): Record<string, unknown> {
           {
             name: props.seriesName,
             type: 'bar',
-            // 细柱 + 末端微圆角 + 适度透明度，逐类目取色（display-guide 图形风格）
+            // 细柱 + 末端微圆角 + 适度透明度；单序列一色——颜色编码"序列"而非"类目"，
+            // 同一指标的柱子五颜六色不携带信息、还与图例矛盾
             barWidth: 16,
-            colorBy: 'data',
             itemStyle: { borderRadius: capRadius, opacity: 0.9 },
             data: props.data.map((d) => d.value),
           },
@@ -218,14 +420,14 @@ function buildOption(): Record<string, unknown> {
     return {
       backgroundColor: 'transparent',
       color: colors,
-      tooltip: { ...tooltip, trigger: 'axis', axisPointer: { type: 'shadow' } },
+      tooltip: { ...tooltip, trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: props.diverging ? divAbs : pctUnit },
       ...axes,
       ...cartesianLegend,
       series: barSeries,
     }
   }
 
-  // line：细线 + 小折点（多序列各一条线）
+  // ── 折线：细线 + 小折点（多序列各一条线，≤4 条）────────────────────────
   const lineSeries = multi
     ? props.series!.map((sr) => ({ name: sr.name, type: 'line', lineStyle: { width: 2 }, symbolSize: 6, data: sr.data }))
     : [{ name: props.seriesName, type: 'line', lineStyle: { width: 2 }, symbolSize: 6, data: props.data.map((d) => d.value) }]
@@ -268,7 +470,11 @@ onBeforeUnmount(() => {
   chart = null
 })
 
-watch(() => [props.type, props.data, props.categories, props.series, props.horizontal, props.stacked, props.seriesName, props.unit, props.option], render, { deep: true })
+watch(
+  () => [props.type, props.data, props.categories, props.series, props.indicators, props.horizontal, props.stacked, props.percent, props.diverging, props.zoomable, props.seriesName, props.unit, props.unit2, props.xUnit, props.option],
+  render,
+  { deep: true },
+)
 </script>
 
 <style scoped>

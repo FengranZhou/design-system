@@ -3,7 +3,7 @@
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右（同「公开信息设置」页） -->
     <div class="toolbar course-tools-demo__toolbar">
       <div class="toolbar__left">
-        <h2 class="demo-section__title">课程工具</h2>
+        <h2 class="demo-section__title">Course Tools 课程工具</h2>
       </div>
       <div class="toolbar__right">
         <el-button @click="toggleFullscreen">

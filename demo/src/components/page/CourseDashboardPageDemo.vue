@@ -3,7 +3,7 @@
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右（同前两个典型页面） -->
     <div class="toolbar course-dashboard-demo__toolbar">
       <div class="toolbar__left">
-        <h2 class="demo-section__title">课程看板</h2>
+        <h2 class="demo-section__title">Profile 课程画像</h2>
       </div>
       <div class="toolbar__right">
         <el-button @click="toggleFullscreen">
@@ -88,7 +88,9 @@
 
 <script setup lang="ts">
 /**
- * 典型页面 —— 课程看板（参考讯飞小雅「课程看板」数据页）。
+ * 典型页面 —— 课程画像（参考讯飞小雅「课程看板」数据页；页面名取「课程画像」
+ * 作六个 tab——看板/AI+应用/活动轨迹/实录分析/班级画像/成员画像——的总称，
+ * 「课程看板」只是第一个 tab，不再用作页面名）。
  * 演示数据看板页的组织：
  *   PageFrame 骨架 + .tabs-page 标题层与右侧主操作 + KPI 数字条（number-display-sm）+
  *   模块分组 + 栅格分栏（col-12 双环图 / col-8 三柱图）+ 业务组件 Chart（取色/重绘在源头）。
@@ -108,7 +110,7 @@ import noDataDark from '../../../../design-spec/el-theme/assets/empty/dark/no-da
 const menus: PageFrameMenuGroup[] = [
   {
     title: '典型页面',
-    items: [{ key: 'course-dashboard', label: '课程看板', icon: (props: Record<string, unknown>) => h(NavIcon, { normal: progressSvg, activeSvg: progressActiveSvg, ...props }) }],
+    items: [{ key: 'course-dashboard', label: '课程画像', icon: (props: Record<string, unknown>) => h(NavIcon, { normal: progressSvg, activeSvg: progressActiveSvg, ...props }) }],
   },
 ]
 const activeKey = ref('course-dashboard')
@@ -118,7 +120,7 @@ const course: PageFrameCourse = {
   meta: ['2023年春', '全网公开', '教务开课'],
 }
 
-const breadcrumbs = [{ label: '典型页面' }, { label: '课程看板' }]
+const breadcrumbs = [{ label: '典型页面' }, { label: '课程画像' }]
 
 const activeTab = ref('board')
 

@@ -185,9 +185,9 @@
 
         <template v-if="currentTopTab === 'page'">
         <ul class="app-sidebar__nav">
-          <li><a href="#page-public-info" :class="{ 'is-active': activeSection === 'page-public-info' }">公开信息设置</a></li>
-          <li><a href="#page-course-tools" :class="{ 'is-active': activeSection === 'page-course-tools' }">课程工具</a></li>
-          <li><a href="#page-course-dashboard" :class="{ 'is-active': activeSection === 'page-course-dashboard' }">课程看板</a></li>
+          <li><a href="#page-public-info" :class="{ 'is-active': activeSection === 'page-public-info' }">Public 公开信息设置</a></li>
+          <li><a href="#page-course-tools" :class="{ 'is-active': activeSection === 'page-course-tools' }">Course Tools 课程工具</a></li>
+          <li><a href="#page-course-dashboard" :class="{ 'is-active': activeSection === 'page-course-dashboard' }">Profile 课程画像</a></li>
         </ul>
         </template>
 
@@ -199,11 +199,18 @@
 
         <template v-if="currentTopTab === 'chart'">
         <ul class="app-sidebar__nav">
-          <li><a href="#chart-donut" :class="{ 'is-active': activeSection === 'chart-donut' }">Donut 环形图</a></li>
-          <li><a href="#chart-bar" :class="{ 'is-active': activeSection === 'chart-bar' }">Bar 柱状图</a></li>
-          <li><a href="#chart-bar-stack" :class="{ 'is-active': activeSection === 'chart-bar-stack' }">Stacked 堆积柱状图</a></li>
-          <li><a href="#chart-bar-horizontal" :class="{ 'is-active': activeSection === 'chart-bar-horizontal' }">Horizontal 条形图</a></li>
           <li><a href="#chart-line" :class="{ 'is-active': activeSection === 'chart-line' }">Line 折线图</a></li>
+          <li><a href="#chart-bar" :class="{ 'is-active': activeSection === 'chart-bar' }">Bar 柱状图</a></li>
+          <li><a href="#chart-bar-horizontal" :class="{ 'is-active': activeSection === 'chart-bar-horizontal' }">Horizontal 条形图</a></li>
+          <li><a href="#chart-donut" :class="{ 'is-active': activeSection === 'chart-donut' }">Donut 环形图</a></li>
+          <li><a href="#chart-pie" :class="{ 'is-active': activeSection === 'chart-pie' }">Pie 饼状图</a></li>
+          <li><a href="#chart-bar-line" :class="{ 'is-active': activeSection === 'chart-bar-line' }">Bar-Line 柱线图</a></li>
+          <li><a href="#chart-radar" :class="{ 'is-active': activeSection === 'chart-radar' }">Radar 雷达图</a></li>
+          <li><a href="#chart-scatter" :class="{ 'is-active': activeSection === 'chart-scatter' }">Scatter 散点图</a></li>
+          <li><a href="#chart-bar-stack" :class="{ 'is-active': activeSection === 'chart-bar-stack' }">Stacked 堆积柱状图</a></li>
+          <li><a href="#chart-bar-stack-h" :class="{ 'is-active': activeSection === 'chart-bar-stack-h' }">Stacked-H 堆积条形图</a></li>
+          <li><a href="#chart-bar-percent" :class="{ 'is-active': activeSection === 'chart-bar-percent' }">Percent 百分比堆积</a></li>
+          <li><a href="#chart-diverging" :class="{ 'is-active': activeSection === 'chart-diverging' }">Diverging 双向柱状图</a></li>
         </ul>
         </template>
 
@@ -511,7 +518,8 @@ const sectionIds = [
   'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'page-public-info', 'page-course-tools', 'page-course-dashboard',
   'copywriting-time',
-  'chart-donut', 'chart-bar', 'chart-bar-stack', 'chart-bar-horizontal', 'chart-line',
+  'chart-line', 'chart-bar', 'chart-bar-horizontal', 'chart-donut', 'chart-pie', 'chart-bar-line',
+  'chart-radar', 'chart-scatter', 'chart-bar-stack', 'chart-bar-stack-h', 'chart-bar-percent', 'chart-diverging',
   'judging-intro', 'judging-list',
 ]
 
@@ -524,7 +532,7 @@ const firstSectionByTab: Record<string, string> = {
   pattern: 'pattern-form-org',
   page: 'page-public-info',
   copywriting: 'copywriting-time',
-  chart: 'chart-donut',
+  chart: 'chart-line',
   judging: 'judging-intro',
 }
 

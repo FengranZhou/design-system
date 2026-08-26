@@ -53,7 +53,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = join(ROOT, 'scripts/catalog.json')
 
 /** 导航里存在、但不是可插入组件的条目 */
-const SKIP_ANCHORS = new Set(['other', 'data-display'])
+const SKIP_ANCHORS = new Set(['other', 'data-display', 'chart-excluded'])
 
 /**
  * demo 有、但**插入场景用不上**的配置项。
