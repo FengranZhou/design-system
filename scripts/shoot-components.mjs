@@ -154,7 +154,7 @@ function fingerprint(anchor) {
 function navAnchors() {
   const src = readFileSync(join(ROOT, 'demo/src/App.vue'), 'utf8')
   const out = []
-  for (const tab of ['component', 'business']) {
+  for (const tab of ['component', 'business', 'chart']) {
     const re = new RegExp(`currentTopTab === '${tab}'"[\\s\\S]*?</template>`, 'm')
     const block = src.match(re)
     if (!block) continue
@@ -259,6 +259,18 @@ function framingScript(anchor) {
       var fit = document.createElement('div');
       fit.style.cssText = 'position:absolute;left:0;top:0;width:${STAGE_W}px;';
       var clone = s.cloneNode(true);
+      // canvas 的画面不随 cloneNode 复制（克隆出来是空白）——图表等 canvas 内容
+      // 先从原节点逐个导出为 img 替换进克隆体，按 DOM 顺序一一对应
+      var srcCanvases = s.querySelectorAll('canvas');
+      var cloneCanvases = clone.querySelectorAll('canvas');
+      for (var ci = 0; ci < srcCanvases.length; ci++) {
+        try {
+          var img = document.createElement('img');
+          img.src = srcCanvases[ci].toDataURL('image/png');
+          img.style.cssText = 'width:100%;height:100%;';
+          cloneCanvases[ci].parentNode.replaceChild(img, cloneCanvases[ci]);
+        } catch (e) { /* 跨域画布等异常时保持原样 */ }
+      }
       // 下面这些都不是"组件长什么样"，一律剥掉：
       //   demo-section__title  区块大标题（列表里已有组件名）
       //   config-card          配置项卡片（demo 的演示脚手架）
@@ -274,6 +286,9 @@ function framingScript(anchor) {
         for (var i = blocks.length - 1; i >= 1; i--) blocks[i].remove();
       }
       clone.style.cssText = 'margin:0;padding:0;width:100%;';
+      // 含 canvas 的 section：克隆宽度锁定为原始宽度——canvas 截图与绝对定位
+      // 覆盖层（如环心数字）的比例只有在原宽下才对得上，整体交给 fit 等比缩放
+      if (srcCanvases.length) clone.style.width = s.getBoundingClientRect().width + 'px';
       fit.appendChild(clone);
       host.appendChild(fit);
       document.body.appendChild(host);
@@ -432,7 +447,7 @@ await sleep(2500)
 await pcall('Runtime.evaluate', {
   expression: `
     (function(){
-      var tabs = document.querySelectorAll('.app-topbar__tab');
+      var tabs = document.querySelectorAll('.app-topbar__nav .el-tabs__item');
       for (var i=0;i<tabs.length;i++) tabs[i].click();
       return tabs.length;
     })()`,
@@ -447,8 +462,8 @@ for (const it of todo) {
   await pcall('Runtime.evaluate', {
     expression: `
       (function(){
-        var tabs = document.querySelectorAll('.app-topbar__tab');
-        var want = ${JSON.stringify(it.tab === 'business' ? '业务组件' : '基础组件')};
+        var tabs = document.querySelectorAll('.app-topbar__nav .el-tabs__item');
+        var want = ${JSON.stringify(it.tab === 'business' ? '业务组件' : it.tab === 'chart' ? '图表组件' : '基础组件')};
         for (var i=0;i<tabs.length;i++) {
           if ((tabs[i].textContent||'').indexOf(want) >= 0) { tabs[i].click(); break; }
         }
