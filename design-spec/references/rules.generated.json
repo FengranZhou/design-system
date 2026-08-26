@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 92,
-  "totalWeight": 264,
+  "total": 98,
+  "totalWeight": 281,
   "byLevel": {
-    "MUST": 80,
-    "SHOULD": 12,
+    "MUST": 85,
+    "SHOULD": 13,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 61,
+    "regex": 65,
     "ast": 7,
-    "manual": 24
+    "manual": 26
   },
   "byView": {
-    "design": 73,
-    "impl": 84
+    "design": 79,
+    "impl": 90
   },
   "categoryOrder": [
     "单一数据源",
@@ -124,7 +124,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 589
+      "line": 616
     },
     {
       "id": "color-no-hardcode",
@@ -286,7 +286,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 621
+      "line": 648
     },
     {
       "id": "breadcrumb-use-component",
@@ -301,7 +301,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 648
+      "line": 675
     },
     {
       "id": "anchor-vertical-ask-first",
@@ -315,7 +315,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 698
+      "line": 725
     },
     {
       "id": "dialog-no-messagebox",
@@ -330,7 +330,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1095
+      "line": 1124
     },
     {
       "id": "component-no-suspended",
@@ -345,7 +345,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1296
+      "line": 1325
     },
     {
       "id": "select-v2-over-200",
@@ -362,6 +362,51 @@
       "line": 38
     },
     {
+      "id": "btn-entry-class",
+      "title": "入口引导箭头一律用约定 class .btn-entry（间距/hover 前移/禁用不动在源头）",
+      "designTitle": "「查看更多 ›」这类入口的箭头间距与 hover 前移动效应全站一致",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 105
+    },
+    {
+      "id": "btn-entry-text-only",
+      "title": "入口引导箭头仅限 text 文本按钮，有底按钮不挂（源头无样式兜底）",
+      "designTitle": "有底按钮尾部不应出现导航箭头，入口引导只属于轻量文字入口",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 106
+    },
+    {
+      "id": "btn-entry-exclusive-caret",
+      "title": ".btn-entry 与 .btn-caret/.dropdown-caret 互斥，一个按钮只挂其一",
+      "designTitle": "一个按钮尾部只能有一枚箭头：要么\"原地展开\"要么\"去往别处\"，不能既下拉又跳转",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 107
+    },
+    {
       "id": "tooltip-no-native-title",
       "title": "文字提示一律用 el-tooltip，禁用原生 title 属性",
       "designTitle": "悬停提示应是设计系统的白底气泡，不是浏览器默认的黑色小方块",
@@ -374,7 +419,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 112
+      "line": 139
     },
     {
       "id": "tooltip-show-after",
@@ -389,7 +434,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 114
+      "line": 141
     },
     {
       "id": "tooltip-no-override",
@@ -403,7 +448,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 116
+      "line": 143
     },
     {
       "id": "tooltip-no-interactive",
@@ -418,7 +463,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 128
+      "line": 155
     },
     {
       "id": "datepicker-value-format",
@@ -433,7 +478,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 205
+      "line": 232
     },
     {
       "id": "timepicker-value-format",
@@ -447,7 +492,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 241
+      "line": 268
     },
     {
       "id": "checkbox-label-prop",
@@ -461,7 +506,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 306
+      "line": 333
     },
     {
       "id": "switch-text-prop",
@@ -475,7 +520,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 341
+      "line": 368
     },
     {
       "id": "slider-width-container",
@@ -490,7 +535,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 360
+      "line": 387
     },
     {
       "id": "descriptions-not-disabled-form",
@@ -505,7 +550,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 400
+      "line": 427
     },
     {
       "id": "inputnumber-min-max",
@@ -520,7 +565,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 424
+      "line": 451
     },
     {
       "id": "dropdown-trigger-use-button",
@@ -535,7 +580,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 540
+      "line": 567
     },
     {
       "id": "dropdown-use-slots",
@@ -550,7 +595,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 550
+      "line": 577
     },
     {
       "id": "dropdown-caret-class",
@@ -565,7 +610,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 551
+      "line": 578
     },
     {
       "id": "anchor-select-scroll-top",
@@ -580,7 +625,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 706
+      "line": 733
     },
     {
       "id": "anchor-stale-hash",
@@ -594,7 +639,22 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 715
+      "line": 742
+    },
+    {
+      "id": "pagination-hide-single-page",
+      "title": "el-pagination 必传 hide-on-single-page（不足一页整个分页器不渲染）",
+      "designTitle": "数据只有一页时不应出现一排点不了的翻页控件",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 839
     },
     {
       "id": "pagination-small-layout",
@@ -609,7 +669,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 821
+      "line": 850
     },
     {
       "id": "message-show-close",
@@ -624,7 +684,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 878
+      "line": 907
     },
     {
       "id": "alert-title-prop",
@@ -638,7 +698,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 908
+      "line": 937
     },
     {
       "id": "loading-no-custom-spinner",
@@ -653,7 +713,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 953
+      "line": 982
     },
     {
       "id": "result-icon-two-values",
@@ -668,7 +728,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1016
+      "line": 1045
     },
     {
       "id": "notification-h-actions",
@@ -682,7 +742,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1048
+      "line": 1077
     },
     {
       "id": "scrollbar-no-raw-overflow",
@@ -697,7 +757,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1245
+      "line": 1274
     },
     {
       "id": "timepicker-disabled-range",
@@ -711,7 +771,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 243
+      "line": 270
     },
     {
       "id": "rate-max-5",
@@ -726,7 +786,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 449
+      "line": 476
     },
     {
       "id": "badge-default-red",
@@ -741,7 +801,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 508
+      "line": 535
     },
     {
       "id": "badge-max-99",
@@ -756,7 +816,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 509
+      "line": 536
     },
     {
       "id": "scrollbar-view-class",
@@ -770,7 +830,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1257
+      "line": 1286
     },
     {
       "id": "grid-no-el-row",
@@ -1145,7 +1205,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 840
+      "line": 869
     },
     {
       "id": "skeleton-animated",
@@ -1160,7 +1220,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 982
+      "line": 1011
     },
     {
       "id": "skeleton-on-panel",
@@ -1175,7 +1235,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 983
+      "line": 1012
     },
     {
       "id": "loading-no-blank-screen",
@@ -1204,7 +1264,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1146
+      "line": 1175
     },
     {
       "id": "time-use-formattime",
@@ -1252,6 +1312,21 @@
       "line": 80
     },
     {
+      "id": "chart-bar-ordered-category",
+      "title": "柱状图 | 横坐标必须是时间、日期等有序类别——无序类别一律用条形图  | 分类 ≤4 种；数据差距过小时最好只 2 组；横向空间不足/标签挤压时转条形图 |",
+      "designTitle": "柱状图横轴应是有先后顺序的类别，无序类别应横排成条形图",
+      "level": "MUST",
+      "cat": "视觉呈现",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/display-guide.md",
+      "line": 243
+    },
+    {
       "id": "lightspot-not-in-components",
       "title": "渐变光斑禁止用于效率型组件内部",
       "designTitle": "表单/表格/弹窗内部不应出现光斑等装饰效果",
@@ -1264,7 +1339,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/display-guide.md",
-      "line": 352
+      "line": 381
     },
     {
       "id": "button-primary-unique",
@@ -1350,6 +1425,21 @@
       "weight": 3,
       "source": "design-spec/references/foundations.md",
       "line": 440
+    },
+    {
+      "id": "chart-stacked-real-data",
+      "title": "堆积柱/条形图 | 包含关系的数据：总量 + 总量内各子分类 | 可多序列，但必须用真实数据模拟验证可读性（假数据画完就交付是本图型最常见的翻车）；序列 ≥3 时中间序列的长度难以直接比较，需精确比较各子类时只放 2 个序列 |",
+      "designTitle": "堆积图交付前应拿真实数据试过，中间段是否可读只在真实分布下才暴露",
+      "level": "SHOULD",
+      "cat": "视觉呈现",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/display-guide.md",
+      "line": 245
     },
     {
       "id": "dark-surface-bordered",

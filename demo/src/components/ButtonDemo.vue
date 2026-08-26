@@ -19,6 +19,9 @@
             <template v-if="showIcon" #icon><Pencil :size="16" :stroke-width="2" /></template>
             {{ b.label }}
             <ChevronDown v-if="showCaret" class="btn-caret" :size="14" :stroke-width="2" />
+            <!-- 入口引导仅限 text 形态（规范硬规则）：开关打开时有底三列不出现箭头，
+                 这个"只有 text 列有"本身就是对适用范围的演示 -->
+            <ChevronRight v-if="showEntry && b.text" class="btn-entry" :size="14" :stroke-width="2" />
           </el-button>
         </template>
       </div>
@@ -35,6 +38,9 @@
           <el-form-item label="下拉">
             <el-switch v-model="showCaret" />
           </el-form-item>
+          <el-form-item label="入口引导">
+            <el-switch v-model="showEntry" />
+          </el-form-item>
         </el-form>
       </aside>
     </div>
@@ -44,14 +50,19 @@
 
 <script setup lang="ts">
 import CopyToCC from './CopyToCC.vue'
-import { ref, reactive } from 'vue'
-import { Pencil, ChevronDown } from 'lucide-vue-next'
+import { ref, reactive, watch } from 'vue'
+import { Pencil, ChevronDown, ChevronRight } from 'lucide-vue-next'
 
-// 两个正交配置开关
+// 配置开关：图标可与任意组合叠加；「下拉」与「入口引导」是尾部箭头同一维度的
+// 两个互斥取值（语义相反：原地展开 vs 去往别处，且同占文字尾部位置），
+// 开一个自动关另一个——联动本身就是对互斥规则的演示
 const showIcon = ref(false)
 const showCaret = ref(false)
-// el-form 需要 model 对象；两个开关即表单字段
-const configForm = reactive({ showIcon, showCaret })
+const showEntry = ref(false)
+watch(showCaret, v => { if (v) showEntry.value = false })
+watch(showEntry, v => { if (v) showCaret.value = false })
+// el-form 需要 model 对象；开关即表单字段
+const configForm = reactive({ showIcon, showCaret, showEntry })
 
 // 6 种类型（列）
 const types = [
