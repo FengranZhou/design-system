@@ -317,7 +317,7 @@
       <div v-show="currentTopTab === 'copywriting'">
       <CopywritingTimeDemo />
       </div>
-      <div v-show="currentTopTab === 'chart'">
+      <div v-show="currentTopTab === 'chart'" class="no-title-divider">
       <ChartSpecDemo />
       </div>
       <div v-show="currentTopTab === 'judging'" class="no-title-divider">

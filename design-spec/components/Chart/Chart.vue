@@ -21,6 +21,8 @@
     series        { name, data: number[] }[] 多序列数据（bar/line；自动出图例）。
     horizontal    boolean（仅 bar）          横排 = 条形图（类目多或名称长时用）。
     stacked       boolean（仅 bar 多序列）   堆积柱状图（比多个对象的构成时用）。
+    series-name   string（单序列）           序列名：传了就展示图例（规范：单组数据也展示图例）。
+    unit          string                     数值单位（'%'/'万'…）：数值轴顶部 + 浮层数值后缀。
     height        number，默认 240           图表高度 px；宽度撑满容器。
     center-title  string|number（仅 donut）  环心主数字（number-display-sm 字阶）。
     center-label  string（仅 donut）         环心说明文字。
@@ -31,7 +33,8 @@
     · 切亮暗主题 / 切品牌色自动重取色重绘（监听 html 的 data-theme / data-brand）；
     · 容器尺寸变化自动 resize；
     · 规范图形风格：细柱微圆角、环形留隙、网格虚线 border-subtle、轴标签/图例 text-3、
-      多指标配色 = 品牌色打头 + 扩展色板（≤6 色）、tooltip 白底浮层。
+      序列配色（绿打头 + 扩展色板第 5 级）、tooltip 白底表格化浮层（bar 悬浮列高亮）、
+      环形图分类自动从大到小 12 点起顺时针排。
   禁止：页内手拼 ECharts option 重写取色/重绘逻辑（Chart 自由度不够时先用 option 覆盖，
         再不够与设计负责人确认，勿绕过本组件另起炉灶）。
   改外观：回本文件源头改，改一次所有引用方同步。
@@ -67,6 +70,10 @@ const props = withDefaults(
     series?: ChartSeries[]
     horizontal?: boolean
     stacked?: boolean
+    /** 单序列的序列名：传了就展示图例（规范：只有一组数据也展示图例，保持多图统一） */
+    seriesName?: string
+    /** 数值单位（如 '%'、'万'）：展示在数值轴顶部并拼进浮层数值 */
+    unit?: string
     height?: number
     centerTitle?: string | number
     centerLabel?: string
@@ -99,10 +106,14 @@ function buildOption(): Record<string, unknown> {
     backgroundColor: token('--iflyv-bg-panel'),
     borderColor: token('--iflyv-border-subtle'),
     textStyle: { color: token('--iflyv-text-1'), fontSize: 12 },
+    // 浮层数值右侧拼单位；结构沿用 ECharts 表格化默认（色点+名称左对齐、数值右对齐）
+    valueFormatter: (v: unknown) => `${v}${props.unit ?? ''}`,
   }
 
   if (props.type === 'donut') {
-    const total = props.data.reduce((s, d) => s + d.value, 0) || 1
+    // 分类从大到小、12 点方向顺时针排（Web 图表设计指南硬规则，固化源头下游免记）
+    const sorted = [...props.data].sort((a, b) => b.value - a.value)
+    const total = sorted.reduce((s, d) => s + d.value, 0) || 1
     return {
       backgroundColor: 'transparent',
       color: colors,
@@ -118,7 +129,7 @@ function buildOption(): Record<string, unknown> {
         itemGap: 14,
         textStyle: { color: token('--iflyv-text-3'), fontSize: 12 },
         formatter: (name: string) => {
-          const d = props.data.find((x) => x.name === name)
+          const d = sorted.find((x) => x.name === name)
           if (!d) return name
           return `${name}  ${d.value}（${((d.value / total) * 100).toFixed(2)}%）`
         },
@@ -132,7 +143,7 @@ function buildOption(): Record<string, unknown> {
           padAngle: 2,
           itemStyle: { borderRadius: 2 },
           label: { show: false },
-          data: props.data,
+          data: sorted,
         },
       ],
     }
@@ -151,6 +162,8 @@ function buildOption(): Record<string, unknown> {
   }
   const valueAxis = {
     type: 'value',
+    // 常规单位可不标；传 unit 则展示在数值轴顶部（双轴/特殊单位场景必标）
+    ...(props.unit ? { name: props.unit, nameTextStyle: { color: token('--iflyv-text-3'), fontSize: 12 } } : {}),
     axisLine: { show: false },
     axisLabel: { color: token('--iflyv-text-3'), fontSize: 12 },
     splitLine: { lineStyle: { color: token('--iflyv-border-subtle'), type: 'dashed' } },
@@ -159,10 +172,11 @@ function buildOption(): Record<string, unknown> {
     xAxis: props.horizontal ? valueAxis : categoryAxis,
     yAxis: props.horizontal ? categoryAxis : valueAxis,
     // 多序列出顶部图例，网格给图例让位
-    grid: { left: 8, right: 8, top: multi ? 32 : 16, bottom: 0, containLabel: true },
+    grid: { left: 8, right: 8, top: multi || props.seriesName ? 32 : 16, bottom: 0, containLabel: true },
   }
-  // 多序列图例：顶部横排，样式与环形图图例一致
-  const cartesianLegend = multi
+  // 图例：多序列必出；单序列传 seriesName 也出（规范：只有一组数据也展示图例）。统一顶部横排
+  const showLegend = multi || !!props.seriesName
+  const cartesianLegend = showLegend
     ? {
         legend: {
           top: 0,
@@ -192,6 +206,7 @@ function buildOption(): Record<string, unknown> {
         }))
       : [
           {
+            name: props.seriesName,
             type: 'bar',
             // 细柱 + 末端微圆角 + 适度透明度，逐类目取色（display-guide 图形风格）
             barWidth: 16,
@@ -203,7 +218,7 @@ function buildOption(): Record<string, unknown> {
     return {
       backgroundColor: 'transparent',
       color: colors,
-      tooltip: { ...tooltip, trigger: 'axis' },
+      tooltip: { ...tooltip, trigger: 'axis', axisPointer: { type: 'shadow' } },
       ...axes,
       ...cartesianLegend,
       series: barSeries,
@@ -213,7 +228,7 @@ function buildOption(): Record<string, unknown> {
   // line：细线 + 小折点（多序列各一条线）
   const lineSeries = multi
     ? props.series!.map((sr) => ({ name: sr.name, type: 'line', lineStyle: { width: 2 }, symbolSize: 6, data: sr.data }))
-    : [{ type: 'line', lineStyle: { width: 2 }, symbolSize: 6, data: props.data.map((d) => d.value) }]
+    : [{ name: props.seriesName, type: 'line', lineStyle: { width: 2 }, symbolSize: 6, data: props.data.map((d) => d.value) }]
   return {
     backgroundColor: 'transparent',
     color: colors,
@@ -253,7 +268,7 @@ onBeforeUnmount(() => {
   chart = null
 })
 
-watch(() => [props.type, props.data, props.categories, props.series, props.horizontal, props.stacked, props.option], render, { deep: true })
+watch(() => [props.type, props.data, props.categories, props.series, props.horizontal, props.stacked, props.seriesName, props.unit, props.option], render, { deep: true })
 </script>
 
 <style scoped>

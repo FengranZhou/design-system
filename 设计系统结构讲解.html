@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>xiaoya3.0 设计系统 · 结构讲解（给设计师的版本）</title>
+<style>
+  :root {
+    --green: #23b283;
+    --green-bg: #e9f7f2;
+    --blue: #0077ff;
+    --blue-bg: #eaf3ff;
+    --orange: #e6862b;
+    --orange-bg: #fdf3e7;
+    --purple: #7a5af8;
+    --purple-bg: #f1edfe;
+    --ink: #1f2329;
+    --ink-2: #4e5665;
+    --ink-3: #8a919f;
+    --line: #e8eaed;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --mono: "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--ink);
+    line-height: 1.75; font-size: 15px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 48px 24px 96px; }
+
+  /* ---------- 头部 ---------- */
+  .hero { padding: 40px 0 8px; }
+  .hero .tag {
+    display: inline-block; background: var(--green-bg); color: var(--green);
+    font-size: 13px; font-weight: 600; padding: 3px 12px; border-radius: 999px; margin-bottom: 16px;
+  }
+  .hero h1 { font-size: 30px; line-height: 1.35; margin-bottom: 12px; }
+  .hero p { color: var(--ink-2); max-width: 640px; }
+
+  /* ---------- 目录 ---------- */
+  .toc {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px 24px; margin: 32px 0 8px;
+  }
+  .toc b { font-size: 13px; color: var(--ink-3); letter-spacing: 1px; }
+  .toc ol { margin: 8px 0 0 20px; }
+  .toc li { margin: 2px 0; }
+  .toc a { color: var(--ink); text-decoration: none; }
+  .toc a:hover { color: var(--green); }
+
+  h2 {
+    font-size: 22px; margin: 64px 0 8px; padding-top: 16px;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  h2 .num {
+    font-family: var(--mono); font-size: 14px; color: var(--green); font-weight: 700;
+  }
+  .lede { color: var(--ink-2); margin-bottom: 24px; max-width: 680px; }
+  h3 { font-size: 16px; margin: 28px 0 10px; }
+  p + p { margin-top: 10px; }
+  section p, section li { color: var(--ink-2); }
+  section p strong, section li strong { color: var(--ink); }
+
+  /* ---------- 卡片 ---------- */
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 24px 28px; margin: 16px 0;
+  }
+  .card h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card h3 code { font-size: 14px; }
+  .chip {
+    font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+  }
+  .chip.g { background: var(--green-bg); color: var(--green); }
+  .chip.b { background: var(--blue-bg); color: var(--blue); }
+  .chip.o { background: var(--orange-bg); color: var(--orange); }
+  .chip.p { background: var(--purple-bg); color: var(--purple); }
+
+  /* ---------- 类比框 ---------- */
+  .analogy {
+    background: var(--green-bg); border-radius: 10px; padding: 12px 16px;
+    margin: 12px 0; font-size: 14px; color: #14684d;
+  }
+  .analogy::before { content: "🪞 打个比方 — "; font-weight: 700; }
+
+  .warn {
+    background: var(--orange-bg); border-radius: 10px; padding: 12px 16px;
+    margin: 12px 0; font-size: 14px; color: #8a5416;
+  }
+  .warn::before { content: "⚠️ 设计师最容易踩的坑 — "; font-weight: 700; }
+
+  code {
+    font-family: var(--mono); font-size: 13px;
+    background: #f0f1f3; padding: 1px 6px; border-radius: 5px; color: #c7254e;
+  }
+  .card code, td code { color: #476582; }
+
+  /* ---------- 文件树 ---------- */
+  .tree {
+    font-family: var(--mono); font-size: 13.5px; line-height: 2.05;
+    background: #22272e; color: #adbac7; border-radius: 14px;
+    padding: 24px 28px; overflow-x: auto; margin: 16px 0;
+  }
+  .tree .dir { color: #6cb6ff; font-weight: 700; }
+  .tree .dir.g { color: #57d9a3; }
+  .tree .dir.o { color: #f0b429; }
+  .tree .dir.p { color: #c297ff; }
+  .tree .note { color: #768390; font-size: 12.5px; }
+  .tree .file { color: #adbac7; }
+
+  /* ---------- 图例 ---------- */
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 12px 0 4px; font-size: 13px; color: var(--ink-2); }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  /* ---------- 三层楼 ---------- */
+  .layers { margin: 20px 0; }
+  .layer {
+    border-radius: 12px; padding: 16px 22px; margin: 0 0 6px;
+    display: flex; gap: 16px; align-items: baseline;
+  }
+  .layer .no { font-family: var(--mono); font-weight: 800; font-size: 15px; flex-shrink: 0; }
+  .layer b { display: block; margin-bottom: 2px; }
+  .layer small { color: inherit; opacity: .85; }
+  .layer.l3 { background: var(--green-bg); color: #14684d; margin-left: 0; }
+  .layer.l2 { background: var(--blue-bg); color: #174e91; margin-left: 24px; }
+  .layer.l1 { background: #eef0f3; color: #45505e; margin-left: 48px; }
+  .arrow-down { text-align: center; color: var(--ink-3); font-size: 13px; margin: 2px 0; }
+
+  /* ---------- 流程步骤 ---------- */
+  .flow { counter-reset: step; margin: 16px 0; }
+  .step {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 18px 14px 56px; margin-bottom: 8px; position: relative;
+  }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 16px; top: 15px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--green); color: #fff; font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step b { color: var(--ink); }
+  .step small { color: var(--ink-3); display: block; }
+  .flow.blue .step::before { background: var(--blue); }
+
+  /* ---------- 表格 ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; background: var(--card); border-radius: 12px; overflow: hidden; font-size: 14px; }
+  th { background: #f0f2f4; text-align: left; padding: 10px 14px; font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+  td { padding: 10px 14px; border-top: 1px solid var(--line); vertical-align: top; color: var(--ink-2); }
+  td:first-child { white-space: nowrap; font-weight: 600; color: var(--ink); }
+  .table-scroll { overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); margin: 16px 0; }
+  .table-scroll table { margin: 0; border-radius: 0; }
+
+  footer { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 13px; }
+  @media (max-width: 640px) {
+    .layer.l2 { margin-left: 10px; } .layer.l1 { margin-left: 20px; }
+    .wrap { padding: 24px 16px 64px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ================= 头部 ================= -->
+<div class="hero">
+  <span class="tag">给设计师的结构讲解</span>
+  <h1>你的这套设计系统，<br>到底是怎么运作起来的</h1>
+  <p>这个页面用大白话讲清楚两件事：<strong>每个文件夹/文件是干什么的</strong>，以及<strong>它们怎么串联成一个能自动运转的整体</strong>。看完你不需要会写代码，但会知道"改什么去哪改、东西为什么会同步、质量是怎么被守住的"。</p>
+</div>
+
+<div class="toc">
+  <b>目录</b>
+  <ol>
+    <li><a href="#s1">一句话总纲：这个仓库其实是一个"源头"</a></li>
+    <li><a href="#s2">全景地图：整个仓库长什么样</a></li>
+    <li><a href="#s3">最核心的机制：样式的"三层叠加"</a></li>
+    <li><a href="#s4">逐个文件夹讲清楚</a></li>
+    <li><a href="#s5">三个故事，看懂它们如何串联</a></li>
+    <li><a href="#s6">速查表：你想做 X，该去哪</a></li>
+    <li><a href="#s7">小词典：出现过的技术词</a></li>
+  </ol>
+</div>
+
+<!-- ================= 第一章 ================= -->
+<section id="s1">
+  <h2><span class="num">01</span>一句话总纲：这个仓库其实是一个"源头"</h2>
+  <p class="lede">先建立一个最重要的认知，后面所有内容都建立在它之上。</p>
+
+  <p>这个仓库<strong>本身不是一个网站、不是一个产品页面</strong>。它是一个<strong>"标准的源头"</strong>——别的项目（比如你们真正的业务系统）过来"引用"它，引用之后就自动长成你定义的样子、遵守你定义的规矩。</p>
+
+  <div class="analogy">它像一个<strong>中央厨房</strong>。分店（各个业务项目）自己不炒菜，只从中央厨房进货。中央厨房改了配方（比如把品牌绿调深一点），所有分店的菜第二天自动就变了——分店什么都不用做。这就是文档里反复出现的"<strong>改源头一处 → 处处生效</strong>"。</div>
+
+  <p>另一个关键认知：这个源头有<strong>两种"顾客"</strong>，仓库里的东西也因此分成两大类——</p>
+
+  <div class="card">
+    <h3><span class="chip g">顾客 ①</span>人（设计师、研发同事）</h3>
+    <p>人通过<strong>眼睛</strong>消费这个系统 → 所以有 <code>demo/</code> 这个"样板间"网站，打开就能看到每个组件的标准样子。</p>
+  </div>
+  <div class="card">
+    <h3><span class="chip b">顾客 ②</span>AI（下游项目里的 Claude Code）</h3>
+    <p>AI 通过<strong>读文档</strong>消费这个系统 → 所以有 <code>references/</code> 那一堆规范文档和 <code>CLAUDE.md</code>。这是你这套系统<strong>最与众不同的地方</strong>：它从一开始就把"下游干活的 AI"当成头号读者来写规矩，规矩写得极其精确（"必须传什么、漏了会出什么错"），AI 读了就能照做，不需要人盯着。</p>
+  </div>
+
+  <p>记住这个"<strong>一个源头、两种顾客</strong>"的框架，下面每个文件夹都能归进这个框架里。</p>
+</section>
+
+<!-- ================= 第二章 ================= -->
+<section id="s2">
+  <h2><span class="num">02</span>全景地图：整个仓库长什么样</h2>
+  <p class="lede">先看整体，颜色代表四大板块。每个板块的细节在第 4 章逐个展开。</p>
+
+  <div class="legend">
+    <span><i class="dot" style="background:#57d9a3"></i>样式源头（东西长什么样）</span>
+    <span><i class="dot" style="background:#6cb6ff"></i>规则文档（AI 该怎么做）</span>
+    <span><i class="dot" style="background:#f0b429"></i>展示（给人看的样板间）</span>
+    <span><i class="dot" style="background:#c297ff"></i>质检（自动守住质量）</span>
+  </div>
+
+  <div class="tree">
+xiaoya3.0设计规范/<br>
+├─ <span class="dir b">CLAUDE.md</span>　　　　　　　　　　<span class="note">← AI 进门先读的"门牌"：最高铁律 + 引路</span><br>
+├─ <span class="file">接入指南.md</span>　　　　　　　　　<span class="note">← 给"人"看的接入手册，分享给同事就发这份</span><br>
+├─ <span class="file">双击这里即可打开预览.command</span>　<span class="note">← 双击就能在本机打开 demo 样板间</span><br>
+├─ <span class="file">vercel.json</span>　　　　　　　　　<span class="note">← 把 demo 部署到线上的配置（运维用，可忽略）</span><br>
+│<br>
+├─ <span class="dir g">design-spec/</span>　　　　　　　　<span class="note">★ 设计系统的本体，全部标准都在这里</span><br>
+│　├─ <span class="dir b">CLAUDE.md</span>　　　　　　　　<span class="note">← 完整规范总纲 + "任务→必读"路由表</span><br>
+│　├─ <span class="dir g">design-token/</span>　　　　　　<span class="note">← ① 所有"值"的字典：颜色/字号/间距/圆角…</span><br>
+│　├─ <span class="dir g">el-theme/</span>　　　　　　　　<span class="note">← ② 52 个组件的"皮肤" + 布局约定</span><br>
+│　├─ <span class="dir g">components/</span>　　　　　　　<span class="note">← ③ 8 个成品业务组件（页面框架/表格/图表…）</span><br>
+│　├─ <span class="dir b">references/</span>　　　　　　　<span class="note">← ④ 13 份给 AI 读的规范文档（怎么用、何时用）</span><br>
+│　└─ <span class="dir b">utils/</span>　　　　　　　　　　<span class="note">← ⑤ 可直接执行的文案规范（如时间格式化）</span><br>
+│<br>
+├─ <span class="dir o">demo/</span>　　　　　　　　　　　<span class="note">← 样板间网站，也是源头的"第一个客户"</span><br>
+│<br>
+├─ <span class="dir p">scripts/</span>　　　　　　　　　　<span class="note">← 质检机器人：自动扫描规范和实现有没有裂缝</span><br>
+└─ <span class="dir p">.claude/hooks/</span>　　　　　　　<span class="note">← 安检门：AI 写代码的那一刻实时拦截违规</span>
+  </div>
+
+  <p>一个容易混淆的点先说清：<strong><code>design-spec/</code> 是"货"，<code>demo/</code> 是"橱窗"</strong>。真正被下游项目引用的只有 <code>design-spec/</code>；<code>demo/</code> 只是把货摆出来给人看，它自己也是按"客户"的身份去引用 <code>design-spec/</code> 的——这个身份很重要，第 5 章会讲为什么。</p>
+</section>
+
+<!-- ================= 第三章 ================= -->
+<section id="s3">
+  <h2><span class="num">03</span>最核心的机制：样式的"三层叠加"</h2>
+  <p class="lede">这是整个系统能运转的地基。理解了这一节，design-token 和 el-theme 这两个文件夹的存在意义就都通了。</p>
+
+  <p>你们的组件（按钮、表格、弹窗…）<strong>不是从零画的</strong>，而是建立在一个现成的开源组件库 <strong>Element Plus</strong>（文档里简称 EP）之上。EP 提供了几十种功能完好的组件，但长着一副"默认脸"（蓝色调、通用样式）。你的设计系统做的事，就是<strong>在它上面叠两层，把默认脸换成小雅的脸</strong>：</p>
+
+  <div class="layers">
+    <div class="layer l1">
+      <span class="no">第 1 层</span>
+      <span><b>Element Plus 基础（别人造的毛坯）</b><small>提供按钮、表格、弹窗等几十种组件的"骨架和功能"——能点、能弹、能翻页，但长相是默认的。</small></span>
+    </div>
+    <div class="arrow-down">↓ 在它上面叠</div>
+    <div class="layer l2">
+      <span class="no">第 2 层</span>
+      <span><b>design-token/ 设计令牌（你家的材料库）</b><small>定义所有"值"：品牌绿是哪个色号、间距分几档、字号有哪些组合。它不直接改组件，只是把材料备齐、给每种材料起好名字。</small></span>
+    </div>
+    <div class="arrow-down">↓ 再叠</div>
+    <div class="layer l3">
+      <span class="no">第 3 层</span>
+      <span><b>el-theme/ 主题覆盖（施工队按图纸粉刷）</b><small>拿第 2 层的材料，把第 1 层每个组件逐一"重新粉刷"成小雅风格：按钮圆角多大、表头什么底色、选中态什么绿。52 个组件每个一份粉刷图纸。</small></span>
+    </div>
+  </div>
+
+  <div class="analogy">像装修：<strong>EP 是精装交付的毛坯房</strong>（门窗齐全但是开发商风格），<strong>design-token 是你选好的材料库</strong>（墙漆色卡、地板样品、五金件规格），<strong>el-theme 是施工方案</strong>（客厅墙用 3 号漆、踢脚线统一 8 公分）。三者必须按顺序来——先有房，再备料，最后施工。</div>
+
+  <p>所以任何项目（包括 demo 自己）想"接入"这套设计系统，做法就是<strong>按固定顺序引入这三层</strong>：先 EP、再令牌、最后覆盖层。顺序错了，"粉刷"会盖不住"毛坯"，样式就乱了。这就是文档里说的"<strong>三层样式、顺序固定</strong>"。</p>
+
+  <div class="warn">这三层只解决"<strong>长得对</strong>"。下游的 AI 要"<strong>做得对</strong>"（知道弹窗宽度只有三档、表单必须单列、进行中状态用橙色标签），靠的是另一条通道——下游项目在自己的 CLAUDE.md 里加一行 <code>@</code> 引用，把你的规则文档接进它的 AI 大脑。样式通道和规则通道是<strong>两条独立的线，缺一条都算没接全</strong>。第 5 章的故事会把两条线都走一遍。</div>
+</section>
+
+<!-- ================= 第四章 ================= -->
+<section id="s4">
+  <h2><span class="num">04</span>逐个文件夹讲清楚</h2>
+  <p class="lede">按"样式源头 → 规则文档 → 展示 → 质检"的顺序，每个文件夹一张卡片。</p>
+
+  <!-- design-token -->
+  <div class="card">
+    <h3><code>design-spec/design-token/</code><span class="chip g">样式源头</span>值的字典</h3>
+    <p>这里存放全系统<strong>所有的"值"</strong>，并且给每个值起了名字。研发写样式时不写"绿色 #23b283"，而是写"<code>品牌主色</code>这个名字"——将来你想换品牌色，改字典里这一个值，全系统用到它的几百个地方一起变。这些"起了名字的值"就叫<strong>设计令牌（design token）</strong>。</p>
+    <p>里面最重要的设计是<strong>两层字典</strong>：</p>
+    <ul style="margin: 8px 0 8px 20px;">
+      <li><code>palette.scss</code> —— <strong>原料层</strong>：10 个色系 × 每系 10 阶，纯粹的色号表，不带任何含义。</li>
+      <li><code>semantic.scss</code> —— <strong>语义层</strong>：给原料起"用途名"。比如"正文文字色 = 灰 10 号"、"卡片背景 = 灰 2 号"。研发永远用"用途名"取值，不直接抓原料。</li>
+    </ul>
+    <div class="analogy">口红有<strong>色号</strong>（原料层：#314 豆沙色），也有<strong>用途</strong>（语义层："日常通勤用这支"）。别人问你"上班涂哪支"，你答用途而不是色号。语义层的价值在于：哪天你想换通勤色，只要把"通勤"指向另一个色号，所有场合自动跟着换——而不用挨个通知每个用过 #314 的人。</div>
+    <p>其他文件各管一类值：<code>spacing.scss</code>（间距 10 档 + 圆角 5 档）、<code>font.scss</code>（13 档字号组合 + 字体文件）、<code>z-index.scss</code>（浮层谁盖谁的 6 档层级）、<code>animation.scss</code>（动效时长）。带 <code>-dark</code> 的两个文件是<strong>暗色模式</strong>：它聪明的地方在于只翻转"原料层"，语义层顺着引用关系自动就对了，不用重写一遍。</p>
+    <p><code>brands.scss</code> 单独说一下：它是<strong>品牌色注册器</strong>。每个接入的项目要自己"登记"用什么品牌色，<strong>不登记的话主色会静默变成蓝色而且不报错</strong>——这是审查发现下游最容易翻车的坑，接入指南第 2 步专门讲它。</p>
+  </div>
+
+  <!-- el-theme -->
+  <div class="card">
+    <h3><code>design-spec/el-theme/</code><span class="chip g">样式源头</span>组件的皮肤（唯一定义处）</h3>
+    <p><code>components/</code> 下有 <strong>52 份文件，每个组件一份</strong>：<code>button.scss</code> 管按钮长相、<code>table.scss</code> 管表格长相……每一份都是拿令牌当材料，把 EP 对应组件"重新粉刷"。</p>
+    <p>这里是全系统最神圣的一条铁律的落点：<strong>组件长什么样，只允许在这里定义这一份</strong>（文档里叫"单一数据源"）。任何页面想让按钮长得不一样，都不许在自己页面里私自改，必须回到这里改——因为只有源头这一份在变，所有引用它的项目才会一起变。有人在自己页面里"就地改一改"，那个地方就永远脱离你的控制了，这是设计系统最典型的死法。</p>
+    <p>另外两个成员：<code>var-mapping.scss</code> 是<strong>转接头</strong>——EP 内部有自己的变量名，这份文件把它们逐个接到你的令牌上（EP 说"给我主题色"，转接头递过去你的品牌绿）；<code>patterns/</code> 存的不是组件而是<strong>布局约定</strong>——比如"工具栏"（标题在左、按钮在右的那一条）和"栅格"（页面分栏只许 9 种宽度）。这些不是 EP 组件，是你规定的排版章法，同样只此一份。</p>
+  </div>
+
+  <!-- components -->
+  <div class="card">
+    <h3><code>design-spec/components/</code><span class="chip g">样式源头</span>成品业务组件</h3>
+    <p>前两个文件夹是"换皮"，这个文件夹是<strong>造新家具</strong>——用基础组件拼出来的、EP 里没有的成品：<code>PageFrame</code>（整页后台框架：侧边导航+顶栏）、<code>DataTable</code>（标准表格）、<code>Chart</code>（图表）、<code>StepBar</code>（步骤条）、<code>Breadcrumb</code>（面包屑）、<code>UserAvatar</code>（角色头像）、<code>AiButton</code>（AI 渐变按钮）、<code>SearchMini</code>（搜索框），共 8 个。</p>
+    <p>它们和"皮肤"的区别：皮肤只改现成组件的长相；业务组件有<strong>自己的骨架和内容</strong>（比如 PageFrame 内置了返回按钮、课程卡、导航展开逻辑）。下游项目直接"整个拿去用"，传几个参数就得到标准成品。每个组件的图片素材都装在自己肚子里，拿走即用，不依赖使用方另备。</p>
+  </div>
+
+  <!-- references -->
+  <div class="card">
+    <h3><code>design-spec/references/</code> + <code>utils/</code><span class="chip b">规则文档</span>给 AI 读的说明书</h3>
+    <p>样式层解决"长得对"，这里解决"<strong>用得对</strong>"。13 份文档，写法极其克制统一——每条规矩都按"<strong>何时用 / 强制做法 / 反例 / 可照抄骨架</strong>"四段式写，专门写给 AI 读：它读完既知道该做什么、也知道不做会出什么错、还能直接抄一段标准写法。</p>
+    <div class="table-scroll"><table>
+      <tr><th>文件</th><th>管什么</th></tr>
+      <tr><td>foundations.md</td><td>取值总入口：什么场景用哪档颜色/字号/间距/阴影，AI 写任何样式前先查它</td></tr>
+      <tr><td>component-interaction.md</td><td>最厚的一本（1360 行）：每个 EP 组件的用法规矩、哪些组件已停用别碰、哪些没坑随便用</td></tr>
+      <tr><td>patterns/ 六份</td><td>比组件更大一级的"章法"：表单怎么组织、工具栏怎么排、弹窗还是抽屉怎么选…</td></tr>
+      <tr><td>typical-pages.md</td><td>典型页面索引：接到整页任务先来比对，有现成架子就照抄，不从零发明</td></tr>
+      <tr><td>efficiency-guide.md / display-guide.md</td><td>两种页面性格的指南：干活型页面（后台/列表）和展示型页面（首页/报告）各一套原则</td></tr>
+      <tr><td>copywriting/ + utils/</td><td>文案怎么写：比如时间格式规则（copywriting/time.md 写规则），utils/format-time.ts 是配套的<strong>可直接运行的代码</strong>——规则和实现绑在一起，下游不会各写各的</td></tr>
+      <tr><td>judging-criteria.md + rules.generated.json</td><td>验收标准：全部规矩被自动提取成 92 条打分条目（后者是机器生成的，不要手改）</td></tr>
+    </table></div>
+  </div>
+
+  <!-- CLAUDE.md -->
+  <div class="card">
+    <h3>两份 <code>CLAUDE.md</code><span class="chip b">规则文档</span>AI 的门牌 + 路由器</h3>
+    <p><code>CLAUDE.md</code> 是一个特殊约定：<strong>AI（Claude Code）在一个项目里开工时，会自动先读这个名字的文件</strong>。所以它相当于贴在门口给 AI 看的"入职须知"。</p>
+    <p>你的仓库有两份，分工明确：<strong>根目录那份</strong>是门牌，前置声明最高铁律（一切必须用令牌和标准组件）；<strong><code>design-spec/</code> 里那份</strong>是完整总纲，最有价值的部分是一张<strong>"任务 → 必读"路由表</strong>：AI 接到"做个表单"就被指去读表单章法，接到"加个空状态"就被指去读空状态段——规矩写得再好，AI 想不起来读也白搭，这张表就是解决"想不起来读"的。</p>
+    <p>下游项目怎么获得这一切？在它自己的 CLAUDE.md 里<strong>加一行 <code>@</code> 引用指向你的总纲</strong>，AI 启动时会顺藤摸瓜把整套规矩装进脑子。一行字，永久生效，源头更新自动跟进。</p>
+  </div>
+
+  <!-- demo -->
+  <div class="card">
+    <h3><code>demo/</code><span class="chip o">展示</span>样板间，同时是"第一个客户"</h3>
+    <p>一个可以在浏览器打开的网站（60 个页面文件），左侧导航列出所有组件和设计模式，点开就能看标准效果、拨动配置开关看变化。给同事讲解、自己核对效果，都来这里。</p>
+    <p>它有个精心设计的双重身份：<strong>它不是"另一套实现"，而是严格按客户方式引用源头的第一个客户</strong>。审查确认它 60 个文件里零违规、没有任何私改。这个身份带来一个宝贵的承诺：<strong>demo 里看到的样子 = 任何正确接入的下游项目将来的样子，分毫不差</strong>。demo 同时也是源头的第一道试金石——源头改坏了，样板间先露馅。</p>
+    <p>还有个巧妙机制叫 <strong>CopyToCC</strong>：每个组件区块有一个"复制到 CC 去调用"按钮，把该组件的标准用法（连同你拨过的配置）打包成一段话，贴给下游项目的 AI，它就能原样做出来——相当于<strong>设计师不写代码也能给 AI 精确下单</strong>。</p>
+  </div>
+
+  <!-- scripts + hooks -->
+  <div class="card">
+    <h3><code>scripts/</code> + <code>.claude/hooks/</code><span class="chip p">质检</span>自动守门的机器人</h3>
+    <p>规矩写下来只是第一步，真正难的是<strong>防止规矩和现实慢慢脱节</strong>。这两个文件夹是自动化的守门员，分两种性格：</p>
+    <ul style="margin: 8px 0 8px 20px;">
+      <li><strong>scripts/ 是"巡检员"（事后扫描）</strong>：<code>audit-spec</code> 扫"规范和实现有没有裂缝"（比如某个组件有样式却没有使用说明，下游想用都查不到）；<code>audit-precision</code> 扫"每一档取值有没有说清什么时候用"（间距 10 档如果两档说明一样，下游只能靠猜）；<code>extract-rules</code> 把文档里的规矩自动提取成 92 条打分条目——将来验收某个下游页面"合不合规范"，机器直接打分。</li>
+      <li><strong>hooks/ 是"安检门"（实时拦截）</strong>：AI 写代码<strong>落笔的那一瞬间</strong>触发。比如 AI 想手搓一个浮层面板（而组件库里明明有现成的下拉菜单），安检门当场拦下弹出确认。文档管"让 AI 理解"，安检门管"理解失灵时强制刹车"，双保险。</li>
+    </ul>
+    <div class="analogy">像餐厅的食品安全体系：<strong>巡检员</strong>每周对着台账查库房（脚本），<strong>金属探测门</strong>装在后厨门口实时报警（hook）。只靠贴在墙上的规章制度（文档），迟早有人忘。</div>
+  </div>
+</section>
+
+<!-- ================= 第五章 ================= -->
+<section id="s5">
+  <h2><span class="num">05</span>三个故事，看懂它们如何串联</h2>
+  <p class="lede">单看文件夹还是零件，这三条链路才是"整体如何运作"。</p>
+
+  <h3>故事一：你把品牌绿调深了一号，会发生什么</h3>
+  <div class="flow">
+    <div class="step"><b>你（或研发）只改一处</b><small>design-token/ 字典里"品牌主色"对应的值，从旧绿换成新绿。</small></div>
+    <div class="step"><b>语义层自动跟进</b><small>"主按钮底色""选中态颜色""hover 泛绿"这些用途名都指向品牌主色，无需逐个改。</small></div>
+    <div class="step"><b>52 份组件皮肤自动跟进</b><small>el-theme 里所有粉刷图纸用的都是"用途名"而非写死的色号，材料一换，成品全变。</small></div>
+    <div class="step"><b>demo 和所有下游项目自动跟进</b><small>它们只是"引用"源头，不持有任何拷贝。你没有通知任何人，但所有项目的按钮都变成了新绿。</small></div>
+  </div>
+  <p>这条链路成立的前提，就是那条铁律：<strong>值只在字典里定义一份、组件长相只在皮肤层定义一份，其他所有地方只引用、不复制</strong>。哪个环节有人偷偷复制了一份，那个环节从此断联。</p>
+
+  <h3>故事二：下游项目的 AI 接到"做一个课程列表页"</h3>
+  <div class="flow blue">
+    <div class="step"><b>AI 开机自带你的规矩</b><small>下游项目 CLAUDE.md 里那行 @ 引用，让 AI 一启动就装载了你的总纲和"任务→必读"路由表。</small></div>
+    <div class="step"><b>先翻典型页面找现成架子</b><small>路由表命中"搭新页面"，AI 先去 typical-pages.md 比对——有相近的整页组方就照抄骨架起步，不从零发明。</small></div>
+    <div class="step"><b>再按章法逐块落地</b><small>顶部一条按工具栏章法排、列表用成品 DataTable、状态列按标签选色规则、空数据放标准空状态插画、每个间距查 foundations 取档。</small></div>
+    <div class="step"><b>写歪的瞬间被安检门拦住</b><small>假如 AI 想手搓浮层，hook 当场拦下；交付前它还要按规矩输出"每个取值出自哪条规范"的对账清单。</small></div>
+  </div>
+  <p>结果：不同项目、不同的人、不同的 AI 会话做出来的页面<strong>长得像一家人</strong>——一致性不再依赖谁的记性和自觉。</p>
+
+  <h3>故事三：半年后，规范自己会不会烂掉？</h3>
+  <p>规范体系最常见的死法不是没人写，而是<strong>慢慢和现实脱节却没人发现</strong>（文档说 A、代码是 B，且不报错）。你的系统为此设了三道防线：改任何规则时要求<strong>主动扫一遍所有引用它的地方</strong>（纪律）；<code>audit</code> 脚本定期机扫六大类裂缝（巡检）；每条新规矩必须打上标记、自动进入 92 条验收清单，否则脚本会报（闭环）。此前的深度审查确认这套防线大体是真实生效的——也发现了几处"防线自己失灵"的地方（比如某个检查覆盖面虚高），已单独列了修复清单。</p>
+</section>
+
+<!-- ================= 第六章 ================= -->
+<section id="s6">
+  <h2><span class="num">06</span>速查表：你想做 X，该去哪</h2>
+  <p class="lede">以后有想法时，对照这张表就知道动哪里（自己不动手也知道该指挥去改哪里）。</p>
+  <div class="table-scroll"><table>
+    <tr><th>你想…</th><th>去哪</th><th>提醒</th></tr>
+    <tr><td>看某个组件的标准样子</td><td>双击 <code>双击这里即可打开预览.command</code> 开 demo</td><td>demo 的样子 = 下游接入后的真实样子</td></tr>
+    <tr><td>让下游 AI 用标准写法做某组件</td><td>demo 里该组件的「复制到 CC 去调用」按钮</td><td>拨好配置再复制，配置会一起带过去</td></tr>
+    <tr><td>换品牌色 / 调某个颜色</td><td><code>design-token/</code>（色板或语义层）</td><td>改一处全系统生效，所以改前想清楚</td></tr>
+    <tr><td>调某个组件的长相</td><td><code>el-theme/components/</code> 对应那份文件</td><td>只许改这里，绝不许在某个页面里就地改</td></tr>
+    <tr><td>加一条新的设计规矩</td><td><code>references/</code> 建四段式文档 + 总纲路由表加一行 + 打上规则标记</td><td>三步缺一步，规矩就"到不了下游"</td></tr>
+    <tr><td>给同事介绍怎么接入</td><td>发根目录的 <code>接入指南.md</code></td><td>提醒对方别漏"注册品牌色"，否则主色变蓝</td></tr>
+    <tr><td>验收一个下游页面合不合规范</td><td>对下游 AI 说"按规范检查这个页面"</td><td>它会按 92 条清单打分，主规则不过即不合规</td></tr>
+    <tr><td>改完规则担心哪里没同步</td><td>让 AI 跑 <code>scripts/</code> 里的两个 audit 脚本</td><td>机器只兜机械裂缝，口径矛盾仍需人读</td></tr>
+  </table></div>
+</section>
+
+<!-- ================= 第七章 ================= -->
+<section id="s7">
+  <h2><span class="num">07</span>小词典：出现过的技术词</h2>
+  <div class="table-scroll"><table>
+    <tr><th>词</th><th>大白话</th></tr>
+    <tr><td>Element Plus（EP）</td><td>别人造好的开源组件库，提供按钮/表格/弹窗等"毛坯"，你的系统在它之上换皮</td></tr>
+    <tr><td>设计令牌（token）</td><td>起了名字的样式值。"品牌主色"是令牌，"#23b283"是裸值——用令牌才能一改全变</td></tr>
+    <tr><td>语义层</td><td>令牌字典的第二层：不按色号叫，按"用途"叫（正文色、卡片底色），换值不换名</td></tr>
+    <tr><td>SCSS</td><td>一种写样式的文件格式（.scss 后缀），可以理解为"更好写的 CSS"</td></tr>
+    <tr><td>单一数据源（SSOT）</td><td>一样东西只在一个地方定义一份，其他地方全是引用。设计系统能"一改全变"的根基</td></tr>
+    <tr><td>私货</td><td>本该引用源头，却在自己页面里复制一份改掉——从此脱离同步，规范最恨的事</td></tr>
+    <tr><td>CLAUDE.md</td><td>AI 开工前自动阅读的"入职须知"文件；@ 引用 = 把别处的须知也接进来</td></tr>
+    <tr><td>hook（钩子）</td><td>挂在"AI 写代码"这个动作上的自动检查，落笔瞬间触发，能当场拦截</td></tr>
+    <tr><td>脚本（script）</td><td>一段可以随时运行的自动化检查程序，跑一次出一份体检报告</td></tr>
+    <tr><td>demo</td><td>演示网站/样板间。你这里的 demo 还兼任"第一个客户"，验证源头真的可被引用</td></tr>
+  </table></div>
+</section>
+
+<footer>
+  <p>基于 2026-08 对仓库三个层面（令牌与皮肤 / 规则与脚本 / demo 与业务组件）的深度审查整理 · 文中数字（52 份组件皮肤、8 个业务组件、13 份规范文档、92 条验收条目）均为当时实测值，仓库演进后以实际为准。</p>
+</footer>
+
+</div>
+</body>
+</html>
