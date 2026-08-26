@@ -198,6 +198,73 @@ export const DETECTORS = {
     hint: '纯图标入口用 <el-button text> + #icon 插槽，禁 circle',
   },
 
+  /** 入口引导箭头必须挂约定 class .btn-entry */
+  'btn-entry-class': {
+    custom: (ctx) => {
+      if (!ctx.template) return []
+      const root = parseTemplate(ctx.template)
+      const hits = []
+      for (const btn of findAll(root, /^el-button$/)) {
+        for (const ic of findAll(btn, /^(ChevronRight|ArrowRight)$/)) {
+          // #icon 插槽里的是头部图标（带图标/纯图标形态），不是尾部入口箭头
+          if (closest(ic, /^template$/)?.attrs?.['#icon'] !== undefined) continue
+          const cls = `${ic.attrs.class || ''} ${ic.attrs[':class'] || ''}`
+          if (/btn-entry/.test(cls)) continue
+          hits.push({ line: ic.line + ctx.templateOffset, text: `<${ic.tag}> 未挂 .btn-entry` })
+        }
+      }
+      return hits
+    },
+    hint: '入口引导箭头用约定 class .btn-entry（间距/hover 前移/禁用不动全在源头 button.scss）',
+  },
+
+  /** 入口引导仅限 text 文本按钮（挂在裸元素上也不行） */
+  'btn-entry-text-only': {
+    custom: (ctx) => {
+      if (!ctx.template) return []
+      const root = parseTemplate(ctx.template)
+      const hits = []
+      for (const n of findAll(root, /./)) {
+        const cls = `${n.attrs?.class || ''} ${n.attrs?.[':class'] || ''}`
+        if (!/\bbtn-entry\b/.test(cls)) continue
+        const btn = closest(n, /^el-button$/)
+        if (!btn) {
+          hits.push({ line: n.line + ctx.templateOffset, text: `.btn-entry 挂在 <${n.tag}> 上，不在 el-button 内` })
+          continue
+        }
+        // :text 动态绑定静态判不了真值，视为满足（demo 网格即此写法）
+        const isText = btn.attrs.text !== undefined || btn.attrs[':text'] !== undefined
+        if (!isText) {
+          hits.push({ line: n.line + ctx.templateOffset, text: '.btn-entry 挂在非 text 按钮上（源头无样式兜底）' })
+        }
+      }
+      return hits
+    },
+    hint: '入口引导箭头仅限 <el-button text>；有底按钮不挂、裸 span 不自拼「文字+›」',
+  },
+
+  /** 尾部箭头互斥：同一按钮不得同时挂入口引导与下拉箭头 */
+  'btn-entry-exclusive-caret': {
+    custom: (ctx) => {
+      if (!ctx.template) return []
+      const root = parseTemplate(ctx.template)
+      const hits = []
+      for (const btn of findAll(root, /^el-button$/)) {
+        // 带 v-if/v-else-if/v-show 的箭头是条件渲染（如 demo 配置开关联动），
+        // 运行时可能并不共存——静态判不了真值，豁免；只抓两枚都无条件常驻的
+        const all = findAll(btn, /./).filter(
+          (n) => n.attrs?.['v-if'] === undefined && n.attrs?.['v-else-if'] === undefined && n.attrs?.['v-show'] === undefined,
+        )
+        const has = (re) => all.some((n) => re.test(`${n.attrs?.class || ''} ${n.attrs?.[':class'] || ''}`))
+        if (has(/\bbtn-entry\b/) && has(/\b(btn-caret|dropdown-caret)\b/)) {
+          hits.push({ line: btn.line + ctx.templateOffset, text: '同一按钮同时挂了入口引导与下拉箭头' })
+        }
+      }
+      return hits
+    },
+    hint: '尾部箭头二选一：会弹出面板→下拉箭头（ChevronDown），会跳转/切换视图→入口引导（.btn-entry）',
+  },
+
   // —— 布局与栅格 ——
   'grid-no-el-row': EL_ROW_COL,
 
@@ -241,6 +308,12 @@ export const DETECTORS = {
     'el-time-picker',
     /value-format\s*=/,
     'el-time-picker 必传 value-format',
+  ),
+
+  'pagination-hide-single-page': requireProp(
+    'el-pagination',
+    /\bhide-on-single-page\b/,
+    'el-pagination 必传 hide-on-single-page（不足一页整个分页器不渲染，禁自己 v-if 手算页数）',
   ),
 
   'inputnumber-min-max': requireProp(

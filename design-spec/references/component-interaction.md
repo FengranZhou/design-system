@@ -98,6 +98,33 @@ updated: 2026-05-10
 
 > **纯图标入口一律配 tooltip**（见下方 Tooltip 段）——没有文字标签时，图标含义只能靠 tooltip 给出。
 
+### 入口引导按钮（文字 + › 右箭头轻量入口）
+
+**何时用**：「点了离开此处去别处」的轻量导航入口——查看更多、查看详情、前往设置这类"进入/跳转"语义。它是 text 文本按钮的一个**配置项**，不是新组件。
+
+- **一律 `<el-button text>` + 尾部 `ChevronRight` 挂约定 class `.btn-entry`** <!-- @rule id=btn-entry-class level=MUST cat=组件用法 detect=regex dtitle=「查看更多 ›」这类入口的箭头间距与 hover 前移动效应全站一致 title=入口引导箭头一律用约定 class .btn-entry（间距/hover 前移/禁用不动在源头） -->——箭头间距、hover 前移动效、禁用/加载态不动、RTL 翻转全在源头 `button.scss`，使用方只写一行 class。三款 text 类型（次/主/危险）都可挂，箭头随文字色。
+- **仅限 text 文本形态** <!-- @rule id=btn-entry-text-only level=MUST cat=组件用法 detect=regex dtitle=有底按钮尾部不应出现导航箭头，入口引导只属于轻量文字入口 title=入口引导箭头仅限 text 文本按钮，有底按钮不挂（源头无样式兜底） -->——有底按钮承载"操作"，尾部导航箭头不成立；源头样式整段写在 `.is-text` 下，有底按钮挂了 `.btn-entry` 拿不到任何兜底（有意为之，不是 bug）。
+- **与下拉箭头互斥，尾部只挂其一** <!-- @rule id=btn-entry-exclusive-caret level=MUST cat=组件用法 detect=regex dtitle=一个按钮尾部只能有一枚箭头：要么"原地展开"要么"去往别处"，不能既下拉又跳转 title=.btn-entry 与 .btn-caret/.dropdown-caret 互斥，一个按钮只挂其一 -->——`.btn-caret` / `.dropdown-caret`（ChevronDown）说的是"点我原地展开"，`.btn-entry`（ChevronRight）说的是"点我去别处"，语义相反且都占文字尾部同一位置。按语义二选一：会弹出面板 → 下拉箭头；会跳转/切换视图 → 入口引导。
+- 头部图标配置项可正常叠加（`#icon` 插槽与 `.btn-entry` 正交共存，垂直对齐源头已保证）。
+
+```vue
+<!-- ✅ 标准形态：text 按钮 + 尾部 ChevronRight 挂 .btn-entry -->
+<el-button text type="primary" @click="goDetail">
+  查看详情 <ChevronRight class="btn-entry" :size="14" :stroke-width="2" />
+</el-button>
+
+<!-- ❌ 禁止：有底按钮挂入口箭头（源头无样式兜底，间距/动效全缺） -->
+<el-button type="primary">查看详情 <ChevronRight class="btn-entry" /></el-button>
+
+<!-- ❌ 禁止：一个按钮同时挂两枚尾部箭头 -->
+<el-button text>更多 <ChevronDown class="btn-caret" /><ChevronRight class="btn-entry" /></el-button>
+
+<!-- ❌ 禁止：裸 span 自拼「文字 + ›」再在 scoped 里补色/间距/hover（复刻 el-button text 已有能力） -->
+<span class="my-entry">查看更多 ›</span>
+```
+
+- **反例**：分步流程的「下一步」做成有底主按钮再挂右箭头——方向已由 `StepBar` 步骤条表达，按钮不再挂箭头（方向性按钮是主按钮贴边原则的例外，不是入口引导的适用场景）；箭头不挂 `.btn-entry` 而在页面 scoped 里自写 `translateX` hover 动效（脱离源头，改源头它不动）；拿 `.btn-caret` 装 ChevronRight 凑数（hover 会翻转 180°，语义与动效全错）。
+
 ### Tooltip 文字提示（纯图标入口必配 / 长文本截断补全）
 
 **触发条件**（命中任一即用 `el-tooltip`）：
@@ -802,12 +829,14 @@ onMounted(async () => {
   v-model:page-size="pageSize"
   :page-sizes="[10, 20, 50, 100]"
   :total="total"
+  hide-on-single-page
   layout="prev, pager, next, sizes, jumper"
 />
 ```
 
 - layout 顺序：`prev, pager, next, sizes, jumper`（不含 `total`）
 - **分页器区域布局**：外层容器使用 `flex` + `justify-content: space-between`，左侧放总数文本（如"共 128 条"），右侧放 `el-pagination`。总数不通过分页器的 `total` layout 项展示
+- **必传 `hide-on-single-page`：内容不足一页时不显示分页器** <!-- @rule id=pagination-hide-single-page level=MUST cat=组件用法 detect=regex dtitle=数据只有一页时不应出现一排点不了的翻页控件 title=el-pagination 必传 hide-on-single-page（不足一页整个分页器不渲染） -->——只有一页时翻页控件全是禁用态，是纯噪音（内容优先、装饰有度）。用 EP 原生属性即可，**禁自己写 `v-if="total > pageSize"` 手算**（换每页条数后条件会算错，EP 按真实页数判断）。左侧「共 N 条」总数文本在分页器外层，不受隐藏影响、照常保留——用户仍知道数据量；sizes 下拉随之一起消失无妨，内容已全部可见。
 
 #### 尺寸选型：常规 vs 小型（二选一）
 

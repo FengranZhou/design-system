@@ -18,6 +18,9 @@
               :class="{ 'is-expanded': open }"/></el-button>…</el-dropdown>
               （换 .dropdown-caret：展开时转而非 hover 时转；间距本文件已补，
                 展开真值 .is-expanded 仍需使用方用 @visible-change 绑）
+     入口引导 › （⚠ 仅限 text 文本款）<el-button text>文字 <ChevronRight class="btn-entry"/></el-button>
+              （「点了去别处/查看更多」的轻量导航入口；与下拉箭头互斥、尾部只挂其一；
+                间距/hover 前移/禁用不动 已由本文件统一处理，有底按钮无此形态、挂了无样式兜底）
    → 任意组合（如 主按钮+禁用+图标+箭头）都已支持，无需在接入方写任何样式。
      改任何按钮外观 = 改本文件，所有接入项目自动同步。
    └────────────────────────────────────────────────────────────────────┘ */
@@ -261,6 +264,26 @@
     }
   }
 
+  /* 入口引导箭头（文字 + › ChevronRight）：「点了离开此处 / 查看更多」的轻量导航入口。
+     仅限 text 文本形态——有底按钮承载的是"操作"，尾部导航箭头不成立，故本组规则
+     整段限定在 .is-text 之下：有底按钮误挂此 class 拿不到任何样式兜底（有意为之）。
+     与下拉箭头（.btn-caret / .dropdown-caret）互斥：两者都占"文字尾部"同一位置，
+     语义又相反（下拉=原地展开，入口=离开去别处），一个按钮只能挂其一——
+     互斥属规则层约束（CSS 拦不住硬塞两个 svg），见 references/component-interaction.md
+     「入口引导按钮」段。
+     hover 按钮时箭头前移（暗示"去往"，与 .btn-caret 的 hover 翻转同族、同过渡档）；
+     位移 2px 与本文件按下反馈 translateY(1px) 同属未令牌化的动效微位移档。
+     禁用/加载态不可交互，箭头不动、颜色随文字色（currentColor）一起变淡。
+     用法：<el-button text>文字 <ChevronRight class="btn-entry" /></el-button> */
+  &.is-text .btn-entry {
+    margin-inline-start: var(--iflyv-spacing-1);
+    vertical-align: middle;
+    transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+  }
+  &.is-text:hover:not(.is-disabled):not(.is-loading) .btn-entry {
+    transform: translateX(2px);
+  }
+
   /* 文字按钮加载态：无底，靠文字变淡（disabled 色）表达"处理中不可点"，与实心 loading 一致。
      loading 不带 is-disabled，须显式设 color。 */
   &.is-text.is-loading:not(.is-disabled) {
@@ -394,6 +417,14 @@
 }
 
 /* RTL：覆盖 EP 硬编码物理 margin */
+
+/* RTL：入口引导箭头翻转指向阅读方向前方（ChevronRight → 视觉朝左），
+   hover 前移方向随之反向（scaleX(-1) 叠加 translateX(2px)：先平移后镜像 = 视觉向左 2px）。
+   与 pagination / cascader / breadcrumb 的 RTL 箭头翻转同一纪律。 */
+[dir="rtl"] .el-button.is-text .btn-entry { transform: scaleX(-1); }
+[dir="rtl"] .el-button.is-text:hover:not(.is-disabled):not(.is-loading) .btn-entry {
+  transform: scaleX(-1) translateX(2px);
+}
 
 /* 相邻按钮间距清零（覆盖 EP 原生 margin-left: 12px）。
    @depends-on: 使用方按钮组间距必须由父容器 `display: flex; gap: <token>` 提供。

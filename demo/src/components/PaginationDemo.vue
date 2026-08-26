@@ -15,6 +15,7 @@
             v-model:page-size="pageSize"
             :page-sizes="[10, 20, 50, 100]"
             :total="80"
+            hide-on-single-page
             :small="paginationSize === 'small'"
             :layout="paginationSize === 'small' ? 'prev, pager, next' : 'prev, pager, next, sizes, jumper'"
           />
