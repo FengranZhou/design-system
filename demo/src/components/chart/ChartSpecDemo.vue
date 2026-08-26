@@ -5,7 +5,7 @@
       <CopyToCC anchor="chart-donut" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">看占比构成用它（扇区 ≤5）；环心放总量数字。扇区超过 5 个改用堆积条形，别硬塞。</p>
+      <p class="demo-desc">单组数据看占比用它（扇区 ≤5）；分类自动从大到小、12 点方向顺时针排（源头固化）；环心放总量或留空。多组数据一起比构成 → 改堆积图，扇区超限别硬塞。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
           <h5 class="chart-spec-card__title">课程资源分布</h5>
@@ -21,11 +21,11 @@
       <CopyToCC anchor="chart-bar" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">类目之间比大小用它（类目 ≤8）；单序列逐类目取色。别用折线连类目——类目间没有连续关系。</p>
+      <p class="demo-desc">横坐标必须是时间、学期等有序类别（无序类别一律用条形图）；分类 ≤4 种，数据差距过小时最好只留 2 组；横向空间不足时转条形图。单组数据也展示图例（传 series-name）。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">各班平均分</h5>
-          <Chart type="bar" :data="barData" :height="216" />
+          <h5 class="chart-spec-card__title">近五学期平均分</h5>
+          <Chart type="bar" :data="barData" series-name="平均分" unit="分" :height="216" />
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@
       <CopyToCC anchor="chart-bar-stack" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">同时比较多个对象的构成用它（type="bar" 加 stacked，多序列传 categories + series，自动出图例）。</p>
+      <p class="demo-desc">包含关系的数据：展示总量的同时展示总量内各子分类（type="bar" 加 stacked）。序列 ≥3 时中间序列难以直接比较，需精确比较只放 2 个序列；交付前必须用真实数据验证可读性。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
           <h5 class="chart-spec-card__title">各班题型得分构成</h5>
@@ -53,7 +53,7 @@
       <CopyToCC anchor="chart-bar-horizontal" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">类目多或名称长时的比大小（type="bar" 加 horizontal）——横排放得下长名称。</p>
+      <p class="demo-desc">无序类别（科目、班级、资源类型…）的比大小一律用它（type="bar" 加 horizontal）；柱状图类目过多、标签挤压时也转到这里。很灵活，常与数据表格结合使用。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
           <h5 class="chart-spec-card__title">各类型资源数量</h5>
@@ -69,11 +69,11 @@
       <CopyToCC anchor="chart-line" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">随时间的变化趋势用它（多序列 ≤4 条）；时间点多时别用柱状——会挤成栅栏。</p>
+      <p class="demo-desc">随时间/有序类别的走势用它（折线 ≤4 条，数据多须用真实数据确认不过于集中）；时间点多别用柱状——会挤成栅栏。特殊单位传 unit（轴顶 + 浮层后缀）。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
           <h5 class="chart-spec-card__title">近八周出勤率</h5>
-          <Chart type="line" :data="lineData" :height="216" />
+          <Chart type="line" :data="lineData" series-name="出勤率" unit="%" :height="216" />
         </div>
       </div>
     </div>
@@ -99,12 +99,13 @@ const donutData = [
   { name: '多媒体教材', value: 24 },
 ]
 
+// 柱状图横坐标必须有序类别（学期有先后）；无序类别（如班级、科目）用条形图
 const barData = [
-  { name: '一班', value: 86 },
-  { name: '二班', value: 79 },
-  { name: '三班', value: 91 },
-  { name: '四班', value: 74 },
-  { name: '五班', value: 83 },
+  { name: '大一上', value: 78 },
+  { name: '大一下', value: 82 },
+  { name: '大二上', value: 79 },
+  { name: '大二下', value: 86 },
+  { name: '大三上', value: 91 },
 ]
 
 const stackCategories = ['一班', '二班', '三班', '四班']
