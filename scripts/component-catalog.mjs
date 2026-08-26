@@ -1618,7 +1618,7 @@ import { AiButton } from '<path>/design-spec/components'`,
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      '横坐标必须是时间/学期等有序类别——无序类别一律用条形图；分类 ≤4 种，差距过小只留 2 组；单组数据也传 series-name 展示图例',
+      '横坐标必须是时间/学期等有序类别——无序类别一律用条形图；分类 ≤4 种，差距过小只留 2 组；点位多开 zoomable；单组数据也传 series-name 展示图例',
     ],
     instanceFields: [],
     snippet: () => `<Chart type="bar" :data="[{ name: '一班', value: 86 } /* …类目 ≤8 */]" />`,
@@ -1665,10 +1665,146 @@ import { AiButton } from '<path>/design-spec/components'`,
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      '折线 ≤4 条（多序列同柱状图传 categories + series）；数据多须真实数据确认不过于集中；时间点多别用柱状——会挤成栅栏；特殊单位传 unit',
+      '折线 ≤4 条（多序列同柱状图传 categories + series）；数据多须真实数据确认不过于集中；横轴点位很多时开 zoomable（底部范围控件）；特殊单位传 unit',
     ],
     instanceFields: [],
-    snippet: () => `<Chart type="line" :data="[{ name: '第1周', value: 92 } /* … */]" />`,
+    snippet: () => `<Chart type="line" :data="[{ name: '第1周', value: 92 } /* … */]" series-name="出勤率" unit="%" />`,
+  },
+
+  {
+    id: 'chart-bar-stack-h', anchor: 'chart-bar-stack-h', name: 'Stacked-H 堆积条形图', group: 'chart',
+    desc: '无序类别的总量 + 构成', keywords: ['堆积条形图', '横向堆积', 'stacked horizontal'],
+    readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      'stacked 与 horizontal 正交叠加（不是新类型）；硬判据同堆积柱：真实数据验证、序列 ≥3 中间难比',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart
+  type="bar"
+  stacked
+  horizontal
+  :categories="['语文', '数学']"
+  :series="[
+    { name: '作业', data: [18, 22] },
+    { name: '测验', data: [8, 10] },
+  ]"
+/>`,
+  },
+  {
+    id: 'chart-bar-percent', anchor: 'chart-bar-percent', name: 'Percent 百分比堆积', group: 'chart',
+    desc: '只关心比例不关心总量（只分 2 组）', keywords: ['百分比堆积', 'percent', '占比对比'],
+    readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '只分 2 组——分组 ≥3 时两端长度不固定、中间颜色无法比较；单组看比例用环形图',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart
+  type="bar"
+  stacked
+  percent
+  :categories="['大一上', '大一下']"
+  :series="[
+    { name: '线上课时', data: [24, 32] },
+    { name: '线下课时', data: [72, 64] },
+  ]"
+/>`,
+  },
+  {
+    id: 'chart-diverging', anchor: 'chart-diverging', name: 'Diverging 双向柱状图', group: 'chart',
+    desc: '正负向 / 有相对性的数据', keywords: ['双向柱状图', '双向条形图', 'diverging', '正负'],
+    readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      'diverging 需恰 2 个序列（第二序列自动反向）；横排即双向条形图（加 horizontal）',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart
+  type="bar"
+  diverging
+  :categories="['第1周', '第2周']"
+  :series="[
+    { name: '新增选课', data: [42, 35] },
+    { name: '退课', data: [8, 12] },
+  ]"
+/>`,
+  },
+  {
+    id: 'chart-bar-line', anchor: 'chart-bar-line', name: 'Bar-Line 柱线图', group: 'chart',
+    desc: '不同性质数据的相关关系（双轴）', keywords: ['柱线图', '双轴', 'bar-line', '组合图'],
+    readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '双轴两侧顶部都必须标单位（unit 左 / unit2 右）；柱放更重要的数据、对应左轴；不能出现第三种性质的数据',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart
+  type="bar-line"
+  :categories="['第1周', '第2周']"
+  unit="个"
+  unit2="%"
+  :series="[
+    { name: '发布任务', data: [12, 15] },
+    { name: '完成率', data: [86, 82], kind: 'line' },
+  ]"
+/>`,
+  },
+  {
+    id: 'chart-pie', anchor: 'chart-pie', name: 'Pie 饼状图', group: 'chart',
+    desc: '单组占比（环心无信息时）', keywords: ['饼图', '饼状图', 'pie'],
+    readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '判据同环形图（扇区 ≤5、自动降序 12 点顺时针）；有信息要放环心 → 用 donut',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart type="pie" :data="[{ name: '概念理解', value: 35 } /* …扇区 ≤5 */]" />`,
+  },
+  {
+    id: 'chart-scatter', anchor: 'chart-scatter', name: 'Scatter 散点图', group: 'chart',
+    desc: '变量相互影响程度（分布）', keywords: ['散点图', 'scatter', '相关性', '分布'],
+    readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '两轴都必须标单位（x-unit / unit）；多序列即多色散点；data 为 [x, y] 数组',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart
+  type="scatter"
+  x-unit="周学习时长(h)"
+  unit="成绩(分)"
+  :series="[{ name: '一班', data: [[6, 72], [8, 78]] }]"
+/>`,
+  },
+  {
+    id: 'chart-radar', anchor: 'chart-radar', name: 'Radar 雷达图', group: 'chart',
+    desc: '多维度能力/特质比较', keywords: ['雷达图', 'radar', '多维度'],
+    readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
+    mustRules: [
+      '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
+      '只是一个核心数字→别画图，直接用 number-display 数字字阶',
+      '维度 ≥3 个（过多降低可读性）；分类 ≤4 组；多组差距过小先用真实数据模拟，太相似改条形图',
+    ],
+    instanceFields: [],
+    snippet: () => `<Chart
+  type="radar"
+  :indicators="[{ name: '出勤' }, { name: '作业' }, { name: '互动' }]"
+  :series="[{ name: '一班', data: [92, 85, 74] }]"
+/>`,
   },
 ]
 

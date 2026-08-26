@@ -4,7 +4,7 @@
          全屏是「看 demo 的辅助手段」，不是页面本身的能力，故只做在本页。 -->
     <div class="toolbar public-info-demo__toolbar">
       <div class="toolbar__left">
-        <h2 class="demo-section__title">公开信息设置</h2>
+        <h2 class="demo-section__title">Public 公开信息设置</h2>
       </div>
       <div class="toolbar__right">
         <!-- 次按钮（默认款）：带文字标签，不再是纯图标入口，故无需 tooltip 补全称 -->

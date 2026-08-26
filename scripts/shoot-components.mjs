@@ -161,7 +161,7 @@ function navAnchors() {
     for (const line of block[0].split('\n')) {
       if (/^\s*<!--/.test(line)) continue
       const m = line.match(/href="#([\w-]+)"[^>]*>([^<]+)</)
-      if (m && m[1] !== 'other' && m[1] !== 'data-display') {
+      if (m && m[1] !== 'other' && m[1] !== 'data-display' && m[1] !== 'chart-excluded') {
         out.push({ anchor: m[1], name: m[2].trim(), tab })
       }
     }
