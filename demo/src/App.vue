@@ -186,12 +186,24 @@
         <template v-if="currentTopTab === 'page'">
         <ul class="app-sidebar__nav">
           <li><a href="#page-public-info" :class="{ 'is-active': activeSection === 'page-public-info' }">公开信息设置</a></li>
+          <li><a href="#page-course-tools" :class="{ 'is-active': activeSection === 'page-course-tools' }">课程工具</a></li>
+          <li><a href="#page-course-dashboard" :class="{ 'is-active': activeSection === 'page-course-dashboard' }">课程看板</a></li>
         </ul>
         </template>
 
         <template v-if="currentTopTab === 'copywriting'">
         <ul class="app-sidebar__nav">
           <li><a href="#copywriting-time" :class="{ 'is-active': activeSection === 'copywriting-time' }">Time 通用时间</a></li>
+        </ul>
+        </template>
+
+        <template v-if="currentTopTab === 'chart'">
+        <ul class="app-sidebar__nav">
+          <li><a href="#chart-donut" :class="{ 'is-active': activeSection === 'chart-donut' }">Donut 环形图</a></li>
+          <li><a href="#chart-bar" :class="{ 'is-active': activeSection === 'chart-bar' }">Bar 柱状图</a></li>
+          <li><a href="#chart-bar-stack" :class="{ 'is-active': activeSection === 'chart-bar-stack' }">Stacked 堆积柱状图</a></li>
+          <li><a href="#chart-bar-horizontal" :class="{ 'is-active': activeSection === 'chart-bar-horizontal' }">Horizontal 条形图</a></li>
+          <li><a href="#chart-line" :class="{ 'is-active': activeSection === 'chart-line' }">Line 折线图</a></li>
         </ul>
         </template>
 
@@ -299,9 +311,14 @@
       </div>
       <div v-show="currentTopTab === 'page'" class="no-title-divider">
       <PublicInfoPageDemo />
+      <CourseToolsPageDemo />
+      <CourseDashboardPageDemo />
       </div>
       <div v-show="currentTopTab === 'copywriting'">
       <CopywritingTimeDemo />
+      </div>
+      <div v-show="currentTopTab === 'chart'">
+      <ChartSpecDemo />
       </div>
       <div v-show="currentTopTab === 'judging'" class="no-title-divider">
       <JudgingIntroDemo />
@@ -324,6 +341,7 @@ const topTabs = [
   { value: 'token', label: '基础样式' },
   { value: 'component', label: '基础组件' },
   { value: 'business', label: '业务组件' },
+  { value: 'chart', label: '图表组件' },
   { value: 'pattern', label: '设计模式' },
   { value: 'page', label: '典型页面' },
   { value: 'copywriting', label: '文案规范' },
@@ -462,6 +480,9 @@ import PatternFormDemo from './components/pattern/PatternFormDemo.vue'
 import PatternListItemDemo from './components/pattern/PatternListItemDemo.vue'
 import PatternToolbarDemo from './components/pattern/PatternToolbarDemo.vue'
 import PublicInfoPageDemo from './components/page/PublicInfoPageDemo.vue'
+import CourseToolsPageDemo from './components/page/CourseToolsPageDemo.vue'
+import CourseDashboardPageDemo from './components/page/CourseDashboardPageDemo.vue'
+import ChartSpecDemo from './components/chart/ChartSpecDemo.vue'
 import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
 import JudgingIntroDemo from './components/JudgingIntroDemo.vue'
 import JudgingListDemo from './components/JudgingListDemo.vue'
@@ -488,8 +509,9 @@ const sectionIds = [
   'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
   'page-frame', 'step-bar', 'ai-button',
   'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
-  'page-public-info',
+  'page-public-info', 'page-course-tools', 'page-course-dashboard',
   'copywriting-time',
+  'chart-donut', 'chart-bar', 'chart-bar-stack', 'chart-bar-horizontal', 'chart-line',
   'judging-intro', 'judging-list',
 ]
 
@@ -502,6 +524,7 @@ const firstSectionByTab: Record<string, string> = {
   pattern: 'pattern-form-org',
   page: 'page-public-info',
   copywriting: 'copywriting-time',
+  chart: 'chart-donut',
   judging: 'judging-intro',
 }
 

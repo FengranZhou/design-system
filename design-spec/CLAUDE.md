@@ -146,12 +146,13 @@ updated: 2026-04-12
 
 | 当任务是… | 动手前必须先 Read | 说明 |
 |---|---|---|
+| **搭任何新页面 / 整页级改版**（"做个 XX 页""新增 XX 页面"） | `references/typical-pages.md`（先扫索引表） | **强制工作流 Step 2**：先比对已有典型页面找可复用架子（整体同构→照抄骨架起步 / 局部同构→借部位组方 / 无相近→按模式层组织并明说），比对结论须显式说出 |
 | ⛔ **要用一个本表没提到的 EP 组件**（进度条 / 时间线 / 折叠面板 / 上传 / 穿梭框 / 树形控件 / 链接 / 菜单 / 回到顶部 / 气泡卡片 / 分割线 / 统计数值…）**或拿不准某个组件能不能用** | `references/component-interaction.md` **文末两份清单** | **动手前必查**。组件分三种状态：① 上表有触发行的 → 按对应条目用；② **「⏸ 勿用清单」里的（10+ 个）→ 已停用**，写出来**不报错、页面也能跑**，但拿到 EP 原生观感、脱离设计系统且不随源头更新，**你不会收到任何警告**（清单给了替代方案：链接→`<el-button text>`、折叠面板→`el-tabs`、穿梭框→Select 多选、树→Cascader…）；③ **「✅ 无额外规矩」清单里的 → 直接按 EP 官方文档用**（源头只做了令牌对齐，无坑）。**三份都没有的组件才需要先与设计负责人确认**——"查不到"不等于"不让用" |
 | ⛔ **要做移动端 / 手机适配**（"手机上打开很难用""学生要用手机查成绩"）**或网页打印**（"成绩单要能打印盖章""打出来格式乱"） | `references/efficiency-guide.md`（响应式策略 → **明确不支持的两件事**） | **两者都不在本设计系统支持范围内——是"不做"，不是"还没做"**。移动端：只面向桌面端，**禁写 `<1200` 的 media query** 去"顺手适配"（与 1200 硬下限 + 横向滚动机制直接打架），移动端属独立产品形态、须产品侧另行立项。打印：**不提供打印样式规范**，纸质件走**后端导出 PDF/Excel** 由服务端排版（A4 约 794px 落在硬下限之下，前端写打印样式必然与布局机制冲突）。**接到这类需求应推回产品侧，不要硬做** |
-| **新项目首次接入设计系统** / 搭空项目骨架 / **主色不对**（主按钮·选中态·hover **显示成蓝色**而非品牌绿）/ 换品牌色 / 配 `data-brand` | 根目录 `接入指南.md`（第 2 步 注册品牌色） | **`brands.scss` 只给 mixin、不预注册任何品牌**，注册是接入方的职责。不注册 → `--iflyv-accent-6` 回退到 `var(--iflyv-brand-6, var(--iflyv-geekblue-6))` = **geekblue 蓝，且不报错**。三件套缺一即蓝：① 项目内 `@include register-brand(...)` ② `main.ts` 在三层样式**之后**引入它 ③ `<html data-brand="已注册的名字">`。⛔ **`data-brand` 填没注册过的名字（含 `default`）= 没注册**。⚠️ **demo 自己注册了 green，所以 demo 正常、下游变蓝**——别拿 demo 的观感当"我这也没问题"的证据 |
+| **新项目首次接入设计系统** / 搭空项目骨架 / **换品牌色** / 配 `data-brand` | 根目录 `接入指南.md`（第 2 步 品牌色） | **未注册任何品牌时默认即品牌绿**（`--iflyv-accent-N` 兜底 `var(--iflyv-green-N)`，开箱即用，无需任何操作）。**只有要换品牌色**（如理工蓝）才需注册三件套：① 项目内 `@include register-brand(...)` ② `main.ts` 在三层样式**之后**引入它 ③ `<html data-brand="已注册的名字">`——三件缺一或 `data-brand` 填未注册名，都会**静默回落到默认绿**（不报错），别误以为注册生效了 |
 | **取任何样式值**：设颜色 / 字体字号 / 间距 / 圆角 / 阴影 / z-index 层级 / 渐变（写任何 CSS 前的选令牌动作） | `references/foundations.md` | 令牌用途速查的唯一入口：文本/图标 4 阶怎么选、bg 5 层怎么叠、border 3 档、shadow 3 档、语义字阶 13 档、spacing/radius 场景表、z-index 6 档、渐变分级管控与 AI 渐变令牌。**禁止跳过它凭感觉挑令牌或写裸值** |
 | **做一个「效率型」页面**（管理后台 / 列表页 / 表单页 / 详情下钻）：**排版面怎么分栏**（用几列、模块多宽）/ 信息密度 / 要不要加分割线 / loading·空态·错误态怎么设计 | `references/efficiency-guide.md` | **分栏一律用源头栅格约定类 `.grid` / `.grid__col-*`**（24 列、水槽 16px 全走令牌，**禁用 `el-row`/`el-col`**、禁自拼 flex）；**只有 `col-6/8/10/12/14/16/18/20/24` 九档**——「模块宽度不得小于 6 列」由源头保证。分隔优先级：**间距 > 色差 > 细线**（线能不用就不用）。**响应式只在 ≥1200 区间做**（1200 是硬下限，更窄出横向滚动；**禁写 `<1200` 的 media query**，写了永不触发） |
-| 做**图表 / 数据看板 / 统计分析**（平均分、及格率、分数段分布、趋势曲线、占比构成…）：**选什么图** / 图表配色 / ECharts 怎么接令牌 | `references/display-guide.md`（数据可视化 段） | **先按"读者要比较什么"选图**：比大小→柱/条；看走势→折线（≤4 条）；看构成→环形（扇区 ≤5）；**只是一个核心数字→别画图**，直接 `--iflyv-font-number-display` 大号数字。⚠️ **ECharts 画在 canvas 里、读不到 CSS 变量**——直接写 `color: 'var(--iflyv-brand-primary)'` **不生效**，必须用 `getComputedStyle` 把令牌值取出来再喂 option（骨架见该段）；且**切主题/切品牌色后要重取色并 `setOption` 重绘**，图表不会自己变 |
+| 做**图表 / 数据看板 / 统计分析**（平均分、及格率、分数段分布、趋势曲线、占比构成…）：**选什么图** / 画柱状图·折线图·环形图·堆积柱状图·条形图 / 图表配色 | `references/display-guide.md`（数据可视化 段）+ `components/Chart/Chart.vue`（顶部速查注释） | **先按"读者要比较什么"选图**：比大小→柱/条；看走势→折线（≤4 条）；看构成→环形（扇区 ≤5）；**只是一个核心数字→别画图**，直接 `--iflyv-font-number-display` 数字字阶。**画图一律用业务组件 `Chart`**（基础型 `type` bar/line/donut × 正交配置：`horizontal`=条形、`stacked`=堆积、`categories`+`series`=多序列，勿为组合造新类型；五种形态活示例见 demo「图表组件」tab）——令牌取色、切主题/品牌自动重绘、规范图形风格全固化在源头；⚠️ 接入方需自装 echarts 并把它解析进自己的 node_modules（Vite `resolve.dedupe`+`alias`，范本 `demo/vite.config.ts`）。**禁止页内手拼 ECharts 重写取色/重绘**——Chart 自由度不够先用其 `option` 逃生口，再不够与设计负责人确认扩展 |
 | **做一个「展示型」页面**（首页概览 / 数据报告 / 成果展示 / 对外汇报这类"看"重于"操作"的页）：构图 / 排版张力 / 装饰手法 / 滚动动效 | `references/display-guide.md` | **先定三种子风格之一**（结构化阅读 / 编辑式叙事 / 沉浸式体验），它决定后续装饰与动效的上限，不先定就开做必然风格混乱。**审美不变量优先于子风格**：中性色视觉面积 ≥70%、着色靠小面积锚点而非大面积填充。**EP 组件外观仍不可覆盖**（展示型不例外）；GSAP 仅展示型可用、须按需动态 import，**效率型禁止引入** |
 | **摆一组按钮**：主按钮该放左还是右（弹窗/抽屉 footer、表单底部操作区、工具栏、卡片底部…任何"次按钮 + 主按钮"并排的地方） | `references/foundations.md`（主按钮贴边原则） | **一条公理覆盖所有场景**：主按钮贴近该按钮组所在容器的**对齐侧边缘**——右对齐→主按钮贴右（弹窗/抽屉 footer、工具栏右组），左对齐→主按钮贴左（页面级表单操作区）。**唯一例外是方向性按钮**（上一步/下一步由方向语义定位）。弹窗"主按钮在右"与页面表单"主按钮在左"**不是互相矛盾的两个惯例**，是同一条规则的两个结果——遇到规范没写到的新场景据此自行推理，别凭手感摆 |
 | 做**表单** / 录入界面 / 一组「标签+控件」的信息组织 / **字段太多怎么组织**（分组·分步·锚点）/ **可增删的字段组**（动态表单·可编辑表格·折叠面板）/ **定输入框宽度** / **定校验时机与报错文案** | `references/patterns/form-pattern.md` | 骨架一律 `el-form`+`el-form-item`（禁 div/flex 手拼）、`label-width="auto"`、星号与间距全在源头。**组织分三问**：① 要不要分组——**≤7 平铺到底**（后面都不用问）/ >7 且有关联才分组；② 这些组怎么分布——**要来回对照→同屏 `el-anchor`** / **有先后顺序→拆开 `StepBar`（≤3 步）**；③ 组边界怎么标（**单个可见区域内并列多组时才需要**）——**默认小标题分段**，仅当「**单组 >5 项或含 textarea 等高度不定控件**」或「**各组起不出共同上位词**（不是同一类东西）」命中任一时才每组套卡片。⚠️ **分步时每一步要把 ①②③ 重走一遍**：该步 ≤7 项就平铺、不拆子组也不套卡片（**别给三五个字段的单步硬套卡片**）；>7 才拆子组、才谈组形式。⛔ **禁用 `el-tabs` 做表单分节**——表单各段是同一条记录的不同部分，违反 Tabs「各 tab 数据无交集」硬规则。**组标题别重复**：分步**且一步一组**时标题已由步骤条给出，容器内不再渲染一遍；一步内含多组时步内各组仍需各自标题（层级不同，不算重复）。**分组后操作区放哪看"提交管多大范围"**：小标题分段→仍在末组表单末尾；**每组套卡片→必须提到所有卡片之外**（塞进最后一张卡片会读成"只提交这张卡片"），与卡片外左缘对齐、且别放到滚动区外做成吸底条。一律单列（禁多列 Z 字动线）。**输入框宽度按字段语义选档**（验证码 120 / 手机号 200 / 姓名 320 / 长度不可预期才 100%），**禁为整齐拉成同宽**。**校验：本地可判的失焦即报**（长表单禁止只在提交时统一报错），错误提示放输入域**下方**、文案两段式（错在哪+怎么改）。字段 **>8 项弹窗换抽屉** |
@@ -171,7 +172,7 @@ updated: 2026-04-12
 | 做**页面框架** / 整页后台布局 / 工作区骨架 / **加侧边导航**（左侧边导航 + 顶栏面包屑/用户区 + 内容区） | `components/PageFrame/PageFrame.vue`（业务组件，顶部速查注释） | ⚠️ **先判粒度**：要的是**整页骨架**（侧边导航 + 顶栏 + 内容区一整套）→ 用 `PageFrame`；只是想在**已有页面内部**加一条局部导航（模块内分区切换）→ **不要套 PageFrame**（过重），用 `el-tabs`（见 Tabs 段三档选型）或 `el-anchor` 分节目录（**只有横向形态**，竖向源头未适配，见 Anchor 段）——**`el-menu` 已暂停启用**（见勿用清单），别退回手写它。以下是整页骨架的用法：一律用业务组件 `PageFrame`（`design-spec/components/`）：传 `:menus`（分组导航，item 带 `children` 即可折叠）+ `v-model:active` + `:course`（侧边栏课程卡）+ `:breadcrumbs`（内部复用 Breadcrumb）+ `:notice-count` / `avatar-role`，页面内容放默认插槽（白色圆角内容卡）。返回平台按钮/课程卡/导航选中态/顶栏全在源头，**禁手写 aside/header 拼同款框架、禁用 el-menu/el-container 复刻这套观感** |
 | 加**用户头像** / 角色头像 / 人员标识 | `components/UserAvatar/UserAvatar.vue`（业务组件，顶部速查注释） | 一律用业务组件 `UserAvatar`（`design-spec/components/`）：内置教师/学生男女四款角色图，传 `role="teacher-male"` 等命中；自定义图传 `src`。**尺寸只用三档 40（默认）/ 24 / 20** 保持全站一致，禁手拼 `el-avatar` + 自配图片/尺寸 |
 | 做 **AI 按钮** / AI 功能入口（AI 生成、智能出题、AI 提交等 AI 操作按钮） | `components/AiButton/AiButton.vue`（业务组件，顶部速查注释） | 一律用业务组件 `AiButton`（`design-spec/components/`）：`type` 三形态（`primary` 渐变实心=AI 主操作 / `outline` 白底描边渐变字=工具栏入口 / `text` 行内文字链=轻量入口）+ `disabled` + `loading`（四角星旋转，文案自定如"思考中..."）。四角星图标为组件内置原版切图、渐变走 AI 渐变令牌，全固化在源头，**禁手拼渐变按钮 / 在 el-button 上自贴渐变复刻这套观感** |
-| 加**分页** `el-pagination`（列表翻页、每页条数、跳转到第几页） | `references/component-interaction.md`（分页器 段） | layout 固定顺序 `prev, pager, next, sizes, jumper`（**不含 `total`**）；**总数文本不走分页器**——外层 `flex + space-between`，左侧放「共 128 条」、右侧放分页器。**两档按容器选**：整页/弹窗列表用常规档；卡片内/抽屉里等窄容器加 `small` **且同时**把 layout 精简为 `prev, pager, next`（只加 small 不精简会挤出换行） |
+| 加**分页** `el-pagination`（列表翻页、每页条数、跳转到第几页 / **数据少要不要显示分页**） | `references/component-interaction.md`（分页器 段） | layout 固定顺序 `prev, pager, next, sizes, jumper`（**不含 `total`**）；**总数文本不走分页器**——外层 `flex + space-between`，左侧放「共 128 条」、右侧放分页器；**必传 `hide-on-single-page`**（不足一页整个分页器不渲染，禁自己 `v-if` 手算）。**两档按容器选**：整页/弹窗列表用常规档；卡片内/抽屉里等窄容器加 `small` **且同时**把 layout 精简为 `prev, pager, next`（只加 small 不精简会挤出换行） |
 | 选**颜色** `el-color-picker`（让用户自选任意色，如给标签/分类配色） | `references/component-interaction.md`（ColorPicker 段） | **先想清楚是不是该用**：界面元素配色一律走设计令牌，ColorPicker 只用于「颜色本身是业务数据」的场景。⚠️ **面板宽度源头已从 300 改为 360px**（为放大字号档位适配），**别按 300 做定位或容器约束**，会错位；也不要在使用方覆盖面板尺寸 |
 | 做**页内导航 / 内容组织**：标签页 tab / 轻量步骤条 / **决定某批内容该不该用 tab 切分** | `references/component-interaction.md`（Tabs / Steps 段） | **前置硬规则：各 tab 数据必须「无交集」**——一条记录只能落在一个 tab 里；状态/流程节点（待批改/已批改）可以，`我创建的 / 我关注的 / 我处理过的` **不行**（同一条可能三者皆是，应放筛选下拉）。Tabs **再选三档**：页面级 `.tabs-page` / 模块级裸 `el-tabs` / 组件级 `.tabs-sub`；tab 带计数用 `.tab-label-count`+`.tab-count`、挂徽标用 `.badge-tabs`+`.tab-badge`（全是源头约定 class，禁 scoped 复刻）。分页=分隔长列表每次只加载一页（常规/小型两档按容器选）；Steps=任务复杂/有先后关系时分解成一系列步骤 |
 | 做**页内锚点 / 目录导航**（长页分节跳转、"跳到某一节"、表单分组跳转、锚点被顶栏挡住 / 不高亮 / marker 样式不对的排障） | `references/component-interaction.md`（Anchor 段） | 用 `el-anchor`+`el-anchor-link`。**六条不写就必然出错**：① **必须传 `direction="horizontal"`**——**竖向源头未适配**（只有横向写了 marker 规格），而竖向恰是 EP 默认值，**漏传即落到未适配形态**；② 有固定顶栏时**必须传 `:offset`**（=顶栏高+间距，本项目 76）——EP 走 JS 滚动、**不吃** `scroll-padding-top`，不传则跳转后标题被顶栏盖住；③ **滚动容器不是 window 时必须传 `container`**——⚠️ 与「滚动条一律 el-scrollbar」规则的**交叉盲区**：内容区一旦被 `el-scrollbar` 包裹，Anchor 默认监听 window 会完全失效，须指向其 wrap；④ **首节贴容器顶部时必须传 `select-scroll-top`**——EP 在 `scrollTop===0` 时故意不高亮任何项，**回顶后锚点全灭**；⑤ **用了 `container` 就必须 `@click="e => e.preventDefault()"`**——link 是真 `<a href="#…">` 而 EP 不拦默认行为，浏览器原生锚跳会叠加一次**页面级滚动、把整个模块顶出视口**；⑥ **页面存在 hash 导航时，条件渲染出的 `el-anchor` 挂载前须清 `location.hash`**——EP 在 `onMounted` 里读**全局** hash 并跳过去，于是"切个选项/开个弹窗，页面自己跳到别处"。⛔ ①~④ 任一漏传的表现都是"不高亮"，**别据此断定 EP 高亮不生效而去监听 `@scroll` 自算 active**（marker 由 EP 的 JS 定位，手工 class 驱动不了）；`@click` 也**只拦默认行为、不接管滚动** |
@@ -185,7 +186,7 @@ updated: 2026-04-12
 | 选**日期 / 时间 / 日期区间**（`el-date-picker`、`el-time-picker`：表单日期字段、筛选时间范围） | `references/component-interaction.md`（DatePicker 段） | **必传 `value-format`**（否则 v-model 拿到 Date 对象，还要自己转）；区间用 `type="daterange"` 一个组件搞定、**禁拼两个 DatePicker**（丢联动校验）；**图标按 type 自动分流** Calendar/Clock，**禁传 `prefix-icon`**（会被源头 mask 盖住白写）；datetime 面板头部输入框读的是 `--el-component-size-small`，调高度要改 `-small` 变量。**展示**已选日期走 `formatTime`（见文案规范） |
 | 加**徽标未读数** / 消息条数红点 | `references/component-interaction.md`（Badge 段） | Badge=待处理消息条数醒目提醒（**一律默认红、勿传 type**；包裸宿主定位，挂 tab 走 `.tab-badge`） |
 | 弹**通知** / 右上角结果通知 / 带操作按钮的通知（"完成后通知我"这类长时结果告知） | `references/component-interaction.md`（Notification 段） | 一律用 `ElNotification`；**默认常驻**（`duration: 0`，非必要不设自动消失）；带操作按钮**必须**用 `h()` 渲染 message + 按钮行套约定 class **`.notify-actions`**（右对齐/间距在源头），按钮「一退路+一进路」、点击调 `handle.close()`，禁手撸浮层/行内布局 style |
-| 写**按钮/输入框的图标与间距细节**：按钮加图标 / 纯图标按钮 / 输入框前后缀图标 / 一排按钮的间距 | `references/component-interaction.md`（按钮图标 / 纯图标按钮 / 输入框图标 / 按钮间距 段） | 图标一律 Lucide + 插槽传递（按钮 `#icon`、输入框 `#prefix`/`#suffix`，禁 `:icon` 属性）；**纯图标入口用 `<el-button text>` + `#icon`**（`.btn-icon-square` 已暂停启用、写了不生效；text 不受 min-width 80 约束，图标色阶源头自动给）；按钮组间距一律父容器 `flex+gap`（源头已清零 EP 相邻 margin，禁再写 margin） |
+| 写**按钮/输入框的图标与间距细节**：按钮加图标 / 纯图标按钮 / 输入框前后缀图标 / 一排按钮的间距 / **做「查看更多 ›」「查看详情 ›」这类轻量入口**（文字+右箭头的导航入口） | `references/component-interaction.md`（按钮图标 / 纯图标按钮 / 入口引导按钮 / 输入框图标 / 按钮间距 段） | 图标一律 Lucide + 插槽传递（按钮 `#icon`、输入框 `#prefix`/`#suffix`，禁 `:icon` 属性）；**纯图标入口用 `<el-button text>` + `#icon`**（`.btn-icon-square` 已暂停启用、写了不生效；text 不受 min-width 80 约束，图标色阶源头自动给）；**入口引导箭头用 `<el-button text>` + ChevronRight 挂约定 class `.btn-entry`**（仅限 text 形态、与下拉箭头互斥只挂其一，间距/hover 前移在源头，禁裸 span 自拼「文字+›」）；按钮组间距一律父容器 `flex+gap`（源头已清零 EP 相邻 margin，禁再写 margin） |
 | 做**详情展示** `el-descriptions`（只读的「字段名+值」信息组，如详情页基本信息、弹窗信息回显） | `references/component-interaction.md`（Descriptions 段） | **只读用 Descriptions、可编辑才用 `el-form`**——禁拿 `el-form` + `disabled` 冒充只读（禁用态文字过淡、语义也不对）。默认加 `border`；`:column` 按内容长短选（短字段 3~4 列 / 含长文本 1~2 列或 `:span` 占整行）；`size` 三档字号源头已成套定义、**不在使用方覆盖**；空值补 `—` 不留空白；时间走 `formatTime` |
 | 输入**数值** `el-input-number`（数量 / 分数 / 时长 / 阈值这类带步进的数字输入） | `references/component-interaction.md`（InputNumber 段） | **必传 `:min` / `:max`**（否则用户能填负数或超大值），小数配 `:precision`+`:step`；三形态：默认 / `controls-position="right"`（空间紧张）/ `:controls="false"`（只要输入框外观）；增减图标源头已换 Lucide、不自定义。⚠️ **滑块旁显示数值不要拼它**——用 `<el-slider show-input>` |
 | 加**文字提示气泡** `el-tooltip` / **给纯图标按钮配说明**（图标是什么意思）/ **补全被省略号截断的文本** / hover 出提示 | `references/component-interaction.md`（Tooltip 段） | **纯图标入口必须配 tooltip 给全称**（否则语义靠猜），一律 `el-tooltip content=""`、**禁原生 `title` 属性**（延迟约 1s、样式失控、移动端不触发）；**每个 tooltip 必传 `:show-after="300"`**（全站统一延迟，防鼠标扫过一排图标时气泡连片弹出；延迟是 JS prop、**源头 scss 兜不住**，漏传即漏）；`placement` 按可用空间选（顶栏→`bottom`、底部→`top`），气泡白底/无箭头/字阶/限宽 318 限高 240 全在源头 `tooltip.scss`，**禁 `popper-class`/`:deep` 改外观**；`effect="dark"` 未启用（源头已统一白底）；必读信息不进 tooltip（用 `el-alert`）、可交互内容也不进（用 `el-dropdown` / `el-popconfirm` / `el-dialog`——`el-popover` 已暂停启用） |
@@ -289,18 +290,21 @@ demo 里出现的英文分三层，性质不同，处理方式不同——**新�
 
 确认结果记录后，同一项目内所有页面直接复用。
 
-> ⚠️ **确认完还必须验证「这个品牌名真的注册过」**——`design-token/css/brands.scss` **只提供
-> `register-brand` mixin，不预注册任何品牌**，注册是接入方的职责。`--iflyv-accent-6` 的定义是
-> `var(--iflyv-brand-6, var(--iflyv-geekblue-6))`：**没注册就静默回退成 geekblue 蓝**，
-> 主按钮 / 选中态 / hover 全变蓝，**且不报任何错，只能靠眼睛看**。
->
-> **接手一个项目时先查三处**（缺任一即主色是蓝的）：① 项目里有没有 `@include register-brand(...)`；
-> ② `main.ts` 有没有在三层样式**之后**引入那个注册文件；③ `index.html` 的 `<html data-brand="…">`
-> 是不是填的**已注册的名字**。⛔ **`data-brand` 填一个没注册过的名字（含 `default`）等同于没注册。**
-> 落地步骤见根目录 `接入指南.md` 第 2 步。
->
-> **为什么这坑难发现**：`demo/` 在自己的 `src/styles/global.scss` 里注册了 green，所以
-> **demo 一切正常**——下游照着 demo 的观感预期，却在自己项目里得到蓝色。
+### Step 2 — 典型页面比对（每个页面级任务动手前都做）
+
+接到**任何**页面设计 / 新页面搭建 / 整页改版任务，写代码前先 Read `references/typical-pages.md` 的索引表，判断要做的页与哪个典型页面结构相近——像设计师动手前先翻已有界面找可复用的架子：
+
+- **整体同构** → 以该页组方为底、照抄其骨架（demo 源文件）起步，只替换业务内容；
+- **局部同构** → 借用对应部位的组方；
+- **无相近页** → 明说"无可复用典型页"，再按设计模式层（触发表）自行组织。
+
+**这一步的产出要显式说出来**（用了哪页作底 / 借了哪些部位 / 无可复用），不许默默跳过——跳过等于每次从零发明整页结构，正是典型页面库要消灭的浪费。
+
+> **未注册品牌时默认即品牌绿**——`--iflyv-accent-N` 兜底 `var(--iflyv-green-N)`，接入后零操作即得
+> 品牌绿观感（与 demo 一致）。**只有确认结果是「换品牌色」时**才需要注册三件套：
+> ① 项目内 `@include register-brand(...)`；② `main.ts` 在三层样式**之后**引入注册文件；
+> ③ `<html data-brand="已注册的名字">`。三件缺一或 `data-brand` 填未注册名（含 `default`），
+> 都会**静默回落到默认绿**、不报错——换品牌没生效时按这三处排查。落地步骤见根目录 `接入指南.md` 第 2 步。
 
 ---
 
@@ -353,6 +357,7 @@ design-spec/
 │   ├── efficiency-guide.md          ← 效率型：布局 + 视觉 + 组件原则
 │   ├── display-guide.md             ← 展示型：排版 + 装饰 + 光斑 + 数据可视化 + GSAP 动效 + 沉浸式背景
 │   ├── component-interaction.md     ← EP 组件交互规范
+│   ├── typical-pages.md             ← 典型页面：整页组方索引（强制工作流 Step 2 的比对入口）
 │   ├── patterns/                    ← 设计模式细则（四段式，见「设计模式」小节）
 │   └── copywriting/                 ← 文案规范细则（四段式，见「文案规范」小节）
 │       └── time.md                   ← 通用时间：本年省年 / 跨年带年 / 不带秒（实现 utils/format-time.ts）
