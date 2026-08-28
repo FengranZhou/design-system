@@ -2,30 +2,44 @@
   <!-- 折线图 -->
   <section id="chart-line" class="demo-section">
     <h2 class="demo-section__title">Line 折线图
-      <CopyToCC anchor="chart-line" />
+      <CopyToCC anchor="chart-line" :values="chartConfig" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">走势 + 有序横轴；折线 ≤4 条。横轴点位多时可开启底部范围控件（拖选区间、滚轮缩放）。</p>
+      <p class="demo-desc">走势 + 有序横轴；建议折线数量 ≤ 4 条。横轴点位多时可开启底部范围控件（拖选区间、滚轮缩放）。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">近三十日出勤率</h5>
-          <Chart type="line" :data="lineData" series-name="出勤率" unit="%" zoomable :height="240" />
+                    <Chart title="近三十日出勤率" type="line" :data="lineData" series-name="出勤率" unit="%" :zoomable="zoomable" :height="240" />
         </div>
+        <aside class="config-card">
+          <p class="config-card__title">配置项</p>
+          <el-form label-width="auto">
+            <el-form-item label="范围控件">
+              <el-switch v-model="zoomable" />
+            </el-form-item>
+          </el-form>
+        </aside>
       </div>
     </div>
   </section>
   <!-- 柱状图 -->
   <section id="chart-bar" class="demo-section">
     <h2 class="demo-section__title">Bar 柱状图
-      <CopyToCC anchor="chart-bar" />
+      <CopyToCC anchor="chart-bar" :values="chartConfig" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">有序类别比大小；分类 ≤4、差距小只留 2 组。点位多可开启底部范围控件。</p>
+      <p class="demo-desc">有序类别比大小；建议并排系列最多 4 组。横轴点位多可开启底部范围控件（拖选区间、滚轮缩放）。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">近五学期平均分</h5>
-          <Chart type="bar" :data="barData" series-name="平均分" unit="分" :height="216" />
+                    <Chart title="近五学期成绩" type="bar" :categories="barCategories" :series="barSeries" unit="分" :zoomable="zoomable" :height="216" />
         </div>
+        <aside class="config-card">
+          <p class="config-card__title">配置项</p>
+          <el-form label-width="auto">
+            <el-form-item label="范围控件">
+              <el-switch v-model="zoomable" />
+            </el-form-item>
+          </el-form>
+        </aside>
       </div>
     </div>
   </section>
@@ -35,11 +49,10 @@
       <CopyToCC anchor="chart-bar-horizontal" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">无序类别比大小；类目多、名称长时用，常与表格结合。</p>
+      <p class="demo-desc">无序类别比大小；类目多、名称长时用。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">各类型资源数量</h5>
-          <Chart type="bar" horizontal :data="barHData" :height="240" />
+                    <Chart title="各类型资源数量" type="bar" horizontal :data="barHData" series-name="资源数量" :height="240" />
         </div>
       </div>
     </div>
@@ -50,11 +63,10 @@
       <CopyToCC anchor="chart-donut" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">单组占比，扇区 ≤5；自动降序 12 点顺时针（源头固化）；环心放总量。多组比构成 → 堆积图。</p>
+      <p class="demo-desc">单组占比，扇区 ≤5；超 5 类自动合并为「其他」；环心放总量。每类都重要 → 条形图；多组比构成 → 堆积图。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">课程资源分布</h5>
-          <Chart type="donut" :data="donutData" center-title="104" center-label="课程资源" :height="216" />
+                    <Chart title="课程资源分布" type="donut" :data="donutData" center-title="104" center-label="课程资源" :height="180" />
         </div>
       </div>
     </div>
@@ -68,8 +80,7 @@
       <p class="demo-desc">判据同环形图；环心无信息可放时用饼。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">课堂提问类型分布</h5>
-          <Chart type="pie" :data="pieData" :height="216" />
+                    <Chart title="课堂提问类型分布" type="pie" :data="pieData" :height="180" />
         </div>
       </div>
     </div>
@@ -80,11 +91,10 @@
       <CopyToCC anchor="chart-bar-line" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">两种性质数据的相关关系；左右两轴都要标单位；柱放更重要的数据、对应左轴。</p>
+      <p class="demo-desc">两种性质数据的相关关系；柱放更重要的数据、对应左轴。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">每周任务发布与完成率</h5>
-          <Chart type="bar-line" :categories="barLineCategories" :series="barLineSeries" unit="个" unit2="%" :height="216" />
+                    <Chart title="每周任务发布与完成率" type="bar-line" :categories="barLineCategories" :series="barLineSeries" unit="个" unit2="%" :height="216" />
         </div>
       </div>
     </div>
@@ -95,11 +105,10 @@
       <CopyToCC anchor="chart-radar" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">多维度比较；维度 ≥3、分类 ≤4；太相似改条形图。</p>
+      <p class="demo-desc">多维度比较；维度 ≥3、分类 ≤4。超 4 类别硬叠：只留重点对象（其余合成「平均」基准）、拆多张并排，或改条形图。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">班级学情画像</h5>
-          <Chart type="radar" :indicators="radarIndicators" :series="radarSeries" :height="260" />
+                    <Chart title="班级学情画像" type="radar" :indicators="radarIndicators" :series="radarSeries" :height="220" />
         </div>
       </div>
     </div>
@@ -110,11 +119,10 @@
       <CopyToCC anchor="chart-scatter" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">变量相关性 / 分布；两条轴都必须标单位。</p>
+      <p class="demo-desc">变量相关性 / 分布。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">学习时长与成绩</h5>
-          <Chart type="scatter" x-unit="周学习时长(h)" unit="成绩(分)" :series="scatterSeries" :height="240" />
+                    <Chart title="学习时长与成绩" type="scatter" x-unit="周学习时长(h)" unit="成绩(分)" :series="scatterSeries" :height="240" />
         </div>
       </div>
     </div>
@@ -125,11 +133,10 @@
       <CopyToCC anchor="chart-bar-stack" />
     </h2>
     <div class="demo-block">
-      <p class="demo-desc">总量 + 构成；堆 3 层以上时中间层难以比较；交付前用真实数据验证。</p>
+      <p class="demo-desc">总量 + 构成；堆 3 层以上时中间层难以比较。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">各班题型得分构成</h5>
-          <Chart type="bar" stacked :categories="stackCategories" :series="stackSeries" :height="216" />
+                    <Chart title="各学期题型得分构成" type="bar" stacked :categories="stackCategories" :series="stackSeries" :height="216" />
         </div>
       </div>
     </div>
@@ -143,8 +150,7 @@
       <p class="demo-desc">无序类别的总量 + 构成（堆积的横排形态）；判据同堆积柱状图。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">各科目任务构成</h5>
-          <Chart type="bar" stacked horizontal :categories="stackHCategories" :series="stackHSeries" :height="216" />
+                    <Chart title="各科目任务构成" type="bar" stacked horizontal :categories="stackHCategories" :series="stackHSeries" :height="216" />
         </div>
       </div>
     </div>
@@ -158,12 +164,10 @@
       <p class="demo-desc">只看比例、不看总量；只分 2 组。单组看比例 → 环形图。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">各学期线上/线下课时占比</h5>
-          <Chart type="bar" stacked percent :categories="percentCategories" :series="percentSeries" :height="216" />
+                    <Chart title="各学期线上/线下课时占比" type="bar" stacked percent :categories="percentCategories" :series="percentSeries" :height="216" />
         </div>
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">各课程男女比例</h5>
-          <Chart type="bar" stacked percent horizontal :categories="percentHCategories" :series="percentHSeries" :height="216" />
+                    <Chart title="各课程男女比例" type="bar" stacked percent horizontal :categories="percentHCategories" :series="percentHSeries" :height="216" />
         </div>
       </div>
     </div>
@@ -177,12 +181,10 @@
       <p class="demo-desc">正负相对的数据（收入/支出、转入/转出）；恰好 2 组、从零轴反向展开；横排即双向条形图。</p>
       <div class="chart-spec-row">
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">各周选课变动</h5>
-          <Chart type="bar" diverging :categories="divCategories" :series="divSeries" unit="人" :height="216" />
+                    <Chart title="各周选课变动" type="bar" diverging :categories="divCategories" :series="divSeries" unit="人" :height="216" />
         </div>
         <div class="chart-spec-card">
-          <h5 class="chart-spec-card__title">各院系转入/转出</h5>
-          <Chart type="bar" diverging horizontal :categories="divHCategories" :series="divHSeries" unit="人" :height="216" />
+                    <Chart title="各院系转入/转出" type="bar" diverging horizontal :categories="divHCategories" :series="divHSeries" unit="人" :height="216" />
         </div>
       </div>
     </div>
@@ -198,8 +200,14 @@
  * 典型页面与下游项目的调用方式与本页完全相同。
  * 选型判据与各图型细则见 references/display-guide.md「数据可视化」段。
  */
+import { ref, reactive } from 'vue'
 import CopyToCC from '../CopyToCC.vue'
 import { Chart } from '../../../../design-spec/components'
+
+// 范围控件开关：折线/柱状两区块共用演示同一能力。默认关闭——
+// 真实调用中开不开不是喜好项，由下游 CC 按「横轴点位多」判据决定（规则在 catalog mustRules / display-guide）
+const zoomable = ref(false)
+const chartConfig = reactive({ zoomable })
 
 // 折线：时间有序；30 个点位演示 zoomable 底部范围控件
 const lineData = Array.from({ length: 30 }, (_, i) => ({
@@ -207,13 +215,12 @@ const lineData = Array.from({ length: 30 }, (_, i) => ({
   value: 88 + Math.round(6 * Math.sin(i / 3) + (i % 4)),
 }))
 
-// 柱状图横坐标必须有序类别（学期有先后）；无序类别（如班级、科目）用条形图
-const barData = [
-  { name: '大一上', value: 78 },
-  { name: '大一下', value: 82 },
-  { name: '大二上', value: 79 },
-  { name: '大二下', value: 86 },
-  { name: '大三上', value: 91 },
+// 柱状图横坐标必须有序类别（学期有先后）；无序类别（如班级、科目）用条形图。
+// 用 2 个系列并排展示，给「并排系列最多 4 组」一个看得见的对照
+const barCategories = ['大一上', '大一下', '大二上', '大二下', '大三上']
+const barSeries = [
+  { name: '平均分', data: [78, 82, 79, 86, 91] },
+  { name: '最高分', data: [92, 95, 93, 97, 99] },
 ]
 
 // 条形：无序类别
@@ -221,13 +228,12 @@ const barHData = [
   { name: '多媒体教材', value: 46 },
   { name: '课堂实录视频', value: 38 },
   { name: '在线互动文档', value: 31 },
-  { name: '自适应练习', value: 24 },
   { name: '课件 PPT', value: 19 },
   { name: '其他资源', value: 8 },
 ]
 
-// 堆积柱
-const stackCategories = ['一班', '二班', '三班', '四班']
+// 堆积柱：竖排堆积同样受「横轴须有序类别」硬规则约束——班级是无序类别（序号只是命名），须用学期/考次等有序类目
+const stackCategories = ['大一上', '大一下', '大二上', '大二下']
 const stackSeries = [
   { name: '选择题', data: [32, 28, 35, 26] },
   { name: '填空题', data: [24, 26, 22, 20] },
@@ -282,10 +288,11 @@ const donutData = [
   { name: '多媒体教材', value: 24 },
 ]
 const pieData = [
-  { name: '概念理解', value: 35 },
-  { name: '解题方法', value: 28 },
-  { name: '作业疑问', value: 22 },
-  { name: '其他', value: 15 },
+  { name: '概念理解', value: 32 },
+  { name: '解题方法', value: 26 },
+  { name: '作业疑问', value: 20 },
+  { name: '拓展探究', value: 12 },
+  { name: '其他', value: 10 },
 ]
 
 // 散点：两变量相关性（多序列即多色散点）
@@ -329,10 +336,5 @@ const radarSeries = [
   border: 1px solid var(--iflyv-border-subtle);
   border-radius: var(--iflyv-radius-md);
   background: var(--iflyv-bg-panel);
-}
-.chart-spec-card__title {
-  margin: 0 0 var(--iflyv-spacing-2);
-  font: var(--iflyv-font-title-regular);
-  color: var(--iflyv-text-1);
 }
 </style>

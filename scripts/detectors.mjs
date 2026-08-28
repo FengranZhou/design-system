@@ -285,6 +285,21 @@ export const DETECTORS = {
   'component-no-suspended': SUSPENDED_COMPONENTS,
   'dialog-no-messagebox': MESSAGE_BOX,
 
+  /** 画图一律用业务组件 Chart：页面直接 import echarts = 绕过源头手拼（取色/重绘/图形风格全要自己做，且不随源头同步） */
+  'chart-use-component': {
+    custom: (ctx) => {
+      // 源头 Chart 组件自身是唯一合法的 echarts 引用处
+      if (/design-spec\/components\/Chart\//.test(ctx.file ?? '')) return []
+      const hits = []
+      ;(ctx.text ?? '').split('\n').forEach((line, i) => {
+        if (/^\s*(\/\/|\/\*|\*)/.test(line)) return
+        if (/from\s+['"]echarts|require\(\s*['"]echarts/.test(line)) hits.push({ line: i + 1, text: line.trim().slice(0, 90) })
+      })
+      return hits
+    },
+    hint: '画图一律用业务组件 Chart（design-spec/components/Chart），禁止页面直接 import echarts 手拼；自由度不够先用 Chart 的 option 逃生口',
+  },
+
   'select-v2-over-200': {
     scope: 'all',
     find: null, // 选项数量需运行时才知道，静态扫不出——留给人工
@@ -491,6 +506,12 @@ export const DETECTORS = {
   'time-use-formattime': {
     find: /(?:new\s+)?(?:Date|dayjs|moment)\s*\([^)]*\)\s*\.\s*(?:format|toLocaleDateString|toLocaleString)\s*\(/,
     hint: '时间展示一律 import 源头 formatTime（design-spec/utils/format-time），禁各自写格式化',
+  },
+  'number-thousands-separator': {
+    // 两种翻车形态：① 各自用 toLocaleString 打千分位（受运行环境 locale 影响）；
+    // ② 硬编码带逗号的数字字符串（'5,082'——脱离数据源，数值变了逗号不跟）
+    find: /\.\s*toLocaleString\s*\(|['"]\d{1,3}(?:,\d{3})+(?:\.\d+)?['"]/,
+    hint: '数字千分位一律 import 源头 formatNumber（design-spec/utils/format-number），禁 toLocaleString / 硬编码带逗号字符串',
   },
 
   // —— 设计模式 ——
