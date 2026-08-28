@@ -45,7 +45,7 @@
                  8 个并列指标一行铺开属卡内条目排布（非页面分栏），不走栅格（col-3 低于 6 列下限） -->
             <div class="kpi-strip">
               <div v-for="kpi in kpis" :key="kpi.label" class="kpi-item">
-                <span class="kpi-item__num">{{ kpi.value }}<em class="kpi-item__unit">{{ kpi.unit }}</em></span>
+                <span class="kpi-item__num">{{ formatNumber(kpi.value) }}<em class="kpi-item__unit">{{ kpi.unit }}</em></span>
                 <span class="kpi-item__label">{{ kpi.label }}</span>
               </div>
             </div>
@@ -55,8 +55,7 @@
               <h4 class="board-group__title">课程备课</h4>
               <div class="grid">
                 <div v-for="d in donuts" :key="d.title" class="grid__col-12 chart-card">
-                  <h5 class="chart-card__title">{{ d.title }}</h5>
-                  <Chart type="donut" :data="d.data" :center-title="d.total" :center-label="d.centerLabel" :height="216" />
+                  <Chart type="donut" :title="d.title" :data="d.data" :center-title="d.total" :center-label="d.centerLabel" :height="180" />
                 </div>
               </div>
             </section>
@@ -66,8 +65,7 @@
               <h4 class="board-group__title">课堂授课</h4>
               <div class="grid">
                 <div v-for="b in bars" :key="b.title" class="grid__col-8 chart-card">
-                  <h5 class="chart-card__title">{{ b.title }}</h5>
-                  <Chart type="bar" :data="b.data" :height="200" />
+                  <Chart type="bar" :title="b.title" :data="b.data" :series-name="b.seriesName" :height="200" />
                 </div>
               </div>
             </section>
@@ -100,6 +98,7 @@ import { h, ref, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Maximize, Minimize } from 'lucide-vue-next'
 import { PageFrame, Chart, type PageFrameMenuGroup, type PageFrameCourse } from '../../../../design-spec/components'
+import { formatNumber } from '../../../../design-spec/utils/format-number'
 import NavIcon from '../biz/NavIcon.vue'
 import progressSvg from '../../assets/nav-icons/progress.svg?raw'
 import progressActiveSvg from '../../assets/nav-icons/progress-active.svg?raw'
@@ -166,9 +165,9 @@ const donuts = [
 
 // —— 柱状图（类目比大小）——
 const bars = [
-  { title: '开启授课', data: [{ name: '本学期', value: 41 }, { name: '上学期', value: 33 }] },
-  { title: '授课资源', data: [{ name: '本学期', value: 41 }, { name: '上学期', value: 33 }] },
-  { title: '课堂互动', data: [{ name: '本学期', value: 41 }, { name: '上学期', value: 33 }] },
+  { title: '开启授课', seriesName: '授课次数', data: [{ name: '本学期', value: 41 }, { name: '上学期', value: 33 }] },
+  { title: '授课资源', seriesName: '资源数量', data: [{ name: '本学期', value: 41 }, { name: '上学期', value: 33 }] },
+  { title: '课堂互动', seriesName: '互动次数', data: [{ name: '本学期', value: 41 }, { name: '上学期', value: 33 }] },
 ]
 
 // —— 跟随全局主题切换空状态亮/暗插画 ——
@@ -293,11 +292,5 @@ onBeforeUnmount(() => {
   border: 1px solid var(--iflyv-border-subtle);
   border-radius: var(--iflyv-radius-md);
   background: var(--iflyv-bg-panel);
-}
-/* 卡标题：常规标题档；与下方图表 8（常规标题与其下方内容） */
-.chart-card__title {
-  margin: 0 0 var(--iflyv-spacing-2);
-  font: var(--iflyv-font-title-regular);
-  color: var(--iflyv-text-1);
 }
 </style>

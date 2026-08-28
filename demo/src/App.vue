@@ -194,6 +194,7 @@
         <template v-if="currentTopTab === 'copywriting'">
         <ul class="app-sidebar__nav">
           <li><a href="#copywriting-time" :class="{ 'is-active': activeSection === 'copywriting-time' }">Time 通用时间</a></li>
+          <li><a href="#copywriting-number" :class="{ 'is-active': activeSection === 'copywriting-number' }">Number 数字</a></li>
         </ul>
         </template>
 
@@ -323,6 +324,7 @@
       </div>
       <div v-show="currentTopTab === 'copywriting'">
       <CopywritingTimeDemo />
+      <CopywritingNumberDemo />
       </div>
       <div v-show="currentTopTab === 'chart'" class="no-title-divider">
       <ChartSpecDemo />
@@ -491,6 +493,7 @@ import CourseToolsPageDemo from './components/page/CourseToolsPageDemo.vue'
 import CourseDashboardPageDemo from './components/page/CourseDashboardPageDemo.vue'
 import ChartSpecDemo from './components/chart/ChartSpecDemo.vue'
 import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
+import CopywritingNumberDemo from './components/CopywritingNumberDemo.vue'
 import JudgingIntroDemo from './components/JudgingIntroDemo.vue'
 import JudgingListDemo from './components/JudgingListDemo.vue'
 // 业务组件层 demo（引用 design-spec/components/）
@@ -518,6 +521,7 @@ const sectionIds = [
   'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'page-public-info', 'page-course-tools', 'page-course-dashboard',
   'copywriting-time',
+  'copywriting-number',
   'chart-line', 'chart-bar', 'chart-bar-horizontal', 'chart-donut', 'chart-pie', 'chart-bar-line',
   'chart-radar', 'chart-scatter', 'chart-bar-stack', 'chart-bar-stack-h', 'chart-bar-percent', 'chart-diverging',
   'judging-intro', 'judging-list',

@@ -86,14 +86,19 @@ const course: PageFrameCourse = {
 const breadcrumbs = [{ label: '典型页面' }, { label: '课程工具' }]
 
 // —— 工具分组（结构与文案沿用参考页）——
-// 四款二级图标循环分配到各工具（固定轮转而非运行时随机，保证每次渲染/截图一致）
+// 四款二级图标循环分配到各工具（固定轮转而非运行时随机，保证每次渲染/截图一致）；
+// 个别工具可用第二参显式指定图标（0 课件绿 / 1 作业紫 / 2 测验蓝 / 3 团子），不打乱其余轮转
 const TOOL_ICONS = [iconCourseware, iconHomework, iconQuiz, iconTuanzi]
 let seq = 0
-const tool = (label: string) => ({ label, icon: TOOL_ICONS[seq++ % TOOL_ICONS.length] })
+const tool = (label: string, iconIdx?: number) => {
+  const i = iconIdx ?? seq % TOOL_ICONS.length
+  seq++
+  return { label, icon: TOOL_ICONS[i] }
+}
 
 const toolGroups = [
   { title: '教学增强', tools: [tool('评价活动'), tool('黑板'), tool('私信/群聊'), tool('回收站')] },
-  { title: '课堂活动与表现', tools: [tool('课堂表现管理'), tool('课堂活动管理'), tool('签到管理')] },
+  { title: '课堂活动与表现', tools: [tool('签到管理', 2), tool('课堂表现管理', 3), tool('课堂活动管理', 1)] },
   { title: '教学回顾', tools: [tool('教学反思'), tool('往期课程空间')] },
   { title: '课程克隆', tools: [tool('课程克隆')] },
 ]

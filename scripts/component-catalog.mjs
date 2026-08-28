@@ -1599,16 +1599,17 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      '扇区 ≤5，超限改堆积图；分类从大到小 12 点顺时针（组件已自动排序）；环心放总量或留空',
+      '扇区 ≤5——超 5 类源头自动合并：保留前 4 大类、其余并入「其他」恒排末位；每类都重要不能合并 → 改条形图；分类从大到小 12 点顺时针（组件已自动排序）；环心放总量或留空',
     ],
     instanceFields: [
       { key: 'centerTitle', label: '环心数字', type: 'text', placeholder: '如：104', default: '' },
       { key: 'centerLabel', label: '环心说明', type: 'text', placeholder: '如：课程资源', default: '' },
     ],
     snippet: ({ centerTitle, centerLabel }) =>
-      `<Chart type="donut" :data="[{ name: '文档', value: 28 } /* …扇区 ≤5 */]"${centerTitle ? ` center-title="${centerTitle}"` : ''}${centerLabel ? ` center-label="${centerLabel}"` : ''} />`,
+      `<Chart title="图表标题" type="donut" :data="[{ name: '文档', value: 28 } /* …扇区 ≤5 */]"${centerTitle ? ` center-title="${centerTitle}"` : ''}${centerLabel ? ` center-label="${centerLabel}"` : ''} />`,
   },
   {
     id: 'chart-bar', anchor: 'chart-bar', name: 'Bar 柱状图', group: 'chart',
@@ -1616,12 +1617,13 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      '横坐标必须是时间/学期等有序类别——无序类别一律用条形图；分类 ≤4 种，差距过小只留 2 组；点位多开 zoomable；单组数据也传 series-name 展示图例',
+      '横坐标必须是时间/学期等有序类别——无序类别一律用条形图；建议并排系列 ≤4 组；横轴点位 >12 开 zoomable、≤12 不开；单组数据也传 series-name 展示图例',
     ],
     instanceFields: [],
-    snippet: () => `<Chart type="bar" :data="[{ name: '一班', value: 86 } /* …类目 ≤8 */]" />`,
+    snippet: ({ zoomable }) => `<Chart title="图表标题" type="bar" :data="[{ name: '大一上', value: 86 } /* …有序类目 ≤8；无序类别用条形图 */]" series-name="平均分"${zoomable ? ' zoomable' : ''} />`,
   },
   {
     id: 'chart-bar-stack', anchor: 'chart-bar-stack', name: 'Stacked 堆积柱状图', group: 'chart',
@@ -1629,15 +1631,17 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      '多序列传 categories + series，stacked 开关叠加，自动出图例——勿为组合造新类型；序列 ≥3 时中间序列难以直接比较；交付前必须用真实数据验证可读性',
+      '多序列传 categories + series，stacked 开关叠加，自动出图例——勿为组合造新类型；序列 ≥3 时中间序列难以直接比较，需精确比较各子类时只放 2 个序列',
     ],
     instanceFields: [],
     snippet: () => `<Chart
+  title="图表标题"
   type="bar"
   stacked
-  :categories="['一班', '二班']"
+  :categories="['期中', '期末']"
   :series="[
     { name: '选择题', data: [32, 28] },
     { name: '填空题', data: [24, 26] },
@@ -1650,25 +1654,27 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
       '无序类别（科目/班级/类型…）比大小一律用条形；柱状图类目过多、标签挤压时也转条形（horizontal 是正交配置，不是新类型）',
     ],
     instanceFields: [],
-    snippet: () => `<Chart type="bar" horizontal :data="[{ name: '多媒体教材', value: 46 } /* … */]" />`,
+    snippet: () => `<Chart title="图表标题" type="bar" horizontal :data="[{ name: '多媒体教材', value: 46 } /* … */]" series-name="资源数量" />`,
   },
   {
     id: 'chart-line', anchor: 'chart-line', name: 'Line 折线图', group: 'chart',
-    desc: '随时间的变化趋势（≤4 条）', keywords: ['折线图', 'line', '趋势', '走势'],
+    desc: '随时间的变化趋势（建议 ≤4 条）', keywords: ['折线图', 'line', '趋势', '走势'],
     readRefs: ['references/display-guide.md（数据可视化 段）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      '折线 ≤4 条（多序列同柱状图传 categories + series）；数据多须真实数据确认不过于集中；横轴点位很多时开 zoomable（底部范围控件）；特殊单位传 unit',
+      '建议折线 ≤4 条（多序列同柱状图传 categories + series）；横轴点位 >12 开 zoomable、≤12 不开（底部范围控件）；特殊单位传 unit',
     ],
     instanceFields: [],
-    snippet: () => `<Chart type="line" :data="[{ name: '第1周', value: 92 } /* … */]" series-name="出勤率" unit="%" />`,
+    snippet: ({ zoomable }) => `<Chart title="图表标题" type="line" :data="[{ name: '第1周', value: 92 } /* … */]" series-name="出勤率" unit="%"${zoomable ? ' zoomable' : ''} />`,
   },
 
   {
@@ -1677,12 +1683,14 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      'stacked 与 horizontal 正交叠加（不是新类型）；硬判据同堆积柱：真实数据验证、序列 ≥3 中间难比',
+      'stacked 与 horizontal 正交叠加（不是新类型）；硬判据同堆积柱：序列 ≥3 中间难比、精确比较只放 2 序列',
     ],
     instanceFields: [],
     snippet: () => `<Chart
+  title="图表标题"
   type="bar"
   stacked
   horizontal
@@ -1699,12 +1707,14 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
       '只分 2 组——分组 ≥3 时两端长度不固定、中间颜色无法比较；单组看比例用环形图',
     ],
     instanceFields: [],
     snippet: () => `<Chart
+  title="图表标题"
   type="bar"
   stacked
   percent
@@ -1721,12 +1731,14 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
       'diverging 需恰 2 个序列（第二序列自动反向）；横排即双向条形图（加 horizontal）',
     ],
     instanceFields: [],
     snippet: () => `<Chart
+  title="图表标题"
   type="bar"
   diverging
   :categories="['第1周', '第2周']"
@@ -1742,12 +1754,14 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
       '双轴两侧顶部都必须标单位（unit 左 / unit2 右）；柱放更重要的数据、对应左轴；不能出现第三种性质的数据',
     ],
     instanceFields: [],
     snippet: () => `<Chart
+  title="图表标题"
   type="bar-line"
   :categories="['第1周', '第2周']"
   unit="个"
@@ -1764,12 +1778,13 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      '判据同环形图（扇区 ≤5、自动降序 12 点顺时针）；有信息要放环心 → 用 donut',
+      '判据同环形图（扇区 ≤5、超 5 类自动并「其他」、自动降序 12 点顺时针）；有信息要放环心 → 用 donut',
     ],
     instanceFields: [],
-    snippet: () => `<Chart type="pie" :data="[{ name: '概念理解', value: 35 } /* …扇区 ≤5 */]" />`,
+    snippet: () => `<Chart title="图表标题" type="pie" :data="[{ name: '概念理解', value: 35 } /* …扇区 ≤5 */]" />`,
   },
   {
     id: 'chart-scatter', anchor: 'chart-scatter', name: 'Scatter 散点图', group: 'chart',
@@ -1777,12 +1792,14 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
       '两轴都必须标单位（x-unit / unit）；多序列即多色散点；data 为 [x, y] 数组',
     ],
     instanceFields: [],
     snippet: () => `<Chart
+  title="图表标题"
   type="scatter"
   x-unit="周学习时长(h)"
   unit="成绩(分)"
@@ -1795,12 +1812,14 @@ import { AiButton } from '<path>/design-spec/components'`,
     readRefs: ['references/display-guide.md（数据可视化·各图型细则）', 'components/Chart/Chart.vue（顶部速查注释）'],
     mustRules: [
       '画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘',
+      '图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行',
       "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
       '只是一个核心数字→别画图，直接用 number-display 数字字阶',
-      '维度 ≥3 个（过多降低可读性）；分类 ≤4 组；多组差距过小先用真实数据模拟，太相似改条形图',
+      '维度 ≥3 个（过多降低可读性）；分类 ≤4 组——超 4 组别硬叠（多边形互相覆盖）：只留重点对象+「平均」基准 / 拆多张雷达并排 / 改分组条形图或表格',
     ],
     instanceFields: [],
     snippet: () => `<Chart
+  title="图表标题"
   type="radar"
   :indicators="[{ name: '出勤' }, { name: '作业' }, { name: '互动' }]"
   :series="[{ name: '一班', data: [92, 85, 74] }]"

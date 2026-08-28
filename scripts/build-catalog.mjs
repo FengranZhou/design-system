@@ -162,6 +162,9 @@ const ANCHOR_TO_DEMO = {
   'data-display': 'DataDisplay',
   table: 'Table',
   'step-bar': 'StepBar',
+  // 图表 12 个条目共用一个 demo 文件；只有折线/柱状有配置卡（范围控件 zoomable）
+  'chart-line': 'ChartSpec',
+  'chart-bar': 'ChartSpec',
 }
 function demoKeyOf(anchor) {
   if (ANCHOR_TO_DEMO[anchor]) return ANCHOR_TO_DEMO[anchor]

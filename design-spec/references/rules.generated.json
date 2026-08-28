@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 98,
-  "totalWeight": 281,
+  "total": 100,
+  "totalWeight": 287,
   "byLevel": {
-    "MUST": 85,
+    "MUST": 87,
     "SHOULD": 13,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 65,
+    "regex": 67,
     "ast": 7,
     "manual": 26
   },
   "byView": {
-    "design": 79,
-    "impl": 90
+    "design": 81,
+    "impl": 92
   },
   "categoryOrder": [
     "单一数据源",
@@ -346,6 +346,21 @@
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
       "line": 1325
+    },
+    {
+      "id": "chart-use-component",
+      "title": "画图一律用业务组件 Chart，禁止页面直接 import echarts 手拼",
+      "designTitle": "页面里的图表应长成设计系统的样子并随主题/品牌自动重绘，而不是一张自拼的原生 ECharts 图",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/display-guide.md",
+      "line": 268
     },
     {
       "id": "select-v2-over-200",
@@ -1267,6 +1282,21 @@
       "line": 1175
     },
     {
+      "id": "number-thousands-separator",
+      "title": "数字展示一律 import 源头 formatNumber 打千分位，禁各自写格式化/硬编码带逗号字符串",
+      "designTitle": "数字千分位全站统一（从右往左每 3 位一个逗号）",
+      "level": "MUST",
+      "cat": "文案规范",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/copywriting/number.md",
+      "line": 34
+    },
+    {
       "id": "time-use-formattime",
       "title": "时间展示一律 import 源头 formatTime，禁各自写格式化函数/硬编码时间字符串",
       "designTitle": "时间展示格式全站统一（本年省年份、不显示秒）",
@@ -1313,7 +1343,7 @@
     },
     {
       "id": "chart-bar-ordered-category",
-      "title": "柱状图 | 横坐标必须是时间、日期等有序类别——无序类别一律用条形图  | 分类 ≤4 种；数据差距过小时最好只 2 组；横向空间不足/标签挤压时转条形图 |",
+      "title": "柱状图 | 横坐标必须是时间、日期等有序类别——无序类别一律用条形图  | 建议并排系列 ≤4 组（每个点位并排的柱子数，非横轴点位数）；横向空间不足/标签挤压时转条形图 |",
       "designTitle": "柱状图横轴应是有先后顺序的类别，无序类别应横排成条形图",
       "level": "MUST",
       "cat": "视觉呈现",
@@ -1427,9 +1457,9 @@
       "line": 440
     },
     {
-      "id": "chart-stacked-real-data",
-      "title": "堆积柱/条形图 | 包含关系的数据：总量 + 总量内各子分类 | 可多序列，但必须用真实数据模拟验证可读性（假数据画完就交付是本图型最常见的翻车）；序列 ≥3 时中间序列的长度难以直接比较，需精确比较各子类时只放 2 个序列 |",
-      "designTitle": "堆积图交付前应拿真实数据试过，中间段是否可读只在真实分布下才暴露",
+      "id": "chart-title-legend-inline",
+      "title": "图例：统一顶部（环形图为右侧带数值占比）；只有一组数据也展示图例（保持多图统一）——单序列给 `Chart` 传 `series-name` 即出。图表标题一律传 `Chart` 的 `title`（组件内标题行，组件标题字阶居左）——横排图例与标题同行右侧、垂直居中（源头固化）；禁在图表上方自拼标题行（对不齐图例）；图例放不下时源头自动收纳为「+N」（点开面板查看并开关其余序列），头行高度恒定",
+      "designTitle": "图表标题与图例不同行：标题自拼在图表上方，图例掉到下一行左右都对不齐",
       "level": "SHOULD",
       "cat": "视觉呈现",
       "detect": "manual",
@@ -1439,7 +1469,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/display-guide.md",
-      "line": 245
+      "line": 260
     },
     {
       "id": "dark-surface-bordered",
