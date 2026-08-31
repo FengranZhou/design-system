@@ -69,3 +69,4 @@
 /* PageFrame 收起态导航浮层：面板 teleport 到 body、scoped 构不着，故归全局层
    （非对外约定类，由业务组件 PageFrame 内部渲染，接入方无需引用） */
 @use './patterns/page-frame-flyout.scss';
+@use './patterns/metric-strip.scss';

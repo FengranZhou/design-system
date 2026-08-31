@@ -22,7 +22,7 @@ export interface SpacingUsage {
 }
 
 export const SPACING_USAGE: SpacingUsage[] = [
-  { name: '--iflyv-spacing-0_5', px: 2, scenes: ['紧贴元素微调（图标与其紧邻文字的视觉对齐补偿）'] },
+  { name: '--iflyv-spacing-0_5', px: 2, scenes: ['紧贴元素微调（图标与其紧邻文字的视觉对齐补偿）', '数字展示字阶（number-display / -sm）与其下方说明文字之间'] },
   { name: '--iflyv-spacing-1', px: 4, scenes: ['控件内图标与其紧邻文字之间（如按钮内 icon + 文字）', '卡内通栏出血面板距卡缘的细缝（两侧与底部同取）'] },
   { name: '--iflyv-spacing-1_5', px: 6, scenes: ['Tag / Badge 等小控件的左右内边距'] },
   { name: '--iflyv-spacing-2', px: 8, scenes: ['列表项内子元素间距（标题与其描述、主信息与副信息；含横向的图标/标签与其同行文字）', '常规标题与其下方内容之间（与「标题与其描述」同档；下方是通栏/出血块时放宽一档取 spacing-3）'] },

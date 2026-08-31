@@ -2021,7 +2021,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "建议折线 ≤4 条（多序列同柱状图传 categories + series）；横轴点位 >12 开 zoomable、≤12 不开（底部范围控件）；特殊单位传 unit"
@@ -2056,7 +2056,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "横坐标必须是时间/学期等有序类别——无序类别一律用条形图；建议并排系列 ≤4 组；横轴点位 >12 开 zoomable、≤12 不开；单组数据也传 series-name 展示图例"
@@ -2084,7 +2084,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "无序类别（科目/班级/类型…）比大小一律用条形；柱状图类目过多、标签挤压时也转条形（horizontal 是正交配置，不是新类型）"
@@ -2114,7 +2114,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "扇区 ≤5——超 5 类源头自动合并：保留前 4 大类、其余并入「其他」恒排末位；每类都重要不能合并 → 改条形图；分类从大到小 12 点顺时针（组件已自动排序）；环心放总量或留空"
@@ -2141,7 +2141,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "判据同环形图（扇区 ≤5、超 5 类自动并「其他」、自动降序 12 点顺时针）；有信息要放环心 → 用 donut"
@@ -2169,7 +2169,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "双轴两侧顶部都必须标单位（unit 左 / unit2 右）；柱放更重要的数据、对应左轴；不能出现第三种性质的数据"
@@ -2196,7 +2196,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "维度 ≥3 个（过多降低可读性）；分类 ≤4 组——超 4 组别硬叠（多边形互相覆盖）：只留重点对象+「平均」基准 / 拆多张雷达并排 / 改分组条形图或表格"
@@ -2224,7 +2224,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "两轴都必须标单位（x-unit / unit）；多序列即多色散点；data 为 [x, y] 数组"
@@ -2252,7 +2252,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "多序列传 categories + series，stacked 开关叠加，自动出图例——勿为组合造新类型；序列 ≥3 时中间序列难以直接比较，需精确比较各子类时只放 2 个序列"
@@ -2279,7 +2279,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "stacked 与 horizontal 正交叠加（不是新类型）；硬判据同堆积柱：序列 ≥3 中间难比、精确比较只放 2 序列"
@@ -2306,7 +2306,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "只分 2 组——分组 ≥3 时两端长度不固定、中间颜色无法比较；单组看比例用环形图"
@@ -2334,7 +2334,7 @@
       ],
       "mustRules": [
         "画图一律用业务组件 Chart，禁页内手拼 ECharts 重写取色/主题重绘",
-        "图表标题传 Chart 的 title（组件内标题行，横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行",
+        "图表标题传 Chart 的 title（横排图例与标题同行右侧垂直居中，源头固化）——禁在图表上方自拼标题行；标题字阶按该图在页面里的层级传 title-level（默认 component＝卡片内一张图，独占模块分区用 module）",
         "import { Chart } from '<path>/design-spec/components'；接入方自装 echarts 并配置解析映射（范本 demo/vite.config.ts）",
         "只是一个核心数字→别画图，直接用 number-display 数字字阶",
         "diverging 需恰 2 个序列（第二序列自动反向）；横排即双向条形图（加 horizontal）"

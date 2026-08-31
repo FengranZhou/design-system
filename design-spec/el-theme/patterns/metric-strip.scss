@@ -1,0 +1,60 @@
+/* ========================================================================== */
+/* ===================== 指标条 Metric Strip（设计模式层） =================== */
+/* ========================================================================== */
+
+/* ┌─ 接入方速查：一排横向并列的指标卡（KPI 条），直接复制即可 ─────────────┐
+   <div class="metric-strip">
+     <div class="metric-item">
+       <span class="metric-item__num">82<em class="metric-item__unit">人</em></span>
+       <span class="metric-item__label">学生</span>
+     </div>
+     … 指标项个数不限，宽度自动按数量等分
+   </div>
+   → 等分与居中由本文件保证，接入方不写任何宽度/间距；数字字阶、单位、说明的
+     取色字阶全在此处，改一次所有页面同步。
+   规则细则见 references/patterns/metric-strip-pattern.md
+   └────────────────────────────────────────────────────────────────────────┘ */
+
+/* 一长条容器：按项数**自动等分**列宽（grid-auto-columns: 1fr + 列向流），
+   ⚠️ 不用 flex + space-between —— 那是按内容宽度排布，长短不一的项会宽窄不齐、
+      间隔也不匀（「访客人次」比「教师」宽一截）。等分是本模式的核心规则：
+      无论 2 项还是 8 项一律等分撑满，宽度可预测、多页面并置时纵向对得齐。 */
+.metric-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-5);
+  border-radius: var(--iflyv-radius-md);
+  background: var(--iflyv-bg-card);
+}
+
+/* 每格：内容在等分宽度内水平居中；数字与说明是主信息/副信息的上下关系。
+   gap 取 spacing-0_5（2px，紧贴元素微调档）—— number-display 系字阶行高已很宽裕，
+   用常规的列表项子元素档（spacing-2）会让数字与说明散开、读不出主副一组 */
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--iflyv-spacing-0_5);
+  min-width: 0;
+}
+
+/* 主数字：数字展示字阶（小号档） */
+.metric-item__num {
+  font: var(--iflyv-font-number-display-sm);
+  color: var(--iflyv-text-1);
+}
+
+/* 单位：紧贴数字（控件内文字与其紧邻元素的微间距），弱化一档 */
+.metric-item__unit {
+  font: var(--iflyv-font-body-min);
+  font-style: normal;
+  color: var(--iflyv-text-3);
+  margin-inline-start: var(--iflyv-spacing-0_5);
+}
+
+/* 说明文字：副信息 */
+.metric-item__label {
+  font: var(--iflyv-font-body-sub);
+  color: var(--iflyv-text-3);
+}

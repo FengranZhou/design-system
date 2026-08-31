@@ -25,9 +25,10 @@
     雷达图：  <Chart type="radar" :indicators="[{ name: '出勤' }, …]" :series="…" />  ← 维度 ≥3
   props：
     type          基础型（见上）             必填。
-    title         string                     图表标题：传了就在图表内渲染（组件标题字阶，左上）；
-                                             横排图例自动与标题同行右侧垂直居中（规范）——
-                                             禁在图表上方自拼标题行（对不齐图例）。
+    title         string                     图表标题：传了就在图表内渲染（左上）；横排图例自动与
+                                             标题同行右侧垂直居中（规范）——禁在图表上方自拼标题行。
+    title-level   'component'（默认）        标题字阶按**该图在页面里的层级**取档，不是图表自带属性：
+                  | 'module' | 'regular'     卡片内一张图＝component；独占一个模块分区＝module/regular。
     data          { name, value }[]          单序列数据（与 categories/series 二选一；waterfall 专用）。
     categories    string[]                   多序列时的类目轴。
     series        { name, data, kind? }[]    多序列数据（自动出图例）；散点 data 为 [x,y][]；
@@ -67,7 +68,7 @@
     <!-- 标题与横排图例同处一个 flex 行：垂直居中是布局事实，不再依赖 canvas 内像素偏移估算；
          图例过多放不下时收纳成「+N」（头行高度恒定），点开 el-dropdown 面板查看并开关其余序列 -->
     <div v-if="title || legendItems.length" class="iflyv-chart__head">
-      <span v-if="title" class="iflyv-chart__title">{{ title }}</span>
+      <span v-if="title" class="iflyv-chart__title" :class="titleLevel !== 'component' && `iflyv-chart__title--${titleLevel}`">{{ title }}</span>
       <div v-if="legendItems.length" class="iflyv-chart__legend">
         <button
           v-for="it in visibleLegendItems"
@@ -151,8 +152,11 @@ const props = withDefaults(
     diverging?: boolean
     /** 横轴点位 >12 开启、≤12 不开：底部范围选择控件 + 滚轮缩放（仅竖排 bar/line/bar-line） */
     zoomable?: boolean
-    /** 图表标题：传了就在图表内渲染标题行（组件标题字阶，左侧）——图例同行右侧垂直居中（规范固化） */
+    /** 图表标题：传了就在图表内渲染标题行（左侧）——图例同行右侧垂直居中（规范固化） */
     title?: string
+    /** 标题层级：按该图表在页面里的位置取档，不是图表自带属性。
+     *  component（默认）=卡片内的一张图 / module=独占一个模块分区 / regular=常规标题层 */
+    titleLevel?: 'component' | 'module' | 'regular'
     /** 单序列的序列名：传了就展示图例（规范：只有一组数据也展示图例，保持多图统一） */
     seriesName?: string
     /** 数值单位（如 '%'、'万'）：展示在数值轴顶部并拼进浮层数值 */
@@ -166,7 +170,7 @@ const props = withDefaults(
     centerLabel?: string
     option?: Record<string, unknown>
   }>(),
-  { data: () => [], height: 240 },
+  { data: () => [], height: 240, titleLevel: 'component' },
 )
 
 const canvasEl = ref<HTMLElement | null>(null)
@@ -736,10 +740,18 @@ watch(
   margin-bottom: var(--iflyv-spacing-2);
 }
 /* 标题：组件标题字阶 */
+/* 标题字阶按 title-level 取档：图表标题的层级由它在页面里的位置决定，不是图表自带属性——
+   卡片内的一张图＝组件级（默认）；独占一个模块/分区时＝模块级或常规标题 */
 .iflyv-chart__title {
   font: var(--iflyv-font-title-component);
   color: var(--iflyv-text-1);
   white-space: nowrap;
+}
+.iflyv-chart__title--module {
+  font: var(--iflyv-font-title-module);
+}
+.iflyv-chart__title--regular {
+  font: var(--iflyv-font-title-regular);
 }
 /* 图例：单行不折行（头行高度恒定）；放不下的序列收进「+N」；条目可点击开关序列 */
 .iflyv-chart__legend {
@@ -840,6 +852,9 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* 环心数字与说明取 spacing-0_5（紧贴元素微调档）——规则见 foundations.md 语义字阶表
+     「数字展示字阶自带的排版约定」 */
+  gap: var(--iflyv-spacing-0_5);
   pointer-events: none;
 }
 .iflyv-chart__center-num {
