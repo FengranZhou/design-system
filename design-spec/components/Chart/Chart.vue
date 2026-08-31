@@ -119,7 +119,7 @@
         >
           <i class="iflyv-chart__legend-dot" :style="{ background: it.color }"></i>
           <span class="iflyv-chart__legend-vname" :style="{ width: pieNameW + 'px' }">{{ it.name }}</span>
-          <span class="iflyv-chart__legend-vval">{{ it.text }}</span>
+          <span class="iflyv-chart__legend-vval">{{ it.val }}<span class="iflyv-chart__legend-vpct"> ({{ it.pct }})</span></span>
         </button>
       </div>
     </div>
@@ -189,7 +189,7 @@ const legendSelected = () => Object.fromEntries([...legendItems.value, ...pieRow
 // —— 环形/饼的纵排图例（同为 HTML，canvas 图例给不了 hover 反馈）——
 // 行数据在 buildOption 的 donut/pie 分支填充（含「其他」归并后的顺序与配色）；
 // pieNameW = 最长名称估宽 + 10，名称定宽后数值列自然左对齐
-const pieRows = ref<{ name: string; color: string; text: string }[]>([])
+const pieRows = ref<{ name: string; color: string; val: string; pct: string }[]>([])
 const pieNameW = ref(0)
 
 // hover 图例 → 图中对应元素高亮：canvas 图例自带这层联动，HTML 图例须手动派发。
@@ -337,8 +337,10 @@ function buildOption(): Record<string, unknown> {
     pieRows.value = sorted.map((d, i) => ({
       name: d.name,
       color: colors[i % colors.length],
-      // 占比括号用半角 () 且前置空格（全角（）在数字语境里过宽）
-      text: `${formatNumber(d.value)} (${((d.value / total) * 100).toFixed(1)}%)`,
+      // 数值与占比分两段渲染：数值是主信息（常规字重 text-1），占比是附注（text-3）
+      val: formatNumber(d.value),
+      // 括号用半角 () 且前置空格（全角（）在数字语境里过宽）——空格在模板里
+      pct: `${((d.value / total) * 100).toFixed(1)}%`,
     }))
     pieNameW.value = Math.max(...sorted.map((d) => textW(d.name, 14))) + 10
     // 环/饼不走 grid：标题已在 HTML 头行（canvas 之外），canvas 即纯绘图区，
@@ -827,10 +829,15 @@ watch(
   flex: none;
   text-align: left;
 }
+/* 数值：与行同档字阶（body-sub，常规字重）——名称已是主信息，数值不再加粗抢一层。
+   tabular-nums 保证多行数字等宽对齐 */
 .iflyv-chart__legend-vval {
-  font-weight: 600;
   color: var(--iflyv-text-1);
   font-variant-numeric: tabular-nums;
+}
+/* 占比：数值的附注信息，弱化到 text-3（与 metric-item__unit 的「单位弱化一档」同语义） */
+.iflyv-chart__legend-vpct {
+  color: var(--iflyv-text-3);
 }
 .iflyv-chart__legend-option.is-off {
   opacity: 0.4;
