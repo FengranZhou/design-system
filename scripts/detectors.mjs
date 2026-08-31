@@ -268,6 +268,14 @@ export const DETECTORS = {
   // —— 布局与栅格 ——
   'grid-no-el-row': EL_ROW_COL,
 
+  /** 指标条：自拼私有类而非用源头约定 class（.metric-strip / .metric-item） */
+  'metric-strip-class': {
+    scope: 'template',
+    // 常见自拼命名：kpi-strip / stat-bar / data-list / kpi-item / stat-card…
+    find: /class="[^"]*\b(kpi|stat|data)-(strip|bar|row|list|item|card|cell)\b/,
+    hint: '一排指标卡用源头约定 class .metric-strip / .metric-item（等分+居中在源头 patterns/metric-strip.scss），禁自拼私有类',
+  },
+
   'grid-min-6col': {
     scope: 'all',
     find: /\bgrid__col-([0-5])\b/,

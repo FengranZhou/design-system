@@ -41,12 +41,12 @@
           </div>
 
           <template v-if="activeTab === 'board'">
-            <!-- KPI 指标条：并列次级指标 → number-display-sm 数字字阶（规范：单个数字不画图）。
-                 8 个并列指标一行铺开属卡内条目排布（非页面分栏），不走栅格（col-3 低于 6 列下限） -->
-            <div class="kpi-strip">
-              <div v-for="kpi in kpis" :key="kpi.label" class="kpi-item">
-                <span class="kpi-item__num">{{ formatNumber(kpi.value) }}<em class="kpi-item__unit">{{ kpi.unit }}</em></span>
-                <span class="kpi-item__label">{{ kpi.label }}</span>
+            <!-- 指标条：一律用源头约定 class（el-theme/patterns/metric-strip.scss）——
+                 等分列宽 + 列内居中、卡片底与字阶全在源头，本页不写任何指标条样式 -->
+            <div class="metric-strip">
+              <div v-for="kpi in kpis" :key="kpi.label" class="metric-item">
+                <span class="metric-item__num">{{ formatNumber(kpi.value) }}<em class="metric-item__unit">{{ kpi.unit }}</em></span>
+                <span class="metric-item__label">{{ kpi.label }}</span>
               </div>
             </div>
 
@@ -244,36 +244,8 @@ onBeforeUnmount(() => {
   min-width: 0;
 }
 
-/* KPI 指标条：大卡片档（上下 16 / 左右 20）；8 个并列指标均布（卡内条目排布，非页面分栏） */
-.kpi-strip {
-  display: flex;
-  justify-content: space-between;
-  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-5);
-  border-radius: var(--iflyv-radius-md);
-  background: var(--iflyv-bg-card);
-}
-.kpi-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* 数字与说明是列表项内子元素关系（主信息与副信息） */
-  gap: var(--iflyv-spacing-2);
-}
-.kpi-item__num {
-  font: var(--iflyv-font-number-display-sm);
-  color: var(--iflyv-text-1);
-}
-.kpi-item__unit {
-  font: var(--iflyv-font-body-min);
-  font-style: normal;
-  color: var(--iflyv-text-3);
-  /* 单位紧贴数字：控件内文字与其紧邻元素微间距 */
-  margin-inline-start: var(--iflyv-spacing-0_5);
-}
-.kpi-item__label {
-  font: var(--iflyv-font-body-sub);
-  color: var(--iflyv-text-3);
-}
+/* 指标条样式已归源头 el-theme/patterns/metric-strip.scss（约定 class .metric-strip / .metric-item），
+   本页只引用不复刻 */
 
 /* 模块分组：组与组 32（模块之间）；组标题下方 12（模块级标题与其下方内容）。
    首组与 KPI 条之间同为模块间关系 */

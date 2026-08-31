@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 100,
-  "totalWeight": 287,
+  "total": 103,
+  "totalWeight": 296,
   "byLevel": {
-    "MUST": 87,
+    "MUST": 90,
     "SHOULD": 13,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 67,
+    "regex": 68,
     "ast": 7,
-    "manual": 26
+    "manual": 28
   },
   "byView": {
-    "design": 81,
-    "impl": 92
+    "design": 84,
+    "impl": 95
   },
   "categoryOrder": [
     "单一数据源",
@@ -257,6 +257,21 @@
       "weight": 3,
       "source": "design-spec/references/foundations.md",
       "line": 209
+    },
+    {
+      "id": "number-display-gap-2",
+      "title": "number-display / -sm 与下方说明的垂直间距取 spacing-0_5，不用常规的列表项子元素档",
+      "designTitle": "大数字与其下方说明文字应紧贴成一组，不能像普通段落那样拉开距离",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 269
     },
     {
       "id": "gradient-cross-hue",
@@ -775,6 +790,21 @@
       "line": 1274
     },
     {
+      "id": "metric-strip-class",
+      "title": "指标条一律用源头约定 class .metric-strip / .metric-item，禁在使用方自拼",
+      "designTitle": "一排指标卡应宽度等分、内容居中，各项不因文字长短而宽窄不齐",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/metric-strip-pattern.md",
+      "line": 13
+    },
+    {
       "id": "timepicker-disabled-range",
       "title": "限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤",
       "designTitle": "限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤",
@@ -891,6 +921,21 @@
       "weight": 3,
       "source": "design-spec/references/foundations.md",
       "line": 22
+    },
+    {
+      "id": "metric-strip-equal-width",
+      "title": "指标条按项数等分列宽、列内居中；禁用 flex + space-between 按内容宽度排布",
+      "designTitle": "指标条各项宽度应均分，不能按内容长短自然排布",
+      "level": "MUST",
+      "cat": "布局与栅格",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/metric-strip-pattern.md",
+      "line": 14
     },
     {
       "id": "form-label-left",
@@ -1440,7 +1485,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 333
+      "line": 337
     },
     {
       "id": "gsap-display-only",
@@ -1454,11 +1499,11 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 440
+      "line": 444
     },
     {
       "id": "chart-title-legend-inline",
-      "title": "图例：统一顶部（环形图为右侧带数值占比）；只有一组数据也展示图例（保持多图统一）——单序列给 `Chart` 传 `series-name` 即出。图表标题一律传 `Chart` 的 `title`（组件内标题行，组件标题字阶居左）——横排图例与标题同行右侧、垂直居中（源头固化）；禁在图表上方自拼标题行（对不齐图例）；图例放不下时源头自动收纳为「+N」（点开面板查看并开关其余序列），头行高度恒定",
+      "title": "图例：统一顶部（环形图为右侧带数值占比）；只有一组数据也展示图例（保持多图统一）——单序列给 `Chart` 传 `series-name` 即出。图表标题一律传 `Chart` 的 `title`（组件内标题行居左）——横排图例与标题同行右侧、垂直居中（源头固化）；标题字阶按「该图表在页面里处于哪一层」传 `title-level`：卡片内的一张图＝`component`（默认）、独占一个模块分区＝`module`——层级由页面位置决定，不是图表自带属性，别所有图都用默认档；禁在图表上方自拼标题行（对不齐图例）；图例放不下时源头自动收纳为「+N」（点开面板查看并开关其余序列），头行高度恒定",
       "designTitle": "图表标题与图例不同行：标题自拼在图表上方，图例掉到下一行左右都对不齐",
       "level": "SHOULD",
       "cat": "视觉呈现",
@@ -1499,7 +1544,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/foundations.md",
-      "line": 387
+      "line": 391
     }
   ]
 }
