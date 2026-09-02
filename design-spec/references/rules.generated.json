@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 104,
-  "totalWeight": 299,
+  "total": 110,
+  "totalWeight": 317,
   "byLevel": {
-    "MUST": 91,
+    "MUST": 97,
     "SHOULD": 13,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 68,
+    "regex": 73,
     "ast": 7,
-    "manual": 29
+    "manual": 30
   },
   "byView": {
-    "design": 85,
-    "impl": 96
+    "design": 91,
+    "impl": 102
   },
   "categoryOrder": [
     "单一数据源",
@@ -124,7 +124,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 616
+      "line": 633
     },
     {
       "id": "color-no-hardcode",
@@ -304,6 +304,21 @@
       "line": 210
     },
     {
+      "id": "tag-not-form-value",
+      "title": "Tag 只用于只读的状态/分类标识；表单已选值用业务组件 PickedItem，禁用 el-tag closable 冒充",
+      "designTitle": "表单里已选中的值（可逐个删除的那种）不应做成彩色标签，那是状态标识的样子",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 507
+    },
+    {
       "id": "aibutton-use-component",
       "title": "AI 按钮一律用业务组件 AiButton，禁在 el-button 上自贴渐变复刻",
       "designTitle": "AI 功能入口应是统一的渐变按钮样式，不应各处自调渐变",
@@ -316,7 +331,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 648
+      "line": 665
     },
     {
       "id": "breadcrumb-use-component",
@@ -331,7 +346,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 675
+      "line": 692
     },
     {
       "id": "anchor-vertical-ask-first",
@@ -345,7 +360,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 725
+      "line": 742
     },
     {
       "id": "dialog-no-messagebox",
@@ -360,7 +375,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1124
+      "line": 1151
     },
     {
       "id": "component-no-suspended",
@@ -375,7 +390,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1325
+      "line": 1352
     },
     {
       "id": "chart-use-component",
@@ -393,6 +408,36 @@
       "line": 268
     },
     {
+      "id": "option-card-for-icon-radio",
+      "title": "选项自带图标的单选一律用业务组件 OptionCard，禁手拼 div 网格或把图标硬塞进 el-radio 的 label",
+      "designTitle": "带图标的单选选项应做成卡片块，不要把图标塞进单选圆点后面",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/select-pattern.md",
+      "line": 32
+    },
+    {
+      "id": "option-card-single-only",
+      "title": "OptionCard 仅用于单选，多选场景一律用 el-checkbox-group，不得用本组件冒充",
+      "designTitle": "卡片单选只能单选，多选场景请用标准多选框",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/select-pattern.md",
+      "line": 57
+    },
+    {
       "id": "select-v2-over-200",
       "title": "选项超过 200 必须换 el-select-v2（虚拟滚动），否则首次展开卡顿",
       "designTitle": "选项超过 200 必须换 el-select-v2（虚拟滚动），否则首次展开卡顿",
@@ -404,7 +449,22 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/select-pattern.md",
-      "line": 38
+      "line": 70
+    },
+    {
+      "id": "button-icon-color-source",
+      "title": "按钮图标取色全在源头 button.scss，禁在使用方给按钮内图标写 color/fill/stroke",
+      "designTitle": "按钮里的图标颜色由设计系统统一给，不要自己指定",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 55
     },
     {
       "id": "btn-entry-class",
@@ -419,7 +479,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 105
+      "line": 117
     },
     {
       "id": "btn-entry-text-only",
@@ -434,7 +494,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 106
+      "line": 118
     },
     {
       "id": "btn-entry-exclusive-caret",
@@ -449,7 +509,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 107
+      "line": 119
     },
     {
       "id": "tooltip-no-native-title",
@@ -464,7 +524,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 139
+      "line": 151
     },
     {
       "id": "tooltip-show-after",
@@ -479,7 +539,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 141
+      "line": 153
     },
     {
       "id": "tooltip-no-override",
@@ -493,7 +553,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 143
+      "line": 155
     },
     {
       "id": "tooltip-no-interactive",
@@ -508,7 +568,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 155
+      "line": 167
     },
     {
       "id": "datepicker-value-format",
@@ -523,7 +583,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 232
+      "line": 244
     },
     {
       "id": "timepicker-value-format",
@@ -537,7 +597,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 268
+      "line": 280
     },
     {
       "id": "checkbox-label-prop",
@@ -551,7 +611,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 333
+      "line": 345
     },
     {
       "id": "switch-text-prop",
@@ -565,7 +625,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 368
+      "line": 380
     },
     {
       "id": "slider-width-container",
@@ -580,7 +640,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 387
+      "line": 399
     },
     {
       "id": "descriptions-not-disabled-form",
@@ -595,7 +655,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 427
+      "line": 439
     },
     {
       "id": "inputnumber-min-max",
@@ -610,7 +670,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 451
+      "line": 463
     },
     {
       "id": "dropdown-trigger-use-button",
@@ -625,7 +685,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 567
+      "line": 584
     },
     {
       "id": "dropdown-use-slots",
@@ -640,7 +700,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 577
+      "line": 594
     },
     {
       "id": "dropdown-caret-class",
@@ -655,7 +715,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 578
+      "line": 595
     },
     {
       "id": "anchor-select-scroll-top",
@@ -670,7 +730,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 733
+      "line": 750
     },
     {
       "id": "anchor-stale-hash",
@@ -684,7 +744,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 742
+      "line": 759
     },
     {
       "id": "pagination-hide-single-page",
@@ -699,7 +759,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 839
+      "line": 856
     },
     {
       "id": "pagination-small-layout",
@@ -714,7 +774,22 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 850
+      "line": 867
+    },
+    {
+      "id": "scrollbar-scroll-fill",
+      "title": "空态所在的 el-scrollbar 须加约定 class scroll-fill 撑满父容器，禁自写 :deep 传导高度",
+      "designTitle": "区域内容为空时，空状态应在该区域内垂直居中，而不是吊在顶部",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 904
     },
     {
       "id": "message-show-close",
@@ -729,7 +804,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 907
+      "line": 934
     },
     {
       "id": "alert-title-prop",
@@ -743,7 +818,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 937
+      "line": 964
     },
     {
       "id": "loading-no-custom-spinner",
@@ -758,7 +833,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 982
+      "line": 1009
     },
     {
       "id": "result-icon-two-values",
@@ -773,7 +848,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1045
+      "line": 1072
     },
     {
       "id": "notification-h-actions",
@@ -787,7 +862,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1077
+      "line": 1104
     },
     {
       "id": "scrollbar-no-raw-overflow",
@@ -802,7 +877,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1274
+      "line": 1301
     },
     {
       "id": "metric-strip-class",
@@ -820,6 +895,21 @@
       "line": 13
     },
     {
+      "id": "option-card-columns-prop",
+      "title": "OptionCard 列数一律用 :columns 属性（卡片按列等分填充容器、自动折行），禁在使用方用 :deep 覆盖 .option-card-group / .option-card 的宽度、排布或外观",
+      "designTitle": "卡片单选的列数请用组件自带的列数配置，不要在页面里另写网格或定死宽度",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/select-pattern.md",
+      "line": 58
+    },
+    {
       "id": "timepicker-disabled-range",
       "title": "限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤",
       "designTitle": "限制时间可选范围用 :disabled-hours/:disabled-minutes，不自己过滤",
@@ -831,7 +921,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 270
+      "line": 282
     },
     {
       "id": "rate-max-5",
@@ -846,7 +936,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 476
+      "line": 488
     },
     {
       "id": "badge-default-red",
@@ -861,7 +951,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 535
+      "line": 552
     },
     {
       "id": "badge-max-99",
@@ -876,7 +966,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 536
+      "line": 553
     },
     {
       "id": "scrollbar-view-class",
@@ -890,7 +980,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1286
+      "line": 1313
     },
     {
       "id": "grid-no-el-row",
@@ -1280,7 +1370,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 869
+      "line": 886
     },
     {
       "id": "skeleton-animated",
@@ -1295,7 +1385,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1011
+      "line": 1038
     },
     {
       "id": "skeleton-on-panel",
@@ -1310,7 +1400,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1012
+      "line": 1039
     },
     {
       "id": "loading-no-blank-screen",
@@ -1339,7 +1429,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1175
+      "line": 1202
     },
     {
       "id": "number-thousands-separator",

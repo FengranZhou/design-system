@@ -97,6 +97,13 @@ done
 # ── 规则 5：Teleport to body 自建面板 ───────────────────────────
 echo "$CONTENT" | grep -qiE '<(Teleport|teleport)[^>]*to="body"' && add_key teleport_panel
 
+# ── 规则 6：拿 el-tag closable 当表单已选值（「形似冒充」类，非手撸）─────
+# 前 5 条拦的都是「自己手撸组件库已有之物」；这条相反——用了真实存在的组件，
+# 但让它承担了不该承担的职责。hook 看到 <el-tag> 只会觉得"用了标准组件"，
+# 所以必须单独判。closable 是关键信号：Tag 是只读状态/分类标识，
+# 只读的东西不需要「可关闭」——一旦可删，它多半是表单里的已选值（应为 PickedItem）。
+echo "$CONTENT" | grep -qiE '<el-tag[^>]*\bclosable' && add_key tag_as_form_value
+
 KEYS=$(echo "$KEYS" | sed 's/^ *//;s/ *$//')
 
 [ -z "$KEYS" ] && exit 0
@@ -109,7 +116,8 @@ REASON=$(jq -rn --arg keys "$KEYS" --arg fp "$FILE_PATH" '
     custom_menu:    "自写下拉/菜单条目（*-menu-item / *-dropdown-item / role=menu）",
     custom_overlay: "自写遮罩层（mask / overlay / backdrop + 定位）",
     custom_widget:  "自定义 class 里出现了已有组件的语义词（tooltip/modal/drawer/steps/breadcrumb...）",
-    teleport_panel: "用 Teleport to body 自建浮层面板"
+    teleport_panel: "用 Teleport to body 自建浮层面板",
+    tag_as_form_value: "用 <el-tag closable> 当表单已选值（Tag 是只读状态/分类标识，可增删的已选值用业务组件 PickedItem）"
   } as $map
   | ($keys | split(" ") | map($map[.]) | map("\n  • " + .) | join("")) as $bullets
   | ("检测到疑似「在手撸组件库已有的东西」，已暂停：" + $bullets

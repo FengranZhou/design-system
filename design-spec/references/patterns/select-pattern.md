@@ -27,6 +27,38 @@
 
 Radio 有两种形态：**基础 radio（`el-radio`）是默认形态**，绝大多数"从固定选项里选一个"都用它；**切换按钮组（`el-radio-button`）一般不默认使用，仅当下游明确要求用它时才用**。
 
+### 选项自带图标、要并排比较 → 用业务组件 OptionCard（卡片单选）
+
+上面两种形态都**没有承载图标的位置**。当每个选项自带一个图形标识（题型图标、模板缩略、场景图示），且需要并排比较时，用业务组件 **`OptionCard`**——每项是一块独立卡片（白底 + 描边 + 圆角），按网格铺开、可换行。<!-- @rule id=option-card-for-icon-radio level=MUST cat=组件选用 view=impl detect=regex dtitle=带图标的单选选项应做成卡片块，不要把图标塞进单选圆点后面 title=选项自带图标的单选一律用业务组件 OptionCard，禁手拼 div 网格或把图标硬塞进 el-radio 的 label -->
+
+```vue
+<el-form-item label="题型" prop="type">
+  <OptionCard v-model="form.type" :options="QUESTION_TYPES" />
+</el-form-item>
+
+<script setup lang="ts">
+import { OptionCard, type OptionCardItem } from '<path>/design-spec/components'
+import iconSingle from '…/single.png'
+const QUESTION_TYPES: OptionCardItem[] = [
+  { value: 'single', label: '单选题', icon: iconSingle },
+  // …
+]
+</script>
+```
+
+**三形态一句话分工**：
+
+| 形态 | 用在 |
+|---|---|
+| `el-radio` 基础单选 | 默认形态。纯文字选项、≤5 项、需并排比较 |
+| `el-radio-button` 切换按钮组 | 首尾相连的紧凑分段条。一般不默认使用，下游明确要求才用 |
+| **`OptionCard` 卡片单选** | **选项自带图标、每块独立成卡、可换行成网格** |
+
+- **仅限单选**：一次只有一项被选中。要多选仍用 `el-checkbox-group` 标准勾选框形态，**不要拿 OptionCard 冒充多选**。<!-- @rule id=option-card-single-only level=MUST cat=组件选用 view=impl detect=manual dtitle=卡片单选只能单选，多选场景请用标准多选框 title=OptionCard 仅用于单选，多选场景一律用 el-checkbox-group，不得用本组件冒充 -->
+- **列数用 `:columns`**（默认 3）：卡片按列**等分填充容器**、不写死宽度，选项多于列数时自动折行。**禁在使用方用 `:deep()` 覆盖 `.option-card-group` / `.option-card` 的宽度、排布或其它外观**。<!-- @rule id=option-card-columns-prop level=MUST cat=组件用法 view=impl detect=regex dtitle=卡片单选的列数请用组件自带的列数配置，不要在页面里另写网格或定死宽度 title=OptionCard 列数一律用 :columns 属性（卡片按列等分填充容器、自动折行），禁在使用方用 :deep 覆盖 .option-card-group / .option-card 的宽度、排布或外观 -->
+- **再次点击已选中项即取消选中**，`v-model` 回到空串 `''`——单选场景里"选错了想清空"很常见，没有这条用户只能改选别项、退不回未选状态。该字段若必填，取消后表单校验正常报"未选择"，是预期行为。
+- **选中态只换描边为品牌色，底与文字都不变**（选中由描边指示，同 `radio.scss`「选中由圆点指示，文字不变色」的口径）——底填品牌色会造成大面积绿，违反设计原则 3。已固化在源头，使用方不覆盖。
+
 ### 选项数量的上限侧：什么时候要分组、什么时候必须换 SelectV2
 
 上面的 `>5 用 Select` 只管下限。**选项继续变多时还有两道坎**：

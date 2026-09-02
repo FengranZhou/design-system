@@ -88,8 +88,13 @@ const FONT_PARTIAL = {
       block += line + '\n'
       if (!line.includes('}')) return
       if (/font-size\s*:\s*var\(--iflyv-font-size-/.test(block)) {
-        const hasLH = /line-height\s*:/.test(block)
-        const hasFW = /font-weight\s*:/.test(block)
+        // 同块内若已有整档 `font: var(--iflyv-font-*)` 简写，字号/行高/字重三者都已给全
+        // （CSS 的 font 简写必然重置 font-weight 与 line-height）——后续单独覆盖
+        // font-size / line-height 属「在整档基础上收一档」，不算缺项。
+        // 漏掉这一分支会把「先整档、再微调」这种合法写法误报为缺字重（真实误报过）。
+        const hasWhole = /font\s*:\s*[^;]*var\(--iflyv-font-(?!size-|weight-|family)/.test(block)
+        const hasLH = hasWhole || /line-height\s*:/.test(block)
+        const hasFW = hasWhole || /font-weight\s*:/.test(block)
         if (!hasLH || !hasFW) {
           const missing = [!hasLH && '行高', !hasFW && '字重'].filter(Boolean).join('、')
           hits.push({
@@ -116,10 +121,16 @@ const SPACING_PX = {
 
 // ── 组件选用类 ──────────────────────────────────────────────────
 
-/** 勿用清单里的停用组件 */
+/** 勿用清单里的停用组件
+ *
+ * ⚠ 结尾用 `(?![-\w])` 而非 `\b`：`\b` 在 `el-collapse` 与 `-transition` 之间**是**词边界，
+ * 于是 `<el-collapse-transition>`（过渡动画组件，未停用）会被 `el-collapse`（折叠面板，已停用）
+ * 误伤。同类还有 el-image-viewer / el-menu-item-group / el-text-… 等一族「同前缀不同组件」。
+ * 原先靠 `el-tree(?!-select)` 逐个打补丁，漏一个就是误报——改成统一后瞻，一次堵死。
+ * 需要匹配的多词组件（el-menu-item / el-collapse-item / el-timeline-item）已各自单列。 */
 const SUSPENDED_COMPONENTS = {
   scope: 'template',
-  find: /<(el-popover|el-menu|el-menu-item|el-submenu|el-sub-menu|el-link|el-collapse|el-collapse-item|el-progress|el-timeline|el-timeline-item|el-upload|el-transfer|el-tree(?!-select)|el-backtop|el-input-tag|el-card|el-autocomplete|el-carousel|el-image|el-affix|el-space|el-text|el-segmented|el-check-tag|el-watermark|el-countdown|el-mention|el-splitter)\b/,
+  find: /<(el-popover|el-menu|el-menu-item|el-submenu|el-sub-menu|el-link|el-collapse|el-collapse-item|el-progress|el-timeline|el-timeline-item|el-upload|el-transfer|el-tree|el-backtop|el-input-tag|el-card|el-autocomplete|el-carousel|el-image|el-affix|el-space|el-text|el-segmented|el-check-tag|el-watermark|el-countdown|el-mention|el-splitter)(?![-\w])/,
   hint: '该组件在「⏸ 勿用清单」内已停用，写出来会拿到 EP 原生观感。见 component-interaction.md 文末清单选替代方案',
 }
 
@@ -362,6 +373,52 @@ export const DETECTORS = {
     /\btitle\s*=|:title\s*=/,
     'el-alert 主文案必须传 title（默认插槽是 description 区，会触发大图标）',
   ),
+
+  /* 滚动区撑满：禁自写 :deep 传导 el-scrollbar 内部高度，一律用约定 class scroll-fill。
+     只查「手写传导」这一半——「该加没加」需要判断该区会不会为空，机器判不了，
+     由 references 正文的人工条目兜。 */
+  /* Tag 冒充表单已选值：closable 与 Tag「只读状态/分类标识」的语义矛盾——
+     只读的东西不需要「可关闭」，一旦可删多半是表单里的已选值（应为业务组件 PickedItem）。 */
+  'tag-not-form-value': {
+    scope: 'template',
+    find: /<el-tag[^>]*\bclosable/,
+    hint: '可增删的表单已选值用业务组件 PickedItem，禁用 <el-tag closable> 冒充（Tag 是只读状态/分类标识）',
+  },
+
+  // 「选项自带图标的单选」两种典型手拼法：
+  //   ① 在 el-radio 内部塞 <img>（把图标硬挤进圆点后面）；
+  //   ② 手写 grid + 图标块自己拼一套卡片单选。
+  // 只抓 ① 这种高置信度写法——② 的形态太自由，正则会大面积误伤普通网格布局。
+  'option-card-for-icon-radio': {
+    scope: 'template',
+    find: /<el-radio(-button)?\b[^>]*>\s*<img\b/,
+    hint: '选项自带图标的单选用业务组件 OptionCard（卡片块），不要把 <img> 塞进 el-radio 的 label',
+  },
+
+  // 按钮内图标取色全在源头（黑字按钮 icon-2、语义色按钮跟随文字），
+  // 使用方给 .el-button 里的图标写死颜色即越界。只抓 :deep 形式——
+  // scoped 选不中 EP 内部的 .el-icon，要覆盖只能走 :deep。
+  'button-icon-color-source': {
+    scope: 'style',
+    find: /:deep\s*\(\s*\.el-button[^)]*\.el-icon\b|:deep\s*\(\s*\.el-button[^)]*\bsvg\b/,
+    hint: '按钮图标取色全在源头 button.scss（黑字按钮 icon-2 / 语义色跟随文字），禁在使用方 :deep 覆盖',
+  },
+
+  'option-card-columns-prop': {
+    scope: 'style',
+    // 只抓 :deep(.option-card…)——使用方的 scoped 样式选不中子组件内部元素，
+    // 要覆盖 OptionCard 的宽度/排布只能走 :deep，故这是使用方越界的唯一入口。
+    // 组件源头自己写的是裸选择器（.option-card-group{…}），天然不会命中。
+    find: /:deep\s*\(\s*\.option-card(-group)?\b/,
+    hint: 'OptionCard 列数用 :columns 属性（按列等分填充、自动折行），外观全在源头；禁在使用方用 :deep 覆盖 .option-card / .option-card-group',
+  },
+
+  'scrollbar-scroll-fill': {
+    scope: 'style',
+    // 逐行扫：:deep(.el-scrollbar__wrap / __view) 选择器行即判违规（同行或下一行给 height 都算）
+    find: /:deep\s*\(\s*\.el-scrollbar__(wrap|view)\b/,
+    hint: '禁自写 :deep 传导 el-scrollbar 内部高度，给滚动区加约定 class scroll-fill（源头 scrollbar.scss 已处理）',
+  },
 
   // —— 组件用法：禁用写法 ——
   'tooltip-no-native-title': {

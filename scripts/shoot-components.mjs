@@ -100,21 +100,21 @@ const MAX_UPSCALE = 1.8
  * 第二项是全局的，所以任何 el-theme 改动都会让全部指纹失效，这正是我们要的。
  */
 function themeHash() {
-  const dir = join(ROOT, 'design-spec/el-theme')
   const h = createHash('sha1')
-  const walk = (d) => {
+  const walk = (d, re) => {
     for (const name of readdirSync(d, { withFileTypes: true }).sort((a, b) => a.name < b.name ? -1 : 1)) {
       const p = join(d, name.name)
-      if (name.isDirectory()) walk(p)
-      else if (/\.(scss|css)$/.test(name.name)) h.update(readFileSync(p))
+      if (name.isDirectory()) walk(p, re)
+      else if (re.test(name.name)) h.update(readFileSync(p))
     }
   }
-  try { walk(dir) } catch (_) {}
+  try { walk(join(ROOT, 'design-spec/el-theme'), /\.(scss|css)$/) } catch (_) {}
   // 令牌层也算进去：改了色板 / 间距同样会改变长相
-  try {
-    const td = join(ROOT, 'design-spec/design-token')
-    walk(td)
-  } catch (_) {}
+  try { walk(join(ROOT, 'design-spec/design-token'), /\.(scss|css)$/) } catch (_) {}
+  // 业务组件源头（.vue）也算进去：它们有自己的模板与 scoped 样式，
+  // 改 PickedItem 的高度、OptionCard 的选中态都会改变长相，而 demo 文件
+  // 一个字没动 —— 漏掉这一项就会「改了源头、图却静默过期」。
+  try { walk(join(ROOT, 'design-spec/components'), /\.vue$/) } catch (_) {}
   // ③ **本脚本自身**：取景与裁切逻辑（容器宽度、居中方式、输出比例）同样
   // 决定长相。曾漏掉这一项 —— 修好了「配图歪」却因为指纹没变而全部跳过
   // 重拍，只能手动 --force。把自己也算进去，改了算法就自动全量重拍。

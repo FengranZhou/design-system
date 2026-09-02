@@ -8,14 +8,27 @@
 .el-empty__image { display: flex; justify-content: center; }
 
 /* ┌─ 接入方速查：承载容器两档，直接加约定 class ─────────────────────────┐
-   页面级（整页空态，插图大、留白多）：<el-empty class="empty-page" :image="图URL" description="无数据" />
+   页面级（整页空态，插图大、留白多，自动撑满父容器并垂直居中）：<el-empty class="empty-page" :image="图URL" description="无数据" />
+     └ 外面套 el-scrollbar 时，给滚动区加约定 class：<el-scrollbar class="scroll-fill">
+       （否则 wrap/view 按内容高、无从居中；见 scrollbar.scss 的 scroll-fill 速查）
    模块级（卡片/区块内空态，插图小、留白少）：<el-empty class="empty-block" :image="图URL" description="无数据" />
    带按钮：把 <el-button> 放进 el-empty 默认插槽即可（正交配置，可叠加）。
    └────────────────────────────────────────────────────────────────────┘ */
 
-/* 页面级：插图 120，上下留白大 */
+/* 页面级：插图 120，上下留白大。
+   ⚠️ 同时**撑满父容器并垂直居中**——「整页/整个内容区的空态」这一语义本身就要求
+   它在容器里居中，不能贴顶。EP 原生 .el-empty 已是纵向 flex，这里补高度与居中轴：
+   父容器有确定高度时（如被 el-scrollbar 包裹的结果区）自动居中，父容器高度由内容
+   撑开时 min-height 不生效、退化为原来的按内容排布，两种场景都对。
+   放源头而非各页自写，是因为漏写就贴顶、且不会有任何报错（真实翻车过一次）。 */
 .el-empty.empty-page {
   padding: var(--iflyv-spacing-10) 0;
+  min-height: 100%;
+  /* 父容器是纵向 flex 时（PageFrame 内容区、面板内容区等常见形态），
+     光有 min-height:100% 不够——flex 子元素默认按内容高，还需吃掉剩余空间 */
+  flex: 1;
+  justify-content: center;
+  box-sizing: border-box;
   .el-empty__image { width: 120px; }
 }
 

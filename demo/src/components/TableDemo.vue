@@ -99,7 +99,9 @@ const contentRow = [
   padding: 0;
 }
 /* 连同外层空 body + 其内 scrollbar 包裹层一起压掉：只喂了空数据，body 无需占任何高度，仅留表头。
-   EP 新版 body-wrapper 内套 .el-scrollbar__wrap（本身还有 ~24px 高），需一并压 0。 */
+   EP 新版 body-wrapper 内套 .el-scrollbar__wrap（本身还有 ~24px 高），需一并压 0。
+   【规范展示页的讲解脚手架】此处 :deep 到 .el-scrollbar__wrap 不是「传导高度给空态」
+   （那才是 scroll-fill 要管的事），而是把只渲染表头的演示表的 body 压成 0。 */
 .header-only-table :deep(.el-table__body-wrapper),
 .header-only-table :deep(.el-scrollbar__wrap) {
   height: 0;

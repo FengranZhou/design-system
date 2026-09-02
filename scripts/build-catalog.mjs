@@ -61,9 +61,11 @@ const SKIP_ANCHORS = new Set(['other', 'data-display', 'chart-excluded'])
  * demo 的开关回答「这个组件有哪些样子可以看」，插入面板问的是「你这次要插的
  * 这个实例怎么配」。有些开关只属于前者：
  *   searchCollapsed —— SearchMini 的展开/收起形态，插普通输入框时无意义
+ *   withIcon —— OptionCard 的「有无图标」是演示开关：图标是**选项数据自己的字段**
+ *     （options 里每项的 icon），不是组件实例的配置，插入时由用户在自己的选项数组里给
  * 排除比"硬接进 snippet"诚实：与其生成一段用户没要的代码，不如不问。
  */
-const EXCLUDE_FIELDS = new Set(['searchCollapsed'])
+const EXCLUDE_FIELDS = new Set(['searchCollapsed', 'withIcon'])
 
 /** demo 左侧导航的分组 key → catalog 分组 key */
 const NAV_GROUP_MAP = {

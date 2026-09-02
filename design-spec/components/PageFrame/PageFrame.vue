@@ -283,10 +283,13 @@
           </div>
         </header>
         <!-- 内容区可滚：用 el-scrollbar（基础组件）而非 overflow:auto——
-             原生滚动条样式不可控、有白底 track 且占位挤内容（见 component-interaction.md 滚动条段） -->
+             原生滚动条样式不可控、有白底 track 且占位挤内容（见 component-interaction.md 滚动条段）。
+             scroll-fill：让 wrap/view 撑满外壳高度，否则 view 按内容高——页面内容不满一屏时
+             （典型是整页空态 empty-page），子元素的 height:100% 拿不到基准、无法在内容区里垂直居中。
+             内容超出时 wrap 的 overflow:auto 照常滚动，不受影响。 -->
         <el-scrollbar
           tag="main"
-          class="page-frame__content"
+          class="page-frame__content scroll-fill"
           view-class="page-frame__content-view"
         >
           <slot />
@@ -497,6 +500,8 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  /* audit-ignore 侧边栏自身的结构性尺寸，与同段的 200px 栏宽 / 64px 收起宽 / 40px 图标方块同性质，
+     不是「内容之间的间距」，故不进 spacing 序列（该序列只有 8 和 12，无 10）。单点维护于此。 */
   gap: 10px;
   padding: 10px var(--iflyv-spacing-3) 0;
   min-height: 0;
@@ -591,6 +596,8 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
    左移 2px 视觉居中：图标 16px 落在 14px 薄片里本就宽出 2px，靠左对齐后
    偏右显重；用负 margin 而非 translateX——transform 被收起态的 rotate 占着。 */
 .page-frame__handle-icon {
+  /* audit-ignore 光学补偿而非间距：16px 图标落在 14px 薄片里本就宽出 2px，
+     负 margin 是把它拉回视觉居中，与 spacing 序列无关（序列里也不存在负值）。 */
   margin-inline-start: -2px;
   transition: transform var(--iflyv-duration-fast) var(--iflyv-ease-default);
 
@@ -699,6 +706,9 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   /* 10/14：卡内元信息比 body-min(12) 再收一档
      TODO 待令牌化：字阶最小为 12，用户确认先硬编码 */
   font: var(--iflyv-font-body-min);
+  /* audit-ignore 语义字阶最小档为 12，此处课程卡元信息需再收一档到 10/14；
+     字重由上一行整档 font: body-min 提供，此处只覆盖字号行高。经用户确认先硬编码，
+     待字阶体系补 10 档后回归令牌（见上方 TODO）。 */
   font-size: 10px;
   line-height: 14px;
   white-space: nowrap;
@@ -718,6 +728,8 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
 :deep(.page-frame__scroll-view) {
   display: flex;
   flex-direction: column;
+  /* audit-ignore 与 __sidebar 的 10px 同一条结构缝（课程卡 ↕ 导航），侧边栏结构性尺寸，
+     非 spacing 序列（同上：序列只有 8 和 12）。两处必须一致，改一处要同步另一处。 */
   gap: 10px;
   padding-bottom: var(--iflyv-spacing-4);
   /* 展开过渡中导航按展开态定宽铺开（见 __nav），这里锁住 view 宽度并裁切，
@@ -739,7 +751,10 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   }
 }
 
-/* 分组小标题：与导航项文字同一左缘（spacing-3 缩进） */
+/* 分组小标题：与导航项文字同一左缘（spacing-3 缩进）
+   ⚠ 待办：语义层没有 13/18 这一档，下面用基础层令牌在 body-sub 之上收一档，
+   按铁律属「自造档位」，正解是补一个语义档（如 --iflyv-font-body-nav）。
+   沿用既有实现，待与设计负责人确认后回归语义档。 */
 .page-frame__group-title {
   margin: var(--iflyv-spacing-4) 0 var(--iflyv-spacing-2);
   padding: 0 var(--iflyv-spacing-3);

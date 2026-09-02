@@ -198,10 +198,14 @@ onBeforeUnmount(() => {
 }
 
 /* 页面内容区：左右/底部留白一次给全，卡片纵向排布 */
+/* 撑满 PageFrame 内容区，使不满一屏的内容（如整页空态）能拿到高度基准、
+   在内容区内垂直居中；内容超出时照常向下撑开并滚动 */
 .public-info {
   display: flex;
   flex-direction: column;
   gap: var(--iflyv-spacing-4);
+  min-height: 100%;
+  box-sizing: border-box;
   padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6) var(--iflyv-spacing-6);
 }
 

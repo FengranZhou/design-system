@@ -1585,11 +1585,60 @@ import { PageFrame, type PageFrameMenuGroup } from '<path>/design-spec/component
           { value: 'text', label: 'text · 行内文字链（轻量入口）' },
         ] },
       { key: 'loading', label: '带 loading', type: 'switch', default: false },
+      { key: 'block', label: '撑满容器', type: 'switch', default: false },
     ],
-    snippet: ({ text, type, loading }) => `<AiButton type="${type || 'primary'}"${loading ? ' loading loading-text="思考中..."' : ''} @click="handleAi">${text || 'AI 生成'}</AiButton>
+    snippet: ({ text, type, loading, block }) => `<AiButton type="${type || 'primary'}"${block ? ' block' : ''}${loading ? ' loading loading-text="思考中..."' : ''} @click="handleAi">${text || 'AI 生成'}</AiButton>
 
 <!-- 脚本 -->
 import { AiButton } from '<path>/design-spec/components'`,
+  },
+  {
+    id: 'picked-item', anchor: 'picked-item', name: 'PickedItem 已选项', group: 'business',
+    desc: '表单里可增删的已选值', keywords: ['已选项', 'pickeditem', '已选', '知识点', '标签', '可删除', '选中值'],
+    readRefs: ['components/PickedItem/PickedItem.vue（顶部速查注释）', 'references/component-interaction.md（Tag 段开头的选用判据）'],
+    mustRules: [
+      '表单里「可增删、跟着表单提交」的已选值一律用 PickedItem，禁用 <el-tag closable> 冒充',
+      '判据：会不会跟着表单一起提交？会 → PickedItem；不会、只标示状态或类别 → 才是 Tag（Tag 是只读的状态/分类标识）',
+      '旁边的「⊕ 增加」入口由调用方自己放、不由本组件渲染；形态看周围有没有边框：与 PickedItem 并排用次按钮（统一带边框才协调），在表格等已有分割线的容器里用 <el-button text>（避免框中框）',
+      '白底描边方块、高度取控件基准高（36）与同排输入框对齐，全在源头，不在使用方 scoped 覆盖',
+    ],
+    instanceFields: [
+      { key: 'label', label: '文案', type: 'text', placeholder: '如：人工智能', default: '' },
+    ],
+    snippet: ({ label }) =>
+      `<PickedItem v-for="k in points" :key="k" :label="k" @remove="() => remove(k)" />
+<!-- 增加入口由调用方自己放，不属于组件 -->
+<el-button @click="onAdd"><template #icon><CirclePlus :size="16" :stroke-width="2" /></template>增加</el-button>
+
+<!-- 脚本 -->
+import { PickedItem } from '<path>/design-spec/components'
+const points = ref(['${label || '人工智能'}'])
+const remove = (k) => { points.value = points.value.filter(p => p !== k) }`,
+  },
+  {
+    id: 'option-card', anchor: 'option-card', name: 'OptionCard 卡片单选', group: 'business',
+    desc: '带图标的卡片式单选', keywords: ['卡片单选', 'optioncard', '题型', '选项卡片', '带图标单选', '模板选择'],
+    readRefs: ['components/OptionCard/OptionCard.vue（顶部速查注释）', 'references/patterns/select-pattern.md（Radio 三形态选型）'],
+    mustRules: [
+      '「选项自带图标、需并排比较」的单选一律用 OptionCard，禁手拼 div 网格或把图标硬塞进 el-radio 的 label',
+      '仅用于单选（一次只选一项）；要多选用 el-checkbox-group 标准勾选框形态，不要拿本组件冒充',
+      '选中态是「品牌色描边 + 文字变色、底仍白」，全在源头，不在使用方 scoped 覆盖（底填色会造成大面积品牌色）',
+      '每行列数用 :columns 控制（默认 3），卡片按列等分填充容器、超出自动折行；禁在使用方 :deep 覆盖 .option-card / .option-card-group 的宽度或排布',
+      '再次点击已选中项即取消选中，v-model 回到空串（必填字段取消后会正常报「未选择」，是预期行为）',
+      '禁用项由选项数据自己带（disabled: true），禁用态文字转浅、图标降透明度，全在源头',
+    ],
+    snippet: ({ columns }) =>
+      `<el-form-item label="题型" prop="type">
+  <OptionCard v-model="form.type" :options="QUESTION_TYPES"${Number(columns) && Number(columns) !== 3 ? ` :columns="${columns}"` : ''} />
+</el-form-item>
+
+<!-- 脚本 -->
+import { OptionCard, type OptionCardItem } from '<path>/design-spec/components'
+import iconSingle from '<你的图标路径>/single.png'
+const QUESTION_TYPES: OptionCardItem[] = [
+  { value: 'single', label: '单选题', icon: iconSingle },
+  // ...
+]`,
   },
 
   // ── 图表（业务组件 Chart 的五种形态，形态 = 基础型 × 正交配置）─────────────

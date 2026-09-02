@@ -8,8 +8,11 @@
     <AiButton type="outline">定制批量出题</AiButton>       ← 白底描边：工具栏 AI 入口
     <AiButton type="text">AI 生成</AiButton>              ← 行内文字链：轻量 AI 入口
     <AiButton type="text" loading>思考中...</AiButton>    ← 加载态：星形旋转，文案自定
+    <AiButton block>智能生成</AiButton>                   ← 撑满容器宽度（正交配置，可与 type 叠加）
   props：
     type     'primary' | 'outline' | 'text'  可选，默认 'primary'。三种互斥形态。
+    block    boolean   可选，默认 false。撑满父容器宽度（如面板底部的主操作按钮）。
+                       正交配置，与 type / loading / disabled 自由叠加。
     disabled boolean   可选，默认 false。禁用：半透明置灰 + 挡点击。
     loading  boolean   可选，默认 false。加载中：星形图标旋转 + 挡点击（不置灰——
                        「进行中」不是「不可用」）；文案由使用方自定（如"思考中..."）。
@@ -25,7 +28,7 @@
   <button
     type="button"
     class="ai-button"
-    :class="[`ai-button--${type}`, { 'is-loading': loading }]"
+    :class="[`ai-button--${type}`, { 'is-loading': loading, 'is-block': block }]"
     :disabled="disabled || loading"
   >
     <img class="ai-button__star" :src="ICON[type]" alt="" />
@@ -47,15 +50,18 @@ const ICON = { primary: fourStar, outline: aiStar, text: linkStar } as const
  * @prop type     形态：primary 渐变实心（AI 主操作）/ outline 白底描边（工具栏入口）/ text 行内文字链
  * @prop disabled 禁用态：半透明 + 挡点击
  * @prop loading  加载态：星形旋转 + 挡点击，文案由使用方自定（如"思考中..."）
+ * @prop block    撑满父容器宽度（面板底部主操作等场景），与其余配置正交可叠加
  */
 withDefaults(defineProps<{
   type?: 'primary' | 'outline' | 'text'
   disabled?: boolean
   loading?: boolean
+  block?: boolean
 }>(), {
   type: 'primary',
   disabled: false,
   loading: false,
+  block: false,
 })
 </script>
 
@@ -75,6 +81,13 @@ withDefaults(defineProps<{
     opacity var(--iflyv-duration-fast) var(--iflyv-ease-default),
     filter var(--iflyv-duration-fast) var(--iflyv-ease-default);
   flex-shrink: 0;
+
+  /* 撑满容器：正交配置，与 type / loading / disabled 自由叠加。
+     inline-flex + flex-shrink:0 在 flex 父容器里不会拉伸，故显式改 flex 显示 + 100% 宽。 */
+  &.is-block {
+    display: flex;
+    width: 100%;
+  }
 
   &:disabled {
     opacity: 0.5;
