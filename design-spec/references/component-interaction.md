@@ -50,7 +50,19 @@ updated: 2026-05-10
 
 ### 按钮图标（icon + 文字）
 
-统一使用 Lucide 图标库，`stroke-width: 2`，`currentColor` 继承按钮色。**图标必须通过 `#icon` 插槽传递**，不使用 EP 的 `:icon` 属性（属性方式只能传组件构造函数，无法精确指定 `:size` / `:stroke-width`，与 input 前后缀图标同理）。
+统一使用 Lucide 图标库，`stroke-width: 2`。**图标必须通过 `#icon` 插槽传递**，不使用 EP 的 `:icon` 属性（属性方式只能传组件构造函数，无法精确指定 `:size` / `:stroke-width`，与 input 前后缀图标同理）。
+
+**图标取色全在源头，使用方不写 `color`**：<!-- @rule id=button-icon-color-source level=MUST cat=组件用法 view=impl detect=regex dtitle=按钮里的图标颜色由设计系统统一给，不要自己指定 title=按钮图标取色全在源头 button.scss，禁在使用方给按钮内图标写 color/fill/stroke -->
+
+| 按钮形态 | 图标色 | 为什么 |
+|---|---|---|
+| **文字是黑色的**（默认按钮、无类型 text 按钮） | `icon-2` —— **比文字弱一档** | 图标是文字的辅助修饰，与文字同为 `text-1` 会争夺视线、整个按钮显得过重 |
+| 纯图标、无文案的 text 按钮 | `icon-2` | 同上一档口径（行内删除、更多等图标入口） |
+| 主按钮 / 危险按钮 / 文本主按钮 / 文本危险按钮 | 跟随文字色 | 文字本就是白色或语义色，图标强行 `icon-2` 会与文字割裂 |
+| 禁用态 | 跟随文字 `text-4` | 比 `icon-2` 更浅，整体弱化 |
+| 加载态 / hover / active | 跟随文字 | hover 时 text 按钮转品牌色，图标须一起变 |
+
+> 一句话：**按钮里的图标一律比黑色文字弱一档（`icon-2`），有语义色时跟着语义色走。** 这些分支全部固化在 `el-theme/components/button.scss`，使用方只管传图标。
 
 ```vue
 <!-- ✅ 推荐：#icon 插槽 + Lucide -->
@@ -492,6 +504,11 @@ const onCheckAll = (val: boolean) => {
 
 ### Tag 标签（选色 + 数量克制）
 
+> ⛔ **先确认这里该不该用 Tag：Tag 是「只读的状态 / 分类标识」，不是表单控件。** <!-- @rule id=tag-not-form-value level=MUST cat=组件选用 detect=regex dtitle=表单里已选中的值（可逐个删除的那种）不应做成彩色标签，那是状态标识的样子 title=Tag 只用于只读的状态/分类标识；表单已选值用业务组件 PickedItem，禁用 el-tag closable 冒充 -->
+> **判据：这个东西会不会跟着表单一起提交？** 会 → 它是**表单已选值**，用业务组件 `PickedItem`（白底描边方块 + 删除叉，与同排输入框等高）；不会、只是标示某条记录处于什么状态或属于哪一类 → 才是 Tag。
+> **真实翻车**：AI 出题页的「知识点」字段（可增可删、参与提交）曾用 `<el-tag closable>` 实现——只因为「形似：一小块带文字和 ×」。结果是蓝底胶囊与旁边的增加入口高矮不齐，语义上也拿只读展示件冒充了录入件。
+> **这是「凭形似选组件」的典型**：选组件的依据必须是**职责**（它在这里干什么、有没有交互、要不要提交），不是**长相**（看着像什么现成组件）。同类判断还有：文字+箭头的入口 → `.btn-entry` 不是裸 span；hover 弹出的选项面板 → `Dropdown`，不要拿别的浮层组件自拼条目行。
+
 **选色约定（源头 `tag.scss`）**：本系统品牌色是绿色，与 success 语义绿撞色，普通标签用品牌绿易被误读为「成功态」。因此：
 
 - **无语义含义的普通标签，优先 `type="info"`（蓝色）作为默认色**；仅确需品牌强调时才用默认 / `type="primary"`（品牌绿）。
@@ -883,6 +900,16 @@ onMounted(async () => {
 
   暗色主题用 `dark/` 目录下的同名变体。
 - **档位 class**：整页空态加 `class="empty-page"`（插图 120、留白大）；卡片/区块内空态加 `class="empty-block"`（插图 80、留白小）。尺寸与间距全在 `el-theme/components/empty.scss` 源头，下游不自行覆盖。
+- **`empty-page` 自带「撑满父容器 + 垂直居中」**（源头已处理，下游不必也不要再写 flex 居中）：整页档的语义就是占满整个内容区，贴顶排会显得空态吊在上方。父容器高度由内容撑开时自动退化为按内容排布，不会拉长页面。
+- ⚠️ **空态套在 `el-scrollbar` 里时，给滚动区加约定 class `scroll-fill`，否则仍然贴顶** <!-- @rule id=scrollbar-scroll-fill level=MUST cat=组件用法 detect=regex dtitle=区域内容为空时，空状态应在该区域内垂直居中，而不是吊在顶部 title=空态所在的 el-scrollbar 须加约定 class scroll-fill 撑满父容器，禁自写 :deep 传导高度 -->（与「滚动区一律 el-scrollbar」规则的交叉盲区）：EP 的 `el-scrollbar` 内部还有 `wrap` 与 `view` 两层、默认都按内容高度，`empty-page` 的 `min-height: 100%` 因此算不出可居中的空间。
+
+  ```vue
+  <el-scrollbar class="scroll-fill">
+    <el-empty class="empty-page" :image="noData" description="暂无数据" />
+  </el-scrollbar>
+  ```
+
+  **禁止自己写 `:deep(.el-scrollbar__wrap){height:100%}` 传导高度**——源头 `scrollbar.scss` 已用 `scroll-fill` 统一处理（下游写 `:deep` 还有个坑：`view-class` 挂的类在 EP 内部元素上、没有你组件的 scoped 属性，普通选择器会被**静默丢弃**）。⚠️ **不是所有滚动区都加**：侧栏长列表、弹窗内容等本就按内容高度撑开的，不加。
 - **底部操作按钮**：放默认插槽，使用**默认态**（`<el-button>`），不使用 `type="primary"`——空状态按钮属于辅助引导，遵循「主操作唯一」原则
 
 可照抄骨架：

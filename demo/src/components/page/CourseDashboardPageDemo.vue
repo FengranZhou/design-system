@@ -228,7 +228,13 @@ onBeforeUnmount(() => {
 }
 
 /* 页面内容区：顶 = 页面级标题与页面顶部(16)，左右/底 = 24 */
+/* 内容容器撑满 PageFrame 内容区（纵向 flex），使不满一屏的内容（如整页空态）
+   能拿到高度基准、在内容区内垂直居中；内容超出时照常向下撑开并滚动 */
 .dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-sizing: border-box;
   padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6) var(--iflyv-spacing-6);
 }
 

@@ -110,6 +110,28 @@
     }
   }
 
+  /* 【图标+文字】按钮里，图标比文字弱一档取 icon-2 ——
+     图标是文字的辅助修饰，与文字同为 text-1 会让两者争夺视线、整个按钮显得过重。
+     与上文「纯图标 text 按钮取 icon-2」同一色阶口径，两条合起来即：
+     **按钮里的图标一律 icon-2**，只是有文字时不改文字色。
+
+     判据 = 无类型修饰符（`[class*="--"]` 匹配 el-button--primary/--danger 等）：
+     只有默认按钮与无类型 text 按钮的文字是黑色 text-1，图标才需要弱一档；
+     主/危险按钮的文字本就是白色或语义色，图标必须跟着文字走，不能强行 icon-2。
+
+     排除态说明：
+       :not(.is-disabled)      禁用态图标随文字走 text-4，比 icon-2 更浅
+       :not(.is-loading)       加载态图标是 spinner，取色见 is-loading 段
+       :not(:hover):not(:active) text 按钮 hover 转品牌色，图标应一起变色
+
+     @depends-on: 使用方必须用 `<template #icon>` 插槽传图标（裸 svg 不是 .el-icon）。
+     @when-changed: 删掉这条，带文字按钮的图标回到与文字同色（text-1），视觉变重。 */
+  &:not([class*="--"]):not(.is-disabled):not(.is-loading):not(:hover):not(:active) {
+    .el-icon:has(+ span) {
+      color: var(--iflyv-icon-2);
+    }
+  }
+
   /* ==================== 默认按钮交互态 ==================== */
   /* hover：文字色不变（text-1），填充灰底 gray-1，常规描边 */
   --el-button-hover-text-color: var(--iflyv-text-1);

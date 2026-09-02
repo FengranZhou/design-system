@@ -49,7 +49,8 @@
               <span class="ai-quiz__panel-sub">填写越完整具体，AI 越懂你</span>
             </div>
 
-            <el-scrollbar class="ai-quiz__form-scroll" view-class="ai-quiz__form-view">
+            <!-- 左栏不加 scroll-fill：表单内容驱动高度、不会为空，无需撑满 -->
+            <el-scrollbar class="ai-quiz__form-scroll">
               <!-- 8 个字段平铺不分组：仅超「≤7 平铺」阈值 1 项，且各字段起不出有意义的
                    分组上位词（硬切「基础信息/出题要求」属 form-pattern 明令禁止的
                    「为了分组而分组」）。表单在页面里但提交按钮是本页固定操作区，
@@ -72,8 +73,9 @@
                   <template #label>
                     <span class="ai-quiz__label">出题范围<FieldHint text="限定 AI 的取材范围，如某章节、某课件" /></span>
                   </template>
-                  <!-- 「增加」入口：轻量新增用 text 按钮 + Plus 图标（禁裸 div 自拼虚线块） -->
-                  <el-button class="ai-quiz__add" text @click="onAddScope">
+                  <!-- 「增加」入口：次按钮 + 图标（禁裸 div 自拼虚线块）。
+                       图标走 #icon 插槽，取色由源头按 button 形态给（黑字按钮取 icon-2） -->
+                  <el-button @click="onAddScope">
                     <template #icon>
                       <CirclePlus :size="16" :stroke-width="2" />
                     </template>
@@ -86,17 +88,14 @@
                     <span class="ai-quiz__label">知识点<FieldHint text="命中的知识点，可多选" /></span>
                   </template>
                   <div class="ai-quiz__tags">
-                    <!-- 已选知识点：无语义普通标签默认 info（Tag 段） -->
-                    <el-tag
+                    <!-- 已选知识点：业务组件 PickedItem（表单已选值，不是 el-tag 那种只读状态标识） -->
+                    <PickedItem
                       v-for="k in form.points"
                       :key="k"
-                      type="info"
-                      closable
-                      @close="removePoint(k)"
-                    >
-                      {{ k }}
-                    </el-tag>
-                    <el-button class="ai-quiz__add" text @click="onAddPoint">
+                      :label="k"
+                      @remove="removePoint(k)"
+                    />
+                    <el-button @click="onAddPoint">
                       <template #icon>
                         <CirclePlus :size="16" :stroke-width="2" />
                       </template>
@@ -129,26 +128,15 @@
                   <el-input
                     v-model="form.demand"
                     type="textarea"
-                    :rows="4"
-                    resize="none"
+                    :rows="3"
                     placeholder="如线性代数"
                   />
                 </el-form-item>
 
-                <el-form-item label="题型" prop="types">
-                  <!-- 多选题型：一律 el-checkbox-group 包裹，禁再加 flex+gap；
-                       图标+文字整体作为 label 插槽内容 -->
-                  <el-checkbox-group v-model="form.types" class="ai-quiz__types">
-                    <el-checkbox
-                      v-for="t in QUESTION_TYPES"
-                      :key="t.value"
-                      :value="t.value"
-                      class="ai-quiz__type"
-                    >
-                      <img class="ai-quiz__type-icon" :src="t.icon" alt="" />
-                      <span>{{ t.label }}</span>
-                    </el-checkbox>
-                  </el-checkbox-group>
+                <el-form-item label="题型" prop="type">
+                  <!-- 题型单选：选项自带图形标识、需并排比较 → 业务组件 OptionCard
+                       （el-radio 无处安放图标、el-radio-button 是相连分段条，均不适配） -->
+                  <OptionCard v-model="form.type" :options="QUESTION_TYPES" />
                 </el-form-item>
 
                 <el-form-item label="题目数" prop="count">
@@ -162,7 +150,7 @@
 
             <!-- 固定操作区：贴左栏底，跟随面板不随表单滚动 -->
             <div class="ai-quiz__submit">
-              <AiButton type="primary" :loading="generating" @click="onGenerate">
+              <AiButton type="primary" block :loading="generating" @click="onGenerate">
                 {{ generating ? '生成中...' : '智能生成' }}
               </AiButton>
             </div>
@@ -173,56 +161,33 @@
             <div class="ai-quiz__panel-head">
               <h4 class="ai-quiz__panel-title">智能生成结果</h4>
               <span class="ai-quiz__panel-sub">对单题点击「使用」可添加到作业中；使用前，可编辑题目</span>
-              <!-- 结果区操作：轻量文字入口，主操作唯一（主操作是左栏的智能生成） -->
-              <div class="ai-quiz__result-actions">
-                <el-button text :disabled="!results.length" @click="onUseAll">
-                  <template #icon>
-                    <CirclePlus :size="16" :stroke-width="2" />
-                  </template>
-                  全部使用
-                </el-button>
-                <el-button text :disabled="!results.length" @click="onClear">
-                  <template #icon>
-                    <Trash2 :size="16" :stroke-width="2" />
-                  </template>
-                  清空
-                </el-button>
-              </div>
             </div>
 
-            <el-scrollbar class="ai-quiz__result-scroll" view-class="ai-quiz__result-view">
-              <!-- 空态占满整个结果区 = 页面级档 empty-page（非区块档）；
+            <!-- scroll-fill：滚动区撑满面板，空态（empty-page）才能在区内垂直居中 -->
+            <el-scrollbar class="ai-quiz__result-scroll scroll-fill">
+              <!-- ⚠ 本 demo 只展示空态：结果列表的样子随业务千差万别，演示假题目
+                   对规范展示无增益，故点「生成」只走 loading → message 这条反馈链。
+                   真实项目此处渲染题目列表 + 顶部「全部使用 / 清空」轻量入口，
+                   组方见 references/typical-pages.md「AI 出题」段。
+                   空态占满整个结果区 = 页面级档 empty-page（非区块档）；
                    必须同时传设计系统插画与档位 class，缺一即落回 EP 纸盒图 -->
               <el-empty
-                v-if="!results.length"
                 class="empty-page"
                 :image="noData"
                 description="请在左侧填写内容并点击生成按钮"
               />
-
-              <div v-else class="ai-quiz__list">
-                <article v-for="(q, i) in results" :key="q.id" class="ai-quiz__item">
-                  <div class="ai-quiz__item-head">
-                    <span class="ai-quiz__item-no">{{ i + 1 }}</span>
-                    <el-tag type="info">{{ q.type }}</el-tag>
-                    <span class="ai-quiz__item-stem">{{ q.stem }}</span>
-                  </div>
-                  <ul class="ai-quiz__options">
-                    <li v-for="o in q.options" :key="o" class="ai-quiz__option">{{ o }}</li>
-                  </ul>
-                  <div class="ai-quiz__item-foot">
-                    <span class="ai-quiz__answer">参考答案：{{ q.answer }}</span>
-                    <el-button text @click="onUse(q.id)">使用</el-button>
-                  </div>
-                </article>
-              </div>
             </el-scrollbar>
 
             <!-- AI 免责说明：结果区底部常驻，最小字阶 + 弱化色 -->
             <footer class="ai-quiz__disclaimer">
               AI 生成的内容仅供参考，请仔细甄别
               <span class="ai-quiz__disclaimer-sep">|</span>
-              <el-button text @click="onReport">内容举报</el-button>
+              <!-- 「内容举报」是免责声明句内的行内链接，与整行同为 12/18 说明文字，
+                   故用 <button> + 链接样式而非 el-button text——按钮源头统一 14px
+                   （body-sub、小号档未启用），塞进 12px 的说明行会比正文还大、
+                   喧宾夺主。这是「纯文字入口用 el-button text」的一处例外：
+                   判据是它属于一句说明文字的一部分，不是独立的操作入口。 -->
+              <button type="button" class="ai-quiz__report" @click="onReport">内容举报</button>
             </footer>
           </section>
         </div>
@@ -244,10 +209,10 @@
  */
 import { h, ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage, ElTooltip, type FormInstance, type FormRules } from 'element-plus'
-import { Maximize, Minimize, X, CirclePlus, Trash2, Info } from 'lucide-vue-next'
-import { AiButton } from '../../../../design-spec/components'
+import { Maximize, Minimize, X, CirclePlus, Info } from 'lucide-vue-next'
+import { AiButton, OptionCard, PickedItem } from '../../../../design-spec/components'
 import noData from '../../../../design-spec/el-theme/assets/empty/no-data.png'
-import starIcon from '../../assets/pages/ai-star-3d.png'
+import starIcon from '../../assets/pages/ai-quiz/star.png'
 // —— 题型图标：源项目原版切图（七款） ——
 import iconSingle from '../../assets/pages/ai-quiz/single.png'
 import iconMulti from '../../assets/pages/ai-quiz/multi.png'
@@ -288,14 +253,14 @@ const form = reactive({
   level: '难度1',
   target: '',
   demand: '',
-  types: ['single'],
+  type: 'single',
   count: 5,
 })
 
 // 本地可判的规则一律失焦即报；错误文案两段式（错在哪 + 怎么改）
 const rules: FormRules = {
   course: [{ required: true, message: '课程名称为必填项，请输入本次出题所属课程', trigger: 'blur' }],
-  types: [{ type: 'array', required: true, message: '题型未选择，请至少勾选一种题型', trigger: 'change' }],
+  type: [{ required: true, message: '题型未选择，请选择一种题型', trigger: 'change' }],
   count: [{ required: true, message: '题目数为必填项，请输入 1~50 之间的数量', trigger: 'change' }],
 }
 
@@ -305,34 +270,8 @@ const removePoint = (k: string) => {
 const onAddScope = () => ElMessage({ message: '演示页：此处打开「选择出题范围」弹窗', showClose: true })
 const onAddPoint = () => ElMessage({ message: '演示页：此处打开「选择知识点」弹窗', showClose: true })
 
-// —— 生成结果（演示数据；真实项目由接口返回）——
-type Question = { id: number; type: string; stem: string; options: string[]; answer: string }
-const results = ref<Question[]>([])
+// 生成：演示页只走「按钮 loading → 成功提示」这条反馈链，不渲染结果列表
 const generating = ref(false)
-
-const MOCK: Question[] = [
-  {
-    id: 1,
-    type: '单选题',
-    stem: '下列关于人工智能的描述，哪一项最准确？',
-    options: ['A. 人工智能就是机器人', 'B. 人工智能是让机器模拟人类智能的技术', 'C. 人工智能只能用于图像识别', 'D. 人工智能等同于自动化脚本'],
-    answer: 'B',
-  },
-  {
-    id: 2,
-    type: '单选题',
-    stem: '机器学习与传统程序设计最本质的区别在于？',
-    options: ['A. 运行速度更快', 'B. 规则由数据自动习得而非人工编写', 'C. 必须依赖云端算力', 'D. 只能处理数值数据'],
-    answer: 'B',
-  },
-  {
-    id: 3,
-    type: '单选题',
-    stem: '在监督学习中，训练数据必须包含以下哪一项？',
-    options: ['A. 标注好的目标值', 'B. 完整的业务文档', 'C. 用户的操作日志', 'D. 硬件配置参数'],
-    answer: 'A',
-  },
-]
 
 const onGenerate = async () => {
   try {
@@ -343,22 +282,11 @@ const onGenerate = async () => {
   }
   generating.value = true
   window.setTimeout(() => {
-    results.value = MOCK.slice(0, Math.min(form.count, MOCK.length))
     generating.value = false
+    ElMessage({ message: '演示页：已生成，真实项目此处渲染题目列表', showClose: true })
   }, 1200)
 }
 
-const onUse = (id: number) => {
-  results.value = results.value.filter((q) => q.id !== id)
-  ElMessage({ message: '已添加到作业中', showClose: true })
-}
-const onUseAll = () => {
-  results.value = []
-  ElMessage({ message: '已全部添加到作业中', showClose: true })
-}
-const onClear = () => {
-  results.value = []
-}
 const onReport = () => ElMessage({ message: '演示页：此处打开「内容举报」弹窗', showClose: true })
 const onClose = () => ElMessage({ message: '演示页：真实项目此处 router.back() 退出', showClose: true })
 
@@ -422,12 +350,16 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 }
 
 /* —— 页头 —— */
+/* 页头：定高 56（与 PageFrame 顶栏同为组件级高度，本系统不对高度设令牌，
+   同源头 PageFrame 的 height: 52px 写法）；左右留白仍走令牌 */
 .ai-quiz__head {
   position: relative;
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6);
+  height: 56px;
+  padding: 0 var(--iflyv-spacing-3);
 }
 .ai-quiz__title {
   display: inline-flex;
@@ -438,8 +370,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
   color: var(--iflyv-text-1);
 }
 .ai-quiz__title-star {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
 }
 /* 关闭按钮贴右缘：绝对定位使标题保持整行居中 */
 .ai-quiz__close {
@@ -456,9 +388,9 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 480px 1fr;
-  gap: var(--iflyv-grid-gutter);
-  padding: 0 var(--iflyv-spacing-6) var(--iflyv-spacing-6);
+  grid-template-columns: 440px 1fr;
+  gap: var(--iflyv-spacing-3);
+  padding: 0 var(--iflyv-spacing-3) var(--iflyv-spacing-3);
   align-items: stretch;
 }
 
@@ -473,9 +405,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 }
 
 /* 面板头：标题 + 副说明同行；与下方内容走「常规标题与其下方内容」16 */
+/* 面板头：标题与副说明字号差两档（18/36 vs 12/18），按基线对齐会显得副说明下坠，
+   故垂直居中对齐 */
 .ai-quiz__panel-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--iflyv-spacing-2);
   margin-bottom: var(--iflyv-spacing-4);
 }
@@ -485,15 +419,10 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
   font: var(--iflyv-font-title-module);
   color: var(--iflyv-text-1);
 }
+/* 面板副说明：辅助信息档（12/18）——比标题弱两级，不与标题争视线 */
 .ai-quiz__panel-sub {
-  font: var(--iflyv-font-body-sub);
+  font: var(--iflyv-font-body-min);
   color: var(--iflyv-text-3);
-}
-/* 结果区操作推到最右 */
-.ai-quiz__result-actions {
-  display: flex;
-  gap: var(--iflyv-spacing-4);
-  margin-left: auto;
 }
 
 /* —— 左栏表单 —— */
@@ -513,17 +442,6 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
   align-items: center;
   gap: var(--iflyv-spacing-2);
 }
-/* 题型网格：三列，行列间距走「按钮之间（无底色）」16 */
-.ai-quiz__types {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--iflyv-spacing-3);
-  width: 100%;
-}
-.ai-quiz__type-icon {
-  width: 20px;
-  height: 20px;
-}
 /* 提交区：贴面板底，与表单间距走「模块之间」；主按钮撑满面板宽度作页面主操作 */
 .ai-quiz__submit {
   display: flex;
@@ -534,53 +452,6 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 .ai-quiz__result-scroll {
   flex: 1;
   min-height: 0;
-}
-.ai-quiz__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--iflyv-spacing-4);
-}
-/* 题目条目：浅灰卡浮在白底面板上（背景色纵深关系：白底容器内用 bg-card） */
-.ai-quiz__item {
-  padding: var(--iflyv-spacing-4);
-  border-radius: var(--iflyv-radius-sm);
-  background: var(--iflyv-bg-card);
-}
-.ai-quiz__item-head {
-  display: flex;
-  align-items: baseline;
-  gap: var(--iflyv-spacing-2);
-}
-.ai-quiz__item-no {
-  font: var(--iflyv-font-body-primary);
-  color: var(--iflyv-text-3);
-}
-.ai-quiz__item-stem {
-  font: var(--iflyv-font-body-primary);
-  color: var(--iflyv-text-1);
-}
-/* 选项列表：与题干走「列表项内子元素」8 */
-.ai-quiz__options {
-  margin: var(--iflyv-spacing-2) 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--iflyv-spacing-2);
-}
-.ai-quiz__option {
-  font: var(--iflyv-font-body-sub);
-  color: var(--iflyv-text-2);
-}
-.ai-quiz__item-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: var(--iflyv-spacing-3);
-}
-.ai-quiz__answer {
-  font: var(--iflyv-font-body-sub);
-  color: var(--iflyv-text-2);
 }
 
 /* 免责说明：结果区底部常驻，最小字阶 + 弱化色 */
@@ -595,5 +466,20 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 }
 .ai-quiz__disclaimer-sep {
   color: var(--iflyv-border-default);
+}
+/* 句内链接：裸 button 去掉浏览器默认样式，字号行高继承免责行（12/18），
+   靠下划线而非字号/颜色表达可点 */
+.ai-quiz__report {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--iflyv-text-3);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+.ai-quiz__report:hover {
+  color: var(--iflyv-text-1);
 }
 </style>

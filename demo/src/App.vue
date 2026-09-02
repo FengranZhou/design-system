@@ -171,6 +171,8 @@
           <li><a href="#page-frame" :class="{ 'is-active': activeSection === 'page-frame' }">PageFrame 页面框架</a></li>
           <li><a href="#step-bar" :class="{ 'is-active': activeSection === 'step-bar' }">StepBar 步骤条</a></li>
           <li><a href="#ai-button" :class="{ 'is-active': activeSection === 'ai-button' }">AiButton Ai按钮</a></li>
+          <li><a href="#picked-item" :class="{ 'is-active': activeSection === 'picked-item' }">PickedItem 已选项</a></li>
+          <li><a href="#option-card" :class="{ 'is-active': activeSection === 'option-card' }">OptionCard 卡片单选</a></li>
         </ul>
         </template>
 
@@ -311,6 +313,8 @@
       <PageFrameDemo />
       <StepBarDemo />
       <AiButtonDemo />
+      <PickedItemDemo />
+      <OptionCardDemo />
       </div>
       <div v-show="currentTopTab === 'pattern'" class="no-title-divider">
       <PatternFormOrgDemo />
@@ -487,6 +491,8 @@ import EmptyDemo from './components/EmptyDemo.vue'
 import ResultDemo from './components/ResultDemo.vue'
 // import OtherDemo from './components/OtherDemo.vue'  // ⏸ 暂停启用（页内暂无在展内容），需要时放开
 import PatternFormOrgDemo from './components/pattern/PatternFormOrgDemo.vue'
+import PickedItemDemo from './components/biz/PickedItemDemo.vue'
+import OptionCardDemo from './components/biz/OptionCardDemo.vue'
 import PatternFormDemo from './components/pattern/PatternFormDemo.vue'
 import PatternListItemDemo from './components/pattern/PatternListItemDemo.vue'
 import PatternToolbarDemo from './components/pattern/PatternToolbarDemo.vue'
@@ -520,7 +526,7 @@ const sectionIds = [
   'input', 'select', 'date-picker', 'radio', 'checkbox', 'switch', 'slider', 'rate',
   'tag', 'table', 'badge', 'descriptions', 'avatar', 'empty',
   'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
-  'page-frame', 'step-bar', 'ai-button',
+  'page-frame', 'step-bar', 'ai-button', 'picked-item', 'option-card',
   'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'page-public-info', 'page-course-tools', 'page-course-dashboard', 'page-ai-quiz',
   'copywriting-time',
