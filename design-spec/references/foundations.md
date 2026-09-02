@@ -250,10 +250,10 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 
 | 令牌 | 用途 | 规格（字号/行高 · 字重/字体） |
 |---|---|---|
-| `--iflyv-font-title-page` | 页面标题（一个页面最顶层的大标题） | 26/48 · 阿里普惠 800 |
-| `--iflyv-font-title-module` | 模块标题（页面内一个大区块的标题） | 18/36 · semibold |
-| `--iflyv-font-title-regular` | 常规标题（内容卡片/信息组的标题，介于模块标题与组件标题之间） | 16/24 · semibold |
-| `--iflyv-font-title-component` | 组件标题（配置卡/组件内部的小标题） | 14/20 · semibold |
+| `--iflyv-font-title-page` | **层级链①页面级**·一个页面最顶层的大标题 | 26/48 · 阿里普惠 800 |
+| `--iflyv-font-title-module` | **层级链②模块级**·页面内一个大区块的标题（看板的「课程备课」、双栏页的「出题设置」） | 18/36 · semibold |
+| `--iflyv-font-title-component` | **层级链③组件级**·模块内某个组件/卡片的抬头（图表卡的「课程资源分布」、入口卡的「评价活动」、配置卡的「配置项」） | 14/20 · semibold |
+| `--iflyv-font-title-regular` | **不在层级链上**·通用容器内的标题/正文（信息卡里的「AI助学」这类）。规格与 `body-primary` 同为 16/24，仅字重不同，**语义上与正文更近而非与三档标题同族** | 16/24 · semibold |
 | `--iflyv-font-body-primary` | 常规正文（主要阅读内容） | 16/24 |
 | `--iflyv-font-body-sub` | 次要正文（次要说明、tooltip、表格单元格等） | 14/20 |
 | `--iflyv-font-body-min` | 辅助信息（最小级说明、附注） | 12/18 |
@@ -264,7 +264,18 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 | `--iflyv-font-number-display` | **主指标数字**：一屏里最该被看到的那个数（看板首屏核心指标、结果页的总数） | 26/40 · 抖音美好体 |
 | `--iflyv-font-number-display-sm` | **次级指标数字**：与主指标并列或从属的数（一排指标卡里的各项、卡片内的统计值） | 22/34 · 抖音美好体 |
 
-> 判断入口：先问"这段文字是什么角色？"——页面主标题→`title-page`、区块标题→`title-module`、卡片/信息组标题→`title-regular`、组件内小标题→`title-component`、正文→`body-primary`、次要说明→`body-sub`、最小附注→`body-min`、表单 label→`label-primary`、强调数字→`number-display`（**一屏最核心的那个数**用它，并列的次级指标用 `-sm`）。选定后按下方「设置文字的铁律」落地（含空格字体名的拆分规则）。
+> 判断入口：先问"这段文字是什么角色？"——页面主标题→`title-page`、区块/模块标题→`title-module`、模块内的组件/卡片抬头→`title-component`（**以上三档构成页面层级链**）、通用容器内的标题/正文→`title-regular`（**不参与页面分层**，见下条）、正文→`body-primary`、次要说明→`body-sub`、最小附注→`body-min`、表单 label→`label-primary`、强调数字→`number-display`（**一屏最核心的那个数**用它，并列的次级指标用 `-sm`）。选定后按下方「设置文字的铁律」落地（含空格字体名的拆分规则）。
+
+> **⭐ 标题四档不是一条连续的大小序列——`title-regular` 不参与页面分层（最易混的一步）** <!-- @rule id=title-hierarchy-chain level=MUST cat=设计令牌 detect=manual dtitle=页面的标题层级只有页面级/模块级/组件级三档逐级递减，不要拿常规标题去当其中一级 title=标题层级链只有 title-page→title-module→title-component 三档；title-regular 不在链上，是通用容器内的标题/正文 -->
+>
+> - **`title-page` → `title-module` → `title-component` 是同一条页面层级链**，页面级 → 模块级 → 组件级**逐级递减**（26 → 18 → 14）。给页面分层时**只在这三档里选**，按「这个标题管多大范围」对号入座。
+> - **`title-regular` 不在这条链上**。它是**通用容器内的标题/正文**，规格 16/24 与 `body-primary` **完全相同**（仅字重不同）——**语义上与正文更近，而不是与三档标题同族**。
+>
+> **一句话判据**：问「**这个标题是在给页面分层吗？**」——是 → 在 `page / module / component` 三档里按管辖范围选；不是（只是某个容器里一段内容的抬头，与其正文同级同大小）→ `title-regular`。
+>
+> ⚠️ **别把四档当成"由大到小的四级标题"顺着挑**——那会把 `title-regular` 当成模块级与组件级之间的一档，于是模块标题被写成 16px、页面的三级层级被压成两级。**层级链只有三档，`regular` 是链外的另一类东西。**
+
+
 
 > **⭐ 数字展示字阶自带的排版约定：与下方说明文字的垂直间距取 `spacing-0_5`（2px）。** <!-- @rule id=number-display-gap-2 level=MUST cat=设计令牌 detect=manual dtitle=大数字与其下方说明文字应紧贴成一组，不能像普通段落那样拉开距离 title=number-display / -sm 与下方说明的垂直间距取 spacing-0_5，不用常规的列表项子元素档 -->
 > `number-display` 系两档的行高本就宽裕（26/40、22/34），下方说明文字（指标名、单位说明）**紧贴成一组才读得出主副关系**；用常规的「列表项内子元素」档（`spacing-2` 8px）会让数字与说明散开、像两条独立信息，所以这里降到微调档 `spacing-0_5`。

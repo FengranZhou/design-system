@@ -188,6 +188,7 @@
           <li><a href="#page-public-info" :class="{ 'is-active': activeSection === 'page-public-info' }">Public 公开信息设置</a></li>
           <li><a href="#page-course-tools" :class="{ 'is-active': activeSection === 'page-course-tools' }">Course Tools 课程工具</a></li>
           <li><a href="#page-course-dashboard" :class="{ 'is-active': activeSection === 'page-course-dashboard' }">Profile 课程画像</a></li>
+          <li><a href="#page-ai-quiz" :class="{ 'is-active': activeSection === 'page-ai-quiz' }">AI Quiz AI 出题</a></li>
         </ul>
         </template>
 
@@ -321,6 +322,7 @@
       <PublicInfoPageDemo />
       <CourseToolsPageDemo />
       <CourseDashboardPageDemo />
+      <AiQuizPageDemo />
       </div>
       <div v-show="currentTopTab === 'copywriting'">
       <CopywritingTimeDemo />
@@ -491,6 +493,7 @@ import PatternToolbarDemo from './components/pattern/PatternToolbarDemo.vue'
 import PublicInfoPageDemo from './components/page/PublicInfoPageDemo.vue'
 import CourseToolsPageDemo from './components/page/CourseToolsPageDemo.vue'
 import CourseDashboardPageDemo from './components/page/CourseDashboardPageDemo.vue'
+import AiQuizPageDemo from './components/page/AiQuizPageDemo.vue'
 import ChartSpecDemo from './components/chart/ChartSpecDemo.vue'
 import CopywritingTimeDemo from './components/CopywritingTimeDemo.vue'
 import CopywritingNumberDemo from './components/CopywritingNumberDemo.vue'
@@ -519,7 +522,7 @@ const sectionIds = [
   'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
   'page-frame', 'step-bar', 'ai-button',
   'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
-  'page-public-info', 'page-course-tools', 'page-course-dashboard',
+  'page-public-info', 'page-course-tools', 'page-course-dashboard', 'page-ai-quiz',
   'copywriting-time',
   'copywriting-number',
   'chart-line', 'chart-bar', 'chart-bar-horizontal', 'chart-donut', 'chart-pie', 'chart-bar-line',

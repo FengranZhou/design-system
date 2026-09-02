@@ -23,12 +23,12 @@ import { copyToken, useTokenValues } from './useTokens'
 
 const semanticFontTokens = [
   // split: true → 用拆分属性渲染（含空格字体名的令牌不能用 font 简写，见下方 sampleStyle）
-  // —— 标题 ——
-  { name: '--iflyv-font-title-page', desc: '页面标题 26/48 阿里普惠 800', split: { family: 'emphasis', weight: 'extrabold', size: 26, lh: 48 } },
-  { name: '--iflyv-font-title-module', desc: '模块标题 18/36 semibold' },
-  { name: '--iflyv-font-title-regular', desc: '常规标题 16/24 semibold' },
-  { name: '--iflyv-font-title-component', desc: '组件标题 14/20 semibold' },
-  // —— 正文 ——
+  // —— 标题·页面层级链（页面级 → 模块级 → 组件级，逐级递减，给页面分层只在这三档里选）——
+  { name: '--iflyv-font-title-page', desc: '① 页面级标题 26/48 阿里普惠 800', split: { family: 'emphasis', weight: 'extrabold', size: 26, lh: 48 } },
+  { name: '--iflyv-font-title-module', desc: '② 模块级标题 18/36 semibold' },
+  { name: '--iflyv-font-title-component', desc: '③ 组件级标题 14/20 semibold' },
+  // —— 正文（title-regular 不参与页面分层，规格与 body-primary 同为 16/24、仅字重不同，故归此组）——
+  { name: '--iflyv-font-title-regular', desc: '通用容器内标题 16/24 semibold' },
   { name: '--iflyv-font-body-primary', desc: '常规正文 16/24' },
   { name: '--iflyv-font-body-sub', desc: '次要正文 14/20' },
   { name: '--iflyv-font-body-min', desc: '辅助信息 12/18' },

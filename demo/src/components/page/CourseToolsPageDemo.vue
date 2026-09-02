@@ -52,7 +52,7 @@
  * 典型页面 —— 课程工具（参考讯飞小雅「教学内容 / 课程工具」页）。
  * 演示效率型「功能入口集合页」的组织：
  *   PageFrame 整页骨架 + 页面级标题 + 模块分组 + 源头栅格 .grid/.grid__col-6 四列卡。
- * 工具图标以二级图标四款轮转占位（32px），正式切图到位后逐一替换即可。
+ * 工具图标以二级图标四款轮转占位（24px），正式切图到位后逐一替换即可。
  * 本页 scoped 只写排版留白，组件外观均在源头。
  */
 import { h, ref, onMounted, onBeforeUnmount } from 'vue'
@@ -167,7 +167,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 }
 
 /* 工具入口卡：左右 16（小卡片档）；上下按用户视觉定稿放宽到 16（较小卡片成对锚点的 12 高一档，
-   因 28px 图标撑行、上下 12 观感偏挤）；图标与文字横向 8 */
+   因 24px 图标撑行、上下 12 观感偏挤）；图标与文字横向 8 */
 .tool-card {
   display: flex;
   align-items: center;
@@ -177,8 +177,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
   background: var(--iflyv-bg-card);
 }
 .tool-card__icon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
 }
 .tool-card__label {
   font: var(--iflyv-font-body-primary);
