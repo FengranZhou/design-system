@@ -764,8 +764,11 @@ export const DETECTORS = {
   'aibutton-use-component': {
     custom: (ctx) => {
       const hits = []
-      // ① 模板里给 el-button 挂含 ai/gradient 的 class 或行内渐变
-      const re = /<el-button[^>]*(class=["'][^"']*\b(ai|gradient)[\w-]*["']|style=["'][^"']*gradient)/gs
+      // ① 模板里给 el-button 挂「AI 按钮等价物」class 或行内渐变。
+      //    ⚠️ class 匹配须锁定到 ai-btn / ai-button / btn-ai / xx-gradient 这类**按钮语义**名，
+      //    不能宽到 /\b(ai|gradient)[\w-]*/ ——那会把 BEM 前缀恰好以 ai 开头的无关按钮
+      //    （如 AI 出题页的 .ai-quiz__close 关闭按钮）全部误报成"自贴渐变"。
+      const re = /<el-button[^>]*(class=["'][^"']*\b(ai[-_]?(btn|button)|btn[-_]?ai|[\w-]*gradient)[\w-]*["']|style=["'][^"']*gradient)/gs
       let m
       while ((m = re.exec(ctx.template || ''))) {
         const line = (ctx.template.slice(0, m.index).match(/\n/g) || []).length + 1

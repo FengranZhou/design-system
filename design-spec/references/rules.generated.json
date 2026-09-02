@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 103,
-  "totalWeight": 296,
+  "total": 104,
+  "totalWeight": 299,
   "byLevel": {
-    "MUST": 90,
+    "MUST": 91,
     "SHOULD": 13,
     "MAY": 0
   },
   "byDetect": {
     "regex": 68,
     "ast": 7,
-    "manual": 28
+    "manual": 29
   },
   "byView": {
-    "design": 84,
-    "impl": 95
+    "design": 85,
+    "impl": 96
   },
   "categoryOrder": [
     "单一数据源",
@@ -259,6 +259,21 @@
       "line": 209
     },
     {
+      "id": "title-hierarchy-chain",
+      "title": "标题层级链只有 title-page→title-module→title-component 三档；title-regular 不在链上，是通用容器内的标题/正文",
+      "designTitle": "页面的标题层级只有页面级/模块级/组件级三档逐级递减，不要拿常规标题去当其中一级",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 269
+    },
+    {
       "id": "number-display-gap-2",
       "title": "number-display / -sm 与下方说明的垂直间距取 spacing-0_5，不用常规的列表项子元素档",
       "designTitle": "大数字与其下方说明文字应紧贴成一组，不能像普通段落那样拉开距离",
@@ -271,7 +286,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 269
+      "line": 280
     },
     {
       "id": "gradient-cross-hue",
@@ -1485,7 +1500,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 337
+      "line": 348
     },
     {
       "id": "gsap-display-only",
@@ -1499,7 +1514,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 444
+      "line": 455
     },
     {
       "id": "chart-title-legend-inline",
@@ -1544,7 +1559,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/foundations.md",
-      "line": 391
+      "line": 402
     }
   ]
 }
