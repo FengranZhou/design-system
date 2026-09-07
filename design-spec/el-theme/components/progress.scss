@@ -1,0 +1,59 @@
+/* ======================================================================== */
+/* ======================== Progress 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* 字号 rem 化 */
+.el-progress__text { font-size: var(--iflyv-font-size-14); }
+
+/* 状态图标统一替换为 Lucide 线性图标 */
+.el-progress.is-warning .el-progress__text i,
+.el-progress.is-success .el-progress__text i,
+.el-progress.is-exception .el-progress__text i {
+  position: relative;
+
+  svg {
+    visibility: hidden;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+}
+
+/* Warning → Lucide CircleAlert */
+.el-progress.is-warning .el-progress__text i::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' x2='12' y1='8' y2='12'/%3E%3Cline x1='12' x2='12.01' y1='16' y2='16'/%3E%3C/svg%3E") no-repeat center / contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' x2='12' y1='8' y2='12'/%3E%3Cline x1='12' x2='12.01' y1='16' y2='16'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* Success → Lucide CircleCheck */
+.el-progress.is-success .el-progress__text i::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E") no-repeat center / contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* Exception → Lucide CircleX */
+.el-progress.is-exception .el-progress__text i::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m15 9-6 6'/%3E%3Cpath d='m9 9 6 6'/%3E%3C/svg%3E") no-repeat center / contain;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m15 9-6 6'/%3E%3Cpath d='m9 9 6 6'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* RTL：覆盖 EP 硬编码方向属性 */
+.el-progress-bar__inner {
+  text-align: end;
+  left: unset; inset-inline-start: 0;
+}
+.el-progress__text { margin-left: unset; margin-inline-start: 5px; }
+.el-progress--circle .el-progress__text,
+.el-progress--dashboard .el-progress__text {
+  left: unset; inset-inline-start: 0;
+}
+.el-progress--without-text .el-progress-bar,
+.el-progress--text-inside .el-progress-bar {
+  margin-right: unset; margin-inline-end: 0;
+  padding-right: unset; padding-inline-end: 0;
+}

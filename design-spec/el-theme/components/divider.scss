@@ -1,0 +1,10 @@
+/* ======================================================================== */
+/* ======================== Divider 样式覆盖 =============================== */
+/* ======================================================================== */
+
+.el-divider__text { font-weight: 400; font-size: var(--iflyv-font-size-14); color: var(--iflyv-text-3); }
+
+/* RTL：覆盖 EP 硬编码物理 border/position */
+.el-divider--vertical { border-left: unset; border-inline-start: 1px var(--el-border-color) var(--el-border-style); }
+.el-divider__text.is-left { left: unset; inset-inline-start: 20px; }
+.el-divider__text.is-right { right: unset; inset-inline-end: 20px; }

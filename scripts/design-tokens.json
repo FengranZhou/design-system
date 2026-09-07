@@ -1,0 +1,773 @@
+{
+  "version": 1,
+  "generatedFrom": "FengranZhou/design-system",
+  "semanticColors": [
+    {
+      "name": "brand-primary",
+      "value": "#23B283",
+      "comment": "主色"
+    },
+    {
+      "name": "brand-text",
+      "value": "#23B283",
+      "comment": "品牌文字"
+    },
+    {
+      "name": "brand-hover",
+      "value": "#45BF92",
+      "comment": "悬浮"
+    },
+    {
+      "name": "brand-pressed",
+      "value": "#158C68",
+      "comment": "点击"
+    },
+    {
+      "name": "brand-disabled",
+      "value": "#6ACCA5",
+      "comment": "禁用"
+    },
+    {
+      "name": "brand-bg",
+      "value": "#EBF7F1",
+      "comment": "浅背景"
+    },
+    {
+      "name": "success-primary",
+      "value": "#23B283",
+      "comment": "主色"
+    },
+    {
+      "name": "success-hover",
+      "value": "#45BF92",
+      "comment": "悬浮"
+    },
+    {
+      "name": "success-pressed",
+      "value": "#158C68",
+      "comment": "点击"
+    },
+    {
+      "name": "success-disabled",
+      "value": "#6ACCA5",
+      "comment": "禁用"
+    },
+    {
+      "name": "success-bg",
+      "value": "#EBF7F1",
+      "comment": "浅背景"
+    },
+    {
+      "name": "danger-primary",
+      "value": "#F53B3B",
+      "comment": "主色"
+    },
+    {
+      "name": "danger-hover",
+      "value": "#FF6B66",
+      "comment": "悬浮"
+    },
+    {
+      "name": "danger-pressed",
+      "value": "#CF272D",
+      "comment": "点击"
+    },
+    {
+      "name": "danger-disabled",
+      "value": "#FF968F",
+      "comment": "禁用"
+    },
+    {
+      "name": "danger-bg",
+      "value": "#FFF2F0",
+      "comment": "浅背景"
+    },
+    {
+      "name": "warning-primary",
+      "value": "#FC7819",
+      "comment": "主色"
+    },
+    {
+      "name": "warning-hover",
+      "value": "#FF9742",
+      "comment": "悬浮"
+    },
+    {
+      "name": "warning-pressed",
+      "value": "#D6590B",
+      "comment": "点击"
+    },
+    {
+      "name": "warning-disabled",
+      "value": "#FFB36B",
+      "comment": "禁用"
+    },
+    {
+      "name": "warning-bg",
+      "value": "#FFF4E6",
+      "comment": "浅背景"
+    },
+    {
+      "name": "info-primary",
+      "value": "#0077FF",
+      "comment": "主色"
+    },
+    {
+      "name": "info-hover",
+      "value": "#2994FF",
+      "comment": "悬浮"
+    },
+    {
+      "name": "info-pressed",
+      "value": "#005ED9",
+      "comment": "点击"
+    },
+    {
+      "name": "info-disabled",
+      "value": "#52AEFF",
+      "comment": "禁用"
+    },
+    {
+      "name": "info-bg",
+      "value": "#E6F6FF",
+      "comment": "浅背景"
+    },
+    {
+      "name": "bg-page",
+      "value": "#F2F5F7",
+      "comment": "灰页面底"
+    },
+    {
+      "name": "bg-page-white",
+      "value": "#FFFFFF",
+      "comment": "白页面底"
+    },
+    {
+      "name": "bg-panel",
+      "value": "#FFFFFF",
+      "comment": "面板"
+    },
+    {
+      "name": "bg-inset",
+      "value": "#F2F5F7",
+      "comment": "内嵌区域"
+    },
+    {
+      "name": "bg-segment-active",
+      "value": "#FFFFFF",
+      "comment": "分段选中"
+    },
+    {
+      "name": "bg-card",
+      "value": "linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%)",
+      "comment": "卡片渐变"
+    },
+    {
+      "name": "bg-back",
+      "value": "#{$bg-back}"
+    },
+    {
+      "name": "text-1",
+      "value": "#12151A",
+      "comment": "一级/标题"
+    },
+    {
+      "name": "text-2",
+      "value": "#4B535C",
+      "comment": "二级/正文"
+    },
+    {
+      "name": "text-3",
+      "value": "#7B838C",
+      "comment": "三级/辅助"
+    },
+    {
+      "name": "text-4",
+      "value": "#A9B0B8",
+      "comment": "四级/禁用"
+    },
+    {
+      "name": "text-on-dark",
+      "value": "#FFFFFF",
+      "comment": "深底文字"
+    },
+    {
+      "name": "text-on-light",
+      "value": "#12151A"
+    },
+    {
+      "name": "border-subtle",
+      "value": "#12151A",
+      "comment": "轻量 6%",
+      "alpha": 6
+    },
+    {
+      "name": "border-default",
+      "value": "#12151A",
+      "comment": "常规 10%",
+      "alpha": 10
+    },
+    {
+      "name": "border-strong",
+      "value": "#12151A",
+      "comment": "加重 20%",
+      "alpha": 20
+    },
+    {
+      "name": "border-on-dark",
+      "value": "#FFFFFF",
+      "comment": "深底描边",
+      "alpha": 10
+    },
+    {
+      "name": "mask-primary",
+      "value": "#12151A",
+      "comment": "遮罩",
+      "alpha": 60
+    },
+    {
+      "name": "mask-on-dark",
+      "value": "#FFFFFF",
+      "comment": "深底遮罩",
+      "alpha": 60
+    }
+  ],
+  "semanticColorGroups": {
+    "brand": [
+      {
+        "name": "brand-primary",
+        "value": "#23B283",
+        "comment": "主色"
+      },
+      {
+        "name": "brand-text",
+        "value": "#23B283",
+        "comment": "品牌文字"
+      },
+      {
+        "name": "brand-hover",
+        "value": "#45BF92",
+        "comment": "悬浮"
+      },
+      {
+        "name": "brand-pressed",
+        "value": "#158C68",
+        "comment": "点击"
+      },
+      {
+        "name": "brand-disabled",
+        "value": "#6ACCA5",
+        "comment": "禁用"
+      },
+      {
+        "name": "brand-bg",
+        "value": "#EBF7F1",
+        "comment": "浅背景"
+      }
+    ],
+    "success": [
+      {
+        "name": "success-primary",
+        "value": "#23B283",
+        "comment": "主色"
+      },
+      {
+        "name": "success-hover",
+        "value": "#45BF92",
+        "comment": "悬浮"
+      },
+      {
+        "name": "success-pressed",
+        "value": "#158C68",
+        "comment": "点击"
+      },
+      {
+        "name": "success-disabled",
+        "value": "#6ACCA5",
+        "comment": "禁用"
+      },
+      {
+        "name": "success-bg",
+        "value": "#EBF7F1",
+        "comment": "浅背景"
+      }
+    ],
+    "danger": [
+      {
+        "name": "danger-primary",
+        "value": "#F53B3B",
+        "comment": "主色"
+      },
+      {
+        "name": "danger-hover",
+        "value": "#FF6B66",
+        "comment": "悬浮"
+      },
+      {
+        "name": "danger-pressed",
+        "value": "#CF272D",
+        "comment": "点击"
+      },
+      {
+        "name": "danger-disabled",
+        "value": "#FF968F",
+        "comment": "禁用"
+      },
+      {
+        "name": "danger-bg",
+        "value": "#FFF2F0",
+        "comment": "浅背景"
+      }
+    ],
+    "warning": [
+      {
+        "name": "warning-primary",
+        "value": "#FC7819",
+        "comment": "主色"
+      },
+      {
+        "name": "warning-hover",
+        "value": "#FF9742",
+        "comment": "悬浮"
+      },
+      {
+        "name": "warning-pressed",
+        "value": "#D6590B",
+        "comment": "点击"
+      },
+      {
+        "name": "warning-disabled",
+        "value": "#FFB36B",
+        "comment": "禁用"
+      },
+      {
+        "name": "warning-bg",
+        "value": "#FFF4E6",
+        "comment": "浅背景"
+      }
+    ],
+    "info": [
+      {
+        "name": "info-primary",
+        "value": "#0077FF",
+        "comment": "主色"
+      },
+      {
+        "name": "info-hover",
+        "value": "#2994FF",
+        "comment": "悬浮"
+      },
+      {
+        "name": "info-pressed",
+        "value": "#005ED9",
+        "comment": "点击"
+      },
+      {
+        "name": "info-disabled",
+        "value": "#52AEFF",
+        "comment": "禁用"
+      },
+      {
+        "name": "info-bg",
+        "value": "#E6F6FF",
+        "comment": "浅背景"
+      }
+    ],
+    "bg": [
+      {
+        "name": "bg-page",
+        "value": "#F2F5F7",
+        "comment": "灰页面底"
+      },
+      {
+        "name": "bg-page-white",
+        "value": "#FFFFFF",
+        "comment": "白页面底"
+      },
+      {
+        "name": "bg-panel",
+        "value": "#FFFFFF",
+        "comment": "面板"
+      },
+      {
+        "name": "bg-inset",
+        "value": "#F2F5F7",
+        "comment": "内嵌区域"
+      },
+      {
+        "name": "bg-segment-active",
+        "value": "#FFFFFF",
+        "comment": "分段选中"
+      },
+      {
+        "name": "bg-card",
+        "value": "linear-gradient(90deg, var(--iflyv-gray-1) 0%, #{$bg-card-gradient-end} 100%)",
+        "comment": "卡片渐变"
+      },
+      {
+        "name": "bg-back",
+        "value": "#{$bg-back}"
+      }
+    ],
+    "text": [
+      {
+        "name": "text-1",
+        "value": "#12151A",
+        "comment": "一级/标题"
+      },
+      {
+        "name": "text-2",
+        "value": "#4B535C",
+        "comment": "二级/正文"
+      },
+      {
+        "name": "text-3",
+        "value": "#7B838C",
+        "comment": "三级/辅助"
+      },
+      {
+        "name": "text-4",
+        "value": "#A9B0B8",
+        "comment": "四级/禁用"
+      },
+      {
+        "name": "text-on-dark",
+        "value": "#FFFFFF",
+        "comment": "深底文字"
+      },
+      {
+        "name": "text-on-light",
+        "value": "#12151A"
+      }
+    ],
+    "border": [
+      {
+        "name": "border-subtle",
+        "value": "#12151A",
+        "comment": "轻量 6%",
+        "alpha": 6
+      },
+      {
+        "name": "border-default",
+        "value": "#12151A",
+        "comment": "常规 10%",
+        "alpha": 10
+      },
+      {
+        "name": "border-strong",
+        "value": "#12151A",
+        "comment": "加重 20%",
+        "alpha": 20
+      },
+      {
+        "name": "border-on-dark",
+        "value": "#FFFFFF",
+        "comment": "深底描边",
+        "alpha": 10
+      }
+    ],
+    "mask": [
+      {
+        "name": "mask-primary",
+        "value": "#12151A",
+        "comment": "遮罩",
+        "alpha": 60
+      },
+      {
+        "name": "mask-on-dark",
+        "value": "#FFFFFF",
+        "comment": "深底遮罩",
+        "alpha": 60
+      }
+    ]
+  },
+  "semanticColorGroupTitles": {
+    "brand": "主题色 Brand",
+    "success": "成功色 Success",
+    "danger": "危险色 Danger",
+    "warning": "警告色 Warning",
+    "info": "信息色 Info",
+    "text": "文本色 Text",
+    "icon": "图标色 Icon",
+    "bg": "背景色 Background",
+    "border": "描边色 Border",
+    "mask": "遮罩与滚动条 Mask / Scroller",
+    "message": "Message 描边",
+    "input": "组件桥接 Component Bridge"
+  },
+  "semanticColorGroupOrder": [
+    "brand",
+    "success",
+    "danger",
+    "warning",
+    "info",
+    "text",
+    "icon",
+    "bg",
+    "border",
+    "mask",
+    "message",
+    "input"
+  ],
+  "fontScale": [
+    {
+      "name": "font-family-base",
+      "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+    },
+    {
+      "name": "font-family-number",
+      "value": "\"douyinNum\""
+    },
+    {
+      "name": "font-family-emphasis",
+      "value": "\"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
+    },
+    {
+      "name": "font-size-12",
+      "value": "0.75rem"
+    },
+    {
+      "name": "font-size-13",
+      "value": "0.8125rem"
+    },
+    {
+      "name": "font-size-14",
+      "value": "0.875rem"
+    },
+    {
+      "name": "font-size-16",
+      "value": "1rem"
+    },
+    {
+      "name": "font-size-18",
+      "value": "1.125rem"
+    },
+    {
+      "name": "font-size-22",
+      "value": "1.375rem"
+    },
+    {
+      "name": "font-size-26",
+      "value": "1.625rem"
+    },
+    {
+      "name": "font-size-40",
+      "value": "2.5rem"
+    },
+    {
+      "name": "font-weight-regular",
+      "value": "400"
+    },
+    {
+      "name": "font-weight-semibold",
+      "value": "600"
+    },
+    {
+      "name": "font-weight-bold",
+      "value": "700"
+    },
+    {
+      "name": "font-weight-extrabold",
+      "value": "800"
+    },
+    {
+      "name": "font-title-page",
+      "value": "800 1.625rem / 3rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "comment": "页面标题"
+    },
+    {
+      "name": "font-title-page-multiline",
+      "value": "800 1.625rem / 3.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "comment": "页面标题（多行）"
+    },
+    {
+      "name": "font-tab-active",
+      "value": "800 1.625rem / 2.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "comment": "页面级选中 Tab 项"
+    },
+    {
+      "name": "font-title-module",
+      "value": "600 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "模块标题"
+    },
+    {
+      "name": "font-title-regular",
+      "value": "600 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "常规标题"
+    },
+    {
+      "name": "font-tab-active-sub",
+      "value": "600 1.125rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "模块级选中 Tab 项"
+    },
+    {
+      "name": "font-tab-default",
+      "value": "400 1.125rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "默认 Tab 项"
+    },
+    {
+      "name": "font-title-component",
+      "value": "600 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "组件标题"
+    },
+    {
+      "name": "font-body-primary",
+      "value": "400 1rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "常规正文"
+    },
+    {
+      "name": "font-body-primary-multiline",
+      "value": "400 1rem / 2rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "常规正文（多行）"
+    },
+    {
+      "name": "font-body-sub",
+      "value": "400 0.875rem / 1.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "次要正文"
+    },
+    {
+      "name": "font-body-sub-multiline",
+      "value": "400 0.875rem / 1.75rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "次要正文（多行）"
+    },
+    {
+      "name": "font-body-min",
+      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "辅助信息"
+    },
+    {
+      "name": "font-body-min-multiline",
+      "value": "400 0.75rem / 1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "辅助信息（多行）"
+    },
+    {
+      "name": "font-label-primary",
+      "value": "400 0.75rem / 1.125rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "comment": "常规标签"
+    },
+    {
+      "name": "font-number-display",
+      "value": "700 1.625rem / 2.5rem \"douyinNum\"",
+      "comment": "展示型数字"
+    },
+    {
+      "name": "font-number-display-sm",
+      "value": "700 1.375rem / 2.125rem \"douyinNum\"",
+      "comment": "展示型数字"
+    }
+  ],
+  "spacing": [
+    {
+      "name": "spacing-0_5",
+      "value": "2px",
+      "scenes": [
+        "紧贴元素微调（图标与其紧邻文字的视觉对齐补偿）"
+      ]
+    },
+    {
+      "name": "spacing-1",
+      "value": "4px",
+      "scenes": [
+        "控件内图标与其紧邻文字之间（如按钮内 icon + 文字）",
+        "卡内通栏出血面板距卡缘的细缝（两侧与底部同取）"
+      ]
+    },
+    {
+      "name": "spacing-1_5",
+      "value": "6px",
+      "scenes": [
+        "Tag / Badge 等小控件的左右内边距"
+      ]
+    },
+    {
+      "name": "spacing-2",
+      "value": "8px",
+      "scenes": [
+        "列表项内子元素间距（标题与其描述、主信息与副信息；含横向的图标/标签与其同行文字）",
+        "常规标题与其下方内容之间（与「标题与其描述」同档；下方是通栏/出血块时放宽一档取 spacing-3）"
+      ]
+    },
+    {
+      "name": "spacing-3",
+      "value": "12px",
+      "scenes": [
+        "模块级标题与其下方内容之间",
+        "按钮之间（水平，有底色/描边的按钮）",
+        "小卡片内边距·上下（含横幅/条状容器；左右配 spacing-4）",
+        "常规标题与其下方通栏/出血块之间（比常规内容放宽一档）"
+      ]
+    },
+    {
+      "name": "spacing-4",
+      "value": "16px",
+      "scenes": [
+        "页面级标题与其下方内容之间（含 .tabs-page 充当页面标题层时）",
+        "页面级标题与页面顶部之间（含 .tabs-page 充当页面标题层时）",
+        "卡片之间（同级卡片常规间距）",
+        "栅格列间水槽",
+        "小卡片内边距·左右（含横幅/条状容器；上下配 spacing-3）",
+        "大卡片内边距·上下（左右配 spacing-5）",
+        "按钮之间（水平，无底色的文本按钮 / 纯图标按钮）",
+        "图标之间（一排图标彼此，无论是否可点）"
+      ]
+    },
+    {
+      "name": "spacing-5",
+      "value": "20px",
+      "scenes": [
+        "大卡片内边距·左右（上下配 spacing-4）",
+        "面板内边距·上下（左右配 spacing-6）"
+      ]
+    },
+    {
+      "name": "spacing-6",
+      "value": "24px",
+      "scenes": [
+        "表单项之间（label+控件为一组，组与组）",
+        "页面内容距页面左右及底部内边距（顶部另按「页面级标题与页面顶部之间」取 spacing-4）",
+        "面板内边距·左右（上下配 spacing-5）"
+      ]
+    },
+    {
+      "name": "spacing-8",
+      "value": "32px",
+      "scenes": [
+        "模块之间（垂直，区块与区块）"
+      ]
+    },
+    {
+      "name": "spacing-10",
+      "value": "40px",
+      "scenes": [
+        "页面级 Section 之间（展示型页面的大留白）"
+      ]
+    }
+  ],
+  "radius": [
+    {
+      "name": "radius-xs",
+      "value": "4px",
+      "comment": "Tag、Checkbox、Select item、Dropdown item"
+    },
+    {
+      "name": "radius-sm",
+      "value": "8px",
+      "comment": "Button、Input、小卡片、Table、大多数组件默认"
+    },
+    {
+      "name": "radius-md",
+      "value": "10px",
+      "comment": "大卡片"
+    },
+    {
+      "name": "radius-lg",
+      "value": "12px",
+      "comment": "页面级容器、Dialog、Drawer"
+    },
+    {
+      "name": "radius-full",
+      "value": "999px",
+      "comment": "胶囊按钮、全圆角 Tag"
+    }
+  ]
+}

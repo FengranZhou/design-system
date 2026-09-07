@@ -1,0 +1,112 @@
+<template>
+  <section id="button" class="demo-section">
+    <h2 class="demo-section__title">Button 按钮
+      <CopyToCC anchor="button" :values="configForm" />
+    </h2>
+
+    <div class="demo-block button-showcase">
+      <!-- 左侧：6 类 × 3 状态网格；图标 / 箭头由右侧开关统一控制 -->
+      <div class="button-grid">
+        <template v-for="s in states" :key="s.key">
+          <el-button
+            v-for="b in types"
+            :key="b.key + s.key"
+            :type="b.type"
+            :text="b.text"
+            :disabled="s.disabled"
+            :loading="s.loading"
+          >
+            <template v-if="showIcon" #icon><Pencil :size="16" :stroke-width="2" /></template>
+            {{ b.label }}
+            <ChevronDown v-if="showCaret" class="btn-caret" :size="14" :stroke-width="2" />
+            <!-- 入口引导仅限 text 形态（规范硬规则）：开关打开时有底三列不出现箭头，
+                 这个"只有 text 列有"本身就是对适用范围的演示 -->
+            <ChevronRight v-if="showEntry && b.text" class="btn-entry" :size="14" :stroke-width="2" />
+          </el-button>
+        </template>
+      </div>
+
+      <!-- 右侧：配置项卡片，控制整个网格的图标 / 下拉箭头。
+           用「表单布局模式」实现（el-form + el-form-item），标签右对齐紧邻控件，
+           与设计模式-表单布局、Empty 配置项保持一致 -->
+      <aside class="config-card">
+        <p class="config-card__title">配置项</p>
+        <el-form :model="configForm" label-width="auto">
+          <el-form-item label="图标">
+            <el-switch v-model="showIcon" />
+          </el-form-item>
+          <el-form-item label="下拉">
+            <el-switch v-model="showCaret" />
+          </el-form-item>
+          <el-form-item label="入口引导">
+            <el-switch v-model="showEntry" />
+          </el-form-item>
+        </el-form>
+      </aside>
+    </div>
+
+  </section>
+</template>
+
+<script setup lang="ts">
+import CopyToCC from './CopyToCC.vue'
+import { ref, reactive, watch } from 'vue'
+import { Pencil, ChevronDown, ChevronRight } from 'lucide-vue-next'
+
+// 配置开关：图标可与任意组合叠加；「下拉」与「入口引导」是尾部箭头同一维度的
+// 两个互斥取值（语义相反：原地展开 vs 去往别处，且同占文字尾部位置），
+// 开一个自动关另一个——联动本身就是对互斥规则的演示
+const showIcon = ref(false)
+const showCaret = ref(false)
+const showEntry = ref(false)
+watch(showCaret, v => { if (v) showEntry.value = false })
+watch(showEntry, v => { if (v) showCaret.value = false })
+// el-form 需要 model 对象；开关即表单字段
+const configForm = reactive({ showIcon, showCaret, showEntry })
+
+// 6 种类型（列）
+const types = [
+  { key: 'default',  type: '',        text: false, label: '次按钮' },
+  { key: 'primary',  type: 'primary', text: false, label: '主按钮' },
+  { key: 'danger',   type: 'danger',  text: false, label: '危险按钮' },
+  { key: 'text',     type: '',        text: true,  label: '文本次按钮' },
+  { key: 'text-pri', type: 'primary', text: true,  label: '文本主按钮' },
+  { key: 'text-dan', type: 'danger',  text: true,  label: '文本危险按钮' },
+]
+
+// 3 种状态（行）
+const states = [
+  { key: 'normal',   disabled: false, loading: false },
+  { key: 'disabled', disabled: true,  loading: false },
+  { key: 'loading',  disabled: false, loading: true  },
+]
+</script>
+
+<style scoped>
+
+/* 纯本页排版：左侧网格 + 右侧配置卡片横向布局。不含组件外观规则。 */
+.button-showcase {
+  display: flex;
+  align-items: flex-start;
+  /* 网格与配置卡片间距 48（= spacing-8 32 + spacing-4 16，凑值不写裸值） */
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));
+}
+
+/* 6 列 × 3 行按钮网格，每列内容水平居中对齐 */
+.button-grid {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: center;      /* 同一行按钮垂直居中（text 无固定高，与实心按钮对齐） */
+  justify-items: center;    /* 每格内容水平居中 → 同列按钮以列中心对齐 */
+  gap: var(--iflyv-spacing-10);  /* 行列间距统一 40 */
+}
+
+/* 横向适配：窄屏时按 6→3→2 列递减，避免按钮被挤压变形。
+   配置卡片在中屏就下移换行，把整行宽度让给网格，
+   否则网格被右侧卡片挤窄、text 按钮文字会重叠。 */
+
+/* 右侧配置项卡片：块卡（bg-card）内部用白底 + 细边框区分层次
+   （与 Input / Avatar 配置卡一致），「配置项」标题 + el-form 表单布局 */
+</style>

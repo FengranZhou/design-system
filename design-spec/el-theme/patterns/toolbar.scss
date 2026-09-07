@@ -1,0 +1,67 @@
+/* ==================== 工具栏 Toolbar（设计模式层） ====================
+   何时用：列表页/表格页顶部操作条、模块卡片头部工具栏——任何"一排里同时有
+          标题 / tab / 下拉 / 搜索 / 操作按钮 中两类及以上"的横向组织。
+   规则全文见 references/patterns/toolbar-pattern.md（固定顺序 + 左右分配三分支）。
+
+   ---------------------------- 接入方速查 ----------------------------
+   分支①（有标题）—— 标题左，其余全右：
+     <div class="toolbar">
+       <div class="toolbar__left">
+         <h3 class="toolbar__title">页面标题</h3>
+       </div>
+       <div class="toolbar__right">
+         组件级 tab → 下拉 → 搜索 → 次按钮 → 主按钮（固定顺序）
+       </div>
+     </div>
+
+   标题两档（按层级选字阶）：
+     页面级：<h3 class="toolbar__title">                    ← 默认，title-page 26/48
+     模块级：<h4 class="toolbar__title toolbar__title--module">  ← title-module 18/36
+
+   分支②（无标题、有筛选类）：筛选类放 __left，操作按钮放 __right。
+   分支③（无标题无筛选）：只有操作按钮，放 __left 即可（无 __right）。
+
+   ⚠ 本类不含任何内边距：
+     · 左右 —— 属于「页面内容区容器」的内边距（spacing-6，见 foundations 间距速查），
+       由容器统一给一次，工具栏与同容器内其它内容自然左右齐平；
+       写进工具栏会在容器已给内边距时叠加成 48。
+     · 上下 —— 是工具栏与页面上下文的间距，取决于工具栏被放在哪；
+       按标题层级取档：页面级 spacing-4（16）、模块级下方 spacing-3（12）。
+     两者都由页面给出，档位见 references/patterns/toolbar-pattern.md「留白」。
+   ⚠ 相邻元素间距由 __left / __right 的 gap 提供，禁在元素上写 margin。
+   ⚠ 本类只管排布，每个元素本身仍走各自组件/模式规范
+     （下拉→select-pattern、搜索→search-pattern、按钮→button.scss）。
+   改外观：回本文件改，改一次所有引用方同步（勿在使用方 scoped 复刻）。
+   @see: demo「设计模式 → Toolbar 工具栏布局」标准范例（配置项可实时切三分支）。
+   ==================================================================== */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--iflyv-spacing-3);
+}
+
+/* 左右两组：组内相邻元素间距 12 */
+.toolbar__left,
+.toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-3);
+}
+
+/* 标题：默认页面级字阶；模块级加 --module 降一档 */
+.toolbar__title {
+  margin: 0;
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-page);
+
+  &--module {
+    font: var(--iflyv-font-title-module);
+  }
+}
+
+/* tab 落在工具栏内时无内容面板，清掉 EP header 默认下边距，
+   使其与同排下拉 / 搜索 / 按钮垂直居中对齐 */
+.toolbar .el-tabs__header {
+  margin-bottom: 0;
+}

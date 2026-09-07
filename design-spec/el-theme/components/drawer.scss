@@ -1,0 +1,50 @@
+/* ======================================================================== */
+/* ========================= Drawer 样式覆盖 =============================== */
+/* ======================================================================== */
+
+/* Drawer 基础样式 */
+.el-drawer { border-radius: var(--iflyv-radius-lg) 0 0 var(--iflyv-radius-lg); }
+.el-drawer__header { padding: 16px 24px 0; margin-bottom: 16px; }
+.el-drawer__close-btn {
+  color: var(--iflyv-icon-3);
+  &:hover { color: var(--iflyv-icon-2); }
+  .el-icon { visibility: hidden; position: relative; }
+  .el-icon::after {
+    content: '';
+    visibility: visible;
+    position: absolute;
+    inset: 0;
+    background-color: currentColor;
+    pointer-events: none;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / 16px;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / 16px;
+  }
+}
+.el-drawer__title { font-size: var(--iflyv-font-size-18); line-height: var(--iflyv-line-height-28); font-weight: 600; }
+.el-drawer__body { padding: 8px 24px 0; }
+
+/* 底部按钮区：默认水平右对齐（EP 原生），gap 统一 */
+.el-drawer__footer {
+  text-align: unset; /* 清除 EP text-align: right，由 flex 接管对齐 */
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--iflyv-spacing-3);
+  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6);
+
+  .el-button + .el-button {
+    margin-inline-start: 0;
+  }
+}
+
+/* 垂直布局变体：适用于窄抽屉等特殊场景，在 footer 内添加 .drawer-footer--vertical 容器 */
+.drawer-footer--vertical {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iflyv-spacing-2);
+  width: 100%;
+
+  .el-button {
+    width: 100%;
+    margin-inline-start: 0;
+  }
+}

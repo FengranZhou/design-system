@@ -1,0 +1,36 @@
+/* ======================================================================== */
+/* ======================== Backtop 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* RTL：EP inline style 写死 right:40px，RTL 下落入侧边栏后面，翻转到 left */
+[dir="rtl"] .el-backtop {
+  right: auto !important;
+  left: 40px; /* 与 EP 默认 right 值一致；若业务自定义 :right 需同步调整 */
+}
+
+.el-backtop {
+  --el-backtop-text-color: var(--iflyv-icon-2);
+  --el-backtop-hover-bg-color: var(--el-backtop-bg-color);
+
+  &:hover .el-icon {
+    color: var(--iflyv-brand-primary);
+  }
+  border-radius: var(--iflyv-radius-sm);
+
+  .el-icon {
+    position: relative;
+    color: var(--iflyv-icon-2);
+
+    svg { visibility: hidden; }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3h14'/%3E%3Cpath d='m18 13-6-6-6 6'/%3E%3Cpath d='M12 7v14'/%3E%3C/svg%3E") no-repeat center / 20px 20px;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3h14'/%3E%3Cpath d='m18 13-6-6-6 6'/%3E%3Cpath d='M12 7v14'/%3E%3C/svg%3E") no-repeat center / 20px 20px;
+      background-color: currentColor;
+      pointer-events: none;
+    }
+  }
+}

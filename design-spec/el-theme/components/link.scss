@@ -1,0 +1,23 @@
+/* ======================================================================== */
+/* ========================== Link 样式覆盖 =============================== */
+/* ======================================================================== */
+
+.el-link {
+  transition: transform var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+  &:active:not(.is-disabled) {
+    transform: translateY(1px);
+  }
+}
+
+.el-link { font-weight: 400; }
+
+/* Link 文字色：使用 brand-text（暗色下提亮一级） */
+.el-link.el-link--primary,
+.el-link.el-link--default {
+  --el-link-text-color: var(--iflyv-brand-text);
+  --el-link-hover-text-color: var(--iflyv-brand-hover);
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+.el-link [class*=el-icon-] + span { margin-left: unset; margin-inline-start: 5px; }

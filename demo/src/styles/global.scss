@@ -1,0 +1,598 @@
+@use '../../../design-spec/design-token/css/brands' as *;
+
+// demo 注册 school-red 品牌色（design-spec v1.2.0 起需由使用方显式注册）
+@include register-brand(
+  "school-red",
+  (#fff4f0, #ffdfd4, #ffbeab, #fa987f, #ed6d53, #e0432a, #ba2a1a, #94160d, #6e0804, #470202),
+  (#2c1918, #421e1a, #55261f, #732c21, #9b3524, #c23d28, #d8654d, #ef927a, #f8b9a7, #fadbd0)
+);
+
+// green 品牌色：主色 = 系统 Green-6 #23B283，亮/暗色板直接复用 palette.scss / palette-dark.scss 的 Green 阶梯
+@include register-brand(
+  "green",
+  (#EBF7F1, #C1E6D4, #93D9BB, #6ACCA5, #45BF92, #23B283, #158C68, #0A664E, #034032, #011A15),
+  (#182522, #19372e, #1d483a, #1e5e49, #207d5e, #229b73, #41af86, #66c39e, #8fd3b6, #bee2d0)
+);
+
+// 理工蓝品牌色：base #0077FF（设计哲学里的辅色蓝）
+// 亮色 10 阶 = AntD 算法；暗色 10 阶 = 对齐本设计系统暗色板约定（1 最深 → 10 最浅、
+// 第 6 阶为饱和主色），沿用 palette-dark 里 green 暗板的明度/饱和曲线，而非 AntD
+// 暗色算法——后者输出的亮度走向是"先升后降"，会让 accent-6 掉到接近背景的暗档。
+@include register-brand(
+  "science-blue",
+  (#E6F6FF, #A3DAFF, #7AC6FF, #52AEFF, #2994FF, #0077FF, #005ED9, #0047B3, #00338C, #002266),
+  (#151E28, #122740, #123154, #0E3A6D, #094A95, #0458B8, #2672CA, #4E8FDA, #7CACE4, #B7CFEB)
+);
+
+// ============ 布局骨架尺寸 ============
+// 非 4px 间距序列上的结构性尺寸，无对应 spacing token，
+// 统一提炼为局部变量单点维护（收敛裸 px，避免多处重复魔法值）
+$app-topbar-height: 64px;
+$app-sidebar-width: 224px;  // 280 - 56：侧边栏收窄，给内容区让宽
+$app-logo-size: 32px;
+// 侧栏导航项内缩进（激活条宽 + 视觉留白，非标准间距序列，单点维护）
+$app-nav-item-indent: 28px;
+// 侧栏激活条 / 分组标签字间距（装饰性尺寸，无对应 token）
+$app-nav-active-bar: 3px;
+$app-nav-label-tracking: 0.5px;
+
+html {
+  scroll-behavior: smooth;
+  // 锚点跳转停靠时避开固定顶栏，额外留一档间距避免标题贴边
+  scroll-padding-top: calc(#{$app-topbar-height} + var(--iflyv-spacing-3));
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font: var(--iflyv-font-body-primary);
+  color: var(--iflyv-text-1);
+  background: var(--iflyv-bg-page);
+}
+
+// ============ Topbar ============
+.app-topbar {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  height: $app-topbar-height;
+  background: var(--iflyv-bg-panel);
+  border-bottom: 1px solid var(--iflyv-border-default);
+  display: flex;
+  align-items: stretch;
+  // 固定框架层，走 z-index 契约的 sticky 档；浮层（下拉/气泡/通知，popper 及以上）应压过它。
+  z-index: var(--iflyv-z-sticky);
+
+  &__brand {
+    width: $app-sidebar-width;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-2);
+    padding: 0 var(--iflyv-spacing-5);
+    border-inline-end: 1px solid var(--iflyv-border-default);
+  }
+
+  // 主题切换区（品牌色 + 亮/暗），贴顶栏右缘
+  &__theme {
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-4);
+    padding-inline-end: var(--iflyv-spacing-6);
+    flex-shrink: 0;
+  }
+
+  // 品牌色切换：一排色点（预置 + 自定义取色器）
+  .brand-switcher {
+    display: flex;
+    align-items: center;
+    // 选中环向外扩 4px，间距需大于它才不被相邻色点压住
+    gap: var(--iflyv-spacing-3);
+    flex-shrink: 0;
+  }
+
+  .brand-dot {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    // dot 自带 data-brand 属性，命中 [data-brand] 色板作用域后 accent-6 即该品牌主色
+    background: var(--iflyv-accent-6);
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.15s ease;
+
+    // 选中态：外圈描边环。用 box-shadow 画（不占布局尺寸，选中时色点不位移）——
+    // 内侧先垫一圈页面底色做留白，外侧再描深色环
+    &.is-active {
+      box-shadow:
+        0 0 0 2px var(--iflyv-bg-panel),
+        0 0 0 4px var(--iflyv-text-1);
+    }
+
+    &:hover:not(.is-active) {
+      opacity: 0.75;
+    }
+  }
+
+  // 自定义色点：底色由行内 style 给（默认黑，选定后即所选色），
+  // 内嵌下拉箭头示意"可展开输入色值"
+  .brand-dot--custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // 底色走行内 style，此处覆盖掉基类的 accent-6
+    background: none;
+
+    .brand-dot__caret {
+      color: var(--iflyv-text-on-dark);
+      pointer-events: none;
+    }
+  }
+
+  // 亮/暗切换：图标按钮
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--iflyv-border-default);
+    border-radius: var(--iflyv-radius-sm);
+    background: var(--iflyv-bg-inset);
+    color: var(--iflyv-text-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      color: var(--iflyv-brand-primary);
+      border-color: var(--iflyv-brand-primary);
+    }
+  }
+
+  &__logo {
+    width: $app-logo-size;
+    height: $app-logo-size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__title {
+    font: var(--iflyv-font-title-module);
+    line-height: var(--iflyv-line-height-28);
+    color: var(--iflyv-text-1);
+  }
+
+  &__subtitle {
+    font: var(--iflyv-font-body-min);
+    color: var(--iflyv-text-3);
+    margin-top: var(--iflyv-spacing-0_5);
+  }
+
+  // 顶栏 tab 复用设计系统「Tabs 模块级」（裸 el-tabs，样式全在
+  // el-theme/components/tabs.scss 全局层）。此处仅做顶栏内定位：垂直居中 +
+  // 隐藏内容面板（顶栏 tab 只做导航，内容由主区 v-show 控制）
+  &__nav {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    padding-inline-start: var(--iflyv-spacing-6);
+
+    /* audit-ignore 规范展示页脚手架：顶栏只借 el-tabs 做导航切换，
+       内容区由 App.vue 的 v-show 自行控制，故隐藏 EP 自带的面板容器。
+       不改变 el-tabs 在真实用法下的外观。 */
+    .el-tabs__content {
+      display: none;
+    }
+  }
+}
+
+// 自定义主色输入浮层（el-popover 内容渲染到 body，样式须写在顶层作用域）
+// 间距对齐 Dialog 的「内容 → footer」节奏：footer 上方 spacing-5(20px)、
+// 按钮组 gap spacing-3(12px)（见 el-theme/components/dialog.scss 与
+// component-interaction.md「按钮间距」段：按钮组一律 gap，推荐 12px）
+// 浮层内边距：EP 默认 12px 对「表单 + 操作按钮」这种承载偏挤，
+// 提到 spacing-5(20px) 与 Dialog 内容区同节奏
+.custom-color-popover.el-popover {
+  padding: var(--iflyv-spacing-5);
+}
+
+.custom-color-panel {
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--iflyv-spacing-3);
+    margin-top: var(--iflyv-spacing-5);
+  }
+}
+
+// ============ Layout ============
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  padding-top: $app-topbar-height;
+}
+
+// ============ Sidebar ============
+.app-sidebar {
+  position: fixed;
+  top: $app-topbar-height;
+  inset-inline-start: 0;
+  width: $app-sidebar-width;
+  height: calc(100vh - #{$app-topbar-height});
+  background: var(--iflyv-bg-panel);
+  border-inline-end: 1px solid var(--iflyv-border-default);
+  display: flex;
+  flex-direction: column;
+  // 固定框架层，略低于顶栏（同 sticky 档 -1）；浮层同样应压过它
+  z-index: calc(var(--iflyv-z-sticky) - 1);
+
+  // 滚动条样式不在此定义：本元素不滚动（滚动在 __nav-wrap，走 el-scrollbar），
+  // 且滚动条外观统一归源头 el-theme/components/scrollbar.scss
+
+  &__header {
+    padding: var(--iflyv-spacing-6) var(--iflyv-spacing-5) var(--iflyv-spacing-5);
+    border-bottom: 1px solid var(--iflyv-border-default);
+    flex-shrink: 0;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-3);
+  }
+
+  &__logo {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__title {
+    font: var(--iflyv-font-title-module);
+    color: var(--iflyv-text-1);
+  }
+
+  &__subtitle {
+    font: var(--iflyv-font-body-min);
+    color: var(--iflyv-text-3);
+    margin-top: var(--iflyv-spacing-0_5);
+  }
+
+  &__controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: var(--iflyv-spacing-4);
+    margin-top: var(--iflyv-spacing-4);
+  }
+
+  // 字号档位切换
+  .font-size-switcher {
+    display: flex;
+    gap: var(--iflyv-spacing-0_5);
+    flex-shrink: 0;
+    background: var(--iflyv-bg-inset);
+    border-radius: var(--iflyv-radius-sm);
+    padding: var(--iflyv-spacing-0_5);
+  }
+
+  .font-size-btn {
+    min-width: 28px;
+    height: 24px;
+    padding: 0 var(--iflyv-spacing-1);
+    border: none;
+    border-radius: calc(var(--iflyv-radius-sm) - 2px);
+    background: transparent;
+    color: var(--iflyv-text-3);
+    font: var(--iflyv-font-body-min);
+    font-weight: var(--iflyv-font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+    &:hover:not(.is-active) {
+      color: var(--iflyv-text-2);
+    }
+
+    &.is-active {
+      background: var(--iflyv-bg-segment-active);
+      color: var(--iflyv-brand-text);
+    }
+  }
+
+  // 语言/方向切换
+  .lang-switcher {
+    display: flex;
+    gap: var(--iflyv-spacing-0_5);
+    flex-shrink: 0;
+    background: var(--iflyv-bg-inset);
+    border-radius: var(--iflyv-radius-sm);
+    padding: var(--iflyv-spacing-0_5);
+  }
+
+  .lang-btn {
+    min-width: 28px;
+    height: 24px;
+    padding: 0 var(--iflyv-spacing-1);
+    border: none;
+    border-radius: calc(var(--iflyv-radius-sm) - 2px);
+    background: transparent;
+    color: var(--iflyv-text-3);
+    font: var(--iflyv-font-body-min);
+    font-weight: var(--iflyv-font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+    &:hover:not(.is-active) {
+      color: var(--iflyv-text-2);
+    }
+
+    &.is-active {
+      background: var(--iflyv-bg-segment-active);
+      color: var(--iflyv-brand-text);
+    }
+  }
+
+  // 内部滚动区走 el-scrollbar（见 component-interaction.md 滚动条段）：
+  // 外壳只占位，内容排布放 view 上，滚动条外观全归源头
+  &__nav-wrap {
+    flex: 1;
+    min-height: 0;
+  }
+  &__nav-view {
+    padding: var(--iflyv-spacing-3) 0;
+  }
+
+  &__group-label {
+    padding: var(--iflyv-spacing-4) var(--iflyv-spacing-5) var(--iflyv-spacing-1_5);
+    font: var(--iflyv-font-label-primary);
+    color: var(--iflyv-text-4);
+    text-transform: uppercase;
+    letter-spacing: $app-nav-label-tracking;
+
+    &:first-child {
+      padding-top: var(--iflyv-spacing-1);
+    }
+  }
+
+  &__nav {
+    list-style: none;
+
+    li a {
+      display: block;
+      padding-block: var(--iflyv-spacing-3);
+      padding-inline: $app-nav-item-indent var(--iflyv-spacing-5);
+      color: var(--iflyv-text-1);
+      text-decoration: none;
+      font: var(--iflyv-font-body-primary);
+      transition: all 0.15s ease;
+      border-inline-start: $app-nav-active-bar solid transparent;
+
+      &:hover {
+        color: var(--iflyv-brand-text);
+        background: var(--iflyv-brand-bg);
+      }
+
+      &.is-active {
+        color: var(--iflyv-brand-text);
+        font-weight: var(--iflyv-font-weight-semibold);
+      }
+    }
+  }
+}
+
+// ============ Content ============
+.app-content {
+  margin-inline-start: $app-sidebar-width;
+  flex: 1;
+  /* flex 子项默认 min-width:auto，会被内部不可压缩的宽内容（如 Transfer）顶破容器 →
+     显式 min-width:0 让容器正确约束宽度，内部该换行/收缩的正常收缩，消除横向滚动条。 */
+  min-width: 0;
+  padding: var(--iflyv-spacing-3);
+  max-width: calc(100vw - #{$app-sidebar-width});
+}
+
+// ============ Demo Sections ============
+.demo-section {
+  background: var(--iflyv-bg-panel);
+  border-radius: var(--iflyv-radius-lg);
+  /* 上 16(spacing-4) / 左右 32(spacing-8) / 下 28(无对应梯度 token，保留裸值) */
+  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-8) 28px;
+  margin-bottom: var(--iflyv-spacing-3);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__title {
+    /* 阿里普惠字体名含空格，不能用 font: 简写（会被解析失败/覆盖），
+       故按规范拆分属性但字号/行高/字重一个不漏 —— 规格同 --iflyv-font-title-page */
+    font-family: var(--iflyv-font-family-emphasis);
+    font-size: var(--iflyv-font-size-26);
+    line-height: var(--iflyv-line-height-48);
+    font-weight: var(--iflyv-font-weight-extrabold);
+    color: var(--iflyv-text-1);
+    margin-bottom: var(--iflyv-spacing-4);
+    padding-bottom: var(--iflyv-spacing-4);
+    border-bottom: 1px solid var(--iflyv-border-default);
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-3);
+
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--iflyv-brand-primary);
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// 「基础组件 / 业务组件 / 设计模式」三个 tab 的内容容器挂 .no-title-divider：
+// 大标题下不要分割线（其余 tab 如基础样式保留原分割线）
+.no-title-divider .demo-section__title {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+// sub-section 包裹：label + row
+// demo 演示大卡片（原散落 34 个 demo scoped，2026-08 收敛单点）。
+// 两种版式按展示内容选，默认卡片版，容器挂 .demo-plain 切素排：
+//   · 卡片版（默认）—— 组件演示：灰底卡片框住一组控件，块与块之间靠卡片边界区分。
+//   · 素排版（.demo-plain）—— 令牌 / 基础样式展示（色板、字体、间距、圆角、阴影、动效）：
+//     这类页面本身在展示底色 / 圆角 / 投影，套灰底圆角卡片会与被展示的内容打架，
+//     故不套卡片，仅用大间距分隔。
+.demo-section .demo-block {
+  margin-bottom: 0;
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+
+  & + .demo-block {
+    margin-top: var(--iflyv-spacing-6);
+  }
+}
+
+// 素排版：去掉卡片装饰，块间距回到 48（= spacing-8 + spacing-4 凑值，与 control-showcase 间距同法）
+.demo-plain .demo-block {
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  margin-bottom: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
+
+  & + .demo-block {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.demo-label {
+  font: var(--iflyv-font-title-component);
+  color: var(--iflyv-text-1);
+  margin-bottom: var(--iflyv-spacing-3);
+}
+
+// 块内说明文字：标题下、控件上，浅色小字，不与标题抢视觉
+.demo-desc {
+  margin: 0 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+
+.demo-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--iflyv-spacing-6);
+  margin-bottom: var(--iflyv-spacing-5);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+
+// ============ demo 配置式展示脚手架 ============
+// config-card 配置卡 / control-showcase 左右布局 / pattern-card 模式卡
+// （原散落各 demo scoped，2026-08 收敛单点）。
+// 纯 demo 演示脚手架，不属于设计系统组件，故留在 demo 侧而非 el-theme 源头。
+// 各 demo 若需与此不同（如配置卡窄一档），只在自己 scoped 里写差异那几行做最小覆盖。
+
+// 左示例 + 右配置卡横向布局：主区自适应、配置卡定宽
+.control-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));  /* 48 */
+}
+.control-showcase__main {
+  flex: 1;
+  min-width: 0;
+}
+
+// 配置卡：块卡（bg-card）内部用面板底 + 细边框区分层次，避免同色套同色
+.config-card {
+  flex: 0 1 auto;
+  width: 220px;
+  align-self: flex-start;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-subtle);
+  border-radius: var(--iflyv-radius-md);
+}
+.config-card__title {
+  margin: 0 0 var(--iflyv-spacing-4);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
+}
+// 配置项释义小字：紧跟控件下方
+.config-card__hint {
+  margin: var(--iflyv-spacing-1) 0 0;
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+
+// 设计模式页的模式卡：上下两块大卡片（① 模式规则 / ② 标准范例）
+.pattern-card {
+  padding: var(--iflyv-spacing-6);
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+
+  & + .pattern-card {
+    margin-top: var(--iflyv-spacing-6);
+  }
+
+  &__title {
+    margin: 0 0 var(--iflyv-spacing-4);
+    color: var(--iflyv-text-1);
+    font: var(--iflyv-font-title-component);
+  }
+
+  &__desc {
+    margin: 0 0 var(--iflyv-spacing-6);
+    color: var(--iflyv-text-3);
+    font: var(--iflyv-font-body-sub);
+  }
+}
+
+// ============ 辅助样式 ============
+
+// 全宽块（如 Tabs、Steps、Alert 列表等）
+.demo-full-width {
+  width: 100%;
+}
+
+// 修正 Pagination 宽度
+.demo-section .el-pagination {
+  flex-wrap: wrap;
+}

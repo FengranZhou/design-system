@@ -1,0 +1,29 @@
+/* ============================================================
+   demo 专用 @font-face 兜底（不动 design-spec 源头）
+   ------------------------------------------------------------
+   源头 design-token/css/font.scss 里的 @font-face 用的是
+   相对源头目录的 `url("../font/...")`。Vite 打包 demo 时无法把
+   这个「demo 目录之外」的字体收进 dist，部署后会 404。
+
+   这里用【相同的 font-family 名】再声明一份 @font-face，src 指向
+   demo/public/font/（绝对路径 /font/，Vite 会原样拷进 dist）。
+   浏览器对同名 @font-face 会合并 src 来源：源头那份 404 时自动回退
+   到本份 /font/，从而保证部署环境字体正常加载，本地也不受影响。
+
+   字体文件来源同源头（design-token/font/ 拷贝一份进 public/font/）。
+   ============================================================ */
+
+@font-face {
+  font-family: "douyinNum";
+  src: url("/font/douyin_num.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Alibaba PuHuiTi 3.0";
+  src: url("/font/AlibabaPuHuiTi-3-95-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}

@@ -1,0 +1,10 @@
+/* ======================================================================== */
+/* ====================== PageHeader 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* 行高 rem 化 */
+.el-page-header__header { line-height: var(--iflyv-line-height-24); }
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+.el-page-header__left { margin-right: unset; margin-inline-end: 40px; }
+.el-page-header__icon { margin-right: unset; margin-inline-end: 10px; }

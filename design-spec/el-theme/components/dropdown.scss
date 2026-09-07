@@ -1,0 +1,78 @@
+/* ======================================================================== */
+/* ======================== Dropdown 样式覆盖 ============================== */
+/* ======================================================================== */
+
+/* Dropdown 下拉菜单选项样式 */
+.el-dropdown-menu { padding: var(--iflyv-spacing-1); min-width: 120px; }
+.el-dropdown-menu__item {
+  border-radius: var(--iflyv-radius-xs);
+  height: 36px;
+  line-height: 36px;
+  color: var(--iflyv-text-1);
+  &:not(.is-disabled):hover { background-color: var(--iflyv-bg-inset); color: var(--iflyv-text-1); }
+  &--divided { margin: 4px 0; }
+}
+
+/* ==================== 面板内分组标题约定 .dropdown-group-title ====================
+   下拉面板里给一组选项加抬头（非可选项，故不是 el-dropdown-item，用裸 <li> 承载）：
+
+     <template #dropdown>
+       <el-dropdown-menu>
+         <li class="dropdown-group-title">技术部门</li>
+         <el-dropdown-item command="fe">前端开发</el-dropdown-item>
+       </el-dropdown-menu>
+     </template>
+
+   ⚠️ 口径与 Select 的分组标题（select.scss 的 .el-select-group__title）一致：
+      text-3 灰 + 12px 字号，把"抬头"与"可选项"的层级拉开。
+      左右内边距取 spacing-4（16px），对齐本面板 el-dropdown-item 的左右内边距，
+      而非照抄 Select 的 20px——否则与同面板选项左边缘错位。
+      行高 36 与 el-dropdown-item 同高：抬头与选项在面板里保持同一套竖直节奏。
+      ⚠️ 单行垂直居中用 line-height 而非 flex（与 tooltip.scss 同理，也与 item 写法一致）；
+      故上下不再另加 padding，否则与行高叠加把抬头撑高。 */
+.el-dropdown-menu .dropdown-group-title {
+  padding: 0 var(--iflyv-spacing-4);
+  height: 36px;
+  line-height: 36px;
+  color: var(--iflyv-text-3);
+  font-size: var(--iflyv-font-size-12);
+  list-style: none;
+}
+
+/* 行高 rem 化：覆盖 EP 尺寸变体 baked-in px */
+.el-dropdown-menu--large .el-dropdown-menu__item { line-height: var(--iflyv-line-height-22); }
+.el-dropdown-menu--small .el-dropdown-menu__item { line-height: var(--iflyv-line-height-20); }
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+.el-dropdown-menu__item i { margin-right: unset; margin-inline-end: 5px; }
+
+/* ==================== 下拉触发器箭头约定 .dropdown-caret ====================
+   下拉触发器尾部的 ChevronDown：与文字小间距 + 垂直居中 + 展开时翻转 180°（自然过渡）。
+
+   ⚠️ 与按钮的 .btn-caret 区别：.btn-caret 是「hover 按钮时」转（button.scss，纯 CSS）；
+      本 .dropdown-caret 是「下拉展开时」转——EP el-dropdown 展开态无稳定纯 CSS 钩子，
+      故展开态 class .is-expanded 需由使用方用 @visible-change 绑定：
+
+        <el-dropdown @visible-change="open = $event">
+          <el-button text>更多 <ChevronDown class="dropdown-caret" :class="{ 'is-expanded': open }" /></el-button>
+          <template #dropdown>…</template>
+        </el-dropdown>
+
+   ⚠️ 触发器一律用 <el-button> 承载（轻量入口用 text 款），不要用裸 <span>：
+      裸 span 不可聚焦、无 button 语义（键盘 Tab 不到、回车展不开），
+      且文字色/hover/inline-flex 得在使用方 scoped 里复刻一遍 —— 那些 el-button
+      本来就给了。见 references/component-interaction.md「Dropdown」段。
+
+   翻转规则/过渡在此源头统一；使用方只负责传 .is-expanded（展开真值）。 */
+.dropdown-caret {
+  /* 不自带左间距：留给触发器那一侧决定，避免与父级 gap 叠加成双倍。
+     标准触发器是 <el-button>，其内的间距已由 button.scss 的
+     `.el-button .dropdown-caret { margin-inline-start: spacing-1 }` 补好
+     （按钮内部间距靠 .el-icon+span 的 margin 而非 gap，故需单独补）。
+     若确有自定义 flex 容器当触发器，则由该容器的 gap 提供。 */
+  vertical-align: middle;
+  transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+}
+.dropdown-caret.is-expanded {
+  transform: rotate(180deg);
+}

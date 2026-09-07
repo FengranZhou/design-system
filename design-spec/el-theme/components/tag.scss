@@ -1,0 +1,141 @@
+/* ======================================================================== */
+/* =========================== Tag 样式覆盖 =============================== */
+/* ======================================================================== */
+
+/* 使用约定：本系统品牌色为绿色，与 success（成功）语义绿撞色，易让普通标签被误读为「成功态」。
+   因此无语义含义的普通标签，优先使用 type="info"（蓝色）作为默认色，避免与 success 混淆；
+   仅在确需品牌强调时才用默认 / type="primary"（品牌绿）。 */
+
+.el-tag {
+  --el-tag-font-size: var(--iflyv-font-size-12);
+  /* 全圆角是 tag 的唯一合法形态，直接固化为默认值——裸 el-tag 即标准观感，
+     不依赖调用方逐个传 round（曾因漏传 round 静默偏离标准）。round prop 仍可传，无害冗余。 */
+  border-radius: var(--iflyv-radius-full);
+  font-size: var(--iflyv-font-size-12);
+  /* 标签内文字：字号 12 / 行高 18（.el-tag__content 继承，避免被撑高） */
+  line-height: var(--iflyv-line-height-18);
+  border: none;
+
+  /* 统一尺寸 20px（组件高度，间距令牌体系不覆盖此类尺寸值） */
+  height: 20px;
+  /* 左右内边距走令牌：spacing-1_5 = 6px，对应「Tag/Badge 等小控件的左右内边距」场景 */
+  padding: 0 var(--iflyv-spacing-1_5);
+
+  /* 内容区：内容可含小图标（如描边角标的 12px Info），图文间距走
+     「控件内图标与其紧邻文字之间」锚点；纯文字 tag 不受影响 */
+  .el-tag__content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-1);
+  }
+
+  .el-tag__close {
+    margin-left: 0; /* 清除 EP .el-tag .el-tag__close { margin-left: 6px }，防止 RTL 残留 */
+    margin-inline-start: var(--iflyv-spacing-0_5);
+    position: relative;
+    color: var(--iflyv-icon-3);
+
+    svg {
+      visibility: hidden;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / contain;
+      background-color: currentColor;
+      pointer-events: none;
+    }
+
+    width: 12px !important;
+    height: 12px !important;
+
+    &:hover {
+      background-color: transparent;
+      color: var(--iflyv-brand-primary);
+    }
+  }
+
+  /* ==================== 语义类型 ==================== */
+
+  /* 主题/品牌 */
+  &--primary,
+  &:not([class*="--"]) {
+    color: var(--iflyv-brand-text);
+    background-color: var(--iflyv-brand-bg);
+  }
+
+  /* 成功 */
+  &--success {
+    color: var(--iflyv-success-primary);
+    background-color: var(--iflyv-success-bg);
+  }
+
+  /* 警告 */
+  &--warning {
+    color: var(--iflyv-warning-primary);
+    background-color: var(--iflyv-warning-bg);
+  }
+
+  /* 危险 */
+  &--danger {
+    color: var(--iflyv-danger-primary);
+    background-color: var(--iflyv-danger-bg);
+  }
+
+  /* 信息 */
+  &--info {
+    color: var(--iflyv-info-primary);
+    background-color: var(--iflyv-info-bg);
+  }
+
+
+  /* 描边：透明底 + 细描边（「来源」这类元信息角标，参考小雅原版来源 pill） */
+  &--outline {
+    color: var(--iflyv-text-2);
+    background-color: transparent;
+    border: 1px solid var(--iflyv-border-default);
+  }
+
+  /* 灰色 */
+  &--gray {
+    color: var(--iflyv-text-2);
+    background-color: var(--iflyv-tag-gray-bg);
+  }
+
+  /* AI 标识：蓝→绿渐变底 + 渐变文字（走 AI 渐变语义令牌，源自设计稿 MasterGo AI 标签）。
+     底色渐变在本体、文字渐变在内层 .el-tag__content（背景裁剪到文字），两者分层避免 clip 冲突。 */
+  &--ai {
+    background: var(--iflyv-ai-gradient-bg);
+    .el-tag__content {
+      background: var(--iflyv-ai-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+  }
+}
+
+/* Select 多选内的 tag 统一样式（含 tooltip 浮层内） */
+.el-select .el-tag,
+.el-tag.in-tooltip {
+  height: 20px !important;
+  line-height: var(--iflyv-line-height-18) !important;
+  /* 左右 spacing-2（8）比常规 tag 宽一档：多选 tag 内含关闭按钮，需多留呼吸；
+     上下 1px 为高度补偿（20 高 - 18 行高）÷2，非间距语义，故不走令牌 */
+  padding: 1px var(--iflyv-spacing-2) !important;
+  color: var(--iflyv-text-2) !important;
+  /* 底色与灰 Tag 统一走桥接令牌（亮 = gray-10 6%，暗 = 纯白 6%） */
+  background-color: var(--iflyv-tag-gray-bg) !important;
+  border: none !important;
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin/padding（尺寸变体） */
+.el-tag.is-closable { padding-right: unset; padding-inline-end: 5px; }
+.el-tag--large .el-tag__close { margin-left: unset; margin-inline-start: 8px; }
+.el-tag--large.is-closable { padding-right: unset; padding-inline-end: 7px; }
+.el-tag--small .el-tag__close { margin-left: unset; margin-inline-start: 4px; }
+.el-tag--small.is-closable { padding-right: unset; padding-inline-end: 3px; }

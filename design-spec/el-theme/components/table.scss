@@ -1,0 +1,294 @@
+/* ======================================================================== */
+/* ========================== Table 样式覆盖 ============================== */
+/* ======================================================================== */
+/* 设计系统约定：表格**不使用 stripe（斑马纹）**，通过 hover 行高亮区分行。
+   @depends-on: L29-31 的 :hover 高亮规则提供视觉行区分。
+   @when-changed: 使用方写 <el-table stripe> 不会被禁，但视觉与设计系统不一致——
+                  详见 examples/table.examples.vue 反模式。 */
+
+/* 设计系统约定：表格**不画最外层描边**——行与行之间的细线已足够区分记录，
+   再加一圈外框会让表格在卡片/面板里显得"框中框"。
+   @depends-on: 无外框后，表头行的四个圆角（L20-27）成为表格顶部的唯一形状来源。
+   @when-changed: 若将来要恢复外框，需同时恢复 border + 外层 border-radius，
+                  并回到"最后一行去 border-bottom 防双线"的原始理由（见 L45）。 */
+.el-table {
+  /* ⚠️ 底色铺在表体（body-wrapper）而非 .el-table 整体：表头圆角把四角切开后，
+     切口必须透出表格所在容器的底色；若把 bg-panel 铺在 .el-table 上，
+     它会垫在表头之下，从切口漏出白色小三角（真实翻车）。
+     @depends-on: 与表头圆角（L31-37）强相关——有圆角就不能给 .el-table 设底色。
+     @when-changed: 若取消表头圆角，可把底色移回 .el-table。 */
+  background-color: transparent;
+  box-shadow: none;
+
+  .el-table__body-wrapper { background-color: var(--iflyv-bg-panel); }
+
+  /* ==================== 表头 Header ==================== */
+  .el-table__header-wrapper {
+    /* 表头不画底部分割线：表头底色 bg-inset 与表体 bg-panel 的色差已完成分隔，
+       再加一条线属于「间距/色差已够时不再上线条」原则里的多余线。
+       @depends-on: 依赖表头与表体的底色差；若两者同色需另找分隔手段。 */
+    th.el-table__cell {
+      background-color: var(--iflyv-bg-inset);
+      font-size: var(--iflyv-font-size-16);
+      font-weight: var(--iflyv-font-weight-semibold);
+      color: var(--iflyv-text-1);
+      border-bottom: none;
+    }
+
+    /* 表头行整体四个圆角 radius-sm(8px)：左上/右上由表头容器裁切，
+       左下/右下由首尾单元格各自补上——th 是表格布局元素，圆角必须落在单元格上，
+       给 thead/tr 设 border-radius 不生效。
+       @depends-on: 依赖表头底色 bg-inset 与表体 bg-panel 的色差呈现圆角形状。
+       @when-changed: 若表头改为与表体同底色，圆角将不可见，本组规则可一并移除。 */
+    th.el-table__cell:first-child { border-start-start-radius: var(--iflyv-radius-sm); border-end-start-radius: var(--iflyv-radius-sm); }
+    th.el-table__cell:last-child  { border-start-end-radius: var(--iflyv-radius-sm);  border-end-end-radius: var(--iflyv-radius-sm); }
+  }
+
+  /* ==================== 行样式 Row ==================== */
+  .el-table__row {
+    td.el-table__cell {
+      border-bottom-color: var(--iflyv-border-default);
+      font-size: var(--iflyv-font-size-16);
+      color: var(--iflyv-text-1);
+    }
+
+    &:hover > td.el-table__cell {
+      background-color: var(--iflyv-bg-inset);
+    }
+
+    /* 最后一行去掉 border-bottom：表格无外框，末行底线会成为一条悬空的收尾线，
+       视觉上像"表格没结束"。行间线只用于分隔相邻两行，末行之后无行可分隔。
+       @when-changed: 若恢复表格外框，本规则的理由变为"防与外框重合产生双线"，仍需保留。 */
+    &:last-child > td.el-table__cell {
+      border-bottom: none;
+    }
+  }
+
+  /* 行高 52px：由单元格 min-height 直接指定，而非「上下内边距 + 文字行高」凑出。
+     ⚠️ 为什么用 min-height 而不是加大内边距：
+        52 = 上下各 14 + 文字行高 24，而间距体系**没有 14px 档**；
+        若改用「上下 12 + 文字行高 28」，则文字行高脱离 body-primary 语义字阶
+        （它是 16/24 一整档），属于拆开语义层自拼规格 —— 两条都违反令牌铁律。
+        故保持内边距 spacing-3、文字行高 line-height-24 不动（文字观感与语义字阶
+        完全一致），另用 min-height 把行撑到 52px。取值复用 line-height-52 令牌
+        （值恰为 52px），不新增令牌。
+     ⚠️ 纵向内边距只能有一个来源：EP 自己在 `.el-table--default .el-table__cell`
+     上给了 `padding: 8px 0`，与下面 .cell 的上下 padding 会叠加，
+     故此处必须先清零，把行高交给 .cell 单独决定。
+     @depends-on: 本条清零 + 下方 th/td 的 min-height 共同决定行高。
+     @when-changed: 要调行高改 th/td 的 min-height（整档取用行高令牌）；
+                    本条清零规则不要删，删了行高会被 EP 默认值顶回 64+。 */
+  th.el-table__cell,
+  td.el-table__cell {
+    padding-block: 0;
+    /* 行高落在单元格而非 .cell 上：可保持 .cell 内部原生 inline 排版
+       （操作列 .table-operation 与金额列 text-align 都依赖它），
+       若改在 .cell 上用 display:flex 会同时破坏这两处。 */
+    min-height: var(--iflyv-line-height-52);
+  }
+
+  .cell {
+    padding: var(--iflyv-spacing-3) var(--iflyv-spacing-4);
+    line-height: var(--iflyv-line-height-24);
+  }
+
+  /* ==================== 选中行 Selected Row ====================
+     仅在使用方显式开启 highlight-current-row 时才出现（做「点行→右侧联动详情」
+     这类主从布局才该开；DataTable 默认不开，见其模板注释）。
+     ⚠️ 底色必须与 hover 可区分 —— 曾与 hover 同为 bg-inset，导致点击后
+        鼠标移开，那行仍是 hover 的样子、看不出是"选中"还是"没刷新"（真实反馈）。
+        改用品牌浅底：选中是操作结果，用品牌色表达，与中性灰的 hover 天然分离。 */
+  .el-table__body tr.current-row > td.el-table__cell {
+    background-color: var(--iflyv-brand-bg);
+  }
+
+  /* 统一外框处理：去除 EP 默认伪元素描边（EP 用 ::before/::after 画表格外围横竖线），
+     本设计系统表格不画外框，全部隐藏。
+     @depends-on: 与顶部"不画最外层描边"约定是一组；表头圆角靠 th 自身的 border-radius，
+                  不依赖父级 overflow 裁切。
+     @when-changed: EP 升级若伪元素结构变化，本组规则需重写。 */
+  &::before, &::after { display: none; }
+  .el-table__inner-wrapper::before,
+  .el-table__inner-wrapper::after { display: none; }
+
+  /* border 模式：更高优先级覆盖 EP .el-table--border 伪元素 + 末列去重 */
+  &.el-table--border {
+    &::before, &::after { display: none; }
+    .el-table__inner-wrapper::after { display: none; }
+    .el-table__border-left-patch { display: none; }
+
+    th.el-table__cell:last-of-type,
+    td.el-table__cell:last-of-type {
+      border-inline-end: none;
+    }
+
+    /* RTL：首列（视觉最右侧）border-right 与外框重叠，去重 */
+    [dir="rtl"] & th.el-table__cell:first-of-type,
+    [dir="rtl"] & td.el-table__cell:first-of-type {
+      border-right: none;
+    }
+  }
+}
+
+/* ==================== 排序箭头：圆润化 ====================
+   EP 默认用 border 技巧画尖三角，本项目改用 SVG mask 画 Lucide 风格的圆角箭头。
+   @depends-on: 依赖 EP 的 .sort-caret 元素结构（仍保留 .ascending / .descending 类名）。
+                我们把 border 替换为 background-color + mask 实现。
+   @when-changed: 升级 EP 大版本时，若 EP 改了 .sort-caret 类名或结构，
+                  本组规则（mask URL 也含 viewBox 尺寸）需同步调整。 */
+.el-table .sort-caret {
+  border: none;
+  width: 10px;
+  height: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  &.ascending {
+    top: 0;
+    background-color: var(--iflyv-text-4);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' viewBox='0 0 10 5'%3E%3Cpath d='M4.134.5a1 1 0 0 1 1.732 0L8.5 4.25a.75.75 0 0 1-.65.75H2.15a.75.75 0 0 1-.65-.75Z' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' viewBox='0 0 10 5'%3E%3Cpath d='M4.134.5a1 1 0 0 1 1.732 0L8.5 4.25a.75.75 0 0 1-.65.75H2.15a.75.75 0 0 1-.65-.75Z' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+  }
+
+  &.descending {
+    bottom: 2px;
+    background-color: var(--iflyv-text-4);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' viewBox='0 0 10 5'%3E%3Cpath d='M5.866 4.5a1 1 0 0 1-1.732 0L1.5.75A.75.75 0 0 1 2.15 0h5.7a.75.75 0 0 1 .65.75Z' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' viewBox='0 0 10 5'%3E%3Cpath d='M5.866 4.5a1 1 0 0 1-1.732 0L1.5.75A.75.75 0 0 1 2.15 0h5.7a.75.75 0 0 1 .65.75Z' fill='black'/%3E%3C/svg%3E") no-repeat center / contain;
+  }
+}
+
+/* 激活态：高亮为品牌色 */
+.el-table .ascending .sort-caret.ascending {
+  background-color: var(--iflyv-brand-primary);
+}
+
+.el-table .descending .sort-caret.descending {
+  background-color: var(--iflyv-brand-primary);
+}
+
+/* ==================== 操作列约定类名 ====================
+   使用方式：<el-button class="table-operation">编辑</el-button>
+   —— 一个 class 全包：无底、紧贴文案、相邻间距 16、hover 绿。使用方无需再加 text/link 等属性。
+
+   ⚠️ 设计系统例外：.table-operation 是 td 内 inline 文字按钮的明示例外——
+                    与 button.scss「按钮组间距由父容器 flex+gap 提供」原则**不冲突**：
+                    td 不是 flex 容器，inline 排版传统就是「操作1 | 操作2 | 操作3」，
+                    强行套 flex+gap 父容器反而违反表格习惯。
+
+   @depends-on: 必须用 <el-button class="table-operation">（保留按钮 a11y），
+                禁止用 <span class="table-operation">（失去键盘可达性）。
+                间距由 `& + .table-operation` 相邻选择器提供 spacing-4（16px，
+                与「全组无底色按钮」档一致，非例外——例外只在提供方式）。
+   @when-changed: 不要把 .table-operation 兄弟塞进 flex+gap 父容器（会与相邻选择器叠加）；
+                  也不要在使用方覆盖此处的 margin-inline-start / 再叠 text/link 属性。
+   @see: references/patterns/list-item-pattern.md「操作区固定右侧」段 + 反例。
+   @see: references/component-interaction.md「按钮间距」例外清单。 */
+
+/* 用 .el-button.table-operation 提升特异性，压过 EP 默认按钮的 padding/min-width/底色/边框，
+   使「一个 class」即可把默认 el-button 变成紧贴文案的无底操作按钮，无需再配 text/link。 */
+.el-button.table-operation {
+  color: var(--iflyv-text-1);
+  /* 与表格内容文字一致：body-primary = 16px / 行高 24（原 body-sub 14/20 偏小） */
+  font: var(--iflyv-font-body-primary);
+  padding: 0;
+  height: auto;
+  min-width: 0;             /* 解除 EP 默认按钮最小宽度，按钮紧贴文案 */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  /* 相邻操作按钮间距 spacing-4（16px）：操作列全是无底色文字按钮，
+     按「按钮间距」的边界判据——无底色按钮的边界只能靠文字轮廓判断，
+     12px 会被读成普通字间距、几个操作糊成一句话，故走 16px 档。
+     @see: references/component-interaction.md「按钮间距」档位表。 */
+  & + .table-operation {
+    margin-inline-start: var(--iflyv-spacing-4);
+  }
+
+  /* hover：无底、仅文字变品牌绿（压掉 EP 默认按钮 hover 的灰底/描边） */
+  &:hover,
+  &:focus {
+    color: var(--iflyv-brand-primary);
+    background: transparent;
+    border-color: transparent;
+  }
+}
+
+/* "更多"下拉：与其他 .table-operation（el-button link）垂直对齐
+   @depends-on: 兄弟 .table-operation 必须是 el-button link（默认 vertical-align: middle）。
+                el-dropdown 自身默认 inline-block + vertical-align: baseline，
+                不显式设 middle 会与 el-button link 锚点不一致，视觉错位。
+   @when-changed: 兄弟改为 span（默认 baseline）时，本规则需改回 baseline——
+                  这是历史踩坑：之前用 span 时本规则是 baseline，
+                  改 el-button link 后必须同步改 middle，否则 dropdown 偏上。
+   @see: 方法论 raw/methodology-方法论/design-system分发-隐式耦合.md 类型 1 案例 A。 */
+.el-dropdown.table-operation {
+  vertical-align: middle;
+  /* 与「编辑/查看」（.el-button.table-operation）视觉统一：16px/行高24 + 默认深色，hover 才变绿。
+     触发器文字通过继承拿到，避免业务组件各自把「更多」染成另一种色/字号（不同步）。 */
+  font: var(--iflyv-font-body-primary);
+  color: var(--iflyv-text-1);
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: var(--iflyv-brand-primary);
+  }
+}
+
+/* 「更多」触发器：源头约定的触发器容器（排版：图标↔文字对齐 + 间距），颜色/字号继承上方统一规则 */
+.table-operation__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: inherit;
+  font: inherit;
+}
+
+/* 危险操作：始终为危险色 */
+.table-operation--danger {
+  color: var(--iflyv-danger-primary);
+
+  &:hover {
+    color: var(--iflyv-danger-hover);
+  }
+}
+
+/* RTL：覆盖 EP 硬编码 text-align + 强制方向继承 */
+.el-table .el-table__cell { text-align: start; }
+.el-table .el-table__cell.is-right { text-align: end; }
+.el-table .el-table__cell.is-left { text-align: start; }
+/* RTL：body 单元格 flex 布局，利用 flex 在 RTL 下自动反转行内元素顺序 */
+/* 仅作用于 body-wrapper，不影响 header 排序图标 */
+[dir="rtl"] .el-table .el-table__body-wrapper .cell {
+  display: flex;
+  align-items: center;
+}
+
+/* RTL：固定列功能降级
+   @depends-on: EP JS 用物理 left/right inline style 设置 sticky 偏移，
+                CSS 无法翻转 inline style 的物理属性。
+   @when-changed: RTL 模式下取消 sticky（用 position: relative 覆盖），
+                  使表格正常滚动、列序正确——代价是 RTL 下失去固定列功能。
+                  使用方需提示业务：阿语等 RTL 场景的表格不支持固定列。 */
+[dir="rtl"] .el-table .el-table-fixed-column--left,
+[dir="rtl"] .el-table .el-table-fixed-column--right {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  z-index: auto !important;
+}
+/* 隐藏固定列阴影伪元素 */
+[dir="rtl"] .el-table .el-table-fixed-column--left.is-first-column::before,
+[dir="rtl"] .el-table .el-table-fixed-column--left.is-last-column::before,
+[dir="rtl"] .el-table .el-table-fixed-column--right.is-first-column::before,
+[dir="rtl"] .el-table .el-table-fixed-column--right.is-last-column::before {
+  display: none;
+}
+
+/* RTL：选择列 padding + 必填标记 margin */
+.el-table-column--selection .cell { padding-left: unset; padding-right: unset; padding-inline: 14px; }
+.el-table th.el-table__cell.required > div::before { margin-right: unset; margin-inline-end: 5px; }
+.el-table--fit .el-table__cell.gutter { border-right-width: 0; border-inline-end-width: 1px; }
+

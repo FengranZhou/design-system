@@ -1,0 +1,9 @@
+/* ======================================================================== */
+/* ========================= Avatar 样式覆盖 =============================== */
+/* ======================================================================== */
+
+.el-avatar { --el-avatar-bg-color: var(--iflyv-avatar-default-bg); }
+
+/* RTL：覆盖 EP 硬编码物理 margin */
+.el-avatar-group .el-avatar:not(:first-child) { margin-left: unset; margin-inline-start: var(--el-avatar-group-item-gap); }
+.el-avatar-group__collapse-avatars .el-avatar:not(:first-child) { margin-left: unset; margin-inline-start: var(--el-avatar-group-collapse-item-gap); }

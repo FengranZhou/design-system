@@ -1,0 +1,55 @@
+/* ======================================================================== */
+/* ========================= Tree 样式覆盖 ================================ */
+/* ======================================================================== */
+
+.el-tree {
+  --el-tree-node-content-height: 2rem;  /* 32px @md */
+}
+
+.el-tree-node__content {
+  padding-inline-start: 8px;
+  padding-inline-end: 12px;
+  border-radius: var(--iflyv-radius-sm);
+}
+
+/* TreeSelect 下拉内的树：重置 padding */
+.el-tree-select__popper .el-tree-node__content {
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+}
+
+/* 当前高亮节点 */
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+  background-color: var(--iflyv-bg-inset);
+}
+
+/* 字号 rem 化 */
+.el-tree-node__expand-icon { font-size: var(--iflyv-font-size-12); }
+
+/* 展开箭头 → 圆润三角 */
+.el-tree-node__expand-icon {
+  position: relative;
+  color: var(--iflyv-icon-3);
+
+  svg { visibility: hidden; }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M5.5 3.5C5.5 3.1 5.7 2.8 6.1 2.7 6.4 2.5 6.8 2.6 7.1 2.8L11.6 7.1C11.9 7.3 12 7.6 12 8 12 8.4 11.9 8.7 11.6 8.9L7.1 13.2C6.8 13.4 6.4 13.5 6.1 13.3 5.7 13.2 5.5 12.9 5.5 12.5Z' fill='black'/%3E%3C/svg%3E") no-repeat center / 10px 10px;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M5.5 3.5C5.5 3.1 5.7 2.8 6.1 2.7 6.4 2.5 6.8 2.6 7.1 2.8L11.6 7.1C11.9 7.3 12 7.6 12 8 12 8.4 11.9 8.7 11.6 8.9L7.1 13.2C6.8 13.4 6.4 13.5 6.1 13.3 5.7 13.2 5.5 12.9 5.5 12.5Z' fill='black'/%3E%3C/svg%3E") no-repeat center / 10px 10px;
+    background-color: currentColor;
+    pointer-events: none;
+  }
+
+  &.is-leaf::after {
+    visibility: hidden;
+  }
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin/padding */
+.el-tree-node__content > label.el-checkbox { margin-right: unset; margin-inline-end: 8px; }
+.el-tree-node__loading-icon { margin-right: unset; margin-inline-end: 8px; }
+.el-tree-select__popper .el-tree-node__expand-icon { margin-left: unset; margin-inline-start: 8px; }
+.el-tree-select__popper .el-select-dropdown__list > .el-select-dropdown__item { padding-left: unset; padding-inline-start: 32px; }

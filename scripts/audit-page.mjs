@@ -1,0 +1,359 @@
+#!/usr/bin/env node
+/**
+ * 接入方规范评分器
+ *
+ * 用途：拿「评判标准」的条目去扫接入方代码，出违规报告 + 合规分。
+ *      条目来自 references/rules.generated.json（规范正文的投影），
+ *      检测逻辑在 scripts/detectors.mjs，两者按 id 挂钩。
+ *
+ * 用法：
+ *   node scripts/audit-page.mjs                    # 扫本仓库 demo/src
+ *   node scripts/audit-page.mjs <目录>             # 扫指定目录
+ *   node scripts/audit-page.mjs "src/views/**.vue" # 扫匹配的文件
+ *   node scripts/audit-page.mjs <目标> --json      # 输出 JSON（供 CI / 其它工具消费）
+ *   node scripts/audit-page.mjs <目标> --quiet     # 只输出结论
+ *
+ * 退出码：0 = 合规；1 = 不合规（有 MUST 未通过，或得分 < 85）
+ *
+ * ⚠️ 能力边界：只覆盖「已实现检测器」的条目。
+ *    人工判定项（detect=manual）不计分，仅在报告末尾列成待查清单——
+ *    机器判不了就默认给过会让分数虚高，那比不查更危险。
+ */
+
+import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs'
+import { join, dirname, relative, sep, resolve, isAbsolute } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { DETECTORS, IMPLEMENTED } from './detectors.mjs'
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
+const RULES = join(ROOT, 'design-spec/references/rules.generated.json')
+
+const argv = process.argv.slice(2)
+const JSON_OUT = argv.includes('--json')
+const QUIET = argv.includes('--quiet')
+// 用户显式传的目标 → 相对**调用方 cwd** 解析（见 collectFiles）；
+// 未传时的缺省目标是「本仓库的 demo/src」，与调用者在哪无关，故直接锚定 ROOT。
+const explicitTarget = argv.find((a) => !a.startsWith('--'))
+const target = explicitTarget ?? join(ROOT, 'demo/src')
+
+const PASS_SCORE = 85
+
+// ── 收集待扫文件 ────────────────────────────────────────────────
+const SCAN_EXT = /\.(vue|ts|js|tsx|jsx|scss|css)$/
+const SKIP_DIR = /^(node_modules|dist|\.git|\.nuxt|coverage|design-spec)$/
+
+/** 把 glob 转成正则（只支持 * 与 **，够用且不引依赖） */
+function globToRe(pattern) {
+  // GLOBSTAR 哨兵：先把 ** 换成占位串，避免随后替换单 * 时把它拆坏，最后再还原成 .*
+  // ⚠️ 曾用 NUL 字符做哨兵 —— 功能正常，但会让 git 把整个文件判为二进制，
+  //    此后本文件的所有改动都看不到文本 diff、无法 review。改用普通字符串。
+  //    哨兵需满足：不含正则元字符、不可能出现在真实路径里。
+  const GLOBSTAR = 'zZgLoBsTaRZz'
+  const esc = pattern.replace(/[.+^${}()|[\]\\]/g, '\\$&')
+  const re = esc
+    .replace(/\*\*/g, GLOBSTAR)
+    .replace(/\*/g, '[^/]*')
+    .replaceAll(GLOBSTAR, '.*')
+  return new RegExp(`^${re}$`)
+}
+
+function walk(dir, acc = []) {
+  if (!existsSync(dir)) return acc
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    if (e.isDirectory()) {
+      if (SKIP_DIR.test(e.name)) continue
+      walk(join(dir, e.name), acc)
+    } else if (SCAN_EXT.test(e.name)) {
+      acc.push(join(dir, e.name))
+    }
+  }
+  return acc
+}
+
+/**
+ * 相对路径的解析基准 = **调用方 cwd**，不是本仓库根。
+ * ⚠️ 曾用 ROOT 做基准，导致下游在自己项目里跑
+ *    `node ../design-system/scripts/audit-page.mjs ./src`
+ *    时 ./src 被解析成 design-system/src、必然找不到文件，
+ *    而报错只说「未找到可扫描的文件」，完全指不到真实原因（下游会以为自己路径写错）。
+ *    本脚本是给接入方用的，基准必须跟随调用者所在目录。
+ */
+const CWD = process.cwd()
+
+function collectFiles(t) {
+  const abs = isAbsolute(t) ? t : resolve(CWD, t)
+  if (existsSync(abs) && statSync(abs).isDirectory()) return walk(abs)
+  if (existsSync(abs) && statSync(abs).isFile()) return [abs]
+  // 当作 glob：取模式里第一个含通配符之前的部分作为搜索根
+  const parts = t.split('/')
+  const fixed = []
+  for (const p of parts) {
+    if (p.includes('*')) break
+    fixed.push(p)
+  }
+  const base = resolve(CWD, fixed.join('/') || '.')
+  const re = globToRe(t)
+  // glob 匹配基准同样用 CWD —— 与用户书写模式时的心智一致（他写的是相对自己 cwd 的路径）
+  return walk(base).filter((f) => re.test(relative(CWD, f).split(sep).join('/')))
+}
+
+const files = collectFiles(target)
+
+if (!files.length) {
+  console.error(`✗ 未找到可扫描的文件：${target}`)
+  console.error(`  解析为：${isAbsolute(target) ? target : resolve(CWD, target)}`)
+  console.error(`  当前目录：${CWD}`)
+  console.error(`  可扫描后缀：.vue .ts .js .tsx .jsx .scss .css`)
+  process.exit(1)
+}
+
+// ── 解析 SFC：拆出 template / style / script 三段并记录行偏移 ──────
+// 检测器按 scope 只查对应段落，避免「模板里的字符串」被当成样式违规之类的误报
+/**
+ * 剥掉注释内容（保留换行以维持行号）。
+ * ⚠️ 注释掉的代码不生效，扫它等于报「已经删掉的写法」——
+ *    demo 里大量用 <!-- ⏸ 暂停展示 --> 包住暂时不用的示例，曾误报 el-popover。
+ */
+function stripComments(src) {
+  return src
+    .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '))
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
+    .replace(/(^|\s)\/\/[^\n]*/g, (m) => m.replace(/[^\n]/g, ' '))
+}
+
+function parseFile(file) {
+  const text = stripComments(readFileSync(file, 'utf8'))
+  const ctx = { file, text, template: '', style: '', script: '', templateOffset: 0, styleOffset: 0 }
+  if (!file.endsWith('.vue')) {
+    // 非 SFC：scss/ts 直接按整文件算，style/script 段等同全文
+    ctx.style = /\.(scss|css)$/.test(file) ? text : ''
+    ctx.script = /\.(ts|js|tsx|jsx)$/.test(file) ? text : ''
+    return ctx
+  }
+  /**
+   * 取顶层 <tag> 块。
+   * ⚠️ 不能用非贪婪 `([\s\S]*?)</tag>` —— SFC 的 <template> 内部还会出现
+   *    `<template #content>` 等插槽标签，非贪婪会在第一个 </template> 处截断，
+   *    导致模板只解析到一小段（曾把 1500 字符的模板截成 300 字符，
+   *    使所有结构类检测静默失效）。故按嵌套深度找配对闭合标签。
+   */
+  const grab = (tag) => {
+    const openRe = new RegExp(`<${tag}(\\s[^>]*)?>`, 'g')
+    const first = openRe.exec(text)
+    if (!first) return { body: '', offset: 0 }
+    const bodyStart = first.index + first[0].length
+    const tokenRe = new RegExp(`<${tag}(?:\\s[^>]*)?>|</${tag}>`, 'g')
+    tokenRe.lastIndex = bodyStart
+    let depth = 1
+    let t
+    while ((t = tokenRe.exec(text))) {
+      depth += t[0].startsWith('</') ? -1 : 1
+      if (depth === 0) {
+        const offset = (text.slice(0, first.index).match(/\n/g) || []).length
+        return { body: text.slice(bodyStart, t.index), offset }
+      }
+    }
+    const offset = (text.slice(0, first.index).match(/\n/g) || []).length
+    return { body: text.slice(bodyStart), offset }
+  }
+  const t = grab('template')
+  const s = grab('style')
+  const sc = grab('script')
+  ctx.template = t.body
+  ctx.templateOffset = t.offset
+  ctx.style = s.body
+  ctx.styleOffset = s.offset
+  ctx.script = sc.body
+  ctx.scriptOffset = sc.offset
+  return ctx
+}
+
+/** 在指定 scope 的文本里按行找违规 */
+function scanScope(ctx, det) {
+  const scope = det.scope || 'all'
+  let body, offset
+  if (scope === 'template') [body, offset] = [ctx.template, ctx.templateOffset]
+  else if (scope === 'style') [body, offset] = [ctx.style, ctx.styleOffset]
+  else [body, offset] = [ctx.text, 0]
+
+  if (!body) return []
+  const hits = []
+  body.split('\n').forEach((line, i) => {
+    if (det.skip && det.skip.test(line)) return
+    if (!det.find.test(line)) return
+    hits.push({ line: i + 1 + offset, text: line.trim().slice(0, 90) })
+  })
+  return hits
+}
+
+// ── 执行检测 ────────────────────────────────────────────────────
+const rules = JSON.parse(readFileSync(RULES, 'utf8'))
+const byId = Object.fromEntries(rules.items.map((r) => [r.id, r]))
+
+const violations = []   // { rule, file, line, text }
+const checkedIds = new Set()
+
+// 已下架的组件文件不参与评分——它们既不在导航里也没挂载，
+// 扫出来的是「已封存的旧写法」，不是接入方的现行代码。
+// 判据：文件自身带 ⏸ 标记，或其入口 import 在挂载处被注释掉。
+// 「讲解脚手架」豁免标记（见 design-spec/CLAUDE.md 铁律 3「唯一例外」）
+const IGNORE = /audit-ignore(-file)?\s+\S/
+const SCAFFOLD = /规范展示页的讲解脚手架|【规范展示页的讲解脚手架】/
+
+const suspendedFiles = new Set()
+{
+  const entry = files.find((f) => /App\.vue$/.test(f))
+  if (entry) {
+    const txt = readFileSync(entry, 'utf8')
+    for (const m of txt.matchAll(/\/\/\s*import\s+(\w+)\s+from\s+'([^']+)'/g)) {
+      suspendedFiles.add(m[2].replace(/^\.\//, ''))
+    }
+  }
+}
+const isSuspended = (file, text) =>
+  /⏸\s*(暂停启用|已停用)/.test(text.slice(0, 400)) ||
+  [...suspendedFiles].some((p) => file.includes(p.replace(/\.vue$/, '')))
+
+for (const file of files) {
+  const raw = readFileSync(file, 'utf8')
+  if (isSuspended(file, raw)) continue
+  const ctx = parseFile(file)
+  for (const [id, det] of Object.entries(DETECTORS)) {
+    const rule = byId[id]
+    if (!rule) continue                 // 条目已删但检测器还在
+    if (!det.custom && !det.find) continue  // 未实现
+    if (det.files && !det.files.test(file)) continue
+    checkedIds.add(id)
+
+    let hits = det.custom ? det.custom(ctx) : scanScope(ctx, det)
+    // 规范展示页的「讲解脚手架」豁免（design-spec/CLAUDE.md 铁律 3 唯一例外）：
+    // 命中行前若有该标记注释，说明是为讲解组件局部而造的展示形态，不算私货
+    // 行级豁免：命中行的上一行写 `audit-ignore <理由>` 即跳过。
+    // 与规范里 @rule-skip 同一思路——例外必须显式声明且写明理由，
+    // 而不是在检测器里堆特例（那样规则会越来越不可读）。
+    if (IGNORE.test(raw)) {
+      const lines = raw.split('\n')
+      // 两种作用域：
+      //   `audit-ignore <理由>`            → 仅豁免紧随其后的命中（向上找 6 行）
+      //   `audit-ignore-file <id> <理由>`  → 豁免整个文件里该条目的全部命中
+      //     （演示页常需后者：Badge 各形态分散在几十行里，逐处声明既啰嗦又易漏）
+      const fileWide = new RegExp(`audit-ignore-file\\s+${id}\\b`).test(raw)
+      if (fileWide) {
+        hits = []
+      } else {
+        hits = hits.filter(
+          (h) => !IGNORE.test(lines.slice(Math.max(0, h.line - 7), h.line - 1).join('\n')),
+        )
+      }
+    }
+    if (SCAFFOLD.test(raw)) {
+      const lines = raw.split('\n')
+      hits = hits.filter((h) => {
+        const before = lines.slice(Math.max(0, h.line - 12), h.line - 1).join('\n')
+        return !SCAFFOLD.test(before)
+      })
+    }
+    for (const h of hits) {
+      // 报告路径以调用方 cwd 为基准（与用户输入的目标同一心智）；
+      // 若被扫目录不在 cwd 之下（相对路径会退化成一长串 ../../），则直接给绝对路径
+      const rel = relative(CWD, file)
+      const shown = rel.startsWith('..') ? file : rel
+      violations.push({ rule, file: shown, line: h.line, text: h.text, hint: det.hint })
+    }
+  }
+}
+
+// ── 计分 ────────────────────────────────────────────────────────
+// 分母 = 已实现检测且本次真的执行过的条目；未实现/人工项不计入，
+// 避免「机器查不了就默认给过」把分数抬虚。
+const scored = rules.items.filter((r) => checkedIds.has(r.id))
+const failedIds = new Set(violations.map((v) => v.rule.id))
+const passed = scored.filter((r) => !failedIds.has(r.id))
+
+const totalWeight = scored.reduce((s, r) => s + r.weight, 0)
+const passWeight = passed.reduce((s, r) => s + r.weight, 0)
+const score = totalWeight ? Math.round((passWeight / totalWeight) * 100) : 100
+
+const blocking = [...failedIds].filter((id) => byId[id].level === 'MUST')
+const ok = blocking.length === 0 && score >= PASS_SCORE
+
+// 未实现检测 + 人工判定 → 待人工确认清单
+const manual = rules.items.filter(
+  (r) => !checkedIds.has(r.id) && (r.detect === 'manual' || !IMPLEMENTED.has(r.id)),
+)
+
+// ── 输出 ────────────────────────────────────────────────────────
+if (JSON_OUT) {
+  console.log(
+    JSON.stringify(
+      {
+        target,
+        filesScanned: files.length,
+        score,
+        pass: ok,
+        blockingCount: blocking.length,
+        checked: scored.length,
+        violations: violations.map((v) => ({
+          id: v.rule.id,
+          level: v.rule.level,
+          cat: v.rule.cat,
+          title: v.rule.title,
+          file: v.file,
+          line: v.line,
+          text: v.text,
+          hint: v.hint,
+        })),
+        manualReview: manual.map((r) => ({ id: r.id, level: r.level, cat: r.cat, title: r.title })),
+      },
+      null,
+      2,
+    ),
+  )
+  process.exit(ok ? 0 : 1)
+}
+
+const LV = { MUST: '必须', SHOULD: '应该', MAY: '建议' }
+
+console.log(`\n设计规范评分  ${target}`)
+console.log('─'.repeat(64))
+console.log(`扫描 ${files.length} 个文件，执行 ${scored.length} 条检查\n`)
+
+if (violations.length && !QUIET) {
+  // 按条目归并，同一规则的多处违规聚在一起
+  const grouped = new Map()
+  for (const v of violations) {
+    if (!grouped.has(v.rule.id)) grouped.set(v.rule.id, { rule: v.rule, hint: v.hint, hits: [] })
+    grouped.get(v.rule.id).hits.push(v)
+  }
+  // MUST 优先
+  const order = [...grouped.values()].sort(
+    (a, b) => ['MUST', 'SHOULD', 'MAY'].indexOf(a.rule.level) - ['MUST', 'SHOULD', 'MAY'].indexOf(b.rule.level),
+  )
+  for (const g of order) {
+    console.log(`✗ [${LV[g.rule.level]}] ${g.rule.title}`)
+    console.log(`  ${g.hint}`)
+    for (const h of g.hits.slice(0, 5)) {
+      console.log(`    ${h.file}:${h.line}  ${h.text}`)
+    }
+    if (g.hits.length > 5) console.log(`    …另有 ${g.hits.length - 5} 处`)
+    console.log()
+  }
+}
+
+console.log('─'.repeat(64))
+console.log(`得分 ${score} / 100   ${ok ? '✓ 合规' : '✗ 不合规'}`)
+if (blocking.length) {
+  console.log(`⛔ ${blocking.length} 条「必须」未通过 —— 只要有一条未通过即判不合规，与总分无关`)
+}
+console.log(`   通过 ${passed.length} / ${scored.length} 条（按权重 ${passWeight} / ${totalWeight}）`)
+
+if (manual.length && !QUIET) {
+  console.log(`\n📋 另有 ${manual.length} 条需人工确认（机器判不了，不计入上面的分数）：`)
+  for (const r of manual.slice(0, 12)) {
+    console.log(`   · [${LV[r.level]}] ${r.title.slice(0, 62)}`)
+  }
+  if (manual.length > 12) console.log(`   …另有 ${manual.length - 12} 条，见评判标准页`)
+}
+
+console.log()
+process.exit(ok ? 0 : 1)

@@ -1,0 +1,39 @@
+/* ==================== 栅格 Grid（模式层布局约定类）====================
+   内容区 24 列栅格。规则全文见 references/efficiency-guide.md「栅格系统」。
+
+   ── 接入方速查 ────────────────────────────────────────────────
+   <div class="grid">
+     <div class="grid__col-12">左半</div>
+     <div class="grid__col-12">右半</div>
+   </div>
+
+   常用等分（列数必须 ≥6，即一行最多 4 等份）：
+     24        整行（全宽表格 / 全宽表单）
+     12 + 12   左右对半
+     8 + 8 + 8 三列卡片
+     6 × 4     四列数据卡片（最小粒度）
+     16 + 8    主内容 + 侧边信息栏
+   ─────────────────────────────────────────────────────────────
+
+   为什么用 CSS Grid 而不是 el-row/el-col：
+     EP 的 el-row 走 flex + 负 margin，与本系统「间距一律走令牌、不写 margin」
+     的纪律冲突，且 :gutter 只接受数字（拿不到 CSS 变量）。原生 grid 的 gap
+     可直接吃 --iflyv-grid-gutter，改令牌即全站同步。
+
+   @depends-on: --iflyv-grid-columns / --iflyv-grid-gutter（design-token/css/spacing.scss）
+   @when-changed: 水槽取 spacing-4（16px）= 「卡片之间」同档，保证栅格并排的卡片
+                  与非栅格场景的卡片间距一致。改水槽须同步 efficiency-guide.md 栅格表。 */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--iflyv-grid-columns), minmax(0, 1fr));
+  gap: var(--iflyv-grid-gutter);
+}
+
+/* 列宽跨度：只提供 ≥6 的档位——「模块宽度不得小于 6 列」是硬规则
+   （见 foundations.md 禁止事项），不提供 col-1~5 从源头上杜绝违规。 */
+@each $span in (6, 8, 10, 12, 14, 16, 18, 20, 24) {
+  .grid__col-#{$span} {
+    grid-column: span #{$span};
+  }
+}

@@ -1,0 +1,63 @@
+/* ======================================================================== */
+/* ========================= Switch 样式覆盖 =============================== */
+/* ======================================================================== */
+
+.el-switch {
+  height: calc(var(--el-component-size) - 12px);
+  /* active-text/inactive-text 文字标签：常规字重、与开关本体保持 spacing-2 间距。
+     文字色对齐 Checkbox 标签（常态/激活 = text-1，禁用态 = 禁用灰），见下方规则。
+     ⚠️ margin 归零后由下方 --left/--right 规则单侧补间距：只在「贴开关的那一侧」留白，
+     文字外侧不留——外侧留白属于开关与相邻元素的关系，由父容器 gap 决定，
+     写在这里会与 gap 叠加（并排多个开关时视觉间距被撑大、与设计稿对不上）。 */
+  .el-switch__label { font-weight: 400; margin: 0; }
+  /* 文字与开关本体之间保留 spacing-2（8px）；文字外侧不留白——
+     外侧留白属于开关与相邻元素的关系，由父容器 gap 决定，写在这里会与 gap 叠加。 */
+  .el-switch__label--right { margin-inline-start: var(--iflyv-spacing-2); }
+  .el-switch__label--left { margin-inline-end: var(--iflyv-spacing-2); }
+}
+
+/* Switch 文字标签取色，对齐 Checkbox 标签的取色规则：
+   - 激活/常态：text-1（与 Checkbox 常态文字一致，深色，不用主色绿）
+   - 禁用态：text-4（禁用文字令牌 = gray-3 #A9B0B8），与 Checkbox「禁用 / 选中禁用」标签一致。
+     禁用态不限定 .is-active——关闭态的 active-text 标签不带 .is-active，需覆盖全部 label。 */
+.el-switch__label.is-active { color: var(--iflyv-text-1); }
+.el-switch.is-disabled .el-switch__label { color: var(--iflyv-text-4); }
+
+/* 禁用态透明度归位：EP 默认在整个 .el-switch 容器上加 opacity:0.6，会把文字标签一起降淡，
+   导致禁用文字比 Checkbox 禁用标签更浅、两者不一致。改为只让开关本体（core）降淡，
+   文字标签用实色 text-4 → 与 Checkbox 禁用文字完全一致。 */
+.el-switch.is-disabled { opacity: 1; }
+.el-switch.is-disabled .el-switch__core { opacity: 0.6; }
+
+/* 去掉轨道底板描边：EP 默认给 .el-switch__core 加 1px 边框，关闭态灰底下会露出一圈描边。
+   本设计里开关轨道为纯色底板、不要边框（开启态被绿底盖住，仅关闭态可见），统一抹掉。 */
+.el-switch__core { border-color: transparent; }
+
+/* 字号 rem 化：覆盖 EP 尺寸变体 baked-in px */
+.el-switch { font-size: var(--iflyv-font-size-14); }
+.el-switch--small { font-size: var(--iflyv-font-size-12); }
+/* label 字号 rem 化 */
+.el-switch__label { font-size: var(--iflyv-font-size-14); }
+.el-switch__label * { font-size: var(--iflyv-font-size-14); }
+.el-switch--large .el-switch__label * { font-size: var(--iflyv-font-size-14); }
+.el-switch--small .el-switch__label { font-size: var(--iflyv-font-size-12); }
+.el-switch--small .el-switch__label * { font-size: var(--iflyv-font-size-12); }
+.el-switch__inner-wrapper { font-size: var(--iflyv-font-size-12); }
+
+/* Switch 开启态：背景保持 brand-primary，不跟随 brand-text 提亮 */
+[data-theme="dark"] .el-switch {
+  --el-switch-on-color: var(--iflyv-brand-primary);
+}
+
+/* RTL：覆盖 EP 硬编码物理 margin/position。
+   单侧间距（spacing-2）在上方 .el-switch 块内给，这里只负责清掉 EP 的物理 margin。 */
+.el-switch__label--left { margin-right: unset; }
+.el-switch__label--right { margin-left: unset; }
+.el-switch__core .el-switch__action { left: unset; inset-inline-start: 1px; }
+.el-switch.is-checked .el-switch__core .el-switch__action { left: unset; inset-inline-start: calc(100% - 17px); }
+.el-switch--large.is-checked .el-switch__core .el-switch__action { left: unset; inset-inline-start: calc(100% - 21px); }
+.el-switch--small.is-checked .el-switch__core .el-switch__action { left: unset; inset-inline-start: calc(100% - 13px); }
+/* --wide 变体（文字内嵌开关内部）的 label RTL 规则：当前未启用宽开关，启用时放开。
+   与「带不带文字」无关，是 --wide 变体本身的 RTL 处理。
+.el-switch--wide .el-switch__label.el-switch__label--left span { left: unset; inset-inline-start: 10px; }
+.el-switch--wide .el-switch__label.el-switch__label--right span { right: unset; inset-inline-end: 10px; } */

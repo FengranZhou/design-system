@@ -1,0 +1,23 @@
+/* ======================================================================== */
+/* =========== Popper 共享样式（下拉面板：去箭头 + 间距 + 圆角） ============= */
+/* ======================================================================== */
+
+/* 下拉菜单：去箭头 + 间距 + 圆角 */
+.el-select__popper .el-popper__arrow,
+.el-cascader__dropdown .el-popper__arrow,
+.el-picker__popper .el-popper__arrow,
+.el-dropdown__popper .el-popper__arrow { display: none; }
+
+.el-select__popper.el-popper[data-popper-placement^="bottom"],
+.el-picker__popper.el-popper[data-popper-placement^="bottom"],
+.el-dropdown__popper.el-popper[data-popper-placement^="bottom"] { margin-top: -8px; }
+.el-select__popper.el-popper[data-popper-placement^="top"],
+.el-picker__popper.el-popper[data-popper-placement^="top"],
+.el-dropdown__popper.el-popper[data-popper-placement^="top"] { margin-bottom: -8px; }
+.el-cascader__dropdown.el-popper[data-popper-placement^="bottom"] { margin-top: -8px; }
+.el-cascader__dropdown.el-popper[data-popper-placement^="top"] { margin-bottom: -8px; }
+
+.el-select__popper.el-popper,
+.el-cascader__dropdown.el-popper,
+.el-picker__popper.el-popper,
+.el-dropdown__popper.el-popper { border-radius: var(--iflyv-radius-sm); }
