@@ -5,7 +5,12 @@
          「各图型细则」（数量上限与硬判据）；只是一个核心数字→别画图，
          直接用 --iflyv-font-number-display 数字字阶。
   引用：  import { Chart } from '<path>/design-spec/components'
-         ⚠ 本组件依赖 echarts（按需引 echarts/core，不全量）——接入方需自装：pnpm add echarts
+         ⚠ 本组件依赖 echarts（按需引 echarts/core，不全量）——接入方须做两步，缺一即报错：
+           ① pnpm add echarts
+           ② vite.config.ts 里 resolve.dedupe + alias 指向自己的 node_modules，
+              四个包一个都不能少：['vue','element-plus','lucide-vue-next','echarts']
+              —— 本组件在使用方目录之外，其依赖装在使用方 node_modules；不显式指过去
+                 会解析出两份 vue 实例（表现为渲染异常 / 难以定位的报错）。范本 demo/vite.config.ts
   用法（形态 = 基础型 × 正交配置，勿为组合造新类型）：
     环形图：  <Chart type="donut" :data="…" center-title="104" center-label="课程资源" />
                                              ← 超 5 类源头自动并「其他」（保留前 4 大类，「其他」恒排末位）
