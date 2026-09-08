@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>antd3 适配层试点 — Button</title>
+    <!-- ⚠ antd 3 的依赖链（resize-observer-polyfill 等）是 CommonJS 时代产物，
+         直接引用 Node 全局变量 `global`。webpack 4 会自动注入 polyfill，
+         Vite 5 不会 → 运行时 `ReferenceError: global is not defined` 白屏。
+         必须在任何模块加载前把 global 指向 globalThis。
+         （Vite 的 `define` 对已预打包的 deps 无效，故只能在这里 shim。）
+         这是 antd3 + 现代构建工具的固有摩擦，与设计系统无关，见 DIFF #9。 -->
+    <script>
+      window.global = window.globalThis
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
