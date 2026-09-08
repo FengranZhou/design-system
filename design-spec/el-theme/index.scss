@@ -4,69 +4,69 @@
 /* 加载顺序：Element Plus CSS → design-token/index.scss → 本文件            */
 
 /* 全局变量映射：--iflyv-* → --el-* */
-@use './var-mapping.scss';
+@import './var-mapping.scss';
 
 /* 组件级样式覆盖（A-Z） */
-@use './components/alert.scss';
-@use './components/anchor.scss';
-@use './components/avatar.scss';
+@import './components/alert.scss';
+@import './components/anchor.scss';
+@import './components/avatar.scss';
 /* ⏸ 暂停启用：回到顶部（demo 已同步暂停展示）。需要时放开注释，backtop.scss 文件保留未动。 */
-/* @use './components/backtop.scss'; */
-@use './components/badge.scss';
-@use './components/breadcrumb.scss';
+/* @import './components/backtop.scss'; */
+@import './components/badge.scss';
+@import './components/breadcrumb.scss';
 /* ⏸ el-menu 整体停用（侧边导航一律走业务组件 PageFrame）——menu.scss 只有 RTL 兜底、
-   零外观适配，故连样式都不编译。文件保留未动，需要时放开：@use './components/menu.scss'; */
-@use './components/button.scss';
-@use './components/cascader.scss';
-@use './components/checkbox.scss';
-@use './components/collapse.scss';
-@use './components/color-picker.scss';
-@use './components/datepicker.scss';
-@use './components/descriptions.scss';
-@use './components/dialog.scss';
-@use './components/divider.scss';
-@use './components/drawer.scss';
-@use './components/dropdown.scss';
-@use './components/empty.scss';
-@use './components/form.scss';
-@use './components/input.scss';
-@use './components/input-number.scss';
-@use './components/link.scss';
-@use './components/loading.scss';
-@use './components/message.scss';
-@use './components/message-box.scss';
-@use './components/notification.scss';
-@use './components/page-header.scss';
-@use './components/pagination.scss';
-@use './components/popconfirm.scss';
-@use './components/popover.scss';
-@use './components/popper.scss';
-@use './components/progress.scss';
-@use './components/radio.scss';
-@use './components/rate.scss';
-@use './components/result.scss';
-@use './components/scrollbar.scss';
-@use './components/select.scss';
-@use './components/skeleton.scss';
-@use './components/slider.scss';
-@use './components/statistic.scss';
-@use './components/steps.scss';
-@use './components/switch.scss';
-@use './components/table.scss';
-@use './components/tabs.scss';
-@use './components/tag.scss';
-@use './components/timeline.scss';
-@use './components/tooltip.scss';
-@use './components/tour.scss';
-@use './components/transfer.scss';
-@use './components/tree.scss';
-@use './components/upload.scss';
+   零外观适配，故连样式都不编译。文件保留未动，需要时放开：@import './components/menu.scss'; */
+@import './components/button.scss';
+@import './components/cascader.scss';
+@import './components/checkbox.scss';
+@import './components/collapse.scss';
+@import './components/color-picker.scss';
+@import './components/datepicker.scss';
+@import './components/descriptions.scss';
+@import './components/dialog.scss';
+@import './components/divider.scss';
+@import './components/drawer.scss';
+@import './components/dropdown.scss';
+@import './components/empty.scss';
+@import './components/form.scss';
+@import './components/input.scss';
+@import './components/input-number.scss';
+@import './components/link.scss';
+@import './components/loading.scss';
+@import './components/message.scss';
+@import './components/message-box.scss';
+@import './components/notification.scss';
+@import './components/page-header.scss';
+@import './components/pagination.scss';
+@import './components/popconfirm.scss';
+@import './components/popover.scss';
+@import './components/popper.scss';
+@import './components/progress.scss';
+@import './components/radio.scss';
+@import './components/rate.scss';
+@import './components/result.scss';
+@import './components/scrollbar.scss';
+@import './components/select.scss';
+@import './components/skeleton.scss';
+@import './components/slider.scss';
+@import './components/statistic.scss';
+@import './components/steps.scss';
+@import './components/switch.scss';
+@import './components/table.scss';
+@import './components/tabs.scss';
+@import './components/tag.scss';
+@import './components/timeline.scss';
+@import './components/tooltip.scss';
+@import './components/tour.scss';
+@import './components/transfer.scss';
+@import './components/tree.scss';
+@import './components/upload.scss';
 
 /* 设计模式层样式（非 EP 组件覆盖，而是模式级布局约定类，
    规则全文见 references/patterns/*.md） */
-@use './patterns/toolbar.scss';
-@use './patterns/grid.scss';
+@import './patterns/toolbar.scss';
+@import './patterns/grid.scss';
 /* PageFrame 收起态导航浮层：面板 teleport 到 body、scoped 构不着，故归全局层
    （非对外约定类，由业务组件 PageFrame 内部渲染，接入方无需引用） */
-@use './patterns/page-frame-flyout.scss';
-@use './patterns/metric-strip.scss';
+@import './patterns/page-frame-flyout.scss';
+@import './patterns/metric-strip.scss';

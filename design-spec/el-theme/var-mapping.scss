@@ -1,7 +1,7 @@
 /* Element Plus 主题变量映射（--iflyv-* → --el-*） */
 /* 加载顺序：EP CSS → design-token → 本文件，通过 CSS 变量覆盖，不侵入源码 */
 
-:root {
+html:root {  /* 提高优先级，确保覆盖 Element Plus 的 :root */
   /* 品牌色 Primary */
   --el-color-primary: var(--iflyv-brand-primary);
   --el-color-primary-light-1: var(--iflyv-accent-5);
