@@ -49,3 +49,69 @@
    - **由此得出**：对"正确接入（引全三层 + 不拷贝 + 不写私货）"的项目，**`demo/` 的显示效果就是它们引用后的标准真实效果，分毫不差**；对拷贝式 / 漏引 / 魔改式接入的项目，不保证同步——那是接入方式错误，不是机制问题。
 
 5. **落地前自检** —— 每次改动完成前，逐条核对上述各点；命中「找不到令牌 / 找不到组件 / 想在使用方 scoped 覆盖组件外观 / 引用方接入方式不合规」时必须暂停并向用户说明，由用户决定新增全局定义还是调整方案。**页面 / 模块布局类改动还须输出「样式值对账清单」**（每处新写间距 / 圆角 / 字阶 / 颜色 / 组件档位 → 场景锚点，标不出的升级提问，完整要求见 `design-spec/CLAUDE.md` 同条）。
+
+---
+
+## 🚀 双仓推送流程（用户说「push 一下，打好 tag 和备注」时照此执行）
+
+本仓库同时维护在**两个远程**，两边**内容一致但 commit hash 不同**——因为内网仓强制校验
+提交邮箱，历史被单独改写过一次。**不要试图让两边 hash 一致**（那需要强推个人仓，已排除）。
+
+| remote | 地址 | 分支 | 说明 |
+|---|---|---|---|
+| `origin` | GitHub `FengranZhou/design-system` | `main` | 个人仓，日常开发主线 |
+| `iflytek` | `code.iflytek.com:30004/.../xy-design-system` | `master` | 公司内网仓 |
+
+**本地 `iflytek-sync-done` 分支** = 内网那条历史的本地副本，**别删**，增量同步靠它。
+
+### 执行步骤
+
+```bash
+# ① 正常提交到 main（user.email 已配 frzhou@iflytek.com，两边都合规）
+git add -A && git commit -m "..."
+
+# ② 打 tag（版本号见下方规则），备注写清「新增什么能力 / 改了什么 / 影响面」
+git tag -a vX.Y.Z -F - <<'EOF'
+vX.Y.Z —— 一句话主题
+（分组列出：新增能力 / 组件改进 / 修复 / 仓库变更）
+EOF
+
+# ③ 推个人仓
+git push origin main --follow-tags
+
+# ④ 同步到内网：把 main 上的新提交 cherry-pick 到 sync 分支
+git checkout iflytek-sync-done
+git cherry-pick <上次同步后 main 上的新提交…>     # 多个提交用 A^..B
+git checkout main                                  # 立刻切回，避免误在 sync 分支上开发
+
+# ⑤ 推内网（分支名不同，要写映射）
+git push iflytek iflytek-sync-done:master
+git tag -a vX.Y.Z-iflytek <sync分支上对应的commit> -F - <<'EOF'
+（同 ② 的备注内容）
+EOF
+git push iflytek refs/tags/vX.Y.Z-iflytek:refs/tags/vX.Y.Z
+```
+
+### 版本号规则（语义化，我自行判断后先告知再执行）
+
+- **次版本号**（`v1.19.0` → `v1.20.0`）：新增组件 / 新增能力 / 新增一整条机制
+- **修订号**（`v1.19.0` → `v1.19.1`）：修 bug、补文档、改口径、微调外观
+
+⚠️ **查最新 tag 必须用**：
+
+```bash
+git tag -l | grep -v -- '-iflytek$' | sort -V | tail -1
+```
+
+两个坑都要避开：
+- 直接 `git tag -l | tail` 是**字符串排序**，会把 `v1.9.0` 排在 `v1.18.0` 后面（真实踩过）
+- 不排除 `-iflytek` 后缀的话，内网 tag 会排到最前面污染结果（真实踩过）
+
+### 三条硬纪律
+
+1. **绝不强推 `origin`** —— 个人仓历史已发布，强推会破坏它。内网侧的差异用 sync 分支消化。
+2. **`filter-branch` 绝不加 `-- --all`** —— 会把 main 和所有 tag 一起改写（真实踩过，
+   靠 `refs/original/` 才恢复回来）。只对目标分支操作。
+3. **推内网前先测连通** —— `git ls-remote iflytek` 失败时先看是权限还是网络，
+   不要反复重试推送。内网仓拒绝非公司邮箱的提交，报错是
+   `未通过Commit邮箱校验`。
