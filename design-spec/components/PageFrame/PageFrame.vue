@@ -56,7 +56,11 @@
     默认插槽      内容区（白色圆角卡内部；内边距由页面自定）
     #course-card  整体替换侧边栏课程卡
     #breadcrumb   整体替换顶栏左侧面包屑区
-    #topbar-right 顶栏右侧追加自定义入口（插在帮助图标之前）
+    #topbar-right     顶栏右侧追加自定义入口，插在内置入口【之前】（帮助图标左侧）
+    #topbar-right-end 顶栏右侧追加自定义入口，插在内置入口【之后】（头像右侧）
+                      ↑ 两个按需选用、可同时用。自定义入口若是纯图标，
+                        套 <el-tooltip :show-after="300"> 补全称、并复用约定 class
+                        page-frame__icon-btn 拿到与内置入口一致的 28px 热区与配色。
   最小宽度：整页框架有 1200px 宽度下限（--iflyv-layout-min-width）。承载容器窄于此值时，
            框架自身出横向滚动条、内部布局不再压缩——接入方无需做任何事，也勿在外层
            另加 overflow-x / 自设 min-width 覆盖（会与本机制打架）。
@@ -248,6 +252,9 @@
             />
           </slot>
           <div class="page-frame__topbar-right">
+            <!-- 两个追加位：内置入口（帮助/消息/头像）之前与之后各一个。
+                 分两个而非一个可传位置参数——插槽位置是模板结构，
+                 用 prop 控制要在模板里写条件分支，反而更绕。 -->
             <slot name="topbar-right" />
             <!-- 纯图标入口无文字标签，一律用 el-tooltip 补全称（placement 统一 bottom：
                  顶栏贴页面顶边，气泡只能向下展开）。气泡外观走 tooltip.scss 源头，此处不写样式 -->
@@ -280,6 +287,7 @@
             >
               <UserAvatar :role="avatarRole" :src="avatarSrc" :size="28" />
             </div>
+            <slot name="topbar-right-end" />
           </div>
         </header>
         <!-- 内容区可滚：用 el-scrollbar（基础组件）而非 overflow:auto——
