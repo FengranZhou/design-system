@@ -1,0 +1,483 @@
+/* ======================================================================== */
+/* ==================== Button 样式覆盖（antd 3 适配层）================== */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/button.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md —— 凡本文件做不到 EP 版效果的，必须在那里登记。 */
+
+/* ┌─ 接入方速查：按钮能力全在下面，直接复制即可，无需读实现 ─────────────┐
+   类型（互斥选一）：
+     次按钮   <Button>文字</Button>
+     主按钮   <Button type="primary">文字</Button>
+     危险按钮 <Button className="btn-danger">文字</Button>   ← 见 DIFF #1
+     文本款   在以上任意基础上加 className="btn-text"        ← 见 DIFF #2
+   状态（互斥）：
+     禁用 <Button disabled>   加载 <Button loading>
+   配置项（可自由叠加在任意类型/状态上，正交）：
+     带图标   <Button><IconCmp className="btn-icon" />文字</Button>   ← 见 DIFF #3
+     带下拉箭头 <Button>文字 <ChevronDown className="btn-caret" /></Button>
+     当 Dropdown 触发器 <Button>文字 <ChevronDown className="dropdown-caret" /></Button>
+              （展开真值 .is-expanded 由使用方绑 Dropdown 的 onVisibleChange）
+     入口引导 › （⚠ 仅限 btn-text）<Button className="btn-text">文字 <ChevronRight className="btn-entry" /></Button>
+   → 任意组合都已支持，无需在接入方写任何样式。
+     改任何按钮外观 = 改本文件，所有接入项目自动同步。
+   └────────────────────────────────────────────────────────────────────┘ */
+
+.ant-btn {
+  /* ==================== 基础形制 ==================== */
+  border-radius: var(--iflyv-radius-sm);
+  font: var(--iflyv-font-body-sub);
+  /* ⚠ 组件高度 36px 目前只定义在 el-theme/var-mapping.scss 的 --el-component-size，
+     不在共用令牌层——antd3 不能依赖 EP 映射层。见 DIFF #7：应把它上提进 design-token。
+     在上提前，此处用本适配层的临时变量兜住，不写裸值。 */
+  height: var(--iflyv-a3-component-size);
+  min-width: 80px;
+  padding: 0 15px;
+
+  /* ⚠ 内部布局必须改成 inline-flex 居中——对齐 EP 版基类
+     （EP: display:inline-flex; align-items:center; justify-content:center; line-height:1）。
+     antd 3 基类是 `display:inline-block` + 靠 vertical-align 排内容，
+     而 `vertical-align:middle` 对齐的是 **x-height 中线**、不是真正的盒中心，
+     中文文案下图标/箭头会比文字低约 1.3px，三者视觉不齐（实测发现）。
+     改 flex 后每个子元素都按盒中心对齐，图标/文字/箭头严格居中。 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  /* ⚠ 不要在此写 line-height:1 —— 行高必须由上面 `font: var(--iflyv-font-body-sub)`
+     整档提供（400 14px/20px）。EP 基类虽写了 line-height:1，但设计系统覆盖层的
+     font 简写在其之后，最终 EP 渲染出来就是 20px；此处若补 line-height:1
+     会把整档字阶拆散（违反「多档位体系必须整档取用」铁律）。
+     flex 居中不依赖 line-height，故无需覆盖。 */
+  color: var(--iflyv-text-1);
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default);
+  /* antd 3 基类带 box-shadow: 0 2px 0 rgba(0,0,0,.015)，EP 版无阴影，压掉 */
+  box-shadow: none;
+  /* antd 3 用 text-shadow 提亮 primary 文字，EP 版无，压掉 */
+  text-shadow: none;
+
+  /* ⚠ 关掉 antd 3 的「两字中文自动加宽字距」（见 DIFF #8）。
+     antd 3 对恰好两个汉字的按钮文案（确定/取消/保存/删除…）自动挂
+     .ant-btn-two-chinese-chars，加 letter-spacing: .34em 撑成"确 定"。
+     EP 版无此行为，不关掉则所有两字中文按钮都比 EP 版宽一截、字距明显不同。
+     这是本试点中最隐蔽的一处差异——不看两字按钮根本发现不了。 */
+  &.ant-btn-two-chinese-chars {
+    letter-spacing: normal;
+
+    &::first-letter {
+      letter-spacing: normal;
+    }
+    > *:not(.anticon) {
+      margin-right: 0;
+      letter-spacing: normal;
+    }
+  }
+
+  /* 状态切换过渡（与 EP 版同档同曲线） */
+  transition: background-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              border-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              transform var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+  /* 按下反馈：下沉 1px。
+     antd 3 无 .is-disabled 类，禁用走原生 [disabled] 属性；loading 走 .ant-btn-loading */
+  &:active:not([disabled]):not(.ant-btn-loading) {
+    transform: translateY(1px);
+  }
+
+  /* 鼠标点击不显示外框；键盘 Tab 聚焦显示外框（a11y，与 EP 版同口径）
+     @depends-on: 两条配套使用才能实现「鼠标无框 + 键盘有框」。
+     @when-changed: 删 :focus 那条 → 鼠标点击后框留着不消失；
+                    删 :focus-visible 那条 → 键盘用户失去聚焦反馈。 */
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--iflyv-brand-primary);
+    outline-offset: 1px;
+  }
+  &.btn-danger:focus-visible {
+    outline-color: var(--iflyv-danger-primary);
+  }
+
+  /* ==================== 下拉箭头 .btn-caret ====================
+     与文字保持一致小间距；hover 按钮时箭头旋转 180°（向上翻，暗示可展开）。
+     vertical-align:middle 保证「前置图标 + 文字 + 后置箭头」三者同排时垂直居中对齐。 */
+  .btn-caret {
+    margin-inline-start: var(--iflyv-spacing-1);
+    flex: none; /* flex 布局下防止图标被压缩 */
+    transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+  }
+  &:hover:not([disabled]):not(.ant-btn-loading) .btn-caret {
+    transform: rotate(180deg);
+  }
+
+  /* ==================== Dropdown 触发器箭头 .dropdown-caret ====================
+     与 .btn-caret 的区别：展开时转（由使用方绑 .is-expanded），而非 hover 时转。 */
+  .dropdown-caret {
+    margin-inline-start: var(--iflyv-spacing-1);
+    flex: none;
+    transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+
+    &.is-expanded {
+      transform: rotate(180deg);
+    }
+  }
+
+  /* ==================== 按钮内图标 ====================
+     ⚠ 与 EP 版最大的结构差异：EP 用 #icon 插槽包出 .el-icon 容器，
+       antd 3 没有等价插槽，图标是 children 里的兄弟节点。
+       故改用约定 class .btn-icon 承载（见 DIFF #3）。 */
+  .btn-icon {
+    font-size: var(--iflyv-font-size-16);
+    width: 1em;
+    height: 1em;
+    flex: none;
+
+    & + span,
+    & + * {
+      margin-inline-start: var(--iflyv-spacing-1); /* 图标↔文字间距 4px */
+    }
+  }
+
+  /* 【图标+文字】按钮里，图标比文字弱一档取 icon-2 ——
+     图标是文字的辅助修饰，与文字同为 text-1 会让两者争夺视线。
+     判据 = 无类型修饰符：只有默认按钮与无类型 text 按钮的文字是黑色 text-1，
+     图标才需要弱一档；主/危险按钮的文字本就是白色或语义色，图标必须跟着文字走。
+     排除态：禁用（图标随文字走 text-4）/ 加载（spinner 取色另定）/ hover·active（text 按钮转品牌色一起变）。 */
+  &:not(.ant-btn-primary):not(.btn-danger):not([disabled]):not(.ant-btn-loading):not(:hover):not(:active) {
+    .btn-icon:not(:only-child) {
+      color: var(--iflyv-icon-2);
+    }
+  }
+
+  /* ==================== 默认按钮交互态 ==================== */
+  /* hover：文字色不变（text-1），填充灰底 gray-1，常规描边。
+     ⚠ 必须排除 .btn-text——文本款无底，否则本条会给它填上灰底（特异度更高，压过 btn-text 段）。 */
+  &:hover:not([disabled]):not(.btn-text) {
+    color: var(--iflyv-text-1);
+    background-color: var(--iflyv-bg-inset);
+    border-color: var(--iflyv-border-default);
+  }
+  /* focus 但非 hover/active：复位到**常态**外观。
+     ⚠ 对齐 EP 版的 `:not(.is-text):focus:not(:hover)` 口径——
+     只为压掉 antd 自带的 `.ant-btn:focus{color:蓝;border:蓝}`，
+     **不能**给 focus 配 hover 外观，否则点完鼠标移开、外观停在 hover 态不还原。实测翻车过。 */
+  &:focus:not(:hover):not(:active):not([disabled]):not(.btn-text) {
+    color: var(--iflyv-text-1);
+    background-color: var(--iflyv-bg-panel);
+    border-color: var(--iflyv-border-default);
+  }
+  /* active：与 hover 一致（gray-1），按下反馈通过 transform: translateY(1px) 体现 */
+  &:active:not([disabled]):not(.btn-text) {
+    color: var(--iflyv-text-1);
+    background-color: var(--iflyv-bg-inset);
+    border-color: var(--iflyv-border-default);
+  }
+
+  /* ==================== 默认按钮禁用/加载态 ====================
+     antd 3 禁用态是 [disabled] 属性 + .ant-btn[disabled]，且带自己的灰底，需压掉 */
+  &[disabled],
+  &[disabled]:hover,
+  &[disabled]:active,
+  &[disabled]:focus {
+    color: var(--iflyv-text-4);
+    background-color: var(--iflyv-bg-panel);
+    border-color: var(--iflyv-border-default);
+  }
+
+  /* 仅【默认按钮】loading 态：文字用禁用色，与默认按钮禁用态一致。
+     必须排除 primary/danger/text，否则会把它们的白色文字一起染成浅灰。 */
+  &.ant-btn-loading:not([disabled]):not(.ant-btn-primary):not(.btn-danger):not(.btn-text) {
+    color: var(--iflyv-text-4);
+    background-color: var(--iflyv-bg-panel);
+    border-color: var(--iflyv-border-default);
+  }
+
+  /* ==================== 主按钮 Primary ==================== */
+  &.ant-btn-primary {
+    color: var(--iflyv-text-on-dark);
+    background-color: var(--iflyv-brand-primary);
+    border-color: var(--iflyv-brand-primary);
+
+    /* ⚠ :not(.btn-text) 必不可少——文本款+主色是无底纯文字，
+       不排除的话本条（特异度 0,4,1）会压过 .btn-text 段（0,3,1），
+       hover 时给它填上品牌绿实心底、白字，变成一个绿色胶囊。实测翻车过。 */
+    &:hover:not([disabled]):not(.btn-text) {
+      color: var(--iflyv-text-on-dark);
+      background-color: var(--iflyv-brand-hover);
+      border-color: var(--iflyv-brand-hover);
+    }
+    /* focus 非 hover：复位常态品牌色（压 antd 蓝，不残留 hover 色） */
+    &:focus:not(:hover):not(:active):not([disabled]):not(.btn-text) {
+      color: var(--iflyv-text-on-dark);
+      background-color: var(--iflyv-brand-primary);
+      border-color: var(--iflyv-brand-primary);
+    }
+    &:active:not([disabled]):not(.btn-text) {
+      background-color: var(--iflyv-brand-pressed);
+      border-color: var(--iflyv-brand-pressed);
+    }
+
+    &[disabled],
+    &[disabled]:hover,
+    &[disabled]:active,
+    &[disabled]:focus {
+      color: var(--iflyv-text-on-dark);
+      background-color: var(--iflyv-brand-disabled);
+      border-color: var(--iflyv-brand-disabled);
+    }
+
+    /* loading 态不带 disabled，直接设浅色底，与禁用态观感一致 */
+    &.ant-btn-loading:not([disabled]) {
+      color: var(--iflyv-text-on-dark);
+      background-color: var(--iflyv-brand-disabled);
+      border-color: var(--iflyv-brand-disabled);
+    }
+  }
+
+  /* ==================== 危险按钮 Danger ====================
+     ⚠ antd 3 无 type="danger" 的等价语义（其 type="danger" 是红色实心但色值/状态机不同），
+       为保证与 EP 版口径一致，统一用约定 class .btn-danger（见 DIFF #1）。 */
+  &.btn-danger {
+    color: var(--iflyv-text-on-dark);
+    background-color: var(--iflyv-danger-primary);
+    border-color: var(--iflyv-danger-primary);
+
+    /* ⚠ 同 primary：必须排除 .btn-text，否则文本款+危险 hover 会变红色实心块 */
+    &:hover:not([disabled]):not(.btn-text) {
+      color: var(--iflyv-text-on-dark);
+      background-color: var(--iflyv-danger-hover);
+      border-color: var(--iflyv-danger-hover);
+    }
+    /* focus 非 hover：复位常态危险色 */
+    &:focus:not(:hover):not(:active):not([disabled]):not(.btn-text) {
+      color: var(--iflyv-text-on-dark);
+      background-color: var(--iflyv-danger-primary);
+      border-color: var(--iflyv-danger-primary);
+    }
+    &:active:not([disabled]):not(.btn-text) {
+      background-color: var(--iflyv-danger-pressed);
+      border-color: var(--iflyv-danger-pressed);
+    }
+
+    &[disabled],
+    &[disabled]:hover,
+    &[disabled]:active,
+    &[disabled]:focus {
+      color: var(--iflyv-text-on-dark);
+      background-color: var(--iflyv-danger-disabled);
+      border-color: var(--iflyv-danger-disabled);
+    }
+
+    &.ant-btn-loading:not([disabled]) {
+      color: var(--iflyv-text-on-dark);
+      background-color: var(--iflyv-danger-disabled);
+      border-color: var(--iflyv-danger-disabled);
+    }
+  }
+
+  /* ==================== 文字按钮 Text ====================
+     设计取向：无背景底、hover/active 仅文字变色——语义是"通用轻量按钮"，外观最干净。
+     ⚠ antd 3 无 text 形态（其 type="link" 是蓝色链接语义），故用约定 class .btn-text（见 DIFF #2）。 */
+  &.btn-text {
+    padding: 0;
+    min-width: 0;
+    height: auto;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+
+    &:hover,
+    &:active,
+    &:focus {
+      background-color: transparent;
+      border-color: transparent;
+    }
+
+    /* 无类型 text 按钮。
+       ⚠ 必须排除 .ant-btn-loading——加载态不可交互，hover 不该变品牌色
+         （EP 版口径：loading 时靠文字变淡表达"处理中"，hover 无反馈）。 */
+    &:not(.ant-btn-primary):not(.btn-danger):not([disabled]):not(.ant-btn-loading) {
+      /* 「纯图标」形态（行内删除、更多等入口）取 icon-2 ——
+         与顶栏等处的纯图标入口同色阶，避免图标按钮比正文还重、在列表里抢戏。
+         判据 = 图标是唯一子节点（无文案）。 */
+      .btn-icon:only-child {
+        color: var(--iflyv-icon-2);
+      }
+
+      /* ⚠ 只对 :hover/:active 变色，**不含 :focus**——与 EP 版口径一致
+         （EP 是 `:not(.is-text):focus`，即 text 按钮完全不吃 focus 变色）。
+         点击会留下 focus，若 focus 也变色，点完文字会**停在绿色不还原**。实测翻车过。
+         但仍需把 antd 自带的 `.ant-btn:focus{color:蓝}` 压掉 → 见下方 focus 复位段。 */
+      &:hover,
+      &:active {
+        color: var(--iflyv-brand-text);
+        .btn-icon:only-child { color: var(--iflyv-brand-text); }
+      }
+      /* focus 但非 hover：复位到常态色（压掉 antd 的蓝，又不残留 hover 绿） */
+      &:focus:not(:hover):not(:active) {
+        color: var(--iflyv-text-1);
+        .btn-icon:only-child { color: var(--iflyv-icon-2); }
+      }
+    }
+
+    &.ant-btn-primary:not([disabled]):not(.ant-btn-loading) {
+      color: var(--iflyv-brand-text);
+      &:hover, &:active { color: var(--iflyv-brand-hover); }
+      &:focus:not(:hover):not(:active) { color: var(--iflyv-brand-text); }
+    }
+
+    &.btn-danger:not([disabled]):not(.ant-btn-loading) {
+      color: var(--iflyv-danger-primary);
+      &:hover, &:active { color: var(--iflyv-danger-hover); }
+      &:focus:not(:hover):not(:active) { color: var(--iflyv-danger-primary); }
+    }
+
+    /* 文字按钮加载态：无底，靠文字变淡表达"处理中不可点"。
+       ⚠ 必须把 :hover/:focus 一并列出——antd 3 的 `.ant-btn:hover,.ant-btn:focus`
+         会把文字刷成它自己的蓝 rgb(64,169,255)、`.ant-btn-primary:hover` 刷成白色。
+         只写常态选择器特异度不够，hover 时会被 antd 原色压过。实测翻车过。 */
+    &.ant-btn-loading:not([disabled]),
+    &.ant-btn-loading:not([disabled]):hover,
+    &.ant-btn-loading:not([disabled]):active,
+    &.ant-btn-loading:not([disabled]):focus {
+      color: var(--iflyv-text-4);
+      background-color: transparent;
+      border-color: transparent;
+    }
+    &.ant-btn-loading:not([disabled]).ant-btn-primary,
+    &.ant-btn-loading:not([disabled]).ant-btn-primary:hover,
+    &.ant-btn-loading:not([disabled]).ant-btn-primary:active,
+    &.ant-btn-loading:not([disabled]).ant-btn-primary:focus {
+      color: var(--iflyv-brand-disabled);
+    }
+    &.ant-btn-loading:not([disabled]).btn-danger,
+    &.ant-btn-loading:not([disabled]).btn-danger:hover,
+    &.ant-btn-loading:not([disabled]).btn-danger:active,
+    &.ant-btn-loading:not([disabled]).btn-danger:focus {
+      color: var(--iflyv-danger-disabled);
+    }
+
+    /* 文字按钮禁用态：直接用语义禁用色，不叠 opacity */
+    /* ⚠ 必须把 :active/:focus 也列出——实心按钮的 &[disabled]:active/:focus 规则
+       特异度更高，不列的话文本款禁用态被按下/聚焦时会被填上实心底。 */
+    &[disabled],
+    &[disabled]:hover,
+    &[disabled]:active,
+    &[disabled]:focus {
+      color: var(--iflyv-text-4);
+      background-color: transparent;
+      border-color: transparent;
+    }
+    &.ant-btn-primary[disabled],
+    &.ant-btn-primary[disabled]:hover,
+    &.ant-btn-primary[disabled]:active,
+    &.ant-btn-primary[disabled]:focus {
+      color: var(--iflyv-brand-disabled);
+      background-color: transparent;
+      border-color: transparent;
+    }
+    &.btn-danger[disabled],
+    &.btn-danger[disabled]:hover,
+    &.btn-danger[disabled]:active,
+    &.btn-danger[disabled]:focus {
+      color: var(--iflyv-danger-disabled);
+      background-color: transparent;
+      border-color: transparent;
+    }
+  }
+
+  /* 文本款 focus 不该出现描边——antd 3 的 `.ant-btn:focus` 会给出蓝色 border，
+     而文本款本就是无边框形态，点一下冒出一圈蓝框（实测截图发现）。
+     键盘可达性由基类的 :focus-visible outline 提供，不受影响。 */
+  &.btn-text:focus {
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  /* ==================== 入口引导箭头 .btn-entry ====================
+     「点了离开此处 / 查看更多」的轻量导航入口。仅限 .btn-text 文本形态——
+     有底按钮承载的是"操作"，尾部导航箭头不成立，故整段限定在 .btn-text 之下
+     （有底按钮误挂此 class 拿不到任何样式兜底，有意为之）。
+     与下拉箭头互斥：两者都占"文字尾部"同一位置，语义又相反
+     （下拉=原地展开，入口=离开去别处），一个按钮只能挂其一——
+     互斥属规则层约束（CSS 拦不住硬塞两个 svg）。
+     hover 时箭头前移 2px（暗示"去往"，与 .btn-caret 的 hover 翻转同族、同过渡档）。 */
+  &.btn-text .btn-entry {
+    margin-inline-start: var(--iflyv-spacing-1);
+    flex: none;
+    transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+  }
+  &.btn-text:hover:not([disabled]):not(.ant-btn-loading) .btn-entry {
+    transform: translateX(2px);
+  }
+
+  /* ==================== 加载态 ====================
+     antd 3 的 loading 会在按钮内插入 <i class="anticon anticon-loading">，
+     自带一个 antd 风格的转圈图标。EP 版是把 #icon 插槽里的图标 mask 成 Lucide 的
+     LoaderCircle。此处把 antd 自带 spinner 换成同一个 Lucide 图形，保证观感一致。 */
+  &.ant-btn-loading {
+    /* antd 3 loading 时给按钮加 pointer-events 之外还会改 opacity，压掉 */
+    opacity: 1;
+
+    .anticon-loading {
+      /* 隐藏 antd 自带的 svg，用 mask 画 Lucide LoaderCircle */
+      svg { visibility: hidden; }
+
+      position: relative;
+      width: var(--iflyv-font-size-16);
+      height: var(--iflyv-font-size-16);
+      vertical-align: middle;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3E%3C/svg%3E") no-repeat center / contain;
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3E%3C/svg%3E") no-repeat center / contain;
+        background-color: currentColor;
+        pointer-events: none;
+        animation: iflyv-btn-spin 1s linear infinite;
+      }
+    }
+
+    /* loading 时原图标隐藏（EP 版同口径：只显示 spinner，不同时显示原图标） */
+    .btn-icon { display: none; }
+  }
+}
+
+@keyframes iflyv-btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==================== 关掉 antd 3 的点击波纹（wave） ====================
+   antd 3 点击按钮后会扩散一圈**蓝色波纹**（硬编码 #1890ff，见 antd.css
+   `[ant-click-animating-without-extra-node='true']::after`）。EP 版无此动效——
+   按下反馈只有 `transform: translateY(1px)` 下沉 1px。
+
+   ⚠ 波纹由 JS 注入：Wave 组件在点击时给按钮加 `ant-click-animating-without-extra-node="true"`
+   属性，并往 <head> 插一段带 `--antd-wave-shadow-color` 的 <style>。
+   我们无法阻止 JS 注入属性，但可以把它对应的 ::after 动画整个压掉。
+
+   ⚠ 同时压掉 --antd-wave-shadow-color：即便将来 antd 换用该变量取色，
+   也不会漏出蓝色（双保险）。 */
+.ant-btn[ant-click-animating-without-extra-node='true']::after,
+.ant-btn .ant-click-animating-node,
+.ant-btn[ant-click-animating='true']::after {
+  display: none !important;
+  animation: none !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+}
+.ant-btn {
+  --antd-wave-shadow-color: transparent;
+}
+
+/* ==================== 按钮组间距 ====================
+   与 EP 版同口径：源头清零相邻 margin，间距一律由父容器 flex+gap 提供。
+   antd 3 的 .ant-btn + .ant-btn 没有默认 margin，但 Button.Group 有，一并清掉。 */
+.ant-btn + .ant-btn {
+  margin-left: 0;
+}
