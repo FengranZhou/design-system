@@ -11,6 +11,8 @@
     "./design-token/*": "./design-spec/design-token/*",
     "./el-theme/index.scss": "./design-spec/el-theme/index.scss",
     "./el-theme/*": "./design-spec/el-theme/*",
+    "./antd3-theme/index.less": "./design-spec/antd3-theme/index.less",
+    "./antd3-theme/*": "./design-spec/antd3-theme/*",
     "./components": "./design-spec/components/index.ts",
     "./components/*": "./design-spec/components/*",
     "./utils/*": "./design-spec/utils/*",
@@ -22,7 +24,8 @@
     "design-spec",
     "scripts",
     "接入指南.md",
-    "CLAUDE.md"
+    "CLAUDE.md",
+    "antd3适配层-作业指导书.md"
   ],
   "peerDependencies": {
     "echarts": ">=5",

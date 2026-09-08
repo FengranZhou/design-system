@@ -443,12 +443,27 @@ Step 4 的四项检查应写成 `antd3-theme/scripts/audit-component.mjs`，对�
 在业务项目根 `CLAUDE.md` 里加两行：
 
 ```markdown
-@../xiaoya3.0设计规范/design-spec/CLAUDE.md
+@node_modules/@xiaoya/design-system/design-spec/CLAUDE.md
 
 > 本项目技术栈：**React 16 + antd 3**
 ```
 
-> 路径按实际接入方式调整（相对路径 / submodule / npm 包）。
+同时装包并引第三层样式：
+
+```bash
+pnpm add @xiaoya/design-system
+```
+
+```ts
+// main.tsx —— 顺序固定
+import 'antd/dist/antd.css'                                    // ① antd 基础
+import '@xiaoya/design-system/design-token/index.scss'         // ② 设计令牌（两栈共用）
+import '@xiaoya/design-system/antd3-theme/index.less'          // ③ antd3 覆盖层
+```
+
+> ⚠️ **业务项目一律用 npm 包，不要用相对路径**——相对路径只在本机成立，
+> **CI 流水线上目录不存在、构建必挂**。相对路径仅限本仓库 demo 或临时试跑。
+>
 > **技术栈声明那行别省**——CC 也能从 `package.json` 推断，但显式写更稳。
 
 ### 6.3 ⭐ 你的维护责任（每适配完一个组件必做）

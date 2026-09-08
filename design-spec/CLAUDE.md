@@ -50,8 +50,8 @@ updated: 2026-04-12
      ```
      # 相对路径 / submodule / monorepo（直接指向源头）
      @../xiaoya3.0设计规范/design-spec/CLAUDE.md
-     # npm 包接入
-     @node_modules/<包名>/design-spec/CLAUDE.md
+     # npm 包接入（业务项目推荐——CI 能装，相对路径在流水线上不存在）
+     @node_modules/@xiaoya/design-system/design-spec/CLAUDE.md
      ```
      **原理**：Claude Code 启动时加载下游项目根 `CLAUDE.md`，顺着 `@` 递归把本文件全文拉进**下游 CC 的上下文**——于是下游 CC 做表单/表格/弹窗/页面时，自动命中本文件的「任务→必读」指针，按标准组织布局、用令牌、用标准组件。**范本见本仓库根 `CLAUDE.md`**（它自己就用 `@design-spec/CLAUDE.md` 接了，可直接照抄改路径）。
 
@@ -158,7 +158,7 @@ updated: 2026-04-12
 > - 在**本仓库**工作 → 直接读 `design-spec/references/...`。
 > - 在**下游项目**工作 → 前面拼上你接入本设计系统的路径，即你项目根 `CLAUDE.md` 里那行 `@` 的目录部分。
 >   例：`@../xiaoya3.0设计规范/design-spec/CLAUDE.md` → 读 `../xiaoya3.0设计规范/design-spec/references/foundations.md`；
->   npm 包接入 → `node_modules/<包名>/design-spec/references/foundations.md`。
+>   npm 包接入 → `node_modules/@xiaoya/design-system/design-spec/references/foundations.md`。
 > - 拿不准时用文件名搜（如 `foundations.md`）——**别因为路径拼不对就跳过这一步**，那等于绕开了整套规范。
 
 | 当任务是… | 动手前必须先 Read | 说明 |
