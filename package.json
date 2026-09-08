@@ -1,0 +1,46 @@
+{
+  "name": "@xiaoya/design-system",
+  "version": "1.0.0",
+  "description": "xiaoya3.0 设计系统 —— Element Plus 令牌 + 组件覆盖层 + 业务组件 + 规范文档",
+  "type": "module",
+  "publishConfig": {
+    "registry": "https://depend.iflytek.com/artifactory/api/npm/npm-repo/"
+  },
+  "exports": {
+    "./design-token/index.scss": "./design-spec/design-token/index.scss",
+    "./design-token/*": "./design-spec/design-token/*",
+    "./el-theme/index.scss": "./design-spec/el-theme/index.scss",
+    "./el-theme/*": "./design-spec/el-theme/*",
+    "./antd3-theme/index.less": "./design-spec/antd3-theme/index.less",
+    "./antd3-theme/*": "./design-spec/antd3-theme/*",
+    "./components": "./design-spec/components/index.ts",
+    "./components/*": "./design-spec/components/*",
+    "./utils/*": "./design-spec/utils/*",
+    "./scripts/*": "./scripts/*",
+    "./CLAUDE.md": "./design-spec/CLAUDE.md",
+    "./references/*": "./design-spec/references/*"
+  },
+  "files": [
+    "design-spec",
+    "scripts",
+    "接入指南.md",
+    "CLAUDE.md",
+    "antd3适配层-作业指导书.md"
+  ],
+  "peerDependencies": {
+    "echarts": ">=5",
+    "element-plus": ">=2.6",
+    "lucide-vue-next": ">=0.4",
+    "vue": "^3.3"
+  },
+  "peerDependenciesMeta": {
+    "echarts": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "demo": "pnpm --filter el-theme-demo dev",
+    "audit:spec": "node scripts/audit-spec.mjs",
+    "audit:precision": "node scripts/audit-precision.mjs"
+  }
+}

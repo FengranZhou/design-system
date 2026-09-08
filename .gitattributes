@@ -1,0 +1,21 @@
+# 换行符统一为 LF（仓库内一律 LF，检出时不转换）
+# 起因：协作者在 Windows 上提交，CRLF 让整个文件显示为「全行改动」，
+# 真实差异被淹没（曾出现一次 commit 说明与实际改动不符、无法核对的情况）。
+* text=auto eol=lf
+
+# 二进制文件不做任何换行符转换
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.svg   text eol=lf
+*.ttf   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+*.ico   binary
+*.pdf   binary
+
+# macOS 双击脚本必须是 LF，否则 zsh 报 bad interpreter
+*.command text eol=lf
+*.sh      text eol=lf
