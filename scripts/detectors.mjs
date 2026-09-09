@@ -304,6 +304,57 @@ export const DETECTORS = {
   'component-no-suspended': SUSPENDED_COMPONENTS,
   'dialog-no-messagebox': MESSAGE_BOX,
 
+  /** 弹窗 footer 左侧内容：约定 class .dialog-footer-left；
+      违规特征是绕开约定的两种土办法——给 footer 写 space-between、给按钮写 margin-right/inline-end: auto。
+      检 style 段，避免误伤别处布局：必须与 el-dialog__footer / dialog-footer 同段出现。 */
+  'dialog-footer-left-slot': {
+    custom: (ctx) => {
+      const text = ctx.text ?? ''
+      // 源头自身是唯一合法定义处
+      if (/el-theme\/components\/dialog\.scss/.test(ctx.file ?? '')) return []
+      const hits = []
+      text.split('\n').forEach((line, i) => {
+        if (/^\s*(\/\/|\/\*|\*|<!--)/.test(line)) return
+        if (!/dialog__footer|dialog-footer/.test(line)) return
+        if (/justify-content\s*:\s*space-between/.test(line)) {
+          hits.push({ line: i + 1, text: line.trim().slice(0, 90) })
+        }
+      })
+      // 跨行形态：footer 选择器块内出现 margin-*: auto 推按钮
+      const blocks = text.match(/[^{}]*dialog[-_]*footer[^{}]*\{[^}]*\}/gi) ?? []
+      for (const b of blocks) {
+        if (/justify-content\s*:\s*space-between|margin-(right|inline-end)\s*:\s*auto/.test(b)) {
+          const idx = text.indexOf(b)
+          const line = text.slice(0, idx).split('\n').length
+          if (!hits.some((h) => h.line === line)) hits.push({ line, text: b.trim().split('\n')[0].slice(0, 90) })
+        }
+      }
+      return hits
+    },
+    hint: '弹窗 footer 左侧内容套约定 class .dialog-footer-left（源头 margin-inline-end:auto 推到最左）；写 space-between 会让没有左槽的两钮也被拉到两端',
+  },
+
+  /** 弹窗内容贴边铺满：约定 class .dialog-body-flush；
+      违规特征是用负外边距硬抵消 body 的左右内边距。 */
+  'dialog-body-flush': {
+    custom: (ctx) => {
+      const text = ctx.text ?? ''
+      if (/el-theme\/components\/dialog\.scss/.test(ctx.file ?? '')) return []
+      // 只在确实涉及弹窗的文件里判，避免误伤别处的负外边距出血写法
+      if (!/el-dialog|dialog__body/.test(text)) return []
+      const hits = []
+      text.split('\n').forEach((line, i) => {
+        if (/^\s*(\/\/|\/\*|\*|<!--)/.test(line)) return
+        // margin: 0 -24px / margin-inline: -24px / margin-left: -24px 这类抵消写法
+        if (/margin(-inline|-left|-right)?\s*:\s*[^;]*-\s*(var\(--iflyv-spacing-6\)|24px)/.test(line)) {
+          hits.push({ line: i + 1, text: line.trim().slice(0, 90) })
+        }
+      })
+      return hits
+    },
+    hint: '弹窗内容要贴边铺满用约定 class .dialog-body-flush，禁用负外边距硬抵消 body 内边距',
+  },
+
   /** 画图一律用业务组件 Chart：页面直接 import echarts = 绕过源头手拼（取色/重绘/图形风格全要自己做，且不随源头同步） */
   'chart-use-component': {
     custom: (ctx) => {

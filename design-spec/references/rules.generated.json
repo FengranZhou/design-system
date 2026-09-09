@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 112,
-  "totalWeight": 323,
+  "total": 116,
+  "totalWeight": 333,
   "byLevel": {
-    "MUST": 99,
-    "SHOULD": 13,
+    "MUST": 101,
+    "SHOULD": 15,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 73,
+    "regex": 75,
     "ast": 7,
-    "manual": 32
+    "manual": 34
   },
   "byView": {
-    "design": 93,
-    "impl": 104
+    "design": 97,
+    "impl": 108
   },
   "categoryOrder": [
     "单一数据源",
@@ -390,7 +390,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1352
+      "line": 1399
     },
     {
       "id": "chart-use-component",
@@ -450,6 +450,21 @@
       "weight": 3,
       "source": "design-spec/references/patterns/select-pattern.md",
       "line": 70
+    },
+    {
+      "id": "dialog-fullscreen-not-fourth-tier",
+      "title": "三档宽度装不下时应按四维判据改用页面，而非升级为全屏弹窗",
+      "designTitle": "内容装不下就把弹窗放到全屏，多半说明这件事本该是一个独立页面",
+      "level": "SHOULD",
+      "cat": "组件选用",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1306
     },
     {
       "id": "button-icon-color-source",
@@ -865,6 +880,36 @@
       "line": 1104
     },
     {
+      "id": "dialog-footer-left-slot",
+      "title": "弹窗 footer 左侧内容套约定 class .dialog-footer-left，禁给 footer 自写 space-between",
+      "designTitle": "弹窗底部左下角的「不再提示」等辅助内容应贴左，不该和右侧按钮挤在一起",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1270
+    },
+    {
+      "id": "dialog-body-flush",
+      "title": "弹窗内容贴边铺满用约定 class .dialog-body-flush，禁自写负外边距抵消内边距",
+      "designTitle": "弹窗里内嵌表格/通栏图片要铺满弹窗宽度时，用约定写法而不是手动抵消内边距",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1285
+    },
+    {
       "id": "scrollbar-no-raw-overflow",
       "title": "内部滚动区一律用 el-scrollbar，禁在 div 上直接写 overflow:auto/scroll",
       "designTitle": "区域滚动条应是细长半透明的设计系统样式，不是浏览器默认灰色滚动条",
@@ -877,7 +922,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1301
+      "line": 1348
     },
     {
       "id": "metric-strip-class",
@@ -969,6 +1014,21 @@
       "line": 553
     },
     {
+      "id": "dialog-fullscreen-content-fill",
+      "title": "全屏弹窗的主内容块须给 flex:1 吃满内容区高度",
+      "designTitle": "全屏弹窗里内容只占上面一小条、下方一大片空白",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1308
+    },
+    {
       "id": "scrollbar-view-class",
       "title": "滚动内容的排布写在 view-class 指定的 view 上，不写在 el-scrollbar 外壳",
       "designTitle": "滚动内容的排布写在 view-class 指定的 view 上，不写在 el-scrollbar 外壳",
@@ -980,7 +1040,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1313
+      "line": 1360
     },
     {
       "id": "grid-no-el-row",

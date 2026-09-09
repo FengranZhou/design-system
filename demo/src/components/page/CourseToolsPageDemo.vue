@@ -26,27 +26,31 @@
         :back-disabled="true"
         avatar-role="teacher-male"
       >
-        <div class="course-tools">
-          <!-- 页面级主标题：只含标题也是工具栏（toolbar-pattern 分支①，右侧为空）。
-               字阶与上下左右内边距全在源头 .toolbar，本页不写。 -->
-          <div class="toolbar">
-            <div class="toolbar__left">
-              <h3 class="toolbar__title">课程工具</h3>
-            </div>
-          </div>
-
-          <section v-for="group in toolGroups" :key="group.title" class="tool-group">
-            <h4 class="tool-group__title">{{ group.title }}</h4>
-            <!-- 分栏走源头栅格约定类：24 列，col-6 = 四列数据卡（最小粒度），
-                 水槽与换行间距由 --iflyv-grid-gutter 提供（=「卡片之间」同档） -->
-            <div class="grid">
-              <div v-for="tool in group.tools" :key="tool.label" class="grid__col-6 tool-card">
-                <img class="tool-card__icon" :src="tool.icon" alt="" />
-                <span class="tool-card__label">{{ tool.label }}</span>
+        <!-- 内容区滚动归业务层：PageFrame 只给白底圆角与占位、不定义版面（滚动/留白由页面自己写）。
+             scroll-fill：让 wrap/view 撑满，内容不满一屏时页内空态仍能垂直居中。 -->
+        <el-scrollbar class="scroll-fill">
+          <div class="course-tools">
+            <!-- 页面级主标题：只含标题也是工具栏（toolbar-pattern 分支①，右侧为空）。
+                 字阶与上下左右内边距全在源头 .toolbar，本页不写。 -->
+            <div class="toolbar">
+              <div class="toolbar__left">
+                <h3 class="toolbar__title">课程工具</h3>
               </div>
             </div>
-          </section>
-        </div>
+
+            <section v-for="group in toolGroups" :key="group.title" class="tool-group">
+              <h4 class="tool-group__title">{{ group.title }}</h4>
+              <!-- 分栏走源头栅格约定类：24 列，col-6 = 四列数据卡（最小粒度），
+                   水槽与换行间距由 --iflyv-grid-gutter 提供（=「卡片之间」同档） -->
+              <div class="grid">
+                <div v-for="tool in group.tools" :key="tool.label" class="grid__col-6 tool-card">
+                  <img class="tool-card__icon" :src="tool.icon" alt="" />
+                  <span class="tool-card__label">{{ tool.label }}</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </el-scrollbar>
       </PageFrame>
     </div>
   </section>
@@ -68,10 +72,18 @@ import NavIcon from '../biz/NavIcon.vue'
 import establishSvg from '../../assets/nav-icons/establish.svg?raw'
 import establishActiveSvg from '../../assets/nav-icons/establish-active.svg?raw'
 // —— 工具图标：二级图标四款（智慧课件/作业/测验/任务团子）轮转占位 ——
-import iconCourseware from '../../assets/icons/level2/3.png'
-import iconHomework from '../../assets/icons/level2/4.png'
-import iconQuiz from '../../assets/icons/level2/5.png'
-import iconTuanzi from '../../assets/icons/level2/6.png'
+// 工具卡图标取三级图标（常规类型识别图标，扁平融白）——工具入口属「常规类型识别」层级，
+// 不是强功能入口，故不用二级的玻璃质感图标。
+import iconDiscuss from '../../assets/icons/level3/讨论@10x.png'
+import iconMindmap from '../../assets/icons/level3/思维导图@10x.png'
+import iconVideo from '../../assets/icons/level3/视频@10x.png'
+import iconImage from '../../assets/icons/level3/图片@10x.png'
+import iconText from '../../assets/icons/level3/文本@10x.png'
+import iconLink from '../../assets/icons/level3/网页链接@10x.png'
+import iconFolder from '../../assets/icons/level3/文件夹（开）@10x.png'
+import iconDesign from '../../assets/icons/level3/教学设计@10x.png'
+import iconOnlineDoc from '../../assets/icons/level3/在线文档@10x.png'
+import iconTuanzi from '../../assets/icons/level3/任务团子@10x.png'
 
 // —— 框架数据（同「公开信息设置」口径：组标题「典型页面」+ 本页单项）——
 const menus: PageFrameMenuGroup[] = [
@@ -91,21 +103,35 @@ const course: PageFrameCourse = {
 const breadcrumbs = [{ label: '典型页面' }, { label: '课程工具' }]
 
 // —— 工具分组（结构与文案沿用参考页）——
-// 四款二级图标循环分配到各工具（固定轮转而非运行时随机，保证每次渲染/截图一致）；
-// 个别工具可用第二参显式指定图标（0 课件绿 / 1 作业紫 / 2 测验蓝 / 3 团子），不打乱其余轮转
-const TOOL_ICONS = [iconCourseware, iconHomework, iconQuiz, iconTuanzi]
-let seq = 0
-const tool = (label: string, iconIdx?: number) => {
-  const i = iconIdx ?? seq % TOOL_ICONS.length
-  seq++
-  return { label, icon: TOOL_ICONS[i] }
-}
-
+// 图标按顺序分配、每个工具一款不重样（**固定映射而非运行时随机**，保证每次渲染/截图一致——
+// demo 要能稳定比对，随机会让每次刷新都不同）。这里只是取一组色相分散的三级图标做示意，
+// 与工具语义无对应关系。
 const toolGroups = [
-  { title: '教学增强', tools: [tool('评价活动'), tool('黑板'), tool('私信/群聊'), tool('回收站')] },
-  { title: '课堂活动与表现', tools: [tool('签到管理', 2), tool('课堂表现管理', 3), tool('课堂活动管理', 1)] },
-  { title: '教学回顾', tools: [tool('教学反思'), tool('往期课程空间')] },
-  { title: '课程克隆', tools: [tool('课程克隆')] },
+  {
+    title: '教学增强',
+    tools: [
+      { label: '评价活动', icon: iconDesign },
+      { label: '黑板', icon: iconMindmap },
+      { label: '私信/群聊', icon: iconDiscuss },
+      { label: '回收站', icon: iconFolder },
+    ],
+  },
+  {
+    title: '课堂活动与表现',
+    tools: [
+      { label: '签到管理', icon: iconText },
+      { label: '课堂表现管理', icon: iconImage },
+      { label: '课堂活动管理', icon: iconTuanzi },
+    ],
+  },
+  {
+    title: '教学回顾',
+    tools: [
+      { label: '教学反思', icon: iconOnlineDoc },
+      { label: '往期课程空间', icon: iconVideo },
+    ],
+  },
+  { title: '课程克隆', tools: [{ label: '课程克隆', icon: iconLink }] },
 ]
 
 // —— 全屏预览（同「公开信息设置」的 demo 看图辅助）——

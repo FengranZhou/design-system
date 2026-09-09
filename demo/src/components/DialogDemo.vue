@@ -26,6 +26,12 @@
           <el-form-item label="多标题">
             <el-switch v-model="dialogMultiTitle" />
           </el-form-item>
+          <el-form-item label="底部左侧内容">
+            <el-switch v-model="dialogFooterLeft" />
+          </el-form-item>
+          <el-form-item label="全屏">
+            <el-switch v-model="dialogFullscreen" />
+          </el-form-item>
         </el-form>
       </aside>
     </div>
@@ -51,7 +57,13 @@
     </div>
 
     <!-- 基础 -->
-    <el-dialog v-model="dialogVisible" class="demo-dialog-basic" title="弹窗标题" :width="dialogSceneWidth">
+    <el-dialog
+      v-model="dialogVisible"
+      class="demo-dialog-basic"
+      title="弹窗标题"
+      :width="dialogSceneWidth"
+      :fullscreen="dialogFullscreen"
+    >
       <!-- 多标题：开启时用 #header 插槽放一组可点击标题（约定 class 见 dialog.scss），点击切换 activeTitle -->
       <template v-if="dialogMultiTitle" #header>
         <div class="dialog-titles">
@@ -75,6 +87,10 @@
       <!-- content 区：header 与 footer 之间的内容填充区。后续用此弹窗时，业务内容都放在这块区域内。 -->
       <div class="dialog-content-slot">内容区域</div>
       <template #footer>
+        <!-- 底部左侧：约定 class .dialog-footer-left，源头把它推到最左（放辅助信息/附加选项，不放动作按钮） -->
+        <div v-if="dialogFooterLeft" class="dialog-footer-left">
+          <el-checkbox v-model="dontRemind" label="不再提示" />
+        </div>
         <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="dialogVisible = false">确认</el-button>
       </template>
@@ -116,7 +132,18 @@ const dialogShowTip = ref(false)
 const dialogMultiTitle = ref(false)
 const dialogTitles = ['标题一', '标题二', '标题三']
 const activeTitle = ref(0)
-const dialogConfigForm = reactive({ dialogScene, dialogShowTip, dialogMultiTitle })
+// 底部左侧内容：footer 左下角放辅助信息/附加选项（约定 class .dialog-footer-left）
+const dialogFooterLeft = ref(false)
+const dontRemind = ref(false)
+// 全屏：EP 原生 fullscreen prop，源头统一了全屏下的高度与圆角
+const dialogFullscreen = ref(false)
+const dialogConfigForm = reactive({
+  dialogScene,
+  dialogShowTip,
+  dialogMultiTitle,
+  dialogFooterLeft,
+  dialogFullscreen,
+})
 
 // —— 提示弹窗：四类语义场景（警告/危险/成功/信息）由「场景」配置驱动 ——
 // 每个场景一份配置：变体 class + 标题 + 正文 + footer 按钮组合。
@@ -158,6 +185,8 @@ const copyValues = computed(() => ({
     dialogScene: dialogScene.value,
     dialogShowTip: dialogShowTip.value,
     dialogMultiTitle: dialogMultiTitle.value,
+    dialogFooterLeft: dialogFooterLeft.value,
+    dialogFullscreen: dialogFullscreen.value,
   },
   // 提示弹窗的场景在 demo 里叫 tipScene，catalog 字段名是 scene
   'tip-dialog': { scene: tipScene.value },
@@ -172,6 +201,13 @@ const copyValues = computed(() => ({
    弹窗高度由内容自然撑开，故直接给内容占位块定高至整体达 360。 */
 .demo-dialog-basic .dialog-content-slot {
   min-height: 176px;
+}
+
+/* 全屏时占位块吃满内容区：全屏的目的就是把内容铺开，占位块若仍是 176 会在下方留一大片空白，
+   看不出内容区实际有多高。源头已在全屏时把 body 改成纵向 flex，这里只需 flex: 1 接住。
+   —— 真实业务里同理：全屏弹窗的主内容块给 flex: 1（要内部滚动再加 min-height: 0）。 */
+.demo-dialog-basic.is-fullscreen .dialog-content-slot {
+  flex: 1;
 }
 
 /* 基础对话框的 content 占位区（纯本 demo 示意骨架）：brand-bg 底色，示意「后续弹窗内容都填这块区域」。

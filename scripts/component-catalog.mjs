@@ -897,6 +897,9 @@ import { StepBar } from '<path>/design-spec/components'`
       '800 档是给内嵌表格/列表等非表单富内容的，不是给"双列表单"——表单一律单列',
       '危险操作加 class="is-danger"',
       'footer 主按钮在右（右对齐→主按钮贴右）',
+      'footer 左下角放辅助信息/附加选项时套 .dialog-footer-left，不放第三个动作按钮',
+      '内嵌表格/通栏图片要贴边铺满时给弹窗加 .dialog-body-flush，禁自写负外边距抵消内边距',
+      '全屏用 EP 原生 fullscreen prop；但三档宽度装不下多半该改用页面，不是升级成全屏',
     ],
     instanceFields: [
       { key: 'title', label: '标题', type: 'text', placeholder: '如：新建课程', default: '' },
@@ -914,7 +917,7 @@ import { StepBar } from '<path>/design-spec/components'`
       { key: 'danger', label: '危险操作', type: 'switch', default: false },
       { key: 'confirmText', label: '主按钮文案', type: 'text', placeholder: '如：确定', default: '确定' },
     ],
-    snippet: ({ title, danger, confirmText, dialogScene, dialogShowTip, dialogMultiTitle }) => {
+    snippet: ({ title, danger, confirmText, dialogScene, dialogShowTip, dialogMultiTitle, dialogFooterLeft, dialogFullscreen }) => {
       // 宽度由场景决定（三档，禁非档位值）：确认 400 / 表单 640 / 富内容 800
       const width = { confirm: 400, form: 640, rich: 800 }[dialogScene] || 640
       const tip = dialogShowTip
@@ -923,14 +926,19 @@ import { StepBar } from '<path>/design-spec/components'`
       const titles = dialogMultiTitle
         ? '\n  <div class="dialog-titles"><span class="is-active">基本信息</span><span>高级设置</span></div>\n'
         : ''
+      // 全屏走 EP 原生 prop；全屏时宽度档位不再适用（撑满视口）
+      const fullscreen = dialogFullscreen ? '\n  fullscreen' : `\n  width="${width}px"`
+      // 底部左侧：约定 class .dialog-footer-left，只放辅助信息/附加选项，不放动作按钮
+      const footerLeft = dialogFooterLeft
+        ? '\n    <div class="dialog-footer-left">\n      <el-checkbox v-model="dontRemind" label="不再提示" />\n    </div>'
+        : ''
       return `<el-dialog
   v-model="visible"
-  title="${title || '标题'}"
-  width="${width}px"${danger ? '\n  class="is-danger"' : ''}
+  title="${title || '标题'}"${fullscreen}${danger ? '\n  class="is-danger"' : ''}
 >${titles}${tip}
   <!-- 内容放默认插槽 -->
 
-  <template #footer>
+  <template #footer>${footerLeft}
     <el-button @click="visible = false">取消</el-button>
     <el-button type="${danger ? 'danger' : 'primary'}" @click="handleConfirm">${confirmText || '确定'}</el-button>
   </template>
