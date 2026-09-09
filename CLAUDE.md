@@ -82,12 +82,17 @@ git push origin main --follow-tags
 # ④ 同步到内网：把 main 上的新提交 cherry-pick 到 sync 分支
 git checkout iflytek-sync-done
 git cherry-pick <上次同步后 main 上的新提交…>     # 多个提交用 A^..B
+
+# ⑤ ⛔ 脱敏（必做，漏了就泄露且写进历史无法撤回）
+node scripts/sanitize-for-iflytek.mjs            # 抹掉文件里的 GitHub 痕迹
+git add -A && git commit --amend --no-edit       # 并进刚 cherry-pick 的提交
+node scripts/sanitize-for-iflytek.mjs --check    # 复查，退出码 0 才算干净
 git checkout main                                  # 立刻切回，避免误在 sync 分支上开发
 
-# ⑤ 推内网（分支名不同，要写映射）
+# ⑥ 推内网（分支名不同，要写映射）
 git push iflytek iflytek-sync-done:master
 git tag -a vX.Y.Z-iflytek <sync分支上对应的commit> -F - <<'EOF'
-（同 ② 的备注内容）
+（同 ② 的备注内容，但**删掉任何 GitHub / 双仓字样**）
 EOF
 git push iflytek refs/tags/vX.Y.Z-iflytek:refs/tags/vX.Y.Z
 ```
@@ -106,6 +111,27 @@ git tag -l | grep -v -- '-iflytek$' | sort -V | tail -1
 两个坑都要避开：
 - 直接 `git tag -l | tail` 是**字符串排序**，会把 `v1.9.0` 排在 `v1.18.0` 后面（真实踩过）
 - 不排除 `-iflytek` 后缀的话，内网 tag 会排到最前面污染结果（真实踩过）
+
+### ⛔ 公司仓脱敏（最高优先级）
+
+**公司仓那份绝不能看出「同一套代码也提交在 GitHub 个人仓」**——这不是技术问题，是合规要求。
+
+三处都要干净，缺一即泄露：
+
+| 位置 | 怎么保证 |
+|---|---|
+| **文件内容** | 步骤 ⑤ 跑 `sanitize-for-iflytek.mjs`（自动替换 URL / 仓库名 / 措辞，并整段删除本节「双仓推送流程」） |
+| **提交说明** | **写 commit message 时就不要出现** GitHub / 个人仓 / 双仓 字样（写了要么 `--amend` 改，要么事后 filter-branch 重写整条历史，代价极大） |
+| **tag 说明** | 内网 tag 单独写，删掉任何双仓表述 |
+
+⚠️ **`scripts/sanitize-for-iflytek.mjs` 本身不进公司仓**——它讲的就是双仓机制。
+脚本只存在于 `main`；cherry-pick 到 sync 分支后手动 `rm` 掉再提交（或加进脱敏脚本的删除清单）。
+
+⚠️ **`Claude-Session:` 链接也已从公司仓历史清除**（`Co-Authored-By` 保留，那是业界惯例）。
+以后写 commit 时，公司仓那侧不要带 session 链接。
+
+> **2026-09 已做过一次彻底清理**：重写公司仓全部 83 个提交、强推覆盖、三个 tag 重打。
+> 代价是同事要重新 clone。**别再让痕迹进去第二次。**
 
 ### 三条硬纪律
 
