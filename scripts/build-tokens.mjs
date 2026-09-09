@@ -9,7 +9,7 @@
  *   4. 圆角（radius）
  *
  * 生成物：scripts/design-tokens.json
- * 消费方：扩展的「调整」面板，实时从 GitHub raw URL 拉取
+ * 消费方：扩展的「调整」面板，实时从远程仓库 raw URL 拉取
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'fs'
@@ -385,7 +385,7 @@ export function buildTokens() {
 
   return {
     version: 1,
-    generatedFrom: 'FengranZhou/design-system',
+    generatedFrom: 'xy-design-system',
     semanticColors: semanticColors.all,
     semanticColorGroups: semanticColors.groups,
     semanticColorGroupTitles: semanticColors.groupTitles,
