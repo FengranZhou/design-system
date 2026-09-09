@@ -30,14 +30,20 @@
         avatar-role="teacher-male"
       >
         <div class="public-info">
-          <!-- 页面级一级内容切换 → 页面级档 .tabs-page（充当页面标题层） -->
-          <el-tabs v-model="activeTab" class="tabs-page">
-            <el-tab-pane label="课程概述" name="overview" />
-            <el-tab-pane label="教学团队" name="team" />
-            <el-tab-pane label="课程框架" name="framework" />
-            <el-tab-pane label="课程图谱" name="graph" />
-            <el-tab-pane label="AI特色" name="ai" />
-          </el-tabs>
+          <!-- 页面级一级内容切换 → 页面级档 .tabs-page（充当页面标题层）。
+               本页无同排操作按钮，但仍套 .toolbar：吸顶能力由源头
+               `.toolbar:has(.tabs-page)` 提供，裸 el-tabs 拿不到。 -->
+          <div class="toolbar public-info__head">
+            <div class="toolbar__left">
+              <el-tabs v-model="activeTab" class="tabs-page">
+                <el-tab-pane label="课程概述" name="overview" />
+                <el-tab-pane label="教学团队" name="team" />
+                <el-tab-pane label="课程框架" name="framework" />
+                <el-tab-pane label="课程图谱" name="graph" />
+                <el-tab-pane label="AI特色" name="ai" />
+              </el-tabs>
+            </div>
+          </div>
 
           <!-- AI 特色 tab（演示主体） -->
           <template v-if="activeTab === 'ai'">
