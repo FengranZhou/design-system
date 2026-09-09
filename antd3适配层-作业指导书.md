@@ -10,7 +10,6 @@
 > **配套产物**（都在本仓库里，已可运行）：
 > - `design-spec/antd3-theme/components/button.less` —— 唯一的完整样板，**照它写**
 > - `design-spec/antd3-theme/DIFF.md` —— Button 的 12 条差异全记录，**格式照它记**
-> - `design-spec/antd3-theme/迁移方法论.md` —— 试点复盘（本文档的详细版）
 > - `design-spec/stack-mapping.md` —— EP ↔ antd 3 组件与 prop 映射表（见 §6）
 > - `demo-antd3/` —— 可运行的 React16+antd3 验证环境，**新组件加进这里测**
 >
