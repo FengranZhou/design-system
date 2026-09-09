@@ -206,13 +206,19 @@ onBeforeUnmount(() => {
 /* 页面内容区：左右/底部留白一次给全，卡片纵向排布 */
 /* 撑满 PageFrame 内容区，使不满一屏的内容（如整页空态）能拿到高度基准、
    在内容区内垂直居中；内容超出时照常向下撑开并滚动 */
+/* 内容块之间的间距。⚠ 用「前一个不是工具栏」限定——工具栏与其下方内容的间距
+   已由源头 .toolbar 的 padding-block-end 给出，此处再加会叠成双倍。 */
+.public-info > :not(.toolbar) + * {
+  margin-top: var(--iflyv-spacing-4);
+}
 .public-info {
   display: flex;
   flex-direction: column;
-  gap: var(--iflyv-spacing-4);
   min-height: 100%;
   box-sizing: border-box;
-  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6) var(--iflyv-spacing-6);
+  /* 上下留白由源头 .toolbar 自带（页面级工具栏内边距归工具栏自己），
+     容器只给左右与底部。⚠ 不要在此写 gap——会与工具栏内边距叠加成双倍。 */
+  padding: 0 var(--iflyv-spacing-6) var(--iflyv-spacing-6);
 }
 
 /* AI 特色展示横幅：渐变底为用户提供切图（本页装饰资产） */

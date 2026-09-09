@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 111,
-  "totalWeight": 320,
+  "total": 112,
+  "totalWeight": 323,
   "byLevel": {
-    "MUST": 98,
+    "MUST": 99,
     "SHOULD": 13,
     "MAY": 0
   },
   "byDetect": {
     "regex": 73,
     "ast": 7,
-    "manual": 31
+    "manual": 32
   },
   "byView": {
-    "design": 92,
-    "impl": 103
+    "design": 93,
+    "impl": 104
   },
   "categoryOrder": [
     "单一数据源",
@@ -1298,6 +1298,21 @@
       "line": 67
     },
     {
+      "id": "toolbar-page-level-padding",
+      "title": "页面级工具栏内边距在源头，使用方不得再给容器 gap 或 margin-bottom",
+      "designTitle": "页面级工具栏与页面边缘、与下方内容的间距应各页一致",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "line": 106
+    },
+    {
       "id": "toolbar-order",
       "title": "工具栏顺序固定为 标题→组件级tab→下拉→搜索→次按钮→主按钮",
       "designTitle": "工具栏元素顺序应各页一致：标题→tab→下拉→搜索→次按钮→主按钮",
@@ -1310,7 +1325,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 160
+      "line": 165
     },
     {
       "id": "toolbar-convention-class",
@@ -1325,7 +1340,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 174
+      "line": 179
     },
     {
       "id": "form-max-width",
