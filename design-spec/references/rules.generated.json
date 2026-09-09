@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 110,
-  "totalWeight": 317,
+  "total": 111,
+  "totalWeight": 320,
   "byLevel": {
-    "MUST": 97,
+    "MUST": 98,
     "SHOULD": 13,
     "MAY": 0
   },
   "byDetect": {
     "regex": 73,
     "ast": 7,
-    "manual": 30
+    "manual": 31
   },
   "byView": {
-    "design": 91,
-    "impl": 102
+    "design": 92,
+    "impl": 103
   },
   "categoryOrder": [
     "单一数据源",
@@ -1283,6 +1283,21 @@
       "line": 36
     },
     {
+      "id": "toolbar-sticky-page-tabs",
+      "title": "页面级 tab 必须放进 .toolbar（源头据此自动吸顶），禁裸放或手拼 flex",
+      "designTitle": "页面级分区切换栏滚动时应始终停在顶部，不能随内容滚走",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "line": 67
+    },
+    {
       "id": "toolbar-order",
       "title": "工具栏顺序固定为 标题→组件级tab→下拉→搜索→次按钮→主按钮",
       "designTitle": "工具栏元素顺序应各页一致：标题→tab→下拉→搜索→次按钮→主按钮",
@@ -1295,7 +1310,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 126
+      "line": 160
     },
     {
       "id": "toolbar-convention-class",
@@ -1310,7 +1325,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 140
+      "line": 174
     },
     {
       "id": "form-max-width",

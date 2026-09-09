@@ -41,6 +41,52 @@
   gap: var(--iflyv-spacing-3);
 }
 
+/* ==================== 含页面级 tab 的工具栏：自动吸顶 ====================
+   页面级 tab 充当页面标题层，是「我在哪个分区」的定位信息——内容滚走后它必须留在
+   视口里，否则用户滚到深处会失去所属分区的上下文，也无法就地切换分区。
+   同排的操作按钮（属操作区）随整条一起吸住，二者不会分离。
+
+   为什么是「整条工具栏」而不是「tab 元素本身」：按本模式，页面级 tab 属标题区、
+   主按钮属操作区，二者本就在同一个 .toolbar 内。只吸 tab 会让按钮滚走、一排裂开。
+
+   ⚠ 只对**页面级** tab 生效。模块级（裸 el-tabs）/ 组件级（.tabs-sub）不吸顶：
+   它们从属于某个模块，跟着模块一起滚走才符合层级预期。
+
+   ⚠ 使用方无需做任何事——工具栏里放了 .tabs-page 即自动吸顶，不必额外挂 class
+   （挂 class 的做法漏挂时不报错、只是静默不吸顶）。
+
+   @depends-on: ① 浏览器支持 :has()（Chrome 105+ / Safari 15.4+，2022 起）——
+                本设计系统只面向桌面端，不考虑更老环境；
+                ② 祖先链上不能有 overflow: hidden / auto，否则 sticky 会相对该元素
+                而非滚动容器定位，表现为「不吸顶」。PageFrame 的内容区把滚动放在
+                el-scrollbar 的 wrap 上、view 不裁切，故此处成立。
+   @when-changed: 若使用方自行在工具栏外层套了带 overflow 的容器，吸顶会失效——
+                  那是接入方式问题，不要在使用方补 :deep 覆盖，回来查外层 overflow。 */
+.toolbar:has(.tabs-page) {
+  position: sticky;
+  top: 0;
+  z-index: var(--iflyv-z-sticky);
+  /* 铺不透明底：否则下方内容会从工具栏背后透出来重叠 */
+  background: var(--iflyv-bg-panel);
+
+  /* 细线只在吸顶时显形——分隔优先级「间距 > 色差 > 细线」，静止时不用线。
+     纯 CSS 实现（使用方无需监听滚动）：线画在工具栏下沿之外 1px 处，
+     未吸顶时它落在工具栏与下方内容之间的留白里、与白底同色不可见；
+     吸顶后内容从线下方滑过，线便自然显形为二者的分界。
+     @when-changed: 若把 bottom 改回 0，线会始终压在下边框上、静止时也可见，
+                    违反「线能不用就不用」。 */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--iflyv-border-subtle);
+    pointer-events: none;
+  }
+}
+
 /* 左右两组：组内相邻元素间距 12 */
 .toolbar__left,
 .toolbar__right {

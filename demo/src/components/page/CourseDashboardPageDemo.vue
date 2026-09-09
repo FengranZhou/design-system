@@ -27,17 +27,22 @@
         avatar-role="teacher-male"
       >
         <div class="dashboard">
-          <!-- 页面级 tab 充当标题层 + 右侧主操作（主按钮贴容器右缘） -->
-          <div class="dashboard__head">
-            <el-tabs v-model="activeTab" class="tabs-page dashboard__tabs">
-              <el-tab-pane label="课程看板" name="board" />
-              <el-tab-pane label="AI+应用看板" name="ai" />
-              <el-tab-pane label="课堂教学活动轨迹" name="track" />
-              <el-tab-pane label="课堂实录分析" name="record" />
-              <el-tab-pane label="班级画像" name="class" />
-              <el-tab-pane label="成员画像" name="member" />
-            </el-tabs>
-            <el-button type="primary">查看课程群画像</el-button>
+          <!-- 页面级 tab（标题区）+ 右侧主操作（操作区）→ 按 toolbar-pattern 分支① 组织。
+               工具栏含页面级 tab 时整条自动吸顶（源头 toolbar.scss 提供，本页不写吸顶样式）。 -->
+          <div class="toolbar dashboard__head">
+            <div class="toolbar__left">
+              <el-tabs v-model="activeTab" class="tabs-page dashboard__tabs">
+                <el-tab-pane label="课程看板" name="board" />
+                <el-tab-pane label="AI+应用看板" name="ai" />
+                <el-tab-pane label="课堂教学活动轨迹" name="track" />
+                <el-tab-pane label="课堂实录分析" name="record" />
+                <el-tab-pane label="班级画像" name="class" />
+                <el-tab-pane label="成员画像" name="member" />
+              </el-tabs>
+            </div>
+            <div class="toolbar__right">
+              <el-button type="primary">查看课程群画像</el-button>
+            </div>
           </div>
 
           <template v-if="activeTab === 'board'">
@@ -239,10 +244,8 @@ onBeforeUnmount(() => {
 }
 
 /* 标题层：页面级 tab 左、主操作贴右缘（主按钮贴边原则）；下方 = 页面级标题与其下方内容(16) */
+/* 纯本页排版留白：横向布局由源头 .toolbar 提供，此处只给与下方内容的间距 */
 .dashboard__head {
-  display: flex;
-  align-items: center;
-  gap: var(--iflyv-spacing-4);
   margin-bottom: var(--iflyv-spacing-4);
 }
 .dashboard__tabs {
