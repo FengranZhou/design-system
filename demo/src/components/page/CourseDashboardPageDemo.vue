@@ -240,14 +240,14 @@ onBeforeUnmount(() => {
   flex-direction: column;
   min-height: 100%;
   box-sizing: border-box;
-  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6) var(--iflyv-spacing-6);
+  /* 上下留白由源头 .toolbar 自带（页面级工具栏内边距归工具栏自己），
+     容器只给左右与底部。⚠ 左右仍要给——页面内其它内容靠它对齐，
+     工具栏会用负外边距出血撑回整宽 */
+  padding: 0 var(--iflyv-spacing-6) var(--iflyv-spacing-6);
 }
 
 /* 标题层：页面级 tab 左、主操作贴右缘（主按钮贴边原则）；下方 = 页面级标题与其下方内容(16) */
 /* 纯本页排版留白：横向布局由源头 .toolbar 提供，此处只给与下方内容的间距 */
-.dashboard__head {
-  margin-bottom: var(--iflyv-spacing-4);
-}
 .dashboard__tabs {
   flex: 1;
   min-width: 0;

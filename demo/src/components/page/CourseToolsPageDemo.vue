@@ -27,8 +27,13 @@
         avatar-role="teacher-male"
       >
         <div class="course-tools">
-          <!-- 页面级主标题（本页无 tab，标题独立成层） -->
-          <h3 class="course-tools__title">课程工具</h3>
+          <!-- 页面级主标题：只含标题也是工具栏（toolbar-pattern 分支①，右侧为空）。
+               字阶与上下左右内边距全在源头 .toolbar，本页不写。 -->
+          <div class="toolbar">
+            <div class="toolbar__left">
+              <h3 class="toolbar__title">课程工具</h3>
+            </div>
+          </div>
 
           <section v-for="group in toolGroups" :key="group.title" class="tool-group">
             <h4 class="tool-group__title">{{ group.title }}</h4>
@@ -146,15 +151,11 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 
 /* 页面内容区：顶 = 页面级标题与页面顶部(16)，左右/底 = 24 */
 .course-tools {
-  padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6) var(--iflyv-spacing-6);
+  /* 上下留白由源头 .toolbar 自带（页面级工具栏内边距归工具栏自己），
+     容器只给左右与底部 */
+  padding: 0 var(--iflyv-spacing-6) var(--iflyv-spacing-6);
 }
 
-/* 页面级主标题：title-page 字阶；与下方内容 16 */
-.course-tools__title {
-  margin: 0 0 var(--iflyv-spacing-4);
-  font: var(--iflyv-font-title-page);
-  color: var(--iflyv-text-1);
-}
 
 /* 模块之间 32；模块级标题与其下方内容 12 */
 .tool-group + .tool-group {
