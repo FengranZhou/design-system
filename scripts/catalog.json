@@ -1440,6 +1440,18 @@
           "label": "多标题",
           "type": "switch",
           "default": false
+        },
+        {
+          "key": "dialogFooterLeft",
+          "label": "底部左侧内容",
+          "type": "switch",
+          "default": false
+        },
+        {
+          "key": "dialogFullscreen",
+          "label": "全屏",
+          "type": "switch",
+          "default": false
         }
       ],
       "readRefs": [
@@ -1452,9 +1464,12 @@
         "宽度按场景从三档选：确认/单字段=400、常规表单=640、复杂富内容=800，禁非档位宽度",
         "800 档是给内嵌表格/列表等非表单富内容的，不是给\"双列表单\"——表单一律单列",
         "危险操作加 class=\"is-danger\"",
-        "footer 主按钮在右（右对齐→主按钮贴右）"
+        "footer 主按钮在右（右对齐→主按钮贴右）",
+        "footer 左下角放辅助信息/附加选项时套 .dialog-footer-left，不放第三个动作按钮",
+        "内嵌表格/通栏图片要贴边铺满时给弹窗加 .dialog-body-flush，禁自写负外边距抵消内边距",
+        "全屏用 EP 原生 fullscreen prop；但三档宽度装不下多半该改用页面，不是升级成全屏"
       ],
-      "snippetSrc": "({ title, danger, confirmText, dialogScene, dialogShowTip, dialogMultiTitle }) => {\n      // 宽度由场景决定（三档，禁非档位值）：确认 400 / 表单 640 / 富内容 800\n      const width = { confirm: 400, form: 640, rich: 800 }[dialogScene] || 640\n      const tip = dialogShowTip\n        ? '\\n  <el-alert title=\"提交后不可修改\" class=\"alert-neutral\" show-icon :closable=\"false\" />\\n'\n        : ''\n      const titles = dialogMultiTitle\n        ? '\\n  <div class=\"dialog-titles\"><span class=\"is-active\">基本信息</span><span>高级设置</span></div>\\n'\n        : ''\n      return `<el-dialog\n  v-model=\"visible\"\n  title=\"${title || '标题'}\"\n  width=\"${width}px\"${danger ? '\\n  class=\"is-danger\"' : ''}\n>${titles}${tip}\n  <!-- 内容放默认插槽 -->\n\n  <template #footer>\n    <el-button @click=\"visible = false\">取消</el-button>\n    <el-button type=\"${danger ? 'danger' : 'primary'}\" @click=\"handleConfirm\">${confirmText || '确定'}</el-button>\n  </template>\n</el-dialog>`\n    }",
+      "snippetSrc": "({ title, danger, confirmText, dialogScene, dialogShowTip, dialogMultiTitle, dialogFooterLeft, dialogFullscreen }) => {\n      // 宽度由场景决定（三档，禁非档位值）：确认 400 / 表单 640 / 富内容 800\n      const width = { confirm: 400, form: 640, rich: 800 }[dialogScene] || 640\n      const tip = dialogShowTip\n        ? '\\n  <el-alert title=\"提交后不可修改\" class=\"alert-neutral\" show-icon :closable=\"false\" />\\n'\n        : ''\n      const titles = dialogMultiTitle\n        ? '\\n  <div class=\"dialog-titles\"><span class=\"is-active\">基本信息</span><span>高级设置</span></div>\\n'\n        : ''\n      // 全屏走 EP 原生 prop；全屏时宽度档位不再适用（撑满视口）\n      const fullscreen = dialogFullscreen ? '\\n  fullscreen' : `\\n  width=\"${width}px\"`\n      // 底部左侧：约定 class .dialog-footer-left，只放辅助信息/附加选项，不放动作按钮\n      const footerLeft = dialogFooterLeft\n        ? '\\n    <div class=\"dialog-footer-left\">\\n      <el-checkbox v-model=\"dontRemind\" label=\"不再提示\" />\\n    </div>'\n        : ''\n      return `<el-dialog\n  v-model=\"visible\"\n  title=\"${title || '标题'}\"${fullscreen}${danger ? '\\n  class=\"is-danger\"' : ''}\n>${titles}${tip}\n  <!-- 内容放默认插槽 -->\n\n  <template #footer>${footerLeft}\n    <el-button @click=\"visible = false\">取消</el-button>\n    <el-button type=\"${danger ? 'danger' : 'primary'}\" @click=\"handleConfirm\">${confirmText || '确定'}</el-button>\n  </template>\n</el-dialog>`\n    }",
       "snippetDefaults": {
         "width": "640",
         "danger": false,

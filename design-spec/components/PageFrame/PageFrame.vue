@@ -15,7 +15,9 @@
       @back="router.back()"
       @back-platform="router.push('/')"
     >
-      页面内容（默认插槽，渲染在白色圆角内容卡里）
+      <el-scrollbar class="scroll-fill">      ← 滚动归业务层，见下方「默认插槽」说明
+        <div class="my-page">页面内容（留白 / 版面由本页自己给）</div>
+      </el-scrollbar>
     </PageFrame>
   props：
     menus          PageFrameMenuGroup[]  必填。侧边导航分组：{ title?, items: [{ key, label, icon?, children? }] }。
@@ -53,7 +55,15 @@
     collapse-change(collapsed)  侧边栏收起 / 展开切换
     back-platform / course-click / help-click / notice-click / avatar-click
   slots：
-    默认插槽      内容区（白色圆角卡内部；内边距由页面自定）
+    默认插槽      内容区（白色圆角卡内部）。⚠️ **框架只给白底 + 圆角 + 占满剩余高度，不定义版面**：
+                  内边距、滚动、分区、空态摆放全部由业务层自己写（各页版面差异大，
+                  框架替业务定死只会处处被覆盖）。
+                  · 留白：内容根自己给 padding（页面内容与左右边缘 spacing-6）；
+                  · 滚动：内容长过一屏时，**在自己的内容外套 `<el-scrollbar class="scroll-fill">`**
+                    （仍受「滚动区一律 el-scrollbar」约束，禁给内容区写 overflow: auto）。
+                    `scroll-fill` 让 wrap/view 撑满，页内空态 empty-page 才能垂直居中；
+                    页面级 tab 工具栏的自动吸顶也依赖这个滚动容器。
+                    范本见 demo 的 CourseDashboardPageDemo / CourseToolsPageDemo。
     #course-card  整体替换侧边栏课程卡
     #breadcrumb   整体替换顶栏左侧面包屑区
     #topbar-right     顶栏右侧追加自定义入口，插在内置入口【之前】（帮助图标左侧）
@@ -290,18 +300,15 @@
             <slot name="topbar-right-end" />
           </div>
         </header>
-        <!-- 内容区可滚：用 el-scrollbar（基础组件）而非 overflow:auto——
-             原生滚动条样式不可控、有白底 track 且占位挤内容（见 component-interaction.md 滚动条段）。
-             scroll-fill：让 wrap/view 撑满外壳高度，否则 view 按内容高——页面内容不满一屏时
-             （典型是整页空态 empty-page），子元素的 height:100% 拿不到基准、无法在内容区里垂直居中。
-             内容超出时 wrap 的 overflow:auto 照常滚动，不受影响。 -->
-        <el-scrollbar
-          tag="main"
-          class="page-frame__content scroll-fill"
-          view-class="page-frame__content-view"
-        >
+        <!-- 内容区：框架只给「白底 + 圆角 + 在主区里占位」，**不定义版面**。
+             这里刻意是普通 <main> 而非 el-scrollbar——内容区的排版属于业务层：
+             内边距、滚动区怎么切、要不要吸顶工具栏、空态怎么摆，各页差异极大，
+             框架替业务决定只会处处要覆盖。
+             ⚠️ 业务层要在内容区内部做滚动时，仍受「滚动区一律 el-scrollbar」约束：
+                在自己的内容里套 <el-scrollbar>，而不是给本容器写 overflow: auto。 -->
+        <main class="page-frame__content">
           <slot />
-        </el-scrollbar>
+        </main>
       </div>
     </div>
   </el-scrollbar>
@@ -929,16 +936,26 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   padding: 0 var(--iflyv-spacing-1);
 }
 
-/* 内容区：白色圆角大卡，占满剩余高度，margin 留出与页面灰底的呼吸缝（右/下），
-   内部滚动；内边距由页面内容自定 */
-/* 内容区外壳：只负责在主区 flex 里占位 + 白底圆角卡外观，滚动发生在内部 view */
+/* 内容区：白色圆角大卡。**只给外观与占位，不给版面**——
+   内边距 / 滚动 / 分区 / 空态摆放全部交给业务层自己写（各页版面差异大，
+   框架替业务定死只会处处被覆盖）。
+
+   四条各自不可省：
+     · background + border-radius —— 卡片外观，框架的职责；
+     · flex:1 + min-height:0     —— 在主区纵向 flex 里占满剩余高度。
+       **这不是「版面」，是让卡片有确定高度的前提**：少了它卡片会塌成内容高度，
+       业务层内部再写 height:100% / el-scrollbar / empty-page 居中就全都拿不到基准。
+     · margin —— 与页面灰底的呼吸缝（右/下）。
+     · overflow: hidden —— **属于卡片外观，不是版面**：只有 border-radius 不裁切子元素，
+       业务层的滚动内容（尤其吸顶工具栏那条白底）会盖住四角、把圆角画成直角。
+       它只把内容裁到卡片形状，不产生滚动条（滚动仍归业务层自己的 el-scrollbar）。
+   ⚠️ 有意不写 padding：留白归业务层。 */
 .page-frame__content {
   flex: 1;
   min-height: 0;
   margin: 0 var(--iflyv-spacing-3) var(--iflyv-spacing-3) 0;
   background: var(--iflyv-bg-panel);
   border-radius: var(--iflyv-radius-lg);
-  /* 圆角裁掉滚动条溢出的直角，使自绘条贴合卡片圆角 */
   overflow: hidden;
 }
 </style>

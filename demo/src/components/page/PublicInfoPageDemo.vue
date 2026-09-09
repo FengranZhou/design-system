@@ -29,64 +29,68 @@
         :back-disabled="true"
         avatar-role="teacher-male"
       >
-        <div class="public-info">
-          <!-- 页面级一级内容切换 → 页面级档 .tabs-page（充当页面标题层）。
-               本页无同排操作按钮，但仍套 .toolbar：吸顶能力由源头
-               `.toolbar:has(.tabs-page)` 提供，裸 el-tabs 拿不到。 -->
-          <div class="toolbar public-info__head">
-            <div class="toolbar__left">
-              <el-tabs v-model="activeTab" class="tabs-page">
-                <el-tab-pane label="课程概述" name="overview" />
-                <el-tab-pane label="教学团队" name="team" />
-                <el-tab-pane label="课程框架" name="framework" />
-                <el-tab-pane label="课程图谱" name="graph" />
-                <el-tab-pane label="AI特色" name="ai" />
-              </el-tabs>
-            </div>
-          </div>
-
-          <!-- AI 特色 tab（演示主体） -->
-          <template v-if="activeTab === 'ai'">
-            <!-- AI 特色展示横幅：渐变底 + 3D 四角星均为用户提供切图（页面装饰资产，非组件外观） -->
-            <div class="ai-banner">
-              <img class="ai-banner__star" :src="aiStar" alt="" />
-              <span class="ai-banner__title">AI 特色展示</span>
-              <el-switch v-model="aiEnabled" />
-            </div>
-
-            <div class="info-card info-card--bleed">
-              <h4 class="info-card__title">简介文案</h4>
-              <div class="info-card__panel">
-                本课程将构建“师–生–AI”三元一体的全新教学模式，秉承以人为本的思维，激发学生学习过程中的能动性和责任心，帮助学生站在
-                AI 肩膀上开展意义学习和深度学习，支持文字+图片的混合模式。本课程将构建“师–生–AI”三元一体的全新教学模式，秉承以人为本的思维，激发学生学习过程中的能动性和责任心，帮助学生站在
-                AI 肩膀上开展意义学习和深度学习，支持文字+图片的混合模式。
+        <!-- 内容区滚动归业务层：PageFrame 只给白底圆角与占位、不定义版面（滚动/留白由页面自己写）。
+             scroll-fill：让 wrap/view 撑满，内容不满一屏时页内空态仍能垂直居中。 -->
+        <el-scrollbar class="scroll-fill">
+          <div class="public-info">
+            <!-- 页面级一级内容切换 → 页面级档 .tabs-page（充当页面标题层）。
+                 本页无同排操作按钮，但仍套 .toolbar：吸顶能力由源头
+                 `.toolbar:has(.tabs-page)` 提供，裸 el-tabs 拿不到。 -->
+            <div class="toolbar public-info__head">
+              <div class="toolbar__left">
+                <el-tabs v-model="activeTab" class="tabs-page">
+                  <el-tab-pane label="课程概述" name="overview" />
+                  <el-tab-pane label="教学团队" name="team" />
+                  <el-tab-pane label="课程框架" name="framework" />
+                  <el-tab-pane label="课程图谱" name="graph" />
+                  <el-tab-pane label="AI特色" name="ai" />
+                </el-tabs>
               </div>
             </div>
 
-            <div v-for="card in featureCards" :key="card.title" class="info-card">
-              <h4 class="info-card__title">{{ card.title }}</h4>
-              <p class="info-card__desc">
-                {{ card.desc }}
-                <el-tag class="el-tag--outline"><Info :size="12" :stroke-width="2" />来源</el-tag>
-              </p>
-            </div>
+            <!-- AI 特色 tab（演示主体） -->
+            <template v-if="activeTab === 'ai'">
+              <!-- AI 特色展示横幅：渐变底 + 3D 四角星均为用户提供切图（页面装饰资产，非组件外观） -->
+              <div class="ai-banner">
+                <img class="ai-banner__star" :src="aiStar" alt="" />
+                <span class="ai-banner__title">AI 特色展示</span>
+                <el-switch v-model="aiEnabled" />
+              </div>
 
-            <!-- 页面级表单操作区：主按钮贴左（主按钮贴边原则——左对齐容器主按钮贴左缘） -->
-            <div class="public-info__actions">
-              <el-button type="primary">编辑</el-button>
-              <el-button>预览</el-button>
-            </div>
-          </template>
+              <div class="info-card info-card--bleed">
+                <h4 class="info-card__title">简介文案</h4>
+                <div class="info-card__panel">
+                  本课程将构建“师–生–AI”三元一体的全新教学模式，秉承以人为本的思维，激发学生学习过程中的能动性和责任心，帮助学生站在
+                  AI 肩膀上开展意义学习和深度学习，支持文字+图片的混合模式。本课程将构建“师–生–AI”三元一体的全新教学模式，秉承以人为本的思维，激发学生学习过程中的能动性和责任心，帮助学生站在
+                  AI 肩膀上开展意义学习和深度学习，支持文字+图片的混合模式。
+                </div>
+              </div>
 
-          <!-- 其余 tab 不在演示范围：空状态占据整个页面内容区 → 页面级档 empty-page
-               （档位判据：整页工作区 = 页面级 / 页内某卡片区块 = 模块级；插画 + 档位 class 缺一即落回 EP 默认） -->
-          <el-empty
-            v-else
-            class="empty-page"
-            :image="isDark ? noDataDark : noData"
-            description="该 Tab 内容不在本页演示范围"
-          />
-        </div>
+              <div v-for="card in featureCards" :key="card.title" class="info-card">
+                <h4 class="info-card__title">{{ card.title }}</h4>
+                <p class="info-card__desc">
+                  {{ card.desc }}
+                  <el-tag class="el-tag--outline"><Info :size="12" :stroke-width="2" />来源</el-tag>
+                </p>
+              </div>
+
+              <!-- 页面级表单操作区：主按钮贴左（主按钮贴边原则——左对齐容器主按钮贴左缘） -->
+              <div class="public-info__actions">
+                <el-button type="primary">编辑</el-button>
+                <el-button>预览</el-button>
+              </div>
+            </template>
+
+            <!-- 其余 tab 不在演示范围：空状态占据整个页面内容区 → 页面级档 empty-page
+                 （档位判据：整页工作区 = 页面级 / 页内某卡片区块 = 模块级；插画 + 档位 class 缺一即落回 EP 默认） -->
+            <el-empty
+              v-else
+              class="empty-page"
+              :image="isDark ? noDataDark : noData"
+              description="该 Tab 内容不在本页演示范围"
+            />
+          </div>
+        </el-scrollbar>
       </PageFrame>
     </div>
   </section>
