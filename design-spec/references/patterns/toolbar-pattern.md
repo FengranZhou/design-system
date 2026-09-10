@@ -87,8 +87,36 @@
 （符合「分隔优先级：间距 > 色差 > 细线」）。纯 CSS 实现，无需监听滚动。
 
 > **吸顶失效时排查**：祖先链上若有 `overflow: hidden / auto`，`sticky` 会相对该元素
-> 而非滚动容器定位。`PageFrame` 的内容区把滚动放在 `el-scrollbar` 的 wrap 上、
-> view 不裁切，故正常成立。**不要在使用方补 `:deep` 覆盖**，回去查外层 overflow。
+> 而非滚动容器定位。**不要在使用方补 `:deep` 覆盖**，回去查外层 overflow。
+
+**⭐ 用 `PageFrame` 时，含页面级 tab 的工具栏放 `#page-header` 插槽** <!-- @rule id=toolbar-page-header-slot level=SHOULD cat=设计模式 detect=manual dtitle=页面顶部的分区切换栏应固定在滚动条范围之外，滚动条不该覆盖一段永远不滚的区域 title=用 PageFrame 时含页面级 tab 的工具栏放 #page-header 插槽，纯标题工具栏仍放滚动区内 -->：
+
+⚠️ **只有含页面级 tab 的才放**——判据同上方吸顶段：**纯页面标题工具栏不放**，它没有「定位 + 就地切换」的作用，应跟着内容一起滚走。
+
+```vue
+<PageFrame …>
+  <template #page-header>
+    <div class="toolbar">…页面级 tab / 标题…</div>
+  </template>
+  <div class="my-page">页面内容</div>
+</PageFrame>
+```
+
+**为什么**：放进默认插槽（滚动区内）虽也能靠 `sticky` 吸顶，但工具栏就落在滚动容器里，
+**滚动条轨道会把这段永远不滚的区域也算进去**——轨道从 tab 那一行起算，观感不对。
+放进 `#page-header` 则工具栏在滚动区之外，轨道只覆盖真正会滚的内容。
+
+**纯标题工具栏怎么放**：直接放在默认插槽（滚动区）里的内容顶部，随内容滚走即可，
+不进 `#page-header`、也不需要分割线（源头 `:has(.tabs-page)` 已把这两样都限定在 tab 档）。
+
+**两种接法的分割线都成立**（同一视觉效果、两套驱动）：
+
+| 工具栏位置 | 常驻方式 | 分割线驱动 |
+|---|---|---|
+| `#page-header`（PageFrame，**推荐**） | 天然不滚 | 具名滚动时间线 `--page-scroll`（滚动区声明、页头 `timeline-scope` 接住） |
+| 滚动区内（自建骨架 / 模块内滚动区） | `position: sticky` | `animation-timeline: scroll(nearest block)` |
+
+两者都在源头，使用方不写任何驱动代码。
 
 ### 3. 留白 —— **按标题层级分工**
 

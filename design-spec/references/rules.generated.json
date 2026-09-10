@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 116,
-  "totalWeight": 333,
+  "total": 117,
+  "totalWeight": 335,
   "byLevel": {
     "MUST": 101,
-    "SHOULD": 15,
+    "SHOULD": 16,
     "MAY": 0
   },
   "byDetect": {
     "regex": 75,
     "ast": 7,
-    "manual": 34
+    "manual": 35
   },
   "byView": {
-    "design": 97,
-    "impl": 108
+    "design": 98,
+    "impl": 109
   },
   "categoryOrder": [
     "单一数据源",
@@ -1370,7 +1370,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 106
+      "line": 134
     },
     {
       "id": "toolbar-order",
@@ -1385,7 +1385,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 165
+      "line": 193
     },
     {
       "id": "toolbar-convention-class",
@@ -1400,7 +1400,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 179
+      "line": 207
     },
     {
       "id": "form-max-width",
@@ -1446,6 +1446,21 @@
       "weight": 2,
       "source": "design-spec/references/patterns/form-pattern.md",
       "line": 189
+    },
+    {
+      "id": "toolbar-page-header-slot",
+      "title": "用 PageFrame 时含页面级 tab 的工具栏放 #page-header 插槽，纯标题工具栏仍放滚动区内",
+      "designTitle": "页面顶部的分区切换栏应固定在滚动条范围之外，滚动条不该覆盖一段永远不滚的区域",
+      "level": "SHOULD",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "line": 92
     },
     {
       "id": "empty-image-and-class",

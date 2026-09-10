@@ -26,31 +26,30 @@
         :back-disabled="true"
         avatar-role="teacher-male"
       >
-        <!-- 内容区滚动归业务层：PageFrame 只给白底圆角与占位、不定义版面（滚动/留白由页面自己写）。
-             scroll-fill：让 wrap/view 撑满，内容不满一屏时页内空态仍能垂直居中。 -->
-        <el-scrollbar class="scroll-fill">
-          <div class="course-tools">
-            <!-- 页面级主标题：只含标题也是工具栏（toolbar-pattern 分支①，右侧为空）。
-                 字阶与上下左右内边距全在源头 .toolbar，本页不写。 -->
-            <div class="toolbar">
-              <div class="toolbar__left">
-                <h3 class="toolbar__title">课程工具</h3>
+        <div class="course-tools">
+          <!-- 页面级主标题：只含标题也是工具栏（toolbar-pattern 分支①，右侧为空）。
+               ⚠ 放在滚动区内（不进 #page-header）——**只有页面级 tab 栏才常驻**：
+               tab 是「我在哪个分区」的定位信息、且要能就地切换，滚走会失去上下文；
+               纯标题没有这层作用，跟着内容滚走才符合层级预期。
+               字阶与上下左右内边距全在源头 .toolbar，本页不写。 -->
+          <div class="toolbar">
+            <div class="toolbar__left">
+              <h3 class="toolbar__title">课程工具</h3>
+            </div>
+          </div>
+
+          <section v-for="group in toolGroups" :key="group.title" class="tool-group">
+            <h4 class="tool-group__title">{{ group.title }}</h4>
+            <!-- 分栏走源头栅格约定类：24 列，col-6 = 四列数据卡（最小粒度），
+                 水槽与换行间距由 --iflyv-grid-gutter 提供（=「卡片之间」同档） -->
+            <div class="grid">
+              <div v-for="tool in group.tools" :key="tool.label" class="grid__col-6 tool-card">
+                <img class="tool-card__icon" :src="tool.icon" alt="" />
+                <span class="tool-card__label">{{ tool.label }}</span>
               </div>
             </div>
-
-            <section v-for="group in toolGroups" :key="group.title" class="tool-group">
-              <h4 class="tool-group__title">{{ group.title }}</h4>
-              <!-- 分栏走源头栅格约定类：24 列，col-6 = 四列数据卡（最小粒度），
-                   水槽与换行间距由 --iflyv-grid-gutter 提供（=「卡片之间」同档） -->
-              <div class="grid">
-                <div v-for="tool in group.tools" :key="tool.label" class="grid__col-6 tool-card">
-                  <img class="tool-card__icon" :src="tool.icon" alt="" />
-                  <span class="tool-card__label">{{ tool.label }}</span>
-                </div>
-              </div>
-            </section>
-          </div>
-        </el-scrollbar>
+          </section>
+        </div>
       </PageFrame>
     </div>
   </section>

@@ -15,9 +15,10 @@
       @back="router.back()"
       @back-platform="router.push('/')"
     >
-      <el-scrollbar class="scroll-fill">      ← 滚动归业务层，见下方「默认插槽」说明
-        <div class="my-page">页面内容（留白 / 版面由本页自己给）</div>
-      </el-scrollbar>
+      <template #page-header>                ← 不滚的页头（**仅**放含页面级 tab 的工具栏）
+        <div class="toolbar"><el-tabs class="tabs-page">…</el-tabs></div>
+      </template>
+      <div class="my-page">页面内容（滚动区内，留白由本页自己给）</div>
     </PageFrame>
   props：
     menus          PageFrameMenuGroup[]  必填。侧边导航分组：{ title?, items: [{ key, label, icon?, children? }] }。
@@ -55,15 +56,17 @@
     collapse-change(collapsed)  侧边栏收起 / 展开切换
     back-platform / course-click / help-click / notice-click / avatar-click
   slots：
-    默认插槽      内容区（白色圆角卡内部）。⚠️ **框架只给白底 + 圆角 + 占满剩余高度，不定义版面**：
-                  内边距、滚动、分区、空态摆放全部由业务层自己写（各页版面差异大，
-                  框架替业务定死只会处处被覆盖）。
-                  · 留白：内容根自己给 padding（页面内容与左右边缘 spacing-6）；
-                  · 滚动：内容长过一屏时，**在自己的内容外套 `<el-scrollbar class="scroll-fill">`**
-                    （仍受「滚动区一律 el-scrollbar」约束，禁给内容区写 overflow: auto）。
-                    `scroll-fill` 让 wrap/view 撑满，页内空态 empty-page 才能垂直居中；
-                    页面级 tab 工具栏的自动吸顶也依赖这个滚动容器。
-                    范本见 demo 的 CourseDashboardPageDemo / CourseToolsPageDemo。
+    默认插槽      内容区（白色圆角卡内的**滚动区**）。滚动由框架提供，内容超出即在此滚动。
+                  ⚠️ **留白仍归业务层**：内容根自己给 padding（与左右边缘 spacing-6），
+                  框架不给内边距。
+    #page-header  页面级页头（可选），在**滚动区之外**——始终可见、不参与滚动。
+                  ⚠️ **只放含页面级 tab（`.tabs-page`）的工具栏**：tab 是「我在哪个分区」的
+                  定位信息、且要能就地切换，滚走会失去上下文；放在滚动区里还会让
+                  滚动条轨道把这段永远不滚的区域也算进去（观感不对）。
+                  ⛔ **纯页面标题工具栏不要放这里**——它没有上述作用，应放默认插槽、
+                  跟着内容一起滚走（分割线同理，源头已限定在 tab 档）。
+                  内边距由 `.toolbar` 页面级档自带（上下 16 / 左右 24），本插槽不再给。
+                  范本见 demo 的 CourseDashboardPageDemo / PublicInfoPageDemo。
     #course-card  整体替换侧边栏课程卡
     #breadcrumb   整体替换顶栏左侧面包屑区
     #topbar-right     顶栏右侧追加自定义入口，插在内置入口【之前】（帮助图标左侧）
@@ -300,14 +303,18 @@
             <slot name="topbar-right-end" />
           </div>
         </header>
-        <!-- 内容区：框架只给「白底 + 圆角 + 在主区里占位」，**不定义版面**。
-             这里刻意是普通 <main> 而非 el-scrollbar——内容区的排版属于业务层：
-             内边距、滚动区怎么切、要不要吸顶工具栏、空态怎么摆，各页差异极大，
-             框架替业务决定只会处处要覆盖。
-             ⚠️ 业务层要在内容区内部做滚动时，仍受「滚动区一律 el-scrollbar」约束：
-                在自己的内容里套 <el-scrollbar>，而不是给本容器写 overflow: auto。 -->
+        <!-- 内容区：白底圆角卡，内部分「不滚的页头」+「滚动区」两段。
+             #page-header 在滚动容器**之外**：只放含页面级 tab 的工具栏（须常驻），
+             于是滚动条轨道只覆盖真正会滚的内容（放进滚动区里则轨道会连页头一起算进去）。
+             留白仍归业务层：本框架不给内边距，页头与内容各自给。 -->
         <main class="page-frame__content">
-          <slot />
+          <div v-if="$slots['page-header']" class="page-frame__page-header">
+            <slot name="page-header" />
+          </div>
+          <!-- 滚动区：scroll-fill 让 wrap/view 撑满，内容不满一屏时页内空态仍能垂直居中 -->
+          <el-scrollbar class="page-frame__scroll-area scroll-fill" view-class="page-frame__scroll-area-view">
+            <slot />
+          </el-scrollbar>
         </main>
       </div>
     </div>
@@ -947,15 +954,58 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
        业务层内部再写 height:100% / el-scrollbar / empty-page 居中就全都拿不到基准。
      · margin —— 与页面灰底的呼吸缝（右/下）。
      · overflow: hidden —— **属于卡片外观，不是版面**：只有 border-radius 不裁切子元素，
-       业务层的滚动内容（尤其吸顶工具栏那条白底）会盖住四角、把圆角画成直角。
-       它只把内容裁到卡片形状，不产生滚动条（滚动仍归业务层自己的 el-scrollbar）。
-   ⚠️ 有意不写 padding：留白归业务层。 */
+       内部的滚动内容会盖住四角、把圆角画成直角。它只把内容裁到卡片形状，不产生滚动条。
+     · display: flex + column —— 让「不滚的页头」与「滚动区」上下分段，
+       滚动区吃掉页头之外的剩余高度（见下方两条）。
+   ⚠️ 有意不写 padding：留白归业务层（页头与内容各自给）。 */
 .page-frame__content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
   margin: 0 var(--iflyv-spacing-3) var(--iflyv-spacing-3) 0;
   background: var(--iflyv-bg-panel);
   border-radius: var(--iflyv-radius-lg);
   overflow: hidden;
+}
+
+/* 页头段（#page-header）：在滚动容器之外，故始终可见、不参与滚动。
+   放页面级 tab 工具栏这类「页面定位信息」——它本就该常驻，
+   放在滚动区里则要靠 sticky 吸顶，且会让滚动条轨道把这段也算进去。
+   ⚠️ 不给内边距：留白归业务层（.toolbar 页面级档自带上下 16 / 左右 24）。 */
+.page-frame__page-header {
+  flex-shrink: 0;
+  /* 吃掉页面级 .toolbar 的出血负外边距（左右各 -24）：
+     那对负边距是给「工具栏在有内边距的页面容器里、吸顶时底色要铺满整宽」用的，
+     这里页头本身就是整宽容器，不抵消的话工具栏会比页头宽 48、溢出被卡片圆角裁掉。
+     用等量内边距抵消：视觉位置不变（左右仍 24），宽度回到与内容对齐。 */
+  padding-inline: var(--iflyv-spacing-6);
+}
+
+/* 滚动区：吃掉页头之外的剩余高度，内容超出时在此滚动。
+   min-height: 0 是 flex 子项允许收缩滚动的必要条件。 */
+.page-frame__scroll-area {
+  flex: 1;
+  min-height: 0;
+}
+
+/* 具名滚动时间线：把「本区滚了多少」暴露给**滚动区之外**的页头，
+   让页头里的工具栏能在内容一滚就显出分割线（纯 CSS，无需监听 scroll）。
+   为什么需要具名：工具栏放进 #page-header 后已不在滚动容器内，
+   `animation-timeline: scroll(nearest block)` 找不到滚动祖先、线永远不显形。
+   ⚠️ 声明在真正滚动的元素（el-scrollbar 的 wrap）上，不是外壳。 */
+.page-frame__scroll-area > :deep(.el-scrollbar__wrap) {
+  scroll-timeline: --page-scroll block;
+}
+
+/* timeline-scope 必须挂在**同时包含「声明方」与「使用方」的共同祖先**上。
+   声明方是滚动区里的 wrap、使用方是页头里的工具栏，二者是兄弟子树——
+   挂在页头上只能让页头的后代看见，看不到兄弟子树里声明的名字（线永远不显形，实测踩过）。
+   故挂在 .page-frame__content（页头与滚动区的共同父级）上。
+   降级：不支持 scroll-timeline 的浏览器线始终不显示（不会出现「默认就有线」）。 */
+@supports (animation-timeline: --x) {
+  .page-frame__content {
+    timeline-scope: --page-scroll;
+  }
 }
 </style>
