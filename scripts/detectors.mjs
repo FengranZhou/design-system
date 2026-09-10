@@ -1376,6 +1376,32 @@ export const DETECTORS = {
     },
     hint: '点击行不产生业务联动时不要开 highlight-current-row（常驻高亮＝噪音）；做主从布局才开，并配 @row-click / @current-change。见 patterns/list-item-pattern.md §五.5',
   },
+
+  /**
+   * 服务端分页的表格，排序列必须 sortable="custom"。
+   * 判据：同一文件里既有分页器（→ data 只是一页、不是全量），又有非 custom 的 sortable
+   *       → EP 拿当前页做本地排序，而用户以为排的是全表。**不报错、页面照跑**，故必须静态查。
+   * ⚠️ 为什么用「有没有分页器」而不是「有没有调接口」：后者静态判不出。
+   *    分页器是「数据被分页了」最可靠的模板级信号；没有分页器时无法断定 data 非全量，
+   *    一律放过（宁漏不误报，与 table-freeze-columns 同尺度）。
+   */
+  'table-server-sort-custom': {
+    scope: 'template',
+    custom: (ctx) => {
+      const body = ctx.template || ''
+      // 无分页器 → 无法判定 data 是否为全量，放过
+      if (!/<el-pagination|<DataTable[^>]*\bpage/i.test(body)) return []
+      const hits = []
+      body.split('\n').forEach((line, i) => {
+        if (!/\bsortable\b/.test(line)) return
+        if (/custom/.test(line)) return                            // 已是 custom
+        if (/sortable\s*[:=]\s*["']?false/.test(line)) return      // 显式关闭
+        hits.push({ line: i + 1 + (ctx.templateOffset || 0), text: line.trim().slice(0, 90) })
+      })
+      return hits
+    },
+    hint: '服务端分页的表格排序列改用 sortable="custom" 并接 @sort-change 去请求接口；sortable=true 只会重排当前页。见 patterns/list-item-pattern.md §四.10',
+  },
 }
 
 /** 有检测器且能真正执行的条目 id（find 为 null 表示暂未实现） */

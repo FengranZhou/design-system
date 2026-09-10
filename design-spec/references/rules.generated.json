@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 117,
-  "totalWeight": 335,
+  "total": 118,
+  "totalWeight": 338,
   "byLevel": {
-    "MUST": 101,
+    "MUST": 102,
     "SHOULD": 16,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 75,
+    "regex": 76,
     "ast": 7,
     "manual": 35
   },
   "byView": {
-    "design": 98,
-    "impl": 109
+    "design": 99,
+    "impl": 110
   },
   "categoryOrder": [
     "单一数据源",
@@ -39,7 +39,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/display-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\display-guide.md",
       "line": 22
     },
     {
@@ -53,7 +53,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/judging-criteria.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\judging-criteria.md",
       "line": 153
     },
     {
@@ -67,7 +67,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/judging-criteria.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\judging-criteria.md",
       "line": 155
     },
     {
@@ -81,7 +81,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/judging-criteria.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\judging-criteria.md",
       "line": 157
     },
     {
@@ -95,7 +95,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/judging-criteria.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\judging-criteria.md",
       "line": 161
     },
     {
@@ -109,7 +109,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/judging-criteria.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\judging-criteria.md",
       "line": 159
     },
     {
@@ -123,7 +123,7 @@
         "design"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 633
     },
     {
@@ -138,7 +138,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 14
     },
     {
@@ -152,7 +152,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 15
     },
     {
@@ -166,7 +166,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 16
     },
     {
@@ -181,7 +181,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 17
     },
     {
@@ -196,7 +196,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 18
     },
     {
@@ -211,7 +211,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 19
     },
     {
@@ -225,7 +225,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 33
     },
     {
@@ -240,7 +240,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 39
     },
     {
@@ -255,7 +255,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 209
     },
     {
@@ -270,7 +270,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 269
     },
     {
@@ -285,7 +285,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 280
     },
     {
@@ -300,7 +300,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 210
     },
     {
@@ -315,7 +315,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 507
     },
     {
@@ -330,7 +330,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 665
     },
     {
@@ -345,7 +345,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 692
     },
     {
@@ -359,7 +359,7 @@
         "design"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 742
     },
     {
@@ -374,7 +374,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1151
     },
     {
@@ -389,7 +389,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1399
     },
     {
@@ -404,7 +404,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/display-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\display-guide.md",
       "line": 268
     },
     {
@@ -419,7 +419,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/select-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\select-pattern.md",
       "line": 32
     },
     {
@@ -434,7 +434,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/select-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\select-pattern.md",
       "line": 57
     },
     {
@@ -448,7 +448,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/select-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\select-pattern.md",
       "line": 70
     },
     {
@@ -463,7 +463,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1306
     },
     {
@@ -478,7 +478,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 55
     },
     {
@@ -493,7 +493,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 117
     },
     {
@@ -508,7 +508,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 118
     },
     {
@@ -523,7 +523,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 119
     },
     {
@@ -538,7 +538,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 151
     },
     {
@@ -553,7 +553,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 153
     },
     {
@@ -567,7 +567,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 155
     },
     {
@@ -582,7 +582,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 167
     },
     {
@@ -597,7 +597,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 244
     },
     {
@@ -611,7 +611,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 280
     },
     {
@@ -625,7 +625,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 345
     },
     {
@@ -639,7 +639,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 380
     },
     {
@@ -654,7 +654,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 399
     },
     {
@@ -669,7 +669,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 439
     },
     {
@@ -684,7 +684,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 463
     },
     {
@@ -699,7 +699,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 584
     },
     {
@@ -714,7 +714,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 594
     },
     {
@@ -729,7 +729,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 595
     },
     {
@@ -744,7 +744,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 750
     },
     {
@@ -758,7 +758,7 @@
         "design"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 759
     },
     {
@@ -773,7 +773,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 856
     },
     {
@@ -788,7 +788,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 867
     },
     {
@@ -803,7 +803,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 904
     },
     {
@@ -818,7 +818,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 934
     },
     {
@@ -832,7 +832,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 964
     },
     {
@@ -847,7 +847,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1009
     },
     {
@@ -862,7 +862,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1072
     },
     {
@@ -876,7 +876,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1104
     },
     {
@@ -891,7 +891,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1270
     },
     {
@@ -906,7 +906,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1285
     },
     {
@@ -921,8 +921,23 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1348
+    },
+    {
+      "id": "table-server-sort-custom",
+      "title": "服务端分页表格的 sortable 必须传 custom，不能传 true",
+      "designTitle": "服务端分页的表格，排序结果应是整份数据的顺序而非只有当前页",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\list-item-pattern.md",
+      "line": 96
     },
     {
       "id": "metric-strip-class",
@@ -936,7 +951,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/metric-strip-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\metric-strip-pattern.md",
       "line": 13
     },
     {
@@ -951,7 +966,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/select-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\select-pattern.md",
       "line": 58
     },
     {
@@ -965,7 +980,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 282
     },
     {
@@ -980,7 +995,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 488
     },
     {
@@ -995,7 +1010,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 552
     },
     {
@@ -1010,7 +1025,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 553
     },
     {
@@ -1025,7 +1040,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1308
     },
     {
@@ -1039,7 +1054,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1360
     },
     {
@@ -1054,7 +1069,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/efficiency-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\efficiency-guide.md",
       "line": 50
     },
     {
@@ -1069,7 +1084,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/efficiency-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\efficiency-guide.md",
       "line": 148
     },
     {
@@ -1084,7 +1099,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 22
     },
     {
@@ -1099,7 +1114,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/metric-strip-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\metric-strip-pattern.md",
       "line": 14
     },
     {
@@ -1114,7 +1129,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 33
     },
     {
@@ -1129,7 +1144,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/dialog-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\dialog-pattern.md",
       "line": 80
     },
     {
@@ -1144,7 +1159,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/dialog-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\dialog-pattern.md",
       "line": 81
     },
     {
@@ -1159,7 +1174,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 25
     },
     {
@@ -1174,7 +1189,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 79
     },
     {
@@ -1189,7 +1204,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 81
     },
     {
@@ -1204,7 +1219,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 85
     },
     {
@@ -1219,7 +1234,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 124
     },
     {
@@ -1234,7 +1249,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 145
     },
     {
@@ -1249,7 +1264,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 204
     },
     {
@@ -1264,7 +1279,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 238
     },
     {
@@ -1279,7 +1294,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/list-item-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\list-item-pattern.md",
       "line": 49
     },
     {
@@ -1294,7 +1309,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/list-item-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\list-item-pattern.md",
       "line": 66
     },
     {
@@ -1309,7 +1324,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/list-item-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\list-item-pattern.md",
       "line": 79
     },
     {
@@ -1324,8 +1339,8 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/list-item-pattern.md",
-      "line": 109
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\list-item-pattern.md",
+      "line": 118
     },
     {
       "id": "search-use-searchmini",
@@ -1339,7 +1354,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/search-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\search-pattern.md",
       "line": 36
     },
     {
@@ -1354,7 +1369,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\toolbar-pattern.md",
       "line": 67
     },
     {
@@ -1369,7 +1384,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\toolbar-pattern.md",
       "line": 134
     },
     {
@@ -1384,7 +1399,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\toolbar-pattern.md",
       "line": 193
     },
     {
@@ -1399,7 +1414,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\toolbar-pattern.md",
       "line": 207
     },
     {
@@ -1414,7 +1429,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 49
     },
     {
@@ -1429,7 +1444,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 143
     },
     {
@@ -1444,7 +1459,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 189
     },
     {
@@ -1459,7 +1474,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/patterns/toolbar-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\toolbar-pattern.md",
       "line": 92
     },
     {
@@ -1474,7 +1489,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 886
     },
     {
@@ -1489,7 +1504,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1038
     },
     {
@@ -1504,7 +1519,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1039
     },
     {
@@ -1519,7 +1534,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/efficiency-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\efficiency-guide.md",
       "line": 105
     },
     {
@@ -1533,7 +1548,7 @@
         "design"
       ],
       "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\component-interaction.md",
       "line": 1202
     },
     {
@@ -1548,7 +1563,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/copywriting/number.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\copywriting\\number.md",
       "line": 34
     },
     {
@@ -1563,7 +1578,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/copywriting/time.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\copywriting\\time.md",
       "line": 45
     },
     {
@@ -1578,7 +1593,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/copywriting/time.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\copywriting\\time.md",
       "line": 69
     },
     {
@@ -1593,7 +1608,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/patterns/form-pattern.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\patterns\\form-pattern.md",
       "line": 80
     },
     {
@@ -1608,7 +1623,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/display-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\display-guide.md",
       "line": 243
     },
     {
@@ -1623,7 +1638,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/display-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\display-guide.md",
       "line": 386
     },
     {
@@ -1637,7 +1652,7 @@
         "design"
       ],
       "weight": 3,
-      "source": "design-spec/references/efficiency-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\efficiency-guide.md",
       "line": 127
     },
     {
@@ -1651,7 +1666,7 @@
         "design"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 20
     },
     {
@@ -1665,7 +1680,7 @@
         "design"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 21
     },
     {
@@ -1680,7 +1695,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 204
     },
     {
@@ -1694,7 +1709,7 @@
         "design"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 348
     },
     {
@@ -1708,7 +1723,7 @@
         "impl"
       ],
       "weight": 3,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 455
     },
     {
@@ -1723,7 +1738,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/display-guide.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\display-guide.md",
       "line": 260
     },
     {
@@ -1738,7 +1753,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 23
     },
     {
@@ -1753,7 +1768,7 @@
         "impl"
       ],
       "weight": 2,
-      "source": "design-spec/references/foundations.md",
+      "source": "D:\\xiaoya3-harness\\packages\\xy-design-system\\design-spec\\references\\foundations.md",
       "line": 402
     }
   ]
