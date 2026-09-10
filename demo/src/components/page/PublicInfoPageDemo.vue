@@ -29,10 +29,9 @@
         :back-disabled="true"
         avatar-role="teacher-male"
       >
-        <div class="public-info">
-          <!-- 页面级一级内容切换 → 页面级档 .tabs-page（充当页面标题层）。
-               本页无同排操作按钮，但仍套 .toolbar：吸顶能力由源头
-               `.toolbar:has(.tabs-page)` 提供，裸 el-tabs 拿不到。 -->
+        <!-- 页面级 tab 工具栏放 #page-header：在滚动区之外、始终可见，
+             滚动条轨道于是只覆盖下方真正会滚的内容。 -->
+        <template #page-header>
           <div class="toolbar public-info__head">
             <div class="toolbar__left">
               <el-tabs v-model="activeTab" class="tabs-page">
@@ -44,6 +43,9 @@
               </el-tabs>
             </div>
           </div>
+        </template>
+
+        <div class="public-info">
 
           <!-- AI 特色 tab（演示主体） -->
           <template v-if="activeTab === 'ai'">
@@ -281,14 +283,24 @@ onBeforeUnmount(() => {
 
 /* 页面级操作区：主按钮贴左；按钮间距一律父容器 flex+gap（源头已清零 EP 相邻 margin）。
    吸底：内容超出一屏时 sticky 贴住滚动容器底缘（在流内、随内容滚动，非常驻悬浮条）；
-   白底内衬遮住从其下滚过的卡片，负外边距与内衬相抵 → 未吸底时流内几何与无内衬完全一致 */
+   白底内衬遮住从其下滚过的卡片。
+
+   ⚠ 上下都要内衬（白底才能盖住从其下滚过的卡片），但**只有下方能用负 margin 抵消**：
+     上方若也写负 margin-top，会把 `.public-info > :not(.toolbar) + *` 提供的
+     块间距一起吃掉（16 被抵成 4），导致「吸底时」与「滚到底时」按钮上方间距不一致。
+     故上方直接把块间距让给 padding-top（二者同为 spacing-4，视觉位置不变），
+     并用 margin-top: 0 取消那条兄弟间距规则，避免 16+16 叠成 32。 */
 .public-info__actions {
   position: sticky;
   bottom: 0;
   display: flex;
   gap: var(--iflyv-spacing-3);
   background: var(--iflyv-bg-panel);
-  padding-block: var(--iflyv-spacing-3);
-  margin-block: calc(-1 * var(--iflyv-spacing-3));
+  /* 上：吃掉兄弟间距、改由自身内衬提供（白底覆盖到位，且不吃掉间距） */
+  margin-top: 0;
+  padding-top: var(--iflyv-spacing-4);
+  /* 下：内衬 + 等量负 margin 相抵，未吸底时流内几何与无内衬一致 */
+  padding-bottom: var(--iflyv-spacing-3);
+  margin-bottom: calc(-1 * var(--iflyv-spacing-3));
 }
 </style>

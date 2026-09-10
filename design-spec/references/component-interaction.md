@@ -1246,7 +1246,7 @@ loading.close()
 **实现细节见**：`el-theme/components/dialog.scss` 的「语义化标题图标变体」段。
 **示例代码见**：`design-spec/examples/dialog.examples.vue` 的「语义化标题」section。
 
-### Dialog 结构件：提示信息条 / 多标题切换（约定 class，源头 dialog.scss）
+### Dialog 结构件：提示信息条 / 多标题切换 / 底部左槽 / 贴边内容区（约定 class，源头 dialog.scss）
 
 - **弹窗内提示信息条**：弹窗需要一句全局引导/说明（操作前提、影响范围、填写须知）时，放在 **content 区顶部**（header 之下、主内容之上），用中性灰底 alert 承载；与下方内容的 20px 间距由源头统一给，使用方不再写间距：
 
@@ -1267,7 +1267,54 @@ loading.close()
   </template>
   ```
 
-- **反例**：提示条用裸 `div` + 自配底色；多标题用页面 scoped 自写字重/间距切换态——两者都是脱离源头的私货。
+- **footer 左下角放辅助内容**（「不再提示」多选框、「已选 3 项」计数、一句次要说明）：EP 的 `#footer` 是单个插槽、内部右对齐，直接塞元素会跟按钮挤在右边。把左侧内容包一层 **`.dialog-footer-left`**，源头用 `margin-inline-end: auto` 推到最左 <!-- @rule id=dialog-footer-left-slot level=MUST cat=组件用法 detect=regex dtitle=弹窗底部左下角的「不再提示」等辅助内容应贴左，不该和右侧按钮挤在一起 title=弹窗 footer 左侧内容套约定 class .dialog-footer-left，禁给 footer 自写 space-between -->：
+
+  ```vue
+  <template #footer>
+    <div class="dialog-footer-left">
+      <el-checkbox v-model="dontRemind" label="不再提示" />
+    </div>
+    <el-button @click="visible = false">取消</el-button>
+    <el-button type="primary" @click="onConfirm">确定</el-button>
+  </template>
+  ```
+
+  ⚠️ **左槽只放辅助信息 / 附加选项，不放第三个动作按钮**——按钮个数规则（退路 ≤1 + 若干并列进路）不因为多了个左槽而放宽，想往左塞动作按钮时先回上方「按钮个数」段核对。
+  ⚠️ **禁在使用方给 footer 写 `justify-content: space-between`** 来实现同样效果：那会让没有左槽的「一退路 + 一进路」也被拉到两端，破坏按钮组右对齐约定。
+
+- **内容区贴边铺满**（内嵌表格要让分割线通到两边、通栏图片 / 头图）：给 `el-dialog` 加 **`.dialog-body-flush`**，源头去掉 body 的左右内边距 <!-- @rule id=dialog-body-flush level=MUST cat=组件用法 detect=regex dtitle=弹窗里内嵌表格/通栏图片要铺满弹窗宽度时，用约定写法而不是手动抵消内边距 title=弹窗内容贴边铺满用约定 class .dialog-body-flush，禁自写负外边距抵消内边距 -->：
+
+  ```vue
+  <el-dialog class="dialog-body-flush" width="800px" title="选择学生">
+    <el-table :data="rows" />
+    <template #footer>…</template>
+  </el-dialog>
+  ```
+
+  只去掉 body 的左右内边距，**header / footer 仍保持 24 对齐**（贴边的是内容，不是整个弹窗）。**禁自写负外边距**去抵消内边距。常规文字 / 表单内容**不要加**——文字贴边会与标题错位。
+
+- **反例**：提示条用裸 `div` + 自配底色；多标题用页面 scoped 自写字重/间距切换态；footer 左侧内容靠 `space-between` 或给按钮写 `margin-right: auto`；贴边内容靠 `margin: 0 -24px` 硬抵消——都是脱离源头的私货。
+
+### Dialog 全屏（EP 原生 `fullscreen` prop）
+
+需要整屏才装得下的内容（大幅画布 / 全屏预览 / 复杂编排），传 EP 原生 `fullscreen`，无需额外 class：
+
+```vue
+<el-dialog v-model="visible" fullscreen title="课程编排">…</el-dialog>
+```
+
+⚠️ **全屏不是宽度的「第四档」** <!-- @rule id=dialog-fullscreen-not-fourth-tier level=SHOULD cat=组件选用 detect=manual dtitle=内容装不下就把弹窗放到全屏，多半说明这件事本该是一个独立页面 title=三档宽度装不下时应按四维判据改用页面，而非升级为全屏弹窗 -->：三档（400/640/800）都装不下时，按 `patterns/dialog-pattern.md` 四维判据多半应改用**页面**——全屏弹窗遮挡整个界面、丢失上下文，与「弹窗承载轻量任务」的定位相悖。全屏下的高度（解除 240/`calc(100vh-120px)` 两条限制、改用 `100vh`）与圆角归零已在源头统一，**使用方不再自行覆盖**。
+
+**全屏时内容要铺开须给主内容块 `flex: 1`**：全屏的目的就是把内容铺开，源头已在全屏时把 body 改成**纵向 flex**（默认档不变，仍是 block 自然流），但**哪个子元素该长高只有业务知道**，故由使用方接住 <!-- @rule id=dialog-fullscreen-content-fill level=SHOULD cat=组件用法 detect=manual dtitle=全屏弹窗里内容只占上面一小条、下方一大片空白 title=全屏弹窗的主内容块须给 flex:1 吃满内容区高度 -->：
+
+```vue
+<el-dialog fullscreen title="课程编排">
+  <div class="editor">…</div>   <!-- .editor { flex: 1; min-height: 0 } ← 要内部滚动再加 min-height -->
+  <template #footer>…</template>
+</el-dialog>
+```
+
+不写则内容维持自身高度、下方留一大片空白（**不报错**）。内容本就不需要铺满时不必加。
 
 ### Drawer 抽屉（何时用抽屉 vs 对话框）
 

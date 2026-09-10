@@ -28,7 +28,11 @@
 .el-dialog {
   --el-dialog-content-font-size: var(--iflyv-font-size-14);
   margin: 0;
-  padding: 12px 24px 20px;
+  /* 容器自身不给内边距，改由 header / body / footer 三区各自补齐（见下方各区块）。
+     为什么这么分：内嵌表格 / 通栏图片等需要「贴边铺满」的内容，只需去掉 body 一处的左右内边距
+     （约定 class .dialog-body-flush），不必再写负外边距去抵消父级 padding。
+     三区补齐后的视觉位置与原来完全一致——左右仍 24、上 12、下 20。 */
+  padding: 0;
   border-radius: var(--iflyv-radius-lg);
 
   /* ==================== 高度范围（源头统一约定，使用方无需再设） ====================
@@ -48,7 +52,8 @@
      @when-changed: 若需要恢复分割线（特殊场景如多步骤弹窗），需在使用方 scoped 样式中加回。 */
   .el-dialog__header {
     flex-shrink: 0; /* 限高滚动时头部固定不压缩 */
-    padding: 0 0 12px;
+    /* 容器 padding 已归零，header 自己补齐上 12 / 左右 24 / 下 12 */
+    padding: 12px var(--iflyv-spacing-6);
     margin-bottom: 8px;
     margin-inline-end: 0;
     border-bottom: none;
@@ -138,7 +143,12 @@
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
-    padding: 0;
+    /* 容器 padding 已归零，body 自己补齐左右 24（与 header/footer 对齐）。
+       上下不补：与 header 的间距由 header 的 margin-bottom 给、与 footer 的由 footer 的 padding-top 给。
+       ⚠ 左右留在源头默认里而不是交给使用方写——标准形态必须是「裸组件即标准观感」，
+         交给使用方等于漏写不报错、内容静默贴边（见 CLAUDE.md 源头默认值纪律）。
+       需要贴边铺满时（内嵌表格 / 通栏图片 / 自定义头图）加约定 class .dialog-body-flush，见下方。 */
+    padding: 0 var(--iflyv-spacing-6);
     color: var(--iflyv-text-2);
     font-size: var(--iflyv-font-size-14);
   }
@@ -155,13 +165,93 @@
      @see: references/component-interaction.md Dialog 段「按钮个数」。 */
   .el-dialog__footer {
     flex-shrink: 0; /* 限高滚动时底部按钮固定不压缩、始终可见可点 */
-    padding: 20px 0 0;
+    /* 容器 padding 已归零，footer 自己补齐上 20 / 左右 24 / 下 20 */
+    padding: 20px var(--iflyv-spacing-6);
     border-top: none;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
     .el-button + .el-button { margin-inline-start: 0; }
   }
+}
+
+/* ==================== 内容区贴边铺满（约定 class）====================
+   何时用：body 里装的是需要**铺满弹窗宽度**的内容——内嵌表格（`el-table` 的分割线要通到两边）、
+   通栏图片 / 头图、自带内边距的整块面板。
+
+   用法：加在 el-dialog 上，作用于其 body。
+     <el-dialog class="dialog-body-flush" width="800px" title="选择学生">
+       <el-table :data="rows" />   ← 表格左右贴到弹窗边缘
+       <template #footer>…</template>
+     </el-dialog>
+
+   ⚠ 只去掉左右内边距，header / footer 仍保持 24 对齐——贴边的是内容，不是整个弹窗。
+   ⚠ 常规文字 / 表单内容不要加：文字贴边会与标题错位，可读性差。 */
+.el-dialog.dialog-body-flush > .el-dialog__body {
+  padding-inline: 0;
+}
+
+/* ==================== 全屏弹窗（EP 原生 fullscreen prop）====================
+   用法：<el-dialog v-model="visible" fullscreen title="...">  ← 传 EP 原生 prop，无需额外 class
+
+   何时用：内容确实需要整屏才装得下（大幅画布 / 全屏预览 / 复杂编排）。
+   ⚠ 全屏不是「三档宽度装不下就升级」的第四档——三档（400/640/800）都装不下时，
+     按 dialog-pattern.md 四维判据多半应改用**页面**而非撑成全屏弹窗：
+     全屏遮挡整个界面、丢失上下文，与「弹窗承载轻量任务」的定位相悖。
+
+   源头在此统一全屏形态，使用方不再自行覆盖：
+     · 解除 min-height 240 / max-height calc(100vh - 120px) 两条限制——
+       它们是给居中浮层弹窗定的，全屏时会让弹窗矮于视口、露出下方遮罩；
+     · 圆角归零（贴满视口，留圆角会露出四角遮罩）；
+     · header / footer 内边距沿用常规档，不因全屏而变大。 */
+.el-dialog.is-fullscreen {
+  /* 用视口单位而非 100%：本主题把 .el-overlay-dialog 改成了 flex 居中容器、**它自身没有高度**，
+     百分比高度会解析成 0（弹窗塌成 0×0、整个不可见）。vh 不依赖父级高度，两种模式下都成立。 */
+  min-height: 100vh;
+  max-height: 100vh;
+  height: 100vh;
+  border-radius: 0;
+  /* EP 原生给 .is-fullscreen 加了 overflow: auto，会与 body 的内部滚动叠成两层滚动条。
+     全屏时同样只让 body 滚，容器本身不滚。 */
+  overflow: hidden;
+
+  /* 全屏时 body 改纵向 flex：全屏的目的就是「把内容铺开」，内容需要吃满这块高度
+     （画布 / 预览 / 编排区都得跟着视口长高）。默认档（居中浮层）不这么做——
+     那里弹窗高度由内容撑开，body 是 block、内容自然流排布即可。
+     ⚠ 使用方要让某个子元素填满，给它 flex: 1（配合 min-height: 0 才能内部滚动）；
+       内容不需要填满时按常规文档流排，本条不影响。 */
+  > .el-dialog__body {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* ==================== Footer 左侧插槽（约定 class）====================
+   何时用：footer 右侧是「退路 + 进路」按钮组，左下角还需放一个**与按钮组无关**的元素——
+   典型是「不再提示」多选框、「已选 3 项」计数、一句次要说明。
+
+   EP 的 #footer 是单个插槽、内部 flex-end 右对齐，直接塞元素会跟按钮挤在右边。
+   约定：左侧内容包一层 .dialog-footer-left，源头用 margin-inline-end: auto 推到最左。
+     <template #footer>
+       <div class="dialog-footer-left">
+         <el-checkbox v-model="dontRemind" label="不再提示" />
+       </div>
+       <el-button @click="visible = false">取消</el-button>
+       <el-button type="primary" @click="onConfirm">确定</el-button>
+     </template>
+
+   ⚠ 左槽只放「辅助信息 / 附加选项」，不放第三个动作按钮——
+     按钮个数规则（退路 ≤1 + 若干并列进路）不因为多了个左槽而放宽；
+     想往左边塞动作按钮时，先回 component-interaction.md「按钮个数」段核对。
+   ⚠ 禁在使用方给 footer 写 justify-content: space-between 来实现同样效果——
+     那会让没有左槽的「一退路 + 一进路」也被拉到两端，破坏按钮组右对齐约定。 */
+.el-dialog .el-dialog__footer .dialog-footer-left {
+  margin-inline-end: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-2);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
 }
 
 /* RTL：覆盖 EP 硬编码物理 padding */

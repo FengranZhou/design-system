@@ -26,9 +26,10 @@
         :back-disabled="true"
         avatar-role="teacher-male"
       >
-        <div class="dashboard">
-          <!-- 页面级 tab（标题区）+ 右侧主操作（操作区）→ 按 toolbar-pattern 分支① 组织。
-               工具栏含页面级 tab 时整条自动吸顶（源头 toolbar.scss 提供，本页不写吸顶样式）。 -->
+        <!-- 页面级 tab + 同排主操作 → 按 toolbar-pattern 分支① 组织。
+             整条放 #page-header：在滚动区之外、始终可见（tab 与主操作不分离），
+             滚动条轨道于是只覆盖下方真正会滚的内容。 -->
+        <template #page-header>
           <div class="toolbar dashboard__head">
             <div class="toolbar__left">
               <el-tabs v-model="activeTab" class="tabs-page dashboard__tabs">
@@ -44,6 +45,9 @@
               <el-button type="primary">查看课程群画像</el-button>
             </div>
           </div>
+        </template>
+
+        <div class="dashboard">
 
           <template v-if="activeTab === 'board'">
             <!-- 指标条：一律用源头约定 class（el-theme/patterns/metric-strip.scss）——
