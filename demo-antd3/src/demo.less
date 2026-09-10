@@ -9,8 +9,21 @@ body {
   color: var(--iflyv-text-1);
 }
 
+/* 内容区外壳（对齐 EP 版 .app-content）—— 试点阶段无需 sidebar，
+   只给内边距让 demo-section 不贴边 */
+.app-content {
+  padding: var(--iflyv-spacing-3);
+}
+
 .demo-section {
   padding: var(--iflyv-spacing-10);
+  background: var(--iflyv-bg-panel);
+  border-radius: var(--iflyv-radius-lg);
+  margin-bottom: var(--iflyv-spacing-3);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 /* 页面级标题（对齐 EP 版 demo-section__title） */
@@ -25,6 +38,48 @@ body {
   padding: var(--iflyv-spacing-6);
   background: var(--iflyv-bg-card);
   border-radius: var(--iflyv-radius-lg);
+
+  & + .demo-block {
+    margin-top: var(--iflyv-spacing-6);
+  }
+}
+
+/* 块内小标题（对齐 EP 版 .demo-label） */
+.demo-label {
+  margin: 0 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
+}
+
+/* 块内说明文字（对齐 EP 版 .demo-desc） */
+.demo-desc {
+  margin: 0 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+
+/* 行容器：flex + gap，对齐 EP 版 .demo-row */
+.demo-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--iflyv-spacing-6);
+  margin-bottom: var(--iflyv-spacing-5);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* 左示例 + 右配置卡横向布局（对齐 EP 版 .control-showcase） */
+.control-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));
+}
+.control-showcase__main {
+  flex: 1;
+  min-width: 0;
 }
 
 /* 左侧网格 + 右侧配置卡片横向布局。不含组件外观规则。 */
@@ -83,4 +138,11 @@ body {
   text-align: right;
   color: var(--iflyv-text-1);
   font: var(--iflyv-font-body-sub);
+}
+
+/* Radio 两组连续等距：让两个 RadioGroup 盒子透明化，
+   四个 Radio 直接成为 .demo-row(flex) 的子项，等距排列。
+   对齐 EP 版 .radio-inline-row :deep(.el-radio-group) { display: contents } */
+.radio-inline-row .ant-radio-group {
+  display: contents;
 }
