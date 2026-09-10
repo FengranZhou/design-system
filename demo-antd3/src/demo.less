@@ -220,6 +220,24 @@ body {
   }
 }
 
+/* 素排版（.demo-plain）—— 令牌 / 基础样式展示（色板、字体、间距、圆角、阴影、动效）：
+   这类页面本身在展示底色 / 圆角 / 投影，套灰底圆角卡片会与被展示的内容打架，
+   故不套卡片，仅用大间距分隔。对齐 EP 版 global.scss 的 .demo-plain。 */
+.demo-plain .demo-block {
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  margin-bottom: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4)); /* 48 */
+
+  & + .demo-block {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
 /* 块内小标题（对齐 EP 版 .demo-label） */
 .demo-label {
   margin: 0 0 var(--iflyv-spacing-3);

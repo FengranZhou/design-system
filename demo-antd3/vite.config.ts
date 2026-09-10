@@ -13,4 +13,15 @@ export default defineConfig({
       less: { javascriptEnabled: true }, // antd 3 的 less 需要
     },
   },
+  build: {
+    // antd 3 的 ESM 构建里 es/icon/index.js 用 `import * as allIcons` 引了 CJS 子模块
+    // @ant-design/icons/lib/dist；Rollup 默认的 CJS interop 会在命名空间里多塞一个
+    // `default` 键，antd 初始化时 `ReactIcon.add(Object.keys(allIcons).map(...))` 会把
+    // 这个非图标对象送进 withSuffix，theme 为 undefined 直接抛 “Unknown theme type”
+    // 导致生产产物白屏（dev 走 esbuild 预构建无此问题）。开启混合模块转换让 Rollup
+    // 正确处理这类 ESM 中夹带的 CJS 依赖。
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
 })
