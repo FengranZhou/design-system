@@ -2,6 +2,17 @@
    与 EP 版 demo/src/styles/global.scss 的对应段落保持一致口径。
    ⚠ 这些是 demo 版式，不要抄进业务项目。 */
 
+/* 布局骨架尺寸（对齐 EP 版 global.scss 的 $app-topbar-height / $app-sidebar-width）：
+   非 4px 间距序列上的结构性尺寸，无对应 spacing token，此处单点维护。 */
+@app-topbar-height: 64px;
+@app-sidebar-width: 224px;
+@app-logo-size: 32px;
+@app-nav-item-indent: 28px;
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: var(--iflyv-bg-page);
@@ -9,10 +20,175 @@ body {
   color: var(--iflyv-text-1);
 }
 
-/* 内容区外壳（对齐 EP 版 .app-content）—— 试点阶段无需 sidebar，
-   只给内边距让 demo-section 不贴边 */
+/* ============ Topbar ============ */
+.app-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: @app-topbar-height;
+  background: var(--iflyv-bg-panel);
+  border-bottom: 1px solid var(--iflyv-border-default);
+  display: flex;
+  align-items: stretch;
+  z-index: var(--iflyv-z-sticky);
+
+  &__brand {
+    width: @app-sidebar-width;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-2);
+    padding: 0 var(--iflyv-spacing-5);
+    border-right: 1px solid var(--iflyv-border-default);
+  }
+
+  &__logo {
+    width: @app-logo-size;
+    height: @app-logo-size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__title {
+    font: var(--iflyv-font-title-module);
+    color: var(--iflyv-text-1);
+  }
+
+  &__subtitle {
+    font: var(--iflyv-font-body-min);
+    color: var(--iflyv-text-3);
+    margin-top: var(--iflyv-spacing-0_5);
+  }
+
+  &__nav {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    padding-left: var(--iflyv-spacing-6);
+    gap: var(--iflyv-spacing-2);
+  }
+
+  &__nav-item {
+    position: relative;
+    border: none;
+    background: transparent;
+    padding: 0 var(--iflyv-spacing-4);
+    color: var(--iflyv-text-2);
+    font: var(--iflyv-font-body-primary);
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--iflyv-brand-text);
+    }
+
+    &.is-active {
+      color: var(--iflyv-brand-text);
+      font-weight: var(--iflyv-font-weight-semibold);
+    }
+
+    &.is-active::after {
+      content: '';
+      position: absolute;
+      left: var(--iflyv-spacing-4);
+      right: var(--iflyv-spacing-4);
+      bottom: 0;
+      height: 2px;
+      background: var(--iflyv-brand-primary);
+      border-radius: 1px;
+    }
+  }
+}
+
+/* ============ Layout ============ */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  padding-top: @app-topbar-height;
+}
+
+/* ============ Sidebar ============ */
+.app-sidebar {
+  position: fixed;
+  top: @app-topbar-height;
+  left: 0;
+  width: @app-sidebar-width;
+  height: calc(100vh - @app-topbar-height);
+  background: var(--iflyv-bg-panel);
+  border-right: 1px solid var(--iflyv-border-default);
+  display: flex;
+  flex-direction: column;
+  z-index: calc(var(--iflyv-z-sticky) - 1);
+
+  &__nav-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--iflyv-spacing-3) 0;
+  }
+
+  &__group-label {
+    padding: var(--iflyv-spacing-4) var(--iflyv-spacing-5) var(--iflyv-spacing-1_5);
+    font: var(--iflyv-font-label-primary);
+    color: var(--iflyv-text-4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li a {
+      display: block;
+      padding: var(--iflyv-spacing-3) var(--iflyv-spacing-5) var(--iflyv-spacing-3) @app-nav-item-indent;
+      color: var(--iflyv-text-1);
+      text-decoration: none;
+      font: var(--iflyv-font-body-primary);
+      border-left: 3px solid transparent;
+      transition: all 0.15s ease;
+
+      &:hover {
+        color: var(--iflyv-brand-text);
+        background: var(--iflyv-brand-bg);
+      }
+
+      &.is-active {
+        color: var(--iflyv-brand-text);
+        font-weight: var(--iflyv-font-weight-semibold);
+        border-left-color: var(--iflyv-brand-primary);
+      }
+    }
+  }
+}
+
+/* ============ Content ============ */
 .app-content {
+  margin-left: @app-sidebar-width;
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100vw - @app-sidebar-width);
   padding: var(--iflyv-spacing-3);
+}
+
+/* 未实现子页面的占位内容 */
+.demo-placeholder {
+  padding: var(--iflyv-spacing-10);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-primary);
+  text-align: center;
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
 }
 
 .demo-section {
