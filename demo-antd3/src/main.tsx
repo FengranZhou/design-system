@@ -8,7 +8,7 @@ import '../../design-spec/design-token/index.scss'
 import '../../design-spec/antd3-theme/index.less'
 
 import './demo.less'
-import ButtonDemo from './ButtonDemo'
+import App from './App'
 
 // 把运行时错误显示到页面上（React 16 白屏时看不到原因，故显式兜住）
 window.addEventListener('error', (e) => {
@@ -23,7 +23,7 @@ try {
   // （「确定」→「确 定」）。这是 JS 行为、CSS 压不掉，必须在此关闭。见 DIFF #8。
   ReactDOM.render(
     <ConfigProvider autoInsertSpaceInButton={false}>
-      <ButtonDemo />
+      <App />
     </ConfigProvider>,
     document.getElementById('root'),
   )
