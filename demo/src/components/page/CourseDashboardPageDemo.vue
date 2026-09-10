@@ -26,68 +26,68 @@
         :back-disabled="true"
         avatar-role="teacher-male"
       >
-        <!-- 内容区滚动归业务层：PageFrame 只给白底圆角与占位、不定义版面（滚动/留白由页面自己写）。
-             scroll-fill：让 wrap/view 撑满，内容不满一屏时页内空态仍能垂直居中。 -->
-        <el-scrollbar class="scroll-fill">
-          <div class="dashboard">
-            <!-- 页面级 tab（标题区）+ 右侧主操作（操作区）→ 按 toolbar-pattern 分支① 组织。
-                 工具栏含页面级 tab 时整条自动吸顶（源头 toolbar.scss 提供，本页不写吸顶样式）。 -->
-            <div class="toolbar dashboard__head">
-              <div class="toolbar__left">
-                <el-tabs v-model="activeTab" class="tabs-page dashboard__tabs">
-                  <el-tab-pane label="课程看板" name="board" />
-                  <el-tab-pane label="AI+应用看板" name="ai" />
-                  <el-tab-pane label="课堂教学活动轨迹" name="track" />
-                  <el-tab-pane label="课堂实录分析" name="record" />
-                  <el-tab-pane label="班级画像" name="class" />
-                  <el-tab-pane label="成员画像" name="member" />
-                </el-tabs>
-              </div>
-              <div class="toolbar__right">
-                <el-button type="primary">查看课程群画像</el-button>
+        <!-- 页面级 tab + 同排主操作 → 按 toolbar-pattern 分支① 组织。
+             整条放 #page-header：在滚动区之外、始终可见（tab 与主操作不分离），
+             滚动条轨道于是只覆盖下方真正会滚的内容。 -->
+        <template #page-header>
+          <div class="toolbar dashboard__head">
+            <div class="toolbar__left">
+              <el-tabs v-model="activeTab" class="tabs-page dashboard__tabs">
+                <el-tab-pane label="课程看板" name="board" />
+                <el-tab-pane label="AI+应用看板" name="ai" />
+                <el-tab-pane label="课堂教学活动轨迹" name="track" />
+                <el-tab-pane label="课堂实录分析" name="record" />
+                <el-tab-pane label="班级画像" name="class" />
+                <el-tab-pane label="成员画像" name="member" />
+              </el-tabs>
+            </div>
+            <div class="toolbar__right">
+              <el-button type="primary">查看课程群画像</el-button>
+            </div>
+          </div>
+        </template>
+
+        <div class="dashboard">
+
+          <template v-if="activeTab === 'board'">
+            <!-- 指标条：一律用源头约定 class（el-theme/patterns/metric-strip.scss）——
+                 等分列宽 + 列内居中、卡片底与字阶全在源头，本页不写任何指标条样式 -->
+            <div class="metric-strip">
+              <div v-for="kpi in kpis" :key="kpi.label" class="metric-item">
+                <span class="metric-item__num">{{ formatNumber(kpi.value) }}<em class="metric-item__unit">{{ kpi.unit }}</em></span>
+                <span class="metric-item__label">{{ kpi.label }}</span>
               </div>
             </div>
 
-            <template v-if="activeTab === 'board'">
-              <!-- 指标条：一律用源头约定 class（el-theme/patterns/metric-strip.scss）——
-                   等分列宽 + 列内居中、卡片底与字阶全在源头，本页不写任何指标条样式 -->
-              <div class="metric-strip">
-                <div v-for="kpi in kpis" :key="kpi.label" class="metric-item">
-                  <span class="metric-item__num">{{ formatNumber(kpi.value) }}<em class="metric-item__unit">{{ kpi.unit }}</em></span>
-                  <span class="metric-item__label">{{ kpi.label }}</span>
+            <!-- 课程备课：两张环形图卡（占比构成 → donut，扇区 ≤5） -->
+            <section class="board-group">
+              <h4 class="board-group__title">课程备课</h4>
+              <div class="grid">
+                <div v-for="d in donuts" :key="d.title" class="grid__col-12 chart-card">
+                  <Chart type="donut" :title="d.title" :data="d.data" :center-title="d.total" :center-label="d.centerLabel" :height="180" />
                 </div>
               </div>
+            </section>
 
-              <!-- 课程备课：两张环形图卡（占比构成 → donut，扇区 ≤5） -->
-              <section class="board-group">
-                <h4 class="board-group__title">课程备课</h4>
-                <div class="grid">
-                  <div v-for="d in donuts" :key="d.title" class="grid__col-12 chart-card">
-                    <Chart type="donut" :title="d.title" :data="d.data" :center-title="d.total" :center-label="d.centerLabel" :height="180" />
-                  </div>
+            <!-- 课堂授课：三张柱状图卡（类目比大小 → bar） -->
+            <section class="board-group">
+              <h4 class="board-group__title">课堂授课</h4>
+              <div class="grid">
+                <div v-for="b in bars" :key="b.title" class="grid__col-8 chart-card">
+                  <Chart type="bar" :title="b.title" :data="b.data" :series-name="b.seriesName" :height="200" />
                 </div>
-              </section>
+              </div>
+            </section>
+          </template>
 
-              <!-- 课堂授课：三张柱状图卡（类目比大小 → bar） -->
-              <section class="board-group">
-                <h4 class="board-group__title">课堂授课</h4>
-                <div class="grid">
-                  <div v-for="b in bars" :key="b.title" class="grid__col-8 chart-card">
-                    <Chart type="bar" :title="b.title" :data="b.data" :series-name="b.seriesName" :height="200" />
-                  </div>
-                </div>
-              </section>
-            </template>
-
-            <!-- 其余 tab 不在演示范围：空态占满内容区 → 页面级档 -->
-            <el-empty
-              v-else
-              class="empty-page"
-              :image="isDark ? noDataDark : noData"
-              description="该 Tab 内容不在本页演示范围"
-            />
-          </div>
-        </el-scrollbar>
+          <!-- 其余 tab 不在演示范围：空态占满内容区 → 页面级档 -->
+          <el-empty
+            v-else
+            class="empty-page"
+            :image="isDark ? noDataDark : noData"
+            description="该 Tab 内容不在本页演示范围"
+          />
+        </div>
       </PageFrame>
     </div>
   </section>

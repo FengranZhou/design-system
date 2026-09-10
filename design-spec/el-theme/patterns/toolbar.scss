@@ -47,6 +47,11 @@
    视口里，否则用户滚到深处会失去所属分区的上下文，也无法就地切换分区。
    同排的操作按钮（属操作区）随整条一起吸住，二者不会分离。
 
+   ⚠ 用 PageFrame 时**首选 `#page-header` 插槽**（放在滚动区之外），而不是靠本段吸顶：
+     放进滚动区靠 sticky 吸顶，会让滚动条轨道把这段永远不滚的区域也算进去。
+     本段留给「工具栏确实在某个滚动区内部」的场景（自建骨架、模块内滚动区等），
+     两种方式都成立，按容器结构选。
+
    为什么是「整条工具栏」而不是「tab 元素本身」：按本模式，页面级 tab 属标题区、
    主按钮属操作区，二者本就在同一个 .toolbar 内。只吸 tab 会让按钮滚走、一排裂开。
 
@@ -112,6 +117,43 @@
 @keyframes toolbar-stuck-line {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* ============ 工具栏放在「滚动区之外的页头」时的分割线 ============
+   PageFrame 的 #page-header 把工具栏移出了滚动容器（好处：滚动条轨道不再覆盖它），
+   于是上面那套 `scroll(nearest block)` 找不到滚动祖先、线永远不显形。
+   这里改用**具名**滚动时间线 `--page-scroll`——由 PageFrame 的滚动区声明、
+   页头 `timeline-scope` 接住，工具栏在此消费它。二者是同一个视觉效果的两种接法：
+     · 工具栏在滚动区内 → 上面的 scroll(nearest block)（自建骨架 / 模块内滚动区）
+     · 工具栏在页头里   → 本段的具名时间线（PageFrame #page-header，推荐）
+   ⚠️ 页头里的工具栏不需要 sticky（它本就不滚），故此处只管分割线。 */
+/* ⚠ 仅限**含页面级 tab** 的工具栏——与上方吸顶段同一条判据：
+   页面级 tab 是「我在哪个分区」的定位信息、且要能就地切换，故常驻；
+   纯页面标题 / 模块级没有这层作用，应跟着内容一起滚走，**不要放进 #page-header**。 */
+.page-frame__page-header .toolbar:has(.tabs-page) {
+  position: relative;
+
+  /* 分割线：默认不可见，内容一滚就显形（下方 @supports 驱动） */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--iflyv-border-subtle);
+    opacity: 0;
+    transition: opacity var(--iflyv-duration-fast) var(--iflyv-ease-default);
+    pointer-events: none;
+  }
+}
+
+@supports (animation-timeline: --x) {
+  .page-frame__page-header .toolbar:has(.tabs-page)::after {
+    animation: toolbar-stuck-line linear both;
+    animation-timeline: --page-scroll;
+    animation-range: 0 1px;
+  }
 }
 
 /* 左右两组：组内相邻元素间距 12 */
