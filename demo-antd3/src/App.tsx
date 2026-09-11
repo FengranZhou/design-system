@@ -2,6 +2,17 @@ import React, { useMemo, useState } from 'react'
 
 import ButtonDemo from './ButtonDemo'
 import RadioDemo from './RadioDemo'
+import CheckboxDemo from './CheckboxDemo'
+import SwitchDemo from './SwitchDemo'
+import PaletteDemo from './token/PaletteDemo'
+import SemanticColorDemo from './token/SemanticColorDemo'
+import FontBaseDemo from './token/FontBaseDemo'
+import FontSemanticDemo from './token/FontSemanticDemo'
+import SpacingDemo from './token/SpacingDemo'
+import RadiusDemo from './token/RadiusDemo'
+import ShadowDemo from './token/ShadowDemo'
+import MotionDemo from './token/MotionDemo'
+import IconDemo from './token/IconDemo'
 
 /**
  * antd 3 规范站页面框架 —— 与 demo/src/App.vue 的骨架对位。
@@ -38,15 +49,15 @@ const TOP_TABS: TopTab[] = [
     groups: [
       {
         items: [
-          { key: 'palette', label: 'Palette 基础色板' },
-          { key: 'token-color', label: 'Color 语义色板' },
-          { key: 'token-font-base', label: 'Font Base 基础字阶' },
-          { key: 'token-font-semantic', label: 'Font 语义字阶' },
-          { key: 'token-spacing', label: 'Spacing 间距' },
-          { key: 'token-radius', label: 'Radius 圆角' },
-          { key: 'token-shadow', label: 'Shadow 阴影' },
-          { key: 'token-motion', label: 'Motion 动效' },
-          { key: 'token-icon', label: 'Icon 图标' },
+          { key: 'palette', label: 'Palette 基础色板', render: () => <PaletteDemo /> },
+          { key: 'token-color', label: 'Color 语义色板', render: () => <SemanticColorDemo /> },
+          { key: 'token-font-base', label: 'Font Base 基础字阶', render: () => <FontBaseDemo /> },
+          { key: 'token-font-semantic', label: 'Font 语义字阶', render: () => <FontSemanticDemo /> },
+          { key: 'token-spacing', label: 'Spacing 间距', render: () => <SpacingDemo /> },
+          { key: 'token-radius', label: 'Radius 圆角', render: () => <RadiusDemo /> },
+          { key: 'token-shadow', label: 'Shadow 阴影', render: () => <ShadowDemo /> },
+          { key: 'token-motion', label: 'Motion 动效', render: () => <MotionDemo /> },
+          { key: 'token-icon', label: 'Icon 图标', render: () => <IconDemo /> },
         ],
       },
     ],
@@ -77,8 +88,8 @@ const TOP_TABS: TopTab[] = [
           { key: 'select', label: 'Select 选择器' },
           { key: 'date-picker', label: 'Picker 时间/日期选择器' },
           { key: 'radio', label: 'Radio 单选框', render: () => <RadioDemo /> },
-          { key: 'checkbox', label: 'Checkbox 多选框' },
-          { key: 'switch', label: 'Switch 开关' },
+          { key: 'checkbox', label: 'Checkbox 多选框', render: () => <CheckboxDemo /> },
+          { key: 'switch', label: 'Switch 开关', render: () => <SwitchDemo /> },
           { key: 'slider', label: 'Slider 滑块' },
           { key: 'rate', label: 'Rate 评分' },
         ],
@@ -284,6 +295,9 @@ export default function App() {
                         }}
                       >
                         {item.label}
+                        {!item.render && (
+                          <span className="app-sidebar__todo-badge">未接入</span>
+                        )}
                       </a>
                     </li>
                   ))}
