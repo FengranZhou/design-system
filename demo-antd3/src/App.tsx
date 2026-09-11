@@ -6,6 +6,7 @@ import CheckboxDemo from './CheckboxDemo'
 import SwitchDemo from './SwitchDemo'
 import TooltipDemo from './TooltipDemo'
 import InputDemo from './InputDemo'
+import DropdownDemo from './DropdownDemo'
 import PaletteDemo from './token/PaletteDemo'
 import SemanticColorDemo from './token/SemanticColorDemo'
 import FontBaseDemo from './token/FontBaseDemo'
@@ -80,7 +81,7 @@ const TOP_TABS: TopTab[] = [
           { key: 'pagination', label: 'Pagination 分页' },
           { key: 'anchor', label: 'Anchor 锚点' },
           { key: 'steps', label: 'Steps 轻量步骤条' },
-          { key: 'dropdown', label: 'Dropdown 下拉菜单' },
+          { key: 'dropdown', label: 'Dropdown 下拉菜单', render: () => <DropdownDemo /> },
         ],
       },
       {
