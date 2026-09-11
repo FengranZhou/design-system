@@ -170,6 +170,20 @@ body {
       }
     }
   }
+
+  /* 未接入标记：跟在菜单项名称后的小徽标，用中性灰弱化、不抢主视觉，
+     标识该组件尚未在 antd3 适配层实现（无 render，走占位面板）。 */
+  &__todo-badge {
+    display: inline-block;
+    margin-inline-start: var(--iflyv-spacing-2);
+    padding: 0 var(--iflyv-spacing-1_5);
+    font: var(--iflyv-font-body-min);
+    color: var(--iflyv-text-4);
+    background: var(--iflyv-bg-inset);
+    border: 1px solid var(--iflyv-border-subtle);
+    border-radius: var(--iflyv-radius-xs);
+    vertical-align: middle;
+  }
 }
 
 /* ============ Content ============ */
@@ -330,6 +344,9 @@ body {
 .config-item__label {
   flex: 1;
   text-align: right;
+  /* 不换行：label 被 flex 压窄时（如「文字位置」四字）会逐字竖排，
+     nowrap 保证整体成行；配合 config-card 的 flex-shrink:0 不被主区挤压 */
+  white-space: nowrap;
   color: var(--iflyv-text-1);
   font: var(--iflyv-font-body-sub);
 }
@@ -339,4 +356,27 @@ body {
    对齐 EP 版 .radio-inline-row :deep(.el-radio-group) { display: contents } */
 .radio-inline-row .ant-radio-group {
   display: contents;
+}
+
+/* Checkbox 六态平级等距：group 盒子透明化，让「选中/未选」两项与后面四个独立项
+   都成为 .demo-row(flex) 的直接子项，六个平级等距（与 radio-inline-row 同手法）。 */
+.checkbox-inline-row .ant-checkbox-group {
+  display: contents;
+}
+/* 抹掉源头 checkbox 之间的 margin，间距统一交给 .demo-row 的 gap 管，避免叠加 */
+.checkbox-inline-row .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+  margin-inline-start: 0;
+}
+
+/* Switch 外置文字：开关与其文字标签为一组，组内文字贴开关一侧留 spacing-2，
+   文字外侧不留白（外侧间距由 .demo-row 的 gap 决定，写这里会叠加）。
+   对齐 EP switch.scss 的 label 单侧补间距口径。 */
+.switch-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-2);
+}
+.switch-label {
+  font: var(--iflyv-font-body-sub);
+  color: var(--iflyv-text-1);
 }

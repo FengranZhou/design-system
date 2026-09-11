@@ -1,0 +1,81 @@
+/* ======================================================================== */
+/* ==================== Switch 开关 样式覆盖（antd 3 适配层）============== */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/switch.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md。 */
+
+/* ┌─ 接入方速查：Switch 能力全在下面，直接复制即可 ─────────────────┐
+   基础开关：      <Switch checked={v} onChange={setV} />
+   状态：          禁用 <Switch disabled />
+                  关闭禁用 <Switch disabled checked={false} />
+                  开启禁用 <Switch disabled checked />
+   文字标签：      antd3 用 checkedChildren / unCheckedChildren 内嵌在开关内部，
+                  与 EP 的 active-text/inactive-text 外置于开关两侧不同。
+                  本 demo 采用「文字外置」的版式，由 SwitchDemo 自行在开关旁渲染
+                  <span>，不走 antd3 内嵌文字（见 DIFF：Switch 文字位置差异）。
+   → 改任何 Switch 外观 = 改本文件，所有接入项目自动同步。
+   └────────────────────────────────────────────────────────────────────┘ */
+
+/* ==================== 轨道本体 .ant-switch ====================
+   EP 尺寸：.el-switch__core 实测 20×40、圆角 10（外层 .el-switch 24 只是含热区）。
+   antd3 默认轨道 22 高、min-width 44、圆点 18 —— 偏高偏大，逐项压回。
+   - 关闭态底色：EP 用 gray（antd3 默认 rgba(0,0,0,0.25)，偏黑），对齐到滚动条灰档
+   - 去掉 antd3 默认 border（EP 版轨道无描边）
+   - 过渡 0.36s 太慢，对齐 EP fast/normal 档 */
+.ant-switch {
+  height: 20px;
+  min-width: 40px;
+  background-color: var(--iflyv-scroller-primary);
+  border-color: transparent;
+  transition: background-color var(--iflyv-duration-normal) var(--iflyv-ease-default);
+}
+
+/* 滑块 handle：对齐 EP 的 16×16 圆点（antd3 默认 18×18）。
+   轨道 20 高（含 1px 上下透明边框，内容区 18）、圆点 16 → 居中需上下各留 2px。
+   ::after 的 top 相对 padding box（边框内侧）算，要让圆点距轨道外沿 2px，需 top: 1px
+   （1px + 1px 上边框 = 2px）。left 2px 让左端也留 2px（antd3 默认 1px）。
+   圆点纯白 + 轻投影；过渡曲线压掉 antd3 的弹性 cubic-bezier。 */
+.ant-switch::after {
+  top: 1px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--iflyv-bg-panel);
+  box-shadow: 0 2px 4px 0 rgba(0, 35, 11, 0.2);
+  transition: all var(--iflyv-duration-normal) var(--iflyv-ease-default);
+}
+
+/* 开启态圆点靠右定位：antd3 默认 checked::after left:100% margin-left:-1px translateX(-100%)，
+   右端只留 1px。改 margin-left:-2px 让右端留 2px，与左端 / 上下的 2px 对称。
+   ⚠ 必须显式重申 left:100% —— 上面 .ant-switch::after{left:2px} 与 antd3 的
+      .ant-switch-checked::after{left:100%} 同特异度(0,1,1)，本覆盖层后加载会把 100% 盖成
+      2px，导致开启态圆点被 translateX(-100%) 推到左侧（组件视觉损坏）。这里补回。 */
+.ant-switch-checked::after {
+  left: 100%;
+  margin-left: -2px;
+}
+
+/* ==================== 开启态 ==================== */
+.ant-switch-checked {
+  background-color: var(--iflyv-brand-primary);
+}
+
+/* hover：开启态加深一档（对齐 EP 的 brand-hover 反馈） */
+.ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background-color: var(--iflyv-brand-hover);
+}
+
+/* ==================== focus ====================
+   压掉 antd3 的蓝色外圈 box-shadow（EP 版无外圈阴影）。 */
+.ant-switch:focus {
+  box-shadow: none;
+}
+
+/* ==================== 禁用态 ====================
+   EP 版：只让轨道本体降淡（opacity 0.6），不整体降淡。
+   antd3 默认在整个 .ant-switch 上加 opacity: 0.4，偏淡且会带上外置文字（本 demo
+   文字外置，实际不受影响，但对齐 EP 口径提到 0.6，观感更接近）。 */
+.ant-switch-disabled {
+  opacity: 0.6;
+}

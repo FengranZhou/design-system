@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react'
 
 import ButtonDemo from './ButtonDemo'
 import RadioDemo from './RadioDemo'
+import CheckboxDemo from './CheckboxDemo'
+import SwitchDemo from './SwitchDemo'
 import PaletteDemo from './token/PaletteDemo'
 import SemanticColorDemo from './token/SemanticColorDemo'
 import FontBaseDemo from './token/FontBaseDemo'
@@ -86,8 +88,8 @@ const TOP_TABS: TopTab[] = [
           { key: 'select', label: 'Select 选择器' },
           { key: 'date-picker', label: 'Picker 时间/日期选择器' },
           { key: 'radio', label: 'Radio 单选框', render: () => <RadioDemo /> },
-          { key: 'checkbox', label: 'Checkbox 多选框' },
-          { key: 'switch', label: 'Switch 开关' },
+          { key: 'checkbox', label: 'Checkbox 多选框', render: () => <CheckboxDemo /> },
+          { key: 'switch', label: 'Switch 开关', render: () => <SwitchDemo /> },
           { key: 'slider', label: 'Slider 滑块' },
           { key: 'rate', label: 'Rate 评分' },
         ],
@@ -293,6 +295,9 @@ export default function App() {
                         }}
                       >
                         {item.label}
+                        {!item.render && (
+                          <span className="app-sidebar__todo-badge">未接入</span>
+                        )}
                       </a>
                     </li>
                   ))}
