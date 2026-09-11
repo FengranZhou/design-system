@@ -1,0 +1,173 @@
+/* ======================================================================== */
+/* ==================== Checkbox 多选框 样式覆盖（antd 3 适配层）========== */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/checkbox.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md。 */
+
+/* ┌─ 接入方速查：Checkbox 能力全在下面，直接复制即可 ─────────────────┐
+   基础多选：
+     <CheckboxGroup value={arr} onChange={...}>
+       <Checkbox value="a">文字</Checkbox>
+       <Checkbox value="b">文字</Checkbox>
+     </CheckboxGroup>
+   独立多选 / 状态展示：
+     半选       <Checkbox indeterminate>
+     选中禁用   <Checkbox checked disabled>
+     未选禁用   <Checkbox disabled>
+     半选禁用   <Checkbox indeterminate disabled>
+   ⚠ 与 EP 写法差异：
+     - EP `<el-checkbox value="x">`         → antd3 `<Checkbox value="x">` 同形 ✓
+     - EP `:indeterminate="true"`           → antd3 `indeterminate` 属性同形 ✓
+     - EP `:model-value="true" disabled`    → antd3 `checked disabled`
+   → 改任何 Checkbox 外观 = 改本文件，所有接入项目自动同步。
+   └────────────────────────────────────────────────────────────────────┘ */
+
+/* ==================== 方框本体 .ant-checkbox-inner ====================
+   EP / antd3 默认都是 16×16 ✓，无需改尺寸。
+   - 底色 bg-panel（antd3 默认 #fff）
+   - 边色 border-default（antd3 默认 #d9d9d9）
+   - 圆角 radius-xs 4px（antd3 默认 2px）
+   - antd3 transition: all 0.3s 太慢，对齐 EP 的 fast 档 */
+.ant-checkbox-inner {
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default);
+  border-radius: var(--iflyv-radius-xs);
+  transition: border-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              background-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+
+/* hover/focus：边色 → brand-primary（压 antd3 的 #1890ff）
+   ⚠ 特异度对位：antd3 是三条共用一个规则块（wrapper:hover / :hover / input:focus），
+      特异度 0,3,1。用同等特异度才能压过（同 radio.less 的处理）。 */
+.ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner,
+.ant-checkbox-input:focus + .ant-checkbox-inner {
+  border-color: var(--iflyv-brand-primary);
+}
+
+/* ==================== 选中态 ====================
+   方框：底 + 边都用 brand-primary（antd3 默认 #1890ff）。
+   勾：EP 版用 Lucide Check SVG 替换默认的 border 拼接对勾，本层同口径 ——
+       关掉 antd3 的 ::after（border 拼的对勾），改用 background-image 画 SVG。 */
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--iflyv-brand-primary);
+  border-color: var(--iflyv-brand-primary);
+}
+
+.ant-checkbox-checked .ant-checkbox-inner::after {
+  /* 关掉 antd3 用 border 拼的对勾 */
+  display: none;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-size: 10px 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 压掉 antd3 选中态的外圈扩散动画 ::after（同 radio 的外圈扩散处理）
+   antd3 选中时在 .ant-checkbox 上挂 ::after 扩散一圈 #1890ff 边框，持续 0.36s。
+   EP 版无此动效 —— 选中由方框填色 + 勾指示，外圈不闪。 */
+.ant-checkbox-checked::after {
+  visibility: hidden !important;
+  animation: none !important;
+}
+
+/* ==================== 半选态 ====================
+   EP 版用 Lucide Minus SVG 替换默认横线。antd3 默认是给 ::after 画一个 8×8 蓝方块，
+   关掉它，改用 background-image 画横线 SVG（与选中态勾同一通道）。 */
+.ant-checkbox-indeterminate .ant-checkbox-inner {
+  /* 对齐 EP：半选态方框填 brand-primary、横线为白色（与选中态同为填色方框，
+     仅字形不同）。antd3 默认是白底 + 蓝方块，此处改成填色 + 白线保持一致口径。 */
+  background-color: var(--iflyv-brand-primary);
+  border-color: var(--iflyv-brand-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+  background-size: 10px 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.ant-checkbox-indeterminate .ant-checkbox-inner::after {
+  /* 关掉 antd3 的 8×8 蓝方块 */
+  display: none;
+}
+
+/* ==================== 文字标签 ====================
+   antd3 结构是 `.ant-checkbox + span`，与 radio 同法。
+   - 文字色 text-1（antd3 默认 rgba(0,0,0,0.65)）
+   - 禁用态文字色 text-4（antd3 默认 rgba(0,0,0,0.25)） */
+.ant-checkbox-wrapper {
+  color: var(--iflyv-text-1);
+  font-size: var(--iflyv-font-size-14);
+}
+
+.ant-checkbox + span {
+  color: var(--iflyv-text-1);
+}
+
+.ant-checkbox-disabled + span {
+  color: var(--iflyv-text-4);
+}
+
+/* ==================== 禁用态 ====================
+   未选禁用：方框底 bg-inset（对齐 EP 的禁用底），边 border-default。
+   ⚠ antd3 用 `!important` 锁了 border-color: #d9d9d9，需同样 important 才能压。 */
+.ant-checkbox-disabled .ant-checkbox-inner {
+  background-color: var(--iflyv-bg-inset);
+  border-color: var(--iflyv-border-default) !important;
+}
+
+/* 选中禁用：方框底 bg-inset（对齐 EP --el-checkbox-disabled-checked-input-fill），
+   勾统一到 icon-4。antd3 默认勾是 border 拼的（::after），改成 mask 画勾，颜色走变量。 */
+.ant-checkbox-disabled.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--iflyv-bg-inset);
+  background-image: none;
+}
+
+.ant-checkbox-disabled.ant-checkbox-checked .ant-checkbox-inner::after {
+  display: block;
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  border: none;
+  transform: none;
+  background-color: var(--iflyv-icon-4);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+}
+
+/* 半选禁用：横线统一到 icon-4（mask 画线，与禁用选中态勾同处理）。 */
+.ant-checkbox-disabled.ant-checkbox-indeterminate .ant-checkbox-inner {
+  background-image: none;
+}
+
+.ant-checkbox-disabled.ant-checkbox-indeterminate .ant-checkbox-inner::after {
+  display: block;
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  border: none;
+  transform: none;
+  background-color: var(--iflyv-icon-4);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+}
+
+/* ==================== 组间距 ====================
+   antd3 .ant-checkbox-wrapper + .ant-checkbox-wrapper 默认 margin-left: 8px，
+   EP 是 margin-inline-end: 16px (spacing-4)。对齐 EP。 */
+.ant-checkbox-wrapper + .ant-checkbox-wrapper {
+  margin-left: unset;
+  margin-inline-start: var(--iflyv-spacing-4);
+}
+
+.ant-checkbox-group {
+  color: var(--iflyv-text-1);
+  font-size: var(--iflyv-font-size-14);
+}
