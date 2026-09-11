@@ -290,6 +290,35 @@ body {
   min-width: 0;
 }
 
+/* ========== Input 专用分栏：input-showcase ==========
+   与 control-showcase 布局一致，但语义独立（Vue 版 InputDemo 用此 class）。 */
+.input-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4)); /* 48 */
+}
+.input-showcase__main {
+  flex: 1;
+  min-width: 0;
+}
+/* Input demo 的 demo-row 允许换行（宽度不足时自动折行） */
+.input-showcase .demo-row {
+  flex-wrap: wrap;
+}
+
+/* config-field：配置卡内的开关字段单元（开关 + hint 竖排为一个整体，与 SelectDemo「可清除」布局一致）。 */
+.config-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+/* switch 行：与 label 等高（组件统一高度）并垂直居中，使 switch 与 label 中线对齐 */
+.config-field__row {
+  display: flex;
+  align-items: center;
+  height: var(--iflyv-a3-component-size);
+}
+
 /* 左侧网格 + 右侧配置卡片横向布局。不含组件外观规则。 */
 .button-showcase {
   display: flex;

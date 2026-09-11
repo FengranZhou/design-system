@@ -5,6 +5,7 @@ import RadioDemo from './RadioDemo'
 import CheckboxDemo from './CheckboxDemo'
 import SwitchDemo from './SwitchDemo'
 import TooltipDemo from './TooltipDemo'
+import InputDemo from './InputDemo'
 import PaletteDemo from './token/PaletteDemo'
 import SemanticColorDemo from './token/SemanticColorDemo'
 import FontBaseDemo from './token/FontBaseDemo'
@@ -85,7 +86,7 @@ const TOP_TABS: TopTab[] = [
       {
         label: '数据录入',
         items: [
-          { key: 'input', label: 'Input 输入框' },
+          { key: 'input', label: 'Input 输入框', render: () => <InputDemo /> },
           { key: 'select', label: 'Select 选择器' },
           { key: 'date-picker', label: 'Picker 时间/日期选择器' },
           { key: 'radio', label: 'Radio 单选框', render: () => <RadioDemo /> },

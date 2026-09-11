@@ -1,0 +1,271 @@
+/* ======================================================================== */
+/* ============ Input / Textarea / InputNumber 样式覆盖（antd 3 适配层）=== */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/input.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md。 */
+
+/* ┌─ 接入方速查：Input 能力全在下面，直接复制即可 ─────────────────────┐
+   基础输入：      <Input placeholder="请输入内容" />
+   可清除：        <Input allowClear />
+   字数提示：      <Input maxLength={50} />  ← 见下方 ⚠ 与 EP 的差异说明
+   禁用：          <Input disabled />
+   文本域：        <Input.TextArea rows={3} />
+   数字输入框：    <InputNumber min={1} max={100} />
+   ⚠ 与 EP 写法差异：
+     - EP `v-model` + `clearable`      → antd3 `value/onChange` + `allowClear`
+     - EP `show-word-limit`（组件内建） → antd3 3.x **无内建字数提示**，需接入方自行渲染，
+       demo 侧用 .input-count 复刻 EP 的右下角计数外观（见 DIFF）。
+   → 改任何 Input 外观 = 改本文件，所有接入项目自动同步。
+   └────────────────────────────────────────────────────────────────────┘ */
+
+/* ==================== 输入框本体 ====================
+   EP 尺寸：高 36（--el-component-size），圆角 radius-sm(8)，字号 14。
+   antd3 默认：高 32、圆角 4、字号 14、边框 #d9d9d9。
+   逐项压回；文字色 text-1、占位色 text-4（对齐 EP --el-text-color-placeholder）。 */
+.ant-input {
+  height: var(--iflyv-a3-component-size);
+  padding: 4px var(--iflyv-spacing-3);
+  color: var(--iflyv-text-1);
+  font-size: var(--iflyv-font-size-14);
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default);
+  border-radius: var(--iflyv-radius-sm);
+  /* antd3 默认 transition: all 0.3s —— 对齐 EP 的 fast 档，且只过渡颜色相关属性 */
+  transition: border-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              box-shadow var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+
+/* 占位符：EP 用 text-4（antd3 默认 #bfbfbf）。
+   ⚠ 各内核伪元素不能合并写在一条规则里（任一不识别会整条失效），必须逐条列。 */
+.ant-input::placeholder {
+  color: var(--iflyv-text-4);
+}
+.ant-input::-webkit-input-placeholder {
+  color: var(--iflyv-text-4);
+}
+.ant-input::-moz-placeholder {
+  color: var(--iflyv-text-4);
+  opacity: 1;
+}
+.ant-input:-ms-input-placeholder {
+  color: var(--iflyv-text-4);
+}
+
+/* hover：EP 用 --el-input-hover-border-color = input-hover-border（gray-2），
+   antd3 默认变蓝 #40a9ff。
+   ⚠ antd3 同时带 `border-right-width: 1px !important`，那是它自家 group 拼接的补丁，
+      不影响颜色，无需覆盖。 */
+.ant-input:hover:not(.ant-input-disabled) {
+  border-color: var(--iflyv-input-hover-border);
+}
+
+/* focus：EP 口径是「1px 品牌色内描边 + 2px 浅色外光圈」，
+   antd3 默认是「蓝边框 + 2px 蓝色 20% 阴影」。按 EP 复刻。 */
+.ant-input:focus,
+.ant-input-focused {
+  border-color: var(--iflyv-brand-primary);
+  box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset,
+              0 0 0 2px var(--iflyv-input-focus-ring);
+}
+
+/* 禁用态：EP 底色 bg-inset、文字 text-4、边框 border-default（antd3 默认 #f5f5f5 / #d9d9d9）。
+   ⚠ antd3 用 .ant-input-disabled 与 [disabled] 两套选择器并存，两者都要覆盖。 */
+.ant-input-disabled,
+.ant-input[disabled] {
+  color: var(--iflyv-text-4);
+  background-color: var(--iflyv-bg-inset);
+  border-color: var(--iflyv-border-default);
+}
+
+.ant-input-disabled:hover,
+.ant-input[disabled]:hover {
+  border-color: var(--iflyv-border-default);
+}
+
+/* ==================== 前后缀容器 .ant-input-affix-wrapper ====================
+   allowClear / prefix / suffix 时 antd3 会把 input 包一层 affix-wrapper。
+   hover 态由外层容器代理，需同步压掉蓝色。 */
+.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
+  border-color: var(--iflyv-input-hover-border);
+}
+
+/* 前后缀图标色：对齐 EP 的图标常规档 icon-3 */
+.ant-input-affix-wrapper .ant-input-prefix,
+.ant-input-affix-wrapper .ant-input-suffix {
+  color: var(--iflyv-icon-3);
+}
+
+/* 前后缀图标尺寸：对齐 EP 的 1rem（随字号档位缩放） */
+.ant-input-prefix > svg,
+.ant-input-suffix > svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* 后缀区多图标并存时的相邻间距（对齐 EP 补的 spacing-2）。
+   antd3 只给了 `.ant-input-clear-icon + i { margin-left: 6px }`，
+   非 i 标签（如自定义 svg）拿不到间距，此处统一补齐。 */
+.ant-input-suffix > * + *,
+.ant-input-prefix > * + * {
+  margin-inline-start: var(--iflyv-spacing-2);
+}
+
+/* 清除图标：EP 用 icon 常规档 + hover 加深（antd3 默认 rgba 黑阶）。
+   尺寸对齐 EP 的 14（antd3 默认 12）。 */
+.ant-input-clear-icon,
+.ant-input-textarea-clear-icon {
+  color: var(--iflyv-icon-3);
+  font-size: var(--iflyv-font-size-14);
+}
+
+.ant-input-clear-icon:hover,
+.ant-input-textarea-clear-icon:hover {
+  color: var(--iflyv-icon-2);
+}
+
+.ant-input-clear-icon:active,
+.ant-input-textarea-clear-icon:active {
+  color: var(--iflyv-icon-1);
+}
+
+/* ==================== 文本域 ====================
+   EP 给 textarea 补了上下 7px 内边距、并让高度随 rows 走（不固定 36）。 */
+textarea.ant-input {
+  height: auto;
+  min-height: var(--iflyv-a3-component-size);
+  padding-top: 7px;
+  padding-bottom: 7px;
+  /* 对齐 EP 正文行高，避免多行贴行 */
+  line-height: var(--iflyv-line-height-20);
+}
+
+/* ==================== 字数提示（适配层补齐能力）====================
+   ⚠ 这是 antd 3 的**能力缺口**，不是样式差异：
+     EP 的 el-input 有内建 `show-word-limit`，antd 3.26 没有（antd 4 才加 showCount）。
+   故接入方需自行渲染计数节点，本层只负责「渲染出来后长得和 EP 一致」：
+     色 text-4 / 字号 12 / 行高 18（逐项对齐 EP 的 .el-input__count）。
+
+   用法（Input：走 suffix 插槽，天然落在框内右侧）：
+     <Input maxLength={50} suffix={<span className="a3-input-count">{v.length}/50</span>} />
+   用法（TextArea：antd3 无 suffix，需外层包一层定位容器）：
+     <span className="a3-textarea-count-wrap">
+       <Input.TextArea maxLength={200} />
+       <span className="a3-input-count a3-input-count--textarea">{v.length}/200</span>
+     </span>
+   见 ../DIFF.md 的 Input 字数提示条目。 */
+.a3-input-count {
+  color: var(--iflyv-text-4);
+  font-size: var(--iflyv-font-size-12);
+  line-height: var(--iflyv-line-height-18);
+  /* 计数不参与点击，避免挡住输入区 */
+  pointer-events: none;
+  user-select: none;
+}
+
+/* TextArea 计数：定位到框内右下角（对齐 EP 的 .el-textarea .el-input__count 位置）。
+   容器需 inline-block + relative 才能给计数提供定位参照。 */
+.a3-textarea-count-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.a3-input-count--textarea {
+  position: absolute;
+  /* 贴右下角：与 EP 同档（右 10、下 5，避开 textarea 自带的 resize 手柄视觉区） */
+  inset-inline-end: 10px;
+  bottom: 5px;
+  background: var(--iflyv-bg-panel);
+}
+
+/* 有计数的 textarea 需给底部留出计数占位，否则末行文字会被计数压住 */
+.a3-textarea-count-wrap textarea.ant-input {
+  padding-bottom: var(--iflyv-spacing-5);
+}
+
+/* ==================== 数字输入框 ====================
+   EP：高 36、圆角 radius-sm、focus 同 Input 口径。
+   antd3：外层 .ant-input-number 是边框宿主，内层 .ant-input-number-input 是真实 input。 */
+.ant-input-number {
+  height: var(--iflyv-a3-component-size);
+  color: var(--iflyv-text-1);
+  font-size: var(--iflyv-font-size-14);
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default);
+  border-radius: var(--iflyv-radius-sm);
+  transition: border-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              box-shadow var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+
+.ant-input-number:hover:not(.ant-input-number-disabled) {
+  border-color: var(--iflyv-input-hover-border);
+}
+
+.ant-input-number-focused {
+  border-color: var(--iflyv-brand-primary);
+  box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset,
+              0 0 0 2px var(--iflyv-input-focus-ring);
+}
+
+.ant-input-number-disabled {
+  color: var(--iflyv-text-4);
+  background-color: var(--iflyv-bg-inset);
+  border-color: var(--iflyv-border-default);
+}
+
+.ant-input-number-disabled:hover {
+  border-color: var(--iflyv-border-default);
+}
+
+/* 内层 input：高度跟随外层（36 - 上下边框 2 = 34），左右内边距对齐 spacing-3 */
+.ant-input-number-input {
+  height: calc(var(--iflyv-a3-component-size) - 2px);
+  padding: 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-1);
+  border-radius: var(--iflyv-radius-sm);
+}
+
+.ant-input-number-input::placeholder {
+  color: var(--iflyv-text-4);
+}
+.ant-input-number-input::-webkit-input-placeholder {
+  color: var(--iflyv-text-4);
+}
+.ant-input-number-input::-moz-placeholder {
+  color: var(--iflyv-text-4);
+  opacity: 1;
+}
+.ant-input-number-input:-ms-input-placeholder {
+  color: var(--iflyv-text-4);
+}
+
+/* 步进器：分隔线与右侧圆角对齐令牌（antd3 默认 #d9d9d9 / 4px） */
+.ant-input-number-handler-wrap {
+  background: var(--iflyv-bg-panel);
+  border-left-color: var(--iflyv-border-default);
+  border-start-end-radius: var(--iflyv-radius-sm);
+  border-end-end-radius: var(--iflyv-radius-sm);
+}
+
+.ant-input-number-handler {
+  color: var(--iflyv-icon-3);
+}
+
+/* 步进箭头 hover：antd3 默认变蓝，压到品牌色 */
+.ant-input-number-handler:hover .ant-input-number-handler-up-inner,
+.ant-input-number-handler:hover .ant-input-number-handler-down-inner {
+  color: var(--iflyv-brand-primary);
+}
+
+.ant-input-number-handler-up {
+  border-start-end-radius: var(--iflyv-radius-sm);
+}
+
+.ant-input-number-handler-down {
+  border-end-end-radius: var(--iflyv-radius-sm);
+}
+
+/* 步进器分隔线（上下按钮之间）：antd3 默认 #d9d9d9 */
+.ant-input-number-handler-down {
+  border-top-color: var(--iflyv-border-default);
+}
