@@ -94,7 +94,7 @@ const walk = (dir, ext = '.md') => {
  *    改用 path.relative 求相对路径，再统一转成 '/'，Windows 与 mac 产出一致。
  * @when-changed: 保持输出为 POSIX 分隔符；这是 CI 的 --check 能跨平台通过的前提。
  */
-const rel = (p) => relative(ROOT, p).split('\\').join('/')
+const rel = (p) => relative(ROOT, p).replace(/\\/g, '/')
 
 // ── 解析标记 ─────────────────────────────────────────────
 // 形如：<!-- @rule id=xxx level=MUST cat=颜色 detect=regex -->
