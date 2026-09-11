@@ -188,7 +188,6 @@
 /* 用 .el-button.table-operation 提升特异性，压过 EP 默认按钮的 padding/min-width/底色/边框，
    使「一个 class」即可把默认 el-button 变成紧贴文案的无底操作按钮，无需再配 text/link。 */
 .el-button.table-operation {
-  color: var(--iflyv-text-1);
   /* 与表格内容文字一致：body-primary = 16px / 行高 24（原 body-sub 14/20 偏小） */
   font: var(--iflyv-font-body-primary);
   padding: 0;
@@ -196,7 +195,25 @@
   min-width: 0;             /* 解除 EP 默认按钮最小宽度，按钮紧贴文案 */
   border: none;
   background: transparent;
-  cursor: pointer;
+
+  /* 所有状态强制无底：覆盖 EP disabled 按钮 hover 时的默认白底 */
+  &:hover,
+  &:focus {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  /* 颜色和光标：仅应用到非 disabled 按钮，disabled 保持 EP 原生置灰 */
+  &:not(:disabled):not(.is-disabled) {
+    color: var(--iflyv-text-1);
+    cursor: pointer;
+
+    /* hover：仅文字变品牌绿 */
+    &:hover,
+    &:focus {
+      color: var(--iflyv-brand-primary);
+    }
+  }
 
   /* 相邻操作按钮间距 spacing-4（16px）：操作列全是无底色文字按钮，
      按「按钮间距」的边界判据——无底色按钮的边界只能靠文字轮廓判断，
@@ -204,14 +221,6 @@
      @see: references/component-interaction.md「按钮间距」档位表。 */
   & + .table-operation {
     margin-inline-start: var(--iflyv-spacing-4);
-  }
-
-  /* hover：无底、仅文字变品牌绿（压掉 EP 默认按钮 hover 的灰底/描边） */
-  &:hover,
-  &:focus {
-    color: var(--iflyv-brand-primary);
-    background: transparent;
-    border-color: transparent;
   }
 }
 

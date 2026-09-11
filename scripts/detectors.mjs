@@ -134,10 +134,11 @@ const SUSPENDED_COMPONENTS = {
   hint: '该组件在「⏸ 勿用清单」内已停用，写出来会拿到 EP 原生观感。见 component-interaction.md 文末清单选替代方案',
 }
 
-/** ElMessageBox 命令式弹窗 */
+/** ElMessageBox 命令式弹窗 — 已适配（观感对齐 Dialog 提示弹窗），检测器改为指导性提示 */
 const MESSAGE_BOX = {
   find: /ElMessageBox\s*\.\s*(confirm|alert|prompt)\b|\$msgbox\s*\(/,
-  hint: '弹窗统一用 <el-dialog>，命令式 API 拿不到语义变体/宽度三档/footer 规范',
+  hint: 'MessageBox 已适配（观感对齐 Dialog 提示弹窗）；type 必传（error/warning/success/info），宽度固定 400',
+  level: 'info', // 不再判违规，改为使用提示
 }
 
 /** el-row / el-col 栅格 */

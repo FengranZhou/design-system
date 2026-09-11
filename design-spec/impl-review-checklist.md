@@ -40,7 +40,7 @@ updated: 2026-04-16
 <!-- - [允许] 使用原生 <table>（纯静态展示场景） -->
 - 【单一数据源】禁止在使用方（demo / 页面 / 业务组件）的 `<style scoped>` 或 `:deep()` 中覆盖 `el-*` 组件的外观类属性（字号/字重/颜色/边框/圆角/选中态/装饰/溢出等）——组件外观只允许定义在 `el-theme/components/<组件>.scss` 全局层。使用方一律通过约定 class 或裸 EP 组件引用全局标准。
 - [允许] 使用方 scoped `:deep()` 仅调整"本页排版留白"（如某演示块的 `margin` 间距），不触碰组件外观规则
-- 禁止使用 el-message-box / ElMessageBox.confirm / ElMessageBox.alert，改用 el-dialog
+- MessageBox 已适配，观感与 Dialog 提示弹窗完全对齐；type 必传（error/warning/success/info）
 - 禁止用 `<el-alert>` 实现确认 / 警示 / 删除确认等场景——el-alert 仅用于页面内常驻提示条，凡需要用户决策的弹层一律用 el-dialog
 - el-dialog 的警示装饰（图标、强调标题样式）必须通过添加 `class="is-warning"` / `"is-danger"` / `"is-success"` / `"is-info"` 实现，**禁止**在 dialog 内部用原生 `<div>` + lucide 图标手撸警示头
 - el-dialog 变体类必须与主按钮 type 语义匹配：`is-danger` → `type="danger"`；`is-warning` / `is-success` / `is-info` → `type="primary"`

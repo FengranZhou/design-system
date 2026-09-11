@@ -149,6 +149,7 @@
           <!-- <li><a href="#dialog-examples" :class="{ 'is-active': activeSection === 'dialog-examples' }" style="color: var(--iflyv-brand-primary);">📋 Dialog Examples（临时预览）</a></li> -->
           <li><a href="#drawer" :class="{ 'is-active': activeSection === 'drawer' }">Drawer 抽屉</a></li>
           <li><a href="#message" :class="{ 'is-active': activeSection === 'message' }">Message 消息提示</a></li>
+          <li><a href="#message-box" :class="{ 'is-active': activeSection === 'message-box' }">MessageBox 提示确认框</a></li>
           <li><a href="#alert" :class="{ 'is-active': activeSection === 'alert' }">Alert 警告</a></li>
           <li><a href="#notification" :class="{ 'is-active': activeSection === 'notification' }">Notification 通知</a></li>
           <li><a href="#popconfirm" :class="{ 'is-active': activeSection === 'popconfirm' }">Popconfirm 气泡确认框</a></li>
@@ -299,6 +300,7 @@
       </section> -->
       <DrawerDemo />
       <MessageDemo />
+      <MessageBoxDemo />
       <AlertDemo />
       <NotificationDemo />
       <PopconfirmDemo />
@@ -480,6 +482,7 @@ import BadgeDemo from './components/BadgeDemo.vue'
 import DescriptionsDemo from './components/DescriptionsDemo.vue'
 import DialogDemo from './components/DialogDemo.vue'
 import MessageDemo from './components/MessageDemo.vue'
+import MessageBoxDemo from './components/MessageBoxDemo.vue'
 import PopconfirmDemo from './components/PopconfirmDemo.vue'
 import AlertDemo from './components/AlertDemo.vue'
 import TooltipDemo from './components/TooltipDemo.vue'
@@ -525,7 +528,7 @@ const sectionIds = [
   'breadcrumb', 'tabs', 'pagination', 'anchor', 'steps', 'dropdown',
   'input', 'select', 'date-picker', 'radio', 'checkbox', 'switch', 'slider', 'rate',
   'tag', 'table', 'badge', 'descriptions', 'avatar', 'empty',
-  'dialog', 'drawer', 'message', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
+  'dialog', 'drawer', 'message', 'message-box', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
   'page-frame', 'step-bar', 'ai-button', 'picked-item', 'option-card',
   'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'page-public-info', 'page-course-tools', 'page-course-dashboard', 'page-ai-quiz',

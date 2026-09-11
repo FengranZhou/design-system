@@ -1148,7 +1148,7 @@ loading.close()
 
 ### Dialog 语义化标题（4 种变体）
 
-**背景**：本设计系统**统一使用 Dialog**（不引入 `ElMessageBox` 命令式 API） <!-- @rule id=dialog-no-messagebox level=MUST cat=组件选用 detect=regex dtitle=所有弹窗观感一致（标题/按钮/圆角同一套），不应有长得不一样的系统弹窗 title=弹窗统一用 el-dialog，不引入 ElMessageBox 命令式 API -->。为了让 Dialog 也能表达「警示 / 危险 / 成功 / 信息」语义，提供 4 个变体类——使用方加一个 class 即可在标题前自动渲染圆形彩色底板 + 白色 Lucide 图标。
+**背景**：为了让弹窗也能表达「警示 / 危险 / 成功 / 信息」语义，提供 4 个变体类——使用方加一个 class（或命令式 API 的 `type` 参数）即可在标题前自动渲染圆形彩色底板 + 白色 Lucide 图标。**两种调用方式观感完全一致**：`<el-dialog class="is-danger">` 与 `ElMessageBox.confirm({type:'error'})` 长得一模一样（同一套圆角/宽度/标题字阶/图标/按钮规范）。
 
 **4 个变体的语义与使用场景**：
 
@@ -1403,7 +1403,7 @@ loading.close()
 > **「停用范围」栏有三种写法，含义不同**：
 > - **整体停用 / 仅某形态** → 曾经启用过、现已下架（demo 有 `⏸` 标记）。
 > - **未纳入** → **从未纳入本设计系统**，源头零适配。写出来同样是 EP 原生观感。部分还会**与既有机制冲突**（如 `el-space` 绕过间距令牌、`el-text` 与语义字阶并行、`el-splitter` 与栅格模型冲突、`el-affix` 与 z-index 层级契约冲突）——这类即使"看起来能用"也不要用。
-> - **不引入** → 有等价的标准做法，刻意不用它（如 `ElMessageBox` → 统一走 `el-dialog`）。
+> - **已适配，可正常使用** → 曾经列为「不引入」，后已补全适配（如 `ElMessageBox` 现已对齐 Dialog 提示弹窗观感）。
 >
 > **两类停用，看「替代方案」栏区分**：
 > - **有替代方案** → 直接改用替代品即可（如链接→`<el-button text>`、折叠面板→`el-tabs`）。
@@ -1420,7 +1420,7 @@ loading.close()
 | **`el-progress` 进度条** | 整体停用 | 🚧 **暂无替代，将来以业务组件形式补**（成绩 / 完成度 / 任务进度等场景按产品调性重做）。当前需要时**先与设计负责人确认**，不要临时用 `el-progress` 顶上 |
 | **`el-collapse` 折叠面板** | 整体停用 | 分段内容用 `el-tabs`（见 Tabs 段）；长表单分节见 `patterns/form-pattern.md` §8 |
 | **`el-link` 链接** | 整体停用 | 行内文字操作用 `<el-button text>`（无底、hover 变色，能力等价） |
-| **`ElMessageBox` 命令式弹窗**（`.confirm()` / `.alert()` / `.prompt()`；渲染出的是 `el-message-box`） | 不引入 | **本设计系统统一用 `<el-dialog>`**——命令式 API 拿不到设计系统的语义变体（`is-danger` 等 4 种）、宽度三档、footer 按钮规范。确认场景见 Dialog 段与 Popconfirm 段 |
+| **`ElMessageBox` 命令式弹窗**（`.confirm()` / `.alert()` / `.prompt()`；渲染出的是 `el-message-box`） | **已适配，可正常使用** | 观感与 Dialog 提示弹窗完全一致（同一套圆角/宽度/标题字阶/图标/按钮规范）。**`type` 必传**（`error` / `warning` / `success` / `info`），宽度固定 400。**选型**：一行代码调起、结果用 then/catch 接 → MessageBox；需要自定义内容（多字段表单/嵌套组件）→ Dialog。确认场景也可用 Popconfirm（见 Popconfirm 段） |
 | **`el-menu` 导航菜单** | 整体停用。**源头 `menu.scss` 只有 RTL 兜底、零外观适配**——写出来拿到的是纯 EP 原生观感 | 整页框架的侧边导航一律用业务组件 **`PageFrame`**（`:menus` 分组配置，选中态/折叠/浮层全内置）；一组收纳的操作项用 `el-dropdown` |
 | **`el-input-tag` 标签输入** | 整体停用。源头只有字号变量 + focus ring，**无完整外观适配** | 从固定选项里多选用 `el-select` 多选（`collapse-tags`，见 `patterns/select-pattern.md`） |
 | **`el-autocomplete` 输入建议** | 未纳入。能力与 `el-select` 的 `filterable` 重叠 | 从固定选项里选（含搜索）用 `el-select` + `filterable`（见 `patterns/select-pattern.md`） |
