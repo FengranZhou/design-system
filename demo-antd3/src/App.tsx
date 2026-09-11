@@ -4,6 +4,7 @@ import ButtonDemo from './ButtonDemo'
 import RadioDemo from './RadioDemo'
 import CheckboxDemo from './CheckboxDemo'
 import SwitchDemo from './SwitchDemo'
+import TooltipDemo from './TooltipDemo'
 import PaletteDemo from './token/PaletteDemo'
 import SemanticColorDemo from './token/SemanticColorDemo'
 import FontBaseDemo from './token/FontBaseDemo'
@@ -114,7 +115,7 @@ const TOP_TABS: TopTab[] = [
           { key: 'alert', label: 'Alert 警告' },
           { key: 'notification', label: 'Notification 通知' },
           { key: 'popconfirm', label: 'Popconfirm 气泡确认框' },
-          { key: 'tooltip', label: 'Tooltip 文字提示' },
+          { key: 'tooltip', label: 'Tooltip 文字提示', render: () => <TooltipDemo /> },
           { key: 'loading', label: 'Loading 加载' },
           { key: 'skeleton', label: 'Skeleton 骨架屏' },
           { key: 'result', label: 'Result 结果页' },
