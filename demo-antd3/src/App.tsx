@@ -7,6 +7,7 @@ import SwitchDemo from './SwitchDemo'
 import TooltipDemo from './TooltipDemo'
 import InputDemo from './InputDemo'
 import DropdownDemo from './DropdownDemo'
+import TagDemo from './TagDemo'
 import PaletteDemo from './token/PaletteDemo'
 import SemanticColorDemo from './token/SemanticColorDemo'
 import FontBaseDemo from './token/FontBaseDemo'
@@ -100,7 +101,7 @@ const TOP_TABS: TopTab[] = [
       {
         label: '数据展示',
         items: [
-          { key: 'tag', label: 'Tag 标签' },
+          { key: 'tag', label: 'Tag 标签', render: () => <TagDemo /> },
           { key: 'cell', label: 'Cell 单元格' },
           { key: 'badge', label: 'Badge 徽标' },
           { key: 'descriptions', label: 'Descriptions 描述列表' },

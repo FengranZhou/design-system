@@ -1,0 +1,117 @@
+/* ======================================================================== */
+/* ==================== Tag 标签 样式覆盖（antd 3 适配层）================ */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/tag.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md。 */
+
+/* ┌─ 接入方速查：Tag 能力全在下面，直接复制即可 ─────────────────────┐
+   基础：       <Tag className="tag-info">信息</Tag>
+   语义类型：   className 取 tag-primary | tag-success | tag-warning | tag-danger | tag-info
+   其他形态：   tag-gray（灰）| tag-outline（描边）| tag-ai（AI 渐变）
+   带图标：     <Tag className="tag-success"><CheckIcon />已完成</Tag>（图文间距已在本层给）
+   ⚠ 与 EP 写法差异：
+     - EP `<el-tag type="success">` → antd3 无 type prop，改用约定 class `tag-success`
+     - EP 使用约定：无语义普通标签优先用 tag-info（蓝），避免品牌绿与 success 绿撞色
+   → 改任何 Tag 外观 = 改本文件，所有接入项目自动同步。
+   └────────────────────────────────────────────────────────────────────┘ */
+
+/* ==================== 标签本体 .ant-tag ====================
+   EP：全圆角、高 20、左右 spacing-1_5(6)、字号 12/行高 18、无边框、hover 不变透明度。
+   antd3 默认：圆角 4、line-height 20、padding 0 7px、border 1px #d9d9d9、bg #fafafa、
+              hover opacity 0.85、margin-right 8px、过渡带弹性曲线。逐项压回。 */
+.ant-tag {
+  height: 20px;
+  padding: 0 var(--iflyv-spacing-1_5);
+  margin-right: var(--iflyv-spacing-2);
+  font-size: var(--iflyv-font-size-12);
+  line-height: 18px;
+  border: none;
+  border-radius: var(--iflyv-radius-full);
+  /* 内容水平居中 + 图文间距（对齐 EP .el-tag__content 的 inline-flex + gap） */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-1);
+  /* antd3 默认 hover opacity 0.85 —— EP 无此反馈，压掉 */
+  transition: none;
+}
+
+.ant-tag:hover {
+  opacity: 1;
+}
+
+/* 关闭按钮：EP 用 12×12 的 X 图标、icon-3 色、hover 转品牌绿。
+   antd3 用 .anticon-close（字体图标），改色 + hover 品牌绿即可。 */
+.ant-tag .anticon-close {
+  margin-left: var(--iflyv-spacing-0_5);
+  color: var(--iflyv-icon-3);
+  font-size: var(--iflyv-font-size-12);
+}
+
+.ant-tag .anticon-close:hover {
+  color: var(--iflyv-brand-primary);
+}
+
+/* ==================== 语义类型 ====================
+   antd3 无 type prop，用约定 class。各类型 = 语义主色文字 + 语义浅底、无边框。 */
+
+/* 主题 / 品牌 */
+.ant-tag.tag-primary {
+  color: var(--iflyv-brand-text);
+  background-color: var(--iflyv-brand-bg);
+}
+
+/* 成功 */
+.ant-tag.tag-success {
+  color: var(--iflyv-success-primary);
+  background-color: var(--iflyv-success-bg);
+}
+
+/* 警告 */
+.ant-tag.tag-warning {
+  color: var(--iflyv-warning-primary);
+  background-color: var(--iflyv-warning-bg);
+}
+
+/* 危险 */
+.ant-tag.tag-danger {
+  color: var(--iflyv-danger-primary);
+  background-color: var(--iflyv-danger-bg);
+}
+
+/* 信息 */
+.ant-tag.tag-info {
+  color: var(--iflyv-info-primary);
+  background-color: var(--iflyv-info-bg);
+}
+
+/* 灰色 */
+.ant-tag.tag-gray {
+  color: var(--iflyv-text-2);
+  background-color: var(--iflyv-tag-gray-bg);
+}
+
+/* 描边：透明底 + 细描边（「来源」这类元信息角标） */
+.ant-tag.tag-outline {
+  color: var(--iflyv-text-2);
+  background-color: transparent;
+  border: 1px solid var(--iflyv-border-default);
+}
+
+/* AI 标识：蓝→绿渐变底 + 渐变文字（走 AI 渐变语义令牌）。
+   底色渐变在本体、文字渐变在内层 span（背景裁剪到文字），两层分离避免 clip 冲突
+   （一个元素无法同时对「底」和「文字」用不同渐变）。
+   ⚠ 接入方需把文字包一层 span：<Tag className="tag-ai"><span>AI互动课堂</span></Tag>
+      与 EP 版同限制：渐变文字靠 background-clip + 文字透明，故 AI 标签内图标会随文字
+      透明不可见（源头 clip 机制限制）。 */
+.ant-tag.tag-ai {
+  background: var(--iflyv-ai-gradient-bg);
+}
+
+.ant-tag.tag-ai > span {
+  background: var(--iflyv-ai-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
