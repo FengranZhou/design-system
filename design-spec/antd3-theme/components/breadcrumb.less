@@ -1,0 +1,128 @@
+/* ======================================================================== */
+/* ================ Breadcrumb 面包屑 样式覆盖（antd 3 适配层）========== */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/breadcrumb.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md。 */
+
+/* ┌─ 接入方速查：Breadcrumb 能力全在下面 ─────────────────────────────┐
+   基础用法：
+     <Breadcrumb>
+       <Breadcrumb.Item>首页</Breadcrumb.Item>
+       <Breadcrumb.Item>项目详情</Breadcrumb.Item>
+     </Breadcrumb>
+   
+   返回箭头（约定元素）：面包屑最前面放一个返回按钮，写约定 class `.breadcrumb-back`，
+   16×16 图标 / 与首项水平间距 8 / 色态全在此源头处理，接入方只写一个 span：
+     <span className="breadcrumb-back" onClick={goBack} />        ← 可返回（激活，icon-2）
+     <span className="breadcrumb-back is-disabled" />             ← 无上一级（禁用，icon-4）
+   
+   ⚠ antd3 分隔符默认是文本 `/`，改成右箭头需传 separator={<ChevronRight/>}（见 demo）。
+   → 改任何 Breadcrumb 外观 = 改本文件，所有接入项目自动同步。
+   └────────────────────────────────────────────────────────────────────┘ */
+
+/* ==================== 面包屑本体 .ant-breadcrumb ====================
+   EP：字号 13、行高 18（与分隔符/返回箭头视觉居中）。
+   antd3 默认：font-size 14、line-height 1.5。
+   
+   ⚠ 对齐关键：line-height 18px（对齐 EP --iflyv-line-height-18）。 */
+.ant-breadcrumb {
+  font-size: var(--iflyv-font-size-13);
+  line-height: var(--iflyv-line-height-18);
+  
+  /* antd3 面包屑项容器，确保每项基线对齐 */
+  > span {
+    display: inline-block;
+    line-height: var(--iflyv-line-height-18);
+    vertical-align: middle;
+  }
+}
+
+/* ==================== 面包屑项链接 ====================
+   EP：可点击项 text-3、hover 品牌绿；末项 text-1（非链接态）。
+   antd3 默认：链接 rgba(0,0,0,0.45)、hover #40a9ff 蓝、末项 rgba(0,0,0,0.65)。
+   
+   ⚠ 对齐关键：line-height 18px + vertical-align middle 确保链接文本与分隔符对齐。 */
+.ant-breadcrumb a {
+  color: var(--iflyv-text-3);
+  line-height: var(--iflyv-line-height-18);
+  vertical-align: middle;
+}
+
+.ant-breadcrumb a:hover {
+  color: var(--iflyv-brand-primary);
+}
+
+/* 末项：text-1（对齐 EP .el-breadcrumb__item:last-child）
+   ⚠ 末项也需要 line-height 18px 保持对齐 */
+.ant-breadcrumb > span:last-child {
+  color: var(--iflyv-text-1);
+  line-height: var(--iflyv-line-height-18);
+}
+
+.ant-breadcrumb > span:last-child a {
+  color: var(--iflyv-text-1);
+}
+
+/* ==================== 分隔符 .ant-breadcrumb-separator ====================
+   EP：icon-4 色、8px 间距、16×16 右箭头 SVG mask（lucide ChevronRight）。
+   antd3 默认：rgba(0,0,0,0.45)、margin 0 8px、文本 `/`（外层传 separator prop 才能改）。
+   
+   ⚠ antd3 的分隔符是 separator prop 控制的,默认 `/` 文本。要改成右箭头需接入方传：
+      separator={<ChevronRight size={16} strokeWidth={2} />}
+      本层只负责给分隔符上色（icon-4）和间距（8px），箭头本身由接入方传入的 lucide 组件渲染。
+   
+   ⚠ 对齐关键：display: inline-block + 固定尺寸 16×16 + font-size: 0 + vertical-align: middle
+      （对齐 EP .el-breadcrumb__separator 的实现方式，强制 inline-block 布局）。 */
+.ant-breadcrumb-separator {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin: 0 var(--iflyv-spacing-2);
+  font-size: 0;
+  color: var(--iflyv-icon-4);
+  vertical-align: middle;
+  
+  /* 分隔符内的 svg 也强制 inline-block + 固定尺寸 */
+  svg {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: top;
+  }
+}
+
+/* ==================== 返回箭头约定 class .breadcrumb-back ====================
+   业务组件 Breadcrumb 最前面放的返回按钮，写约定 class。
+   16×16 左箭头 SVG mask（lucide ArrowLeft `←` 形）、与首项水平间距 8、激活 icon-2 / 禁用 icon-4。
+   
+   用法：<span className="breadcrumb-back" onClick={goBack} />（可返回）
+         <span className="breadcrumb-back is-disabled" />（禁用，无上一级）
+   
+   ⚠ 对齐关键：vertical-align: middle（对齐 EP .breadcrumb-back，16px 图标在 18px 行高中居中）。 */
+.breadcrumb-back {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: var(--iflyv-spacing-2);
+  vertical-align: middle;
+  cursor: pointer;
+  /* lucide ArrowLeft 左箭头 `←` 形（16×16、stroke-width 2） */
+  background-color: var(--iflyv-icon-2);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M7.41 4.44 4.2 7.4h9.13a.6.6 0 1 1 0 1.2H4.2l3.21 2.96a.6.6 0 1 1-.81.88L2.28 8.46a.6.6 0 0 1 0-.92L6.6 3.56a.6.6 0 1 1 .81.88Z'/%3E%3C/svg%3E") no-repeat center / contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M7.41 4.44 4.2 7.4h9.13a.6.6 0 1 1 0 1.2H4.2l3.21 2.96a.6.6 0 1 1-.81.88L2.28 8.46a.6.6 0 0 1 0-.92L6.6 3.56a.6.6 0 1 1 .81.88Z'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.breadcrumb-back:hover {
+  background-color: var(--iflyv-brand-primary);
+}
+
+/* 禁用态：cursor not-allowed、icon-4 色、hover 不变色 */
+.breadcrumb-back.is-disabled {
+  background-color: var(--iflyv-icon-4);
+  cursor: not-allowed;
+}
+
+.breadcrumb-back.is-disabled:hover {
+  background-color: var(--iflyv-icon-4);
+}

@@ -1,0 +1,56 @@
+.ant-steps.steps-simple {
+  padding: 13px 12%;
+  border-radius: var(--iflyv-radius-sm);
+  background: var(--iflyv-bg-inset);
+}
+
+.ant-steps.steps-simple .ant-steps-item-icon {
+  display: none;
+}
+
+.ant-steps.steps-simple .ant-steps-item-content {
+  display: inline-block;
+}
+
+.ant-steps.steps-simple .ant-steps-item-title {
+  font-size: var(--iflyv-font-size-14);
+  line-height: var(--iflyv-line-height-20);
+}
+
+.ant-steps.steps-simple .ant-steps-item-title::after {
+  display: none;
+}
+
+.ant-steps.steps-simple .ant-steps-item-wait .ant-steps-item-title {
+  color: var(--iflyv-text-1);
+}
+
+.ant-steps.steps-simple .ant-steps-item-process .ant-steps-item-title {
+  color: var(--iflyv-brand-text);
+  font-weight: var(--iflyv-font-weight-semibold);
+}
+
+.ant-steps.steps-simple .ant-steps-item-finish .ant-steps-item-title {
+  color: var(--iflyv-text-1);
+}
+
+.ant-steps.steps-simple .ant-steps-item {
+  flex: none;
+  margin-right: 0;
+}
+
+.ant-steps.steps-simple .ant-steps-item:not(:last-child) {
+  padding-right: var(--iflyv-spacing-8);
+}
+
+.ant-steps.steps-simple .ant-steps-item:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--iflyv-spacing-4) - 1px);
+  width: 8px;
+  height: 8px;
+  border-top: 1.5px solid var(--iflyv-text-4);
+  border-right: 1.5px solid var(--iflyv-text-4);
+  transform: translateY(-50%) rotate(45deg);
+  content: '';
+}

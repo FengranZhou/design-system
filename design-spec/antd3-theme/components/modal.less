@@ -1,0 +1,91 @@
+.ant-modal-content {
+  border-radius: var(--iflyv-radius-lg);
+  overflow: hidden;
+}
+
+.ant-modal-header {
+  border-bottom: 1px solid var(--iflyv-border-default);
+}
+
+.ant-modal-title {
+  color: var(--iflyv-text-1);
+  font-size: var(--iflyv-font-size-16);
+  font-weight: var(--iflyv-font-weight-semibold);
+}
+
+.ant-modal-body {
+  color: var(--iflyv-text-2);
+}
+
+.ant-modal-body > .ant-alert:first-child {
+  margin-bottom: var(--iflyv-spacing-4);
+}
+
+.ant-modal-footer {
+  border-top: 1px solid var(--iflyv-border-default);
+}
+
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--iflyv-spacing-2);
+}
+
+.dialog-footer-left {
+  margin-right: auto;
+}
+
+.dialog-titles {
+  display: flex;
+  gap: var(--iflyv-spacing-6);
+}
+
+.dialog-title-item {
+  color: var(--iflyv-text-3);
+  cursor: pointer;
+}
+
+.dialog-title-item.is-active {
+  color: var(--iflyv-text-1);
+  font-weight: var(--iflyv-font-weight-semibold);
+}
+
+.dialog-content-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  padding: var(--iflyv-spacing-6);
+  border-radius: var(--iflyv-radius-md);
+  background: var(--iflyv-brand-bg);
+  color: var(--iflyv-brand-text);
+}
+
+.demo-dialog-basic .dialog-content-slot {
+  min-height: 176px;
+}
+
+.dialog-fullscreen-wrap .ant-modal {
+  top: 0;
+  max-width: 100%;
+  width: 100vw !important;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.dialog-fullscreen-wrap .ant-modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  border-radius: 0;
+}
+
+.dialog-fullscreen-wrap .ant-modal-body {
+  flex: 1;
+}
+
+.dialog-fullscreen-wrap .dialog-content-slot {
+  height: 100%;
+}

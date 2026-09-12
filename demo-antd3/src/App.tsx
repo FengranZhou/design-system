@@ -8,6 +8,29 @@ import TooltipDemo from './TooltipDemo'
 import InputDemo from './InputDemo'
 import DropdownDemo from './DropdownDemo'
 import TagDemo from './TagDemo'
+import BreadcrumbDemo from './BreadcrumbDemo'
+import TabsDemo from './TabsDemo'
+import PaginationDemo from './PaginationDemo'
+import AnchorDemo from './AnchorDemo'
+import StepsDemo from './StepsDemo'
+import SelectDemo from './SelectDemo'
+import DatePickerDemo from './DatePickerDemo'
+import SliderDemo from './SliderDemo'
+import RateDemo from './RateDemo'
+import CellDemo from './CellDemo'
+import BadgeDemo from './BadgeDemo'
+import DescriptionsDemo from './DescriptionsDemo'
+import AvatarDemo from './AvatarDemo'
+import EmptyDemo from './EmptyDemo'
+import DialogDemo from './DialogDemo'
+import DrawerDemo from './DrawerDemo'
+import MessageDemo from './MessageDemo'
+import AlertDemo from './AlertDemo'
+import NotificationDemo from './NotificationDemo'
+import PopconfirmDemo from './PopconfirmDemo'
+import LoadingDemo from './LoadingDemo'
+import SkeletonDemo from './SkeletonDemo'
+import ResultDemo from './ResultDemo'
 import PaletteDemo from './token/PaletteDemo'
 import SemanticColorDemo from './token/SemanticColorDemo'
 import FontBaseDemo from './token/FontBaseDemo'
@@ -77,11 +100,11 @@ const TOP_TABS: TopTab[] = [
       {
         label: '导航',
         items: [
-          { key: 'breadcrumb', label: 'Breadcrumb 面包屑' },
-          { key: 'tabs', label: 'Tabs 标签页' },
-          { key: 'pagination', label: 'Pagination 分页' },
-          { key: 'anchor', label: 'Anchor 锚点' },
-          { key: 'steps', label: 'Steps 轻量步骤条' },
+          { key: 'breadcrumb', label: 'Breadcrumb 面包屑', render: () => <BreadcrumbDemo /> },
+          { key: 'tabs', label: 'Tabs 标签页', render: () => <TabsDemo /> },
+          { key: 'pagination', label: 'Pagination 分页', render: () => <PaginationDemo /> },
+          { key: 'anchor', label: 'Anchor 锚点', render: () => <AnchorDemo /> },
+          { key: 'steps', label: 'Steps 轻量步骤条', render: () => <StepsDemo /> },
           { key: 'dropdown', label: 'Dropdown 下拉菜单', render: () => <DropdownDemo /> },
         ],
       },
@@ -89,39 +112,39 @@ const TOP_TABS: TopTab[] = [
         label: '数据录入',
         items: [
           { key: 'input', label: 'Input 输入框', render: () => <InputDemo /> },
-          { key: 'select', label: 'Select 选择器' },
-          { key: 'date-picker', label: 'Picker 时间/日期选择器' },
+          { key: 'select', label: 'Select 选择器', render: () => <SelectDemo /> },
+          { key: 'date-picker', label: 'Picker 时间/日期选择器', render: () => <DatePickerDemo /> },
           { key: 'radio', label: 'Radio 单选框', render: () => <RadioDemo /> },
           { key: 'checkbox', label: 'Checkbox 多选框', render: () => <CheckboxDemo /> },
           { key: 'switch', label: 'Switch 开关', render: () => <SwitchDemo /> },
-          { key: 'slider', label: 'Slider 滑块' },
-          { key: 'rate', label: 'Rate 评分' },
+          { key: 'slider', label: 'Slider 滑块', render: () => <SliderDemo /> },
+          { key: 'rate', label: 'Rate 评分', render: () => <RateDemo /> },
         ],
       },
       {
         label: '数据展示',
         items: [
           { key: 'tag', label: 'Tag 标签', render: () => <TagDemo /> },
-          { key: 'cell', label: 'Cell 单元格' },
-          { key: 'badge', label: 'Badge 徽标' },
-          { key: 'descriptions', label: 'Descriptions 描述列表' },
-          { key: 'avatar', label: 'Avatar 头像' },
-          { key: 'empty', label: 'Empty 空状态' },
+          { key: 'cell', label: 'Cell 单元格', render: () => <CellDemo /> },
+          { key: 'badge', label: 'Badge 徽标', render: () => <BadgeDemo /> },
+          { key: 'descriptions', label: 'Descriptions 描述列表', render: () => <DescriptionsDemo /> },
+          { key: 'avatar', label: 'Avatar 头像', render: () => <AvatarDemo /> },
+          { key: 'empty', label: 'Empty 空状态', render: () => <EmptyDemo /> },
         ],
       },
       {
         label: '反馈',
         items: [
-          { key: 'dialog', label: 'Dialog 对话框' },
-          { key: 'drawer', label: 'Drawer 抽屉' },
-          { key: 'message', label: 'Message 消息提示' },
-          { key: 'alert', label: 'Alert 警告' },
-          { key: 'notification', label: 'Notification 通知' },
-          { key: 'popconfirm', label: 'Popconfirm 气泡确认框' },
+          { key: 'dialog', label: 'Dialog 对话框', render: () => <DialogDemo /> },
+          { key: 'drawer', label: 'Drawer 抽屉', render: () => <DrawerDemo /> },
+          { key: 'message', label: 'Message 消息提示', render: () => <MessageDemo /> },
+          { key: 'alert', label: 'Alert 警告', render: () => <AlertDemo /> },
+          { key: 'notification', label: 'Notification 通知', render: () => <NotificationDemo /> },
+          { key: 'popconfirm', label: 'Popconfirm 气泡确认框', render: () => <PopconfirmDemo /> },
           { key: 'tooltip', label: 'Tooltip 文字提示', render: () => <TooltipDemo /> },
-          { key: 'loading', label: 'Loading 加载' },
-          { key: 'skeleton', label: 'Skeleton 骨架屏' },
-          { key: 'result', label: 'Result 结果页' },
+          { key: 'loading', label: 'Loading 加载', render: () => <LoadingDemo /> },
+          { key: 'skeleton', label: 'Skeleton 骨架屏', render: () => <SkeletonDemo /> },
+          { key: 'result', label: 'Result 结果页', render: () => <ResultDemo /> },
         ],
       },
     ],
