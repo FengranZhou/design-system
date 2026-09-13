@@ -7,7 +7,27 @@
    引用方请勿传 type，直接用默认红即可。 */
 
 /* 组件级变量覆盖（EP 在 .el-badge 作用域声明，:root 级覆盖无效） */
-.el-badge { --el-badge-font-size: var(--iflyv-font-size-12); }
+.el-badge {
+  --el-badge-font-size: var(--iflyv-font-size-12);
+  /* 左右内边距 4（EP 默认 6）：徽标是贴在宿主角上的小标记，
+     内容多为 1~3 个字符，6 会让胶囊显得松垮、也更容易盖住宿主。 */
+  --el-badge-padding: var(--iflyv-spacing-1);
+}
+
+/* ==================== 有内容时最小宽 = 高，保证单字符是正圆 ==================== */
+/* EP 只给了 height（--el-badge-size 18）和左右 padding，**没有 min-width**：
+   于是单个数字的宽 = 字宽 + padding*2 = 16，比高的 18 窄，视觉上是个略扁的椭圆。
+   补一条 min-width 与高同值，单字符即撑成正圆；两位数及以上仍由 padding 自然撑宽，
+   保持胶囊形，不受影响。
+   ⚠️ 只作用于有内容的徽标：小红点（.is-dot）是另一套尺寸（EP 定 8×8 + 圆形），
+      用 :not(.is-dot) 排除，否则会把红点撑成 18 的大圆。
+   ⚠️ **不要加 box-sizing: border-box**：EP 的 `height` 用的是默认 content-box，
+      而徽标自带 1px 描边（与宿主同色、用来在宿主上"挖"出一圈间隙）。
+      这里若改成 border-box，min-width 会把描边算进去 → 宽 18 / 高 20，反而不圆。
+      两边同用 content-box 才等宽等高。 */
+.el-badge__content:not(.is-dot) {
+  min-width: var(--el-badge-size);
+}
 
 /* ==================== 徽标包裸图标：消除基线空隙 ==================== */
 /* badge 包裸 svg 图标（如顶栏铃铛）时，svg 按行内基线排版会在图标下方多出一截

@@ -1557,22 +1557,51 @@ ${steps}
     mustRules: [
       '先判粒度：要整页骨架才用 PageFrame；只是页面内部加局部导航不要套（过重），用 el-tabs 或 el-anchor',
       '禁手写 aside/header 拼同款框架、禁用 el-menu/el-container 复刻（el-menu 已暂停启用）',
-      '页面内容放默认插槽（白色圆角内容卡）',
+      '页面内容放默认插槽（白色圆角内容卡内的滚动区）',
+      '含页面级 tab 的工具栏放 #page-header 插槽（滚动区之外、始终可见）；纯页面标题工具栏仍放默认插槽、跟着内容滚走',
+      '导航是否分组由 menus 每组传不传 title 决定：传了才渲染组标题，不传即平铺成一条连续列表',
+      '头像下拉菜单项由业务方传 :avatar-menus，框架一项不写死；divided 分段、danger 标红破坏性项，禁自写红色或自插分隔线',
+      '侧栏底部用户区分列两端：左=头像+user-name 身份区，右=帮助/消息图标组；不需要某个入口用 show-help / show-notice 关掉',
     ],
-    instanceFields: [],
-    snippet: () => `<PageFrame
+    instanceFields: [
+      { key: 'grouped', label: '导航分组', type: 'switch', default: true },
+    ],
+    snippet: ({ grouped }) => {
+      // 分组与否只体现在 menus 每组传不传 title —— 组件无需任何 prop
+      const groupTitle = grouped === false ? '' : `\n    title: '教学管理',`
+      return `<PageFrame
   :menus="menus"
   v-model:active="activeMenu"
   :course="course"
   :breadcrumbs="breadcrumbs"
   :notice-count="3"
   avatar-role="teacher-male"
+  user-name="王老师"
+  :avatar-menus="avatarMenus"
+  @avatar-menu-click="key => handleAvatarMenu(key)"
 >
+  <template #page-header>
+    <!-- 含页面级 tab 的工具栏放这里；纯标题工具栏放下面默认插槽 -->
+  </template>
   <!-- 页面内容 -->
 </PageFrame>
 
 <!-- 脚本 -->
-import { PageFrame, type PageFrameMenuGroup } from '<path>/design-spec/components'`,
+import { PageFrame, type PageFrameMenuGroup, type PageFrameAvatarMenuItem } from '<path>/design-spec/components'
+
+const menus: PageFrameMenuGroup[] = [
+  {${groupTitle}
+    items: [{ key: 'a', label: '一级导航' }],
+  },
+]
+
+// 头像下拉：菜单项按自己系统的功能配，框架不写死
+// divided = 与上一项之间加分隔线；danger = 破坏性操作转红字
+const avatarMenus: PageFrameAvatarMenuItem[] = [
+  { key: 'profile', label: '个人中心' },
+  { key: 'logout', label: '退出登录', divided: true, danger: true },
+]`
+    },
   },
 
   {

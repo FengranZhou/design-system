@@ -519,10 +519,6 @@
       "value": "\"douyinNum\""
     },
     {
-      "name": "font-family-emphasis",
-      "value": "\"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif"
-    },
-    {
       "name": "font-size-12",
       "value": "0.75rem"
     },
@@ -567,22 +563,18 @@
       "value": "700"
     },
     {
-      "name": "font-weight-extrabold",
-      "value": "800"
-    },
-    {
       "name": "font-title-page",
-      "value": "800 1.625rem / 3rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "value": "600 1.625rem / 3rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
       "comment": "页面标题"
     },
     {
       "name": "font-title-page-multiline",
-      "value": "800 1.625rem / 3.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "value": "600 1.625rem / 3.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
       "comment": "页面标题（多行）"
     },
     {
       "name": "font-tab-active",
-      "value": "800 1.625rem / 2.25rem \"Alibaba PuHuiTi 3.0\", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif",
+      "value": "600 1.625rem / 2.25rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
       "comment": "页面级选中 Tab 项"
     },
     {
@@ -661,7 +653,8 @@
       "name": "spacing-0_5",
       "value": "2px",
       "scenes": [
-        "紧贴元素微调（图标与其紧邻文字的视觉对齐补偿）"
+        "紧贴元素微调（图标与其紧邻文字的视觉对齐补偿）",
+        "数字展示字阶（number-display / -sm）与其下方说明文字之间"
       ]
     },
     {

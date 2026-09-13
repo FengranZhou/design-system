@@ -40,16 +40,24 @@
   &[data-popper-placement^="left"] { margin-right: -8px; }
   &[data-popper-placement^="right"] { margin-left: -8px; }
 }
-/* 限宽/限高 + 超出滚动：仅对「文字型」提示浮层（tooltip / popover）生效——文字过多时限宽 318 / 限高 240 + 滚动。
+/* 限宽/限高 + 超出滚动：仅对「文字型」提示浮层（tooltip / popover）生效——文字过多时限宽 318 / 限高 264 + 滚动。
+   ⚠️ 限高刻意**不取整行的倍数**：浮层内是等高条目列表（如 PageFrame「更多」面板的收纳项）时，
+   整数倍会让最后一项被齐齐切断、看不出下面还有内容；多留约半行让下一项露出上半截，
+   用"被切一半的元素"暗示可滚，比加渐变遮罩或常驻滚动条都轻。
    功能性内容浮层（date-picker / select / cascader / time-select / autocomplete / dropdown）
    的宽、高、滚动全由 EP 精心设置（范围面板宽 ~760、时间列要 auto 滚、日期网格要 visible），
    绝不能被这里的 max-width/max-height/overflow 覆盖——用 :not() 整体排除，尺寸交还 EP 原生
-   （否则：318 限宽会把范围面板挤爆右/下边框、240 限高会截断日期面板出多余滚动条）。 */
+   （否则：318 限宽会把范围面板挤爆右/下边框、240 限高会截断日期面板出多余滚动条）。
+   ⚠️ **自带滚动的内容型浮层也必须列进排除名单**（如 PageFrame 的 `.page-frame-more`）：
+   它们内部已用 <el-scrollbar> 承担滚动，这里再给外壳一个原生 `overflow: auto`，
+   页面上就是**两条滚动条并排**——外壳的原生条 + 内部的自绘条（实测踩过）。
+   ⚠️ 排除只能加在**本规则的 :not() 名单**里，不要去使用方那侧写高权重选择器反压：
+   这条是 `.is-light:not()×6`（7 个类）的权重，使用方那点类名根本压不过，写了也静默失效。 */
 .el-popper.is-light,
 .el-popper.is-dark {
-  &:not(.el-picker__popper):not(.el-select__popper):not(.el-cascader__dropdown):not(.el-autocomplete__popper):not(.el-time-panel):not(.el-dropdown__popper) {
+  &:not(.el-picker__popper):not(.el-select__popper):not(.el-cascader__dropdown):not(.el-autocomplete__popper):not(.el-time-panel):not(.el-dropdown__popper):not(.page-frame-more) {
     max-width: 318px;
-    max-height: 240px;
+    max-height: 264px;
     overflow: auto;
   }
 }

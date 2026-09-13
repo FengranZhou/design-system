@@ -25,6 +25,7 @@
         :breadcrumbs="breadcrumbs"
         :back-disabled="true"
         avatar-role="teacher-male"
+        user-name="王老师"
       >
         <div class="course-tools">
           <!-- 页面级主标题：只含标题也是工具栏（toolbar-pattern 分支①，右侧为空）。
@@ -96,6 +97,12 @@ const activeKey = ref('course-tools')
 const course: PageFrameCourse = {
   name: '《智能启思从零懂智能》',
   meta: ['2023年春', '全网公开', '教务开课'],
+  // 卡片右上「更多」下拉：框架一项都不写死，由业务方按自身功能传入
+  menus: [
+    { key: 'detail', label: '查看课程首页' },
+    { key: 'setting', label: '课程设置' },
+    { key: 'qrcode', label: '打开二维码' },
+  ],
 }
 
 // 面包屑首项 = 组标题；组标题非实体页 → 返回箭头禁用
