@@ -6,14 +6,6 @@
   font-style: normal;
 }
 
-@font-face {
-  font-family: "Alibaba PuHuiTi 3.0";
-  src: url("../font/AlibabaPuHuiTi-3-95-ExtraBold.ttf") format("truetype");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ======================================================================== */
 /* ========================= 字体系统 Font System ========================= */
 /* ======================================================================== */
@@ -26,9 +18,6 @@ $font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helve
 sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
 'Noto Color Emoji';
 $font-family-number: "douyinNum";
-/* 字体名 "Alibaba PuHuiTi 3.0" 必须用插值 #{'"..."'} 强制保留引号输出——
-   否则 Sass 会剥掉引号、并把 3.0 数字化成 3，得到无效字体名 `Alibaba PuHuiTi 3` 导致回退系统字体 */
-$font-family-emphasis: #{'"Alibaba PuHuiTi 3.0"'}, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Noto Sans SC', sans-serif;   /* 强调/页面标题：阿里普惠 95 ExtraBold */
 
 /* 字体大小 Font Size */
 $font-size-12: 12px;
@@ -62,7 +51,6 @@ $line-height-80: 80px;
 $font-weight-regular: 400;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
-$font-weight-extrabold: 800;   /* 阿里普惠 95 ExtraBold / 页面标题强调 */
 
 /* ==================== 第二层：语义化字体应用 ==================== */
 
@@ -70,7 +58,6 @@ $font-weight-extrabold: 800;   /* 阿里普惠 95 ExtraBold / 页面标题强调
   /* 字体家族 Font Family */
   --iflyv-font-family-base: #{$font-family-base};
   --iflyv-font-family-number: #{$font-family-number};
-  --iflyv-font-family-emphasis: #{$font-family-emphasis};
 
   /* 字体大小 Font Size */
   --iflyv-font-size-12: 0.75rem;    /* 12px */
@@ -102,7 +89,6 @@ $font-weight-extrabold: 800;   /* 阿里普惠 95 ExtraBold / 页面标题强调
   --iflyv-font-weight-regular: #{$font-weight-regular};
   --iflyv-font-weight-semibold: #{$font-weight-semibold};
   --iflyv-font-weight-bold: #{$font-weight-bold};
-  --iflyv-font-weight-extrabold: #{$font-weight-extrabold};
 
   /* 语义比例行高 Leading
      用于快速开发场景，按字号段选择合适的比例值。
@@ -116,12 +102,12 @@ $font-weight-extrabold: 800;   /* 阿里普惠 95 ExtraBold / 页面标题强调
 
   /* 标题类型 Title */
 
-  /* 页面标题 - Title-Page - 页面级主标题（阿里普惠 95 ExtraBold） */
-  --iflyv-font-title-page: #{$font-weight-extrabold} 1.625rem / 3rem #{$font-family-emphasis};              /* 26px/48px */
-  --iflyv-font-title-page-multiline: #{$font-weight-extrabold} 1.625rem / 3.25rem #{$font-family-emphasis}; /* 26px/52px */
+  /* 页面标题 - Title-Page - 页面级主标题 */
+  --iflyv-font-title-page: #{$font-weight-semibold} 1.625rem / 3rem #{$font-family-base};              /* 26px/48px */
+  --iflyv-font-title-page-multiline: #{$font-weight-semibold} 1.625rem / 3.25rem #{$font-family-base}; /* 26px/52px */
 
-  /* 页面级选中 Tab 项 - Tab-Active - 页面级 Tabs 激活项（阿里普惠 95 ExtraBold） */
-  --iflyv-font-tab-active: #{$font-weight-extrabold} 1.625rem / 2.25rem #{$font-family-emphasis};           /* 26px/36px */
+  /* 页面级选中 Tab 项 - Tab-Active - 页面级 Tabs 激活项 */
+  --iflyv-font-tab-active: #{$font-weight-semibold} 1.625rem / 2.25rem #{$font-family-base};           /* 26px/36px */
 
   /* 模块标题 - Title-Module - 模块级标题 */
   --iflyv-font-title-module: #{$font-weight-semibold} 1.125rem / 2.25rem #{$font-family-base};              /* 18px/36px */
