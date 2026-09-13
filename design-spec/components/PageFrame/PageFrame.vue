@@ -340,7 +340,7 @@
             <el-popover
               ref="morePopoverRef"
               :visible="moreVisible"
-              placement="right-end"
+              placement="right-start"
               :show-arrow="false"
               trigger="click"
               :popper-class="['page-frame-more', { 'is-collapsed': collapsed }]"
