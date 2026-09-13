@@ -31,6 +31,35 @@ export interface PageFrameCourse {
   meta?: string[]
   /** 封面图 URL；不传时用 AI 渐变缺省底 */
   cover?: string
-  /** 右上角标文案，默认「课程详情」；传空串隐藏角标 */
-  cornerTag?: string
+  /**
+   * 右上角「更多」入口的下拉菜单项。
+   * **框架一项都不写死**——「查看课程首页」「课程设置」「打开二维码」这类功能
+   * 各系统有无不一，由业务方按自身能力传入（同 avatarMenus 口径）。
+   * 不传或空数组 → 不渲染「更多」入口。
+   */
+  menus?: PageFrameCourseMenuItem[]
+}
+
+/** 课程卡「更多」下拉的菜单项（个数 / 文案 / 分段 / 危险项全由业务方定义） */
+export interface PageFrameCourseMenuItem {
+  /** 唯一 key（course-menu-click 以此为准） */
+  key: string
+  label: string
+  /** 与上一项之间加分隔线——用来把菜单分段 */
+  divided?: boolean
+  /** 破坏性/不可逆操作：文字转 danger 色 */
+  danger?: boolean
+  disabled?: boolean
+}
+
+/** 头像下拉菜单项（个数 / 文案 / 分段 / 危险项全由业务方定义，框架不写死） */
+export interface PageFrameAvatarMenuItem {
+  /** 唯一 key（avatar-menu-click 以此为准） */
+  key: string
+  label: string
+  /** 与上一项之间加分隔线——用来把菜单分段（如「账号」「服务」「登出」三段） */
+  divided?: boolean
+  /** 破坏性/不可逆操作（退出登录、注销账号）：文字转 danger 色 */
+  danger?: boolean
+  disabled?: boolean
 }

@@ -4,4 +4,6 @@ export type {
   PageFrameMenuItem,
   PageFrameMenuChild,
   PageFrameCourse,
+  PageFrameAvatarMenuItem,
+  PageFrameCourseMenuItem,
 } from './types'

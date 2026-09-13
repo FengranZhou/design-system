@@ -28,6 +28,7 @@
         :breadcrumbs="breadcrumbs"
         :back-disabled="true"
         avatar-role="teacher-male"
+        user-name="王老师"
       >
         <!-- 页面级 tab 工具栏放 #page-header：在滚动区之外、始终可见，
              滚动条轨道于是只覆盖下方真正会滚的内容。 -->
@@ -127,6 +128,12 @@ const activeKey = ref('public-info')
 const course: PageFrameCourse = {
   name: '《智能启思从零懂智能》',
   meta: ['2023年春', '全网公开', '教务开课'],
+  // 卡片右上「更多」下拉：框架一项都不写死，由业务方按自身功能传入
+  menus: [
+    { key: 'detail', label: '查看课程首页' },
+    { key: 'setting', label: '课程设置' },
+    { key: 'qrcode', label: '打开二维码' },
+  ],
 }
 
 // 面包屑首项 = 所在分组的组标题（同 PageFrameDemo 口径）；组标题非实体页 → 返回箭头禁用

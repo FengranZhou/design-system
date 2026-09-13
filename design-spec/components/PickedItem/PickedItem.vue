@@ -74,10 +74,22 @@ const emit = defineEmits<{ remove: [] }>()
 .picked-item__label {
   font: var(--iflyv-font-body-sub);
   color: var(--iflyv-text-1);
+  /* 值过长时省略而不是把容器顶宽：已选值来自别处挑选，长度不可控，
+     而本组件常处在定宽容器里（表单字段、浮层面板…）。
+     ⚠ min-width: 0 不可省——flex 子项默认不小于内容宽，只写 overflow 不生效。 */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* 删除叉：裸 button 去掉浏览器默认样式，只做图标的承载与取色 */
+/* 删除叉：裸 button 去掉浏览器默认样式，只做图标的承载与取色。
+   ⚠️ margin-inline-start: auto —— 删除叉恒贴右缘。
+   按内容宽时（最常见用法）两者本就相邻，auto 不产生任何差别；
+   一旦调用方把本组件拉成满宽（如放进定宽浮层、表单里占整行），
+   没有这一条的话叉会跟着文字停在中间、右侧空出一段，看起来像没对齐。 */
 .picked-item__remove {
+  margin-inline-start: auto;
   display: inline-flex;
   align-items: center;
   padding: 0;

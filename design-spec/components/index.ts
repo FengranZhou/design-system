@@ -21,4 +21,6 @@ export {
   type PageFrameMenuItem,
   type PageFrameMenuChild,
   type PageFrameCourse,
+  type PageFrameAvatarMenuItem,
+  type PageFrameCourseMenuItem,
 } from './PageFrame'

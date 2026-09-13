@@ -250,14 +250,14 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 
 | 令牌 | 用途 | 规格（字号/行高 · 字重/字体） |
 |---|---|---|
-| `--iflyv-font-title-page` | **层级链①页面级**·一个页面最顶层的大标题 | 26/48 · 阿里普惠 800 |
+| `--iflyv-font-title-page` | **层级链①页面级**·一个页面最顶层的大标题 | 26/48 · semibold |
 | `--iflyv-font-title-module` | **层级链②模块级**·页面内一个大区块的标题（看板的「课程备课」、双栏页的「出题设置」） | 18/36 · semibold |
 | `--iflyv-font-title-component` | **层级链③组件级**·模块内某个组件/卡片的抬头（图表卡的「课程资源分布」、入口卡的「评价活动」、配置卡的「配置项」） | 14/20 · semibold |
 | `--iflyv-font-title-regular` | **不在层级链上**·通用容器内的标题/正文（信息卡里的「AI助学」这类）。规格与 `body-primary` 同为 16/24，仅字重不同，**语义上与正文更近而非与三档标题同族** | 16/24 · semibold |
 | `--iflyv-font-body-primary` | 常规正文（主要阅读内容） | 16/24 |
 | `--iflyv-font-body-sub` | 次要正文（次要说明、tooltip、表格单元格等） | 14/20 |
 | `--iflyv-font-body-min` | 辅助信息（最小级说明、附注） | 12/18 |
-| `--iflyv-font-tab-active` | 页面级选中 Tab 项 | 26/36 · 阿里普惠 800 |
+| `--iflyv-font-tab-active` | 页面级选中 Tab 项 | 26/36 · semibold |
 | `--iflyv-font-tab-active-sub` | 模块级选中 Tab 项 | 18/28 · semibold |
 | `--iflyv-font-tab-default` | 默认（未选中）Tab 项 | 18/36 · regular |
 | `--iflyv-font-label-primary` | 常规标签（表单 label、字段名等） | 12/18 |
@@ -308,7 +308,7 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 按优先级选用：
 
 1. **首选：语义复合令牌**（一条搞定整套）——`font: var(--iflyv-font-body-sub)` / `var(--iflyv-font-title-component)` 等。这层已把字号/行高/字重/字体族打包好，改一处处处同步，是设置文字的默认方式。
-   > ⚠️ **例外（含空格字体名不能用 `font:` 简写）**：当复合令牌的字体族含带空格的引号字体名（如 `'Segoe UI'`、阿里普惠），CSS 的 `font:` 简写会解析出错。此时**改为拆分属性**，逐条引用**单值令牌**：`font-size` + `line-height` + `font-weight`（+ `font-family`），见下方独立 token 用法。**拆分时行高、字重一个都不能漏**——漏了就是塌回默认。
+   > ⚠️ **例外（含空格字体名不能用 `font:` 简写）**：当复合令牌的字体族含带空格的引号字体名（如 `'Segoe UI'`），CSS 的 `font:` 简写会解析出错。此时**改为拆分属性**，逐条引用**单值令牌**：`font-size` + `line-height` + `font-weight`（+ `font-family`），见下方独立 token 用法。**拆分时行高、字重一个都不能漏**——漏了就是塌回默认。
 
 2. **次选：拆分单值令牌**（复合令牌不适用、或只需覆盖其中一两项时）——必须**成套设齐**：`font-size: var(--iflyv-font-size-14); line-height: var(--iflyv-line-height-20); font-weight: var(--iflyv-font-weight-regular);`。字号档位对应的行高**照下方配对表选**，绝不留空让它走 `normal`。
 

@@ -164,7 +164,7 @@ updated: 2026-05-10
 - ❌ 自己另定一个延迟值（`:show-after="500"` / `100`）——延迟是全站统一体感，各处不一致比没有更糟。
 - ❌ 把**必读**信息（操作后果、错误原因、必填说明）塞进 tooltip——hover 才可见 = 大概率看不见，该用 `el-alert` / 表单 `help` 文案。
 - ❌ 用 `popper-class` / `:deep` 改气泡底色字号（源头已定，改了就是脱离源头的局部私货）。
-- ❌ 给 tooltip 内容塞按钮 / 表单等**可交互元素** <!-- @rule id=tooltip-no-interactive level=MUST cat=组件用法 detect=ast dtitle=提示气泡里不应放按钮等要点击的内容（鼠标移过去就消失，够不着） title=禁给 tooltip 塞可交互元素，需要可交互浮层用 dropdown/popconfirm/dialog -->——鼠标移过去气泡就消失，够不着。需要可交互浮层时：一组操作项用 `el-dropdown`、就地确认用 `el-popconfirm`、承载多个控件用 `el-dialog`（`el-popover` 当前暂停启用，见文末「勿用清单」）。
+- ❌ 给 tooltip 内容塞按钮 / 表单等**可交互元素** <!-- @rule id=tooltip-no-interactive level=MUST cat=组件用法 detect=ast dtitle=提示气泡里不应放按钮等要点击的内容（鼠标移过去就消失，够不着） title=禁给 tooltip 塞可交互元素，需要可交互浮层用 dropdown/popconfirm/dialog -->——鼠标移过去气泡就消失，够不着。需要可交互浮层时：一组操作项用 `el-dropdown`、就地确认用 `el-popconfirm`、承载多个控件用 `el-dialog`；**浮层里是一块自定义内容面板**（非命令列表）才用 `el-popover`。
 
 ```vue
 <!-- ✅ 纯图标入口：补全称，顶栏元素向下展开；show-after 300 全站统一 -->
@@ -622,8 +622,63 @@ const onCheckAll = (val: boolean) => {
   </template>
   ```
 
+- **配置项「分段」与「危险项」——用分隔线把菜单切成几段、把不可逆操作标红**（正交配置，可与分组抬头、各触发器形态自由叠加）：
+  - **分段用 EP 原生 `divided`**（线色已由源头映射到 `--iflyv-border-subtle`），⛔ **不要自插 `<li>` 画线、也不要用 `el-divider`** <!-- @rule id=dropdown-divided-native level=MUST cat=组件用法 detect=manual dtitle=下拉菜单的分段横线用组件自带能力，别自己插一条线 title=下拉分段一律用 el-dropdown-item 的 divided 属性，禁自插 li 画线或塞 el-divider -->——自插的线拿不到面板左右内边距与统一线色，改源头时它不动。
+  - **与分组抬头二选一，别同时用** <!-- @rule id=dropdown-divider-or-group-title level=SHOULD cat=组件用法 detect=manual dtitle=菜单分段：要么加一行小标题，要么画一条线，不要既画线又加标题 title=下拉分段：divided 分隔线与 .dropdown-group-title 抬头二选一，不叠加 -->：**能起出上位词 → 用抬头**（读者知道这段是什么）；**只是"这几项不同类、别连着读" → 用分隔线**（如账号类 / 服务类 / 登出）。两者叠加是同一件事说两遍，把面板撑高。
+  - **破坏性/不可逆操作用约定类 `.is-danger`** <!-- @rule id=dropdown-danger-class level=MUST cat=组件用法 detect=regex dtitle=下拉里的删除、退出登录等不可逆操作要标红，且不要铺红底 title=下拉危险项必须用约定 class .is-danger，禁在使用方自写红色或铺红底 -->（源头 `dropdown.scss`：文字转 `danger-primary`，hover 压深一档）：删除、注销账号、退出登录等**点下去收不回来**的项，让用户点前有一次视觉停顿。⛔ **只转文字色、不铺红底**——下拉项是一列等价选项，给其中一条铺底会读成"选中态"；也**不要在使用方自写红色**（脱离源头）。
+  - **一个面板里危险项 ≤1 个且放在最末**：危险项多了红色就不再是警示；放中间会让用户滑向下方项时反复扫过它。
+
+  ```vue
+  <template #dropdown>
+    <el-dropdown-menu>
+      <el-dropdown-item>个人中心</el-dropdown-item>
+      <el-dropdown-item divided>反馈建议</el-dropdown-item>
+      <el-dropdown-item>投诉举报</el-dropdown-item>
+      <el-dropdown-item divided class="is-danger">退出登录</el-dropdown-item>
+    </el-dropdown-menu>
+  </template>
+  ```
+
+  > 业务组件 `PageFrame` 侧栏底部的头像下拉就是纯使用方——分段走 `divided`、退出登录走 `.is-danger`，**没有自己另写一套红色**。
+
   > **这个能力对所有 dropdown 使用方开放，谁要分组谁直接用**——业务组件 `PageFrame` 收起态的侧栏 hover 浮层就是纯使用方（抬头 = 一级导航名、选项 = 其下二级导航），它**完全继承本约定、没有自己另定一套分组标题样式**。这正是「配置式组件设计范式」的落法：能力沉在源头，使用方只写约定 class。
+- **面板高到放不下时，左对齐会被 `flip` 悄悄破坏**：popper 会在 `bottom-start → top-start → bottom-end → top-end` 里挑一个放得下的，**一旦落到 `-end` 档就变成右对齐**——面板整体左移一个「面板宽 − 触发器宽」，左缘远离入口。要求左缘严格对齐触发器时，用 `fallbackPlacements` 把候选锁成同一 variation： <!-- @rule id=dropdown-lock-flip-variation level=SHOULD cat=组件用法 detect=manual dtitle=选项很多时下拉面板会整体左移、不再对齐入口，需要锁定翻转方向 title=要求面板左缘对齐触发器时，用 flip 的 fallbackPlacements 锁成 ['top-start']，禁依赖 preventOverflow 的 altAxis -->
+
+  ```ts
+  // 必须是模块级常量：写成模板内字面量每次渲染都是新对象，EP 会据此重建 popper、关闭时先跳一下
+  const POPPER_OPTIONS = {
+    modifiers: [{ name: 'flip', options: { fallbackPlacements: ['top-start'] } }],
+  }
+  ```
+  ```vue
+  <el-dropdown placement="bottom-start" :popper-options="POPPER_OPTIONS">
+  ```
+
+  ⛔ **别用 `preventOverflow` 的 `altAxis: false` 去治这个**——popper 里 `altAxis` **本来就默认 false**，写了是空操作、挡不住 `flip`（本仓库真实踩过：以为是它在推移，其实一直没生效）。
 - **反例**：手撸一个绝对定位的浮层当下拉；触发器和菜单不用 `el-dropdown` 组合而各写各的；**用裸 `<span>`/`<div>` 当触发器并在 scoped 里补 inline-flex/gap/文字色/hover（复刻 `<el-button text>` 已有的能力，且键盘不可达）**；把本该是按钮/图标的主入口硬做成轻量文字入口（或反之）；「文字 + 箭头」触发器的箭头不用 `.dropdown-caret` 而在页面 scoped 里自写旋转动效；**分组抬头用 `el-dropdown-item` 冒充（带 hover 底色，用户会去点）或在使用方另写一套抬头样式（脱离源头，改源头它不动）**。
+
+### Popover 自定义内容浮层
+
+> **2026-09 起启用（此前在「勿用清单」）**，但**适用面很窄**——先读下面这条判据再决定用不用。
+
+- **何时用**：浮层里是**一块自定义内容面板**，而不是一列可点的命令。典型特征（命中即可考虑）：面板内含**多种控件**（按钮 + 输入 + 标签等）、有**自己的标题行或操作区**、或**点了面板内部不该关闭**（需要在里面连续操作）。 <!-- @rule id=popover-only-custom-panel level=MUST cat=组件选用 detect=manual dtitle=浮层里若只是一列可点选项，应做成下拉菜单而不是自定义面板 title=el-popover 仅用于自定义内容面板；一列命令项必须用 el-dropdown -->
+- **⛔ 何时不用**（这几类各有专属组件，用 popover 即违规）：
+  - 一句纯说明文字 → `el-tooltip`
+  - **一列可点的选项 / 命令** → `el-dropdown`（**最常见的误用**：popover 里塞一堆条目自己拼菜单，等于手撸下拉）
+  - 就地二次确认 → `el-popconfirm`
+  - 需要用户全神贯注填写的成组表单 → `el-dialog`
+- **强制做法**：
+  - **显隐一律走受控 `:visible`**（配合自己的状态），**不要为了绕开 trigger 限制去钉一个不会触发的事件**（如 `trigger="contextmenu"`）——那是把组件当壳用，行为全靠外部补，后续维护者读不懂。 <!-- @rule id=popover-controlled-visible level=MUST cat=组件用法 detect=manual dtitle=浮层的显示隐藏应由明确的状态控制，不应靠"钉一个用不到的触发方式"绕过去 title=el-popover 显隐走受控 :visible，禁用钉死 trigger + 外部句柄模拟 -->
+  - 浮层被 teleport 到 `body`，**使用方 `<style scoped>` 构不着**；需要自定义版式时把样式放进源头（模式层 `el-theme/patterns/` 或组件自己的源头段），用 `popper-class` 挂约定类，**不要在使用方写 `:deep()`**。
+  - 面板内若有两种形态（如浏览态/编辑态），**给面板定宽**，否则切换时宽度跳变。
+  - **内容长到要滚时，套一层 `<el-scrollbar>` 在「需要滚的那块」上，不要让 popover 自己滚** <!-- @rule id=popover-scroll-use-scrollbar level=MUST cat=组件用法 detect=manual dtitle=内容很长的浮层要在内部滚动，且滚动条浮在内容上、不占一列宽度 title=el-popover 内容超长时用 el-scrollbar 包住可滚区，禁让 popover 自身 overflow:auto -->：`el-popover` 内部**没有** `el-scrollbar`（不同于 `el-dropdown`/`el-select`），所以 popover 自身滚 = **原生**滚动条，Chrome 下占位、从布局里真切走一列、track 白底去不掉（见本文件「滚动条」段）。
+    - ⚠️ **`tooltip.scss` 有一条浅色 popper 通用限高（`max-height: 264px; overflow: auto`），它的 `:not()` 排除了 picker/select/cascader/dropdown 但没排除 `el-popover`** —— 所以**任何内容超过 264 高的 popover 都会静默吃到一个原生滚动条**，不报错、只是观感不对。内容可能长过 264 时，在自己的源头段里把外壳解除掉（`max-height: none; overflow: visible`），再把滚动交给内部的 `el-scrollbar`。
+    - **只滚"该滚的那块"**：标题行/操作行留在 `el-scrollbar` **之外**就天然常驻，**不需要 `position: sticky`**——用 sticky 意味着滚动容器是 popover 本身，又绕回原生滚动条那条路。
+- **面板内部要滚动时，必须把它加进 tooltip.scss 通用限高的 `:not()` 排除名单**：`tooltip.scss` 有一条管所有浅色浮层的 `max-height: 264px; overflow: auto`。内容型面板若自己已用 `<el-scrollbar>` 承担滚动，外壳再吃到这个**原生** `overflow: auto`，页面上就是**两条滚动条并排**——外壳的原生条 + 内部的自绘条。 <!-- @rule id=popover-exclude-from-tooltip-maxheight level=MUST cat=组件用法 detect=manual dtitle=自带滚动的浮层面板会出现两条并排的滚动条 title=内部自带 el-scrollbar 的 popover 必须加进 tooltip.scss 限高规则的 :not() 排除名单，禁在使用方写高权重选择器反压 -->
+  - ⛔ **别在使用方那侧写高权重选择器去反压**：那条规则是 `.el-popper.is-light:not()×6`，**7 个类**的权重，`.el-popover.你的类名` 只有 2 个——压不过，写了**静默失效**（本仓库真实踩过：以为 `overflow: visible` 写上了就生效，实际一直没赢）。排除只能加在那条规则**自己的 `:not()` 名单**里，与 picker / select / cascader 等功能性浮层同一机制。
+- **反例**：拿 popover 装一列菜单项（应为 `el-dropdown`）；给 popover 自身写 `overflow: auto` 让它自己滚（原生条、占位）；把常驻的标题行用 `sticky` 钉在自滚的 popover 里（补 top/负外边距/补底一堆补偿，换成 el-scrollbar 后全部作废）；用 `trigger` 钉死 + 外部句柄 `handleOpen/handleClose` 模拟受控（应直接用 `:visible`）；在使用方 scoped 里 `:deep(.el-popover)` 改外观（构不着或脱离源头）。
+
+> **真实案例**：业务组件 `PageFrame` 的「更多」收纳浮层。它最初用 `el-dropdown` 承载，为此被迫写了两处 hack——① `trigger="contextmenu"` 钉成不会触发的事件、显隐全靠外部 `handleOpen/handleClose`；② 内层「添加」下拉选完项会把外层判成「点了外部」而关闭，需要一个 `suppressMoreClose` 标记屏蔽误关再补开。换成 `el-popover` + 受控 `:visible` 后**两处 hack 全部删除**。**判据**：它有标题行、有编辑态、点内部不能关——这三条都指向「面板」而非「菜单」。
 
 ### 按钮间距
 design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-left: 12px }`（见 `el-theme/components/button.scss`）。
@@ -1359,7 +1414,9 @@ loading.close()
 **强制做法**：
 - 内部滚动区一律 `<el-scrollbar>`；滚动内容的排布（flex 方向 / gap / 内边距）写在 `view-class` 指定的 view 上 <!-- @rule id=scrollbar-view-class level=SHOULD cat=组件用法 view=impl detect=regex title=滚动内容的排布写在 view-class 指定的 view 上，不写在 el-scrollbar 外壳 -->，**不要**写在 el-scrollbar 外壳上（滚动发生在 view 这一层）。
 - 外壳负责在父级 flex 里占位（如 `flex: 1; min-height: 0`）。
-- **滚动条外观（粗细 / 颜色 / 圆角 / 过渡）全部在源头 `el-theme/components/scrollbar.scss`**，接入方一律不覆盖。页面主滚动条（`html`/`body`）也已在该文件统一为与 el-scrollbar 一致的观感（宽 6px、hover 8px、圆角 4px、thumb 半透明、track 透明），接入方同样不再自写。 <!-- @rule-skip dup 已由 scrollbar-no-raw-overflow 与 ssot-no-scoped-override 覆盖 -->
+- **滚动条外观（粗细 / 颜色 / 圆角 / 过渡）全部在源头 `el-theme/components/scrollbar.scss`**，接入方一律不覆盖。页面主滚动条（`html`/`body`）也已在该文件统一为与 el-scrollbar 一致的观感（宽 6px、圆角 4px、thumb 半透明且 hover 加深、track 透明），接入方同样不再自写。**主滚动条恒 6px 不随 hover 变粗**（原生条改宽度会引起布局回流），只有 el-scrollbar 那侧有 6→8 变粗。⛔ **不要给 `html`/`body` 加标准属性 `scrollbar-width`**——它会压掉上述整套 `::-webkit-scrollbar` 规则（Chrome 下 `thin` 实测 11px 且为占位式，把内容挤出一列），源头已据此移除；代价是 Firefox 拿浏览器默认滚动条，属已知取舍。 <!-- @rule-skip dup 已由 scrollbar-no-raw-overflow 与 ssot-no-scoped-override 覆盖 -->
+- **页面主滚动也该交给 `el-scrollbar`，别让文档根元素滚**：原生滚动条**只能改宽窄、改不掉「占位」**——macOS 系统默认是悬浮式（不占位），但 Chrome 一旦读到自定义的 `::-webkit-scrollbar` 样式就切成**经典占位式**，从布局里真切走一列。想要「细 + 不占位」原生条给不了。做法是让根元素 `overflow: hidden`、把内容区用 `<el-scrollbar>` 包起来滚（范本见 `demo/src/App.vue` 的 `.app-content-scroll`）。⚠️ 迁移时三处要跟着走：① `scroll-behavior` / `scroll-padding-top` 从 `html` 移到 `.el-scrollbar__wrap`（留在 html 上不生效，锚点跳转会被固定顶栏盖住）；② 监听 `window` 的 scroll-spy / 滚动逻辑要改监听该 wrap（window 上不再有 scroll 事件）；③ 布局容器用 `height: 100vh` 而非 `min-height`（后者会随内容长高、根元素重新长出滚动条）。 <!-- @rule id=scrollbar-page-level-use-el-scrollbar level=SHOULD cat=组件用法 detect=manual dtitle=页面主滚动条也应是浮在内容上的细条，不该占掉右侧一列宽度 title=页面主滚动交给 el-scrollbar 承载，根元素 overflow:hidden；原生滚动条无法既自定义样式又不占位 -->
+- **`el-scrollbar` 会把内容裁成直角，圆角由源头补成 `inherit`**：EP 给 `.el-scrollbar` 写了 `overflow: hidden` 却没给圆角。内容不满时看不出来，**一旦内容铺满（如下拉面板选项变多），里面那层不透明底色被裁成方的、糊住外层圆角——面板四角变直角**。源头已统一补 `border-radius: inherit`（跟随所在容器），**接入方不必也不应自己写圆角去救**。 <!-- @rule-skip dup 已由 ssot-no-scoped-override 覆盖 -->
 
 **可照抄骨架**：
 ```vue
@@ -1396,7 +1453,7 @@ loading.close()
 
 ## ⏸ 暂停启用的组件与形态（勿用清单）
 
-> **下列组件 / 形态当前不在本设计系统的启用范围内**——demo 已下架展示，部分连源头样式都未编译进产物。**做需求时不要选用它们** <!-- @rule id=component-no-suspended level=MUST cat=组件选用 detect=regex dtitle=组件观感应与规范展示页一致，不应出现明显偏离设计系统的原生样式控件 title=不得使用「勿用清单」内已停用的组件（el-popover/el-menu/el-link/el-collapse/el-progress/el-timeline 等） -->；确有需要请先与设计负责人确认后恢复，而不是直接写进业务代码。
+> **下列组件 / 形态当前不在本设计系统的启用范围内**——demo 已下架展示，部分连源头样式都未编译进产物。**做需求时不要选用它们** <!-- @rule id=component-no-suspended level=MUST cat=组件选用 detect=regex dtitle=组件观感应与规范展示页一致，不应出现明显偏离设计系统的原生样式控件 title=不得使用「勿用清单」内已停用的组件（el-menu/el-link/el-collapse/el-progress/el-timeline 等） -->；确有需要请先与设计负责人确认后恢复，而不是直接写进业务代码。
 >
 > **为什么要显式列出**：这些组件在 Element Plus 里是存在的、写出来也不报错，但拿到的是 **EP 原生观感**而非本设计系统的样式——与全站不一致，且不随源头更新。不写这份清单，下游只会以为"能用"。
 >
@@ -1412,9 +1469,8 @@ loading.close()
 | 组件 / 形态 | 停用范围 | 替代方案 |
 |---|---|---|
 | **`el-backtop` 回到顶部** | **源头样式未编译**（`el-theme/index.scss` 的 `@use` 已注释）+ demo 下架 | 长页导航用 `el-anchor` 锚点；确需回顶请先确认再恢复 |
-| **`el-popover` 气泡卡片** | 整体停用 | 一句说明 → `el-tooltip`；一组操作项 → `el-dropdown`；就地确认 → `el-popconfirm`；需承载多个控件 → `el-dialog` |
 | **`el-upload` 上传** | 整体停用 | 🚧 **暂无替代，将来以业务组件形式补**（按产品调性重做，不走 EP 原生）。当前需要上传功能时**先与设计负责人确认**，不要临时用 `el-upload` 顶上 |
-| **`el-transfer` 穿梭框** | 整体停用 | 多选场景用 `el-select` 多选（见 `patterns/select-pattern.md`） |
+| **`el-transfer` 穿梭框** | **组件整体停用**（指 EP 的 `el-transfer` 这个控件，不是指"双栏搬运"这种形态） | 常规多选用 `el-select` 多选（见 `patterns/select-pattern.md`）。⚠️ **确需双栏搬运形态时**（两侧都要能通览、且条目带层级）：`el-transfer` 只吃扁平列表、装不下层级，应按 `PageFrame` 的「导航设置」弹窗那样用 `el-dialog`（800 档）+ 令牌自行搭两栏，**仍不要用 `el-transfer`** |
 | **`el-tree` 树形控件** | 停用**独立的树控件**；**`el-tree-select` 不在停用范围、正常可用**（源头 `tree.scss` 专门为 `.el-tree-select__popper` 写了适配，demo `SelectDemo` 有展示） | 有层级的单选：下拉形态用 `el-tree-select`，或用 `el-cascader`（见 `patterns/select-pattern.md`） |
 | **`el-timeline` 时间线** | 整体停用 | 🚧 **暂无替代，将来以业务组件形式补**（学习轨迹 / 操作日志等场景按产品调性重做）。当前需要时**先与设计负责人确认**，不要临时用 `el-timeline` 顶上 |
 | **`el-progress` 进度条** | 整体停用 | 🚧 **暂无替代，将来以业务组件形式补**（成绩 / 完成度 / 任务进度等场景按产品调性重做）。当前需要时**先与设计负责人确认**，不要临时用 `el-progress` 顶上 |
