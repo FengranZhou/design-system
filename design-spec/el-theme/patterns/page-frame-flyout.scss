@@ -18,14 +18,24 @@
 
    接入方无需引用本文件里的任何类——它们由 PageFrame 内部渲染，不是对外 API。 */
 
-/* 选中态：与侧栏一致（加粗 + text-1）。仅补字重与色阶，
-   行高/圆角/hover 仍归 dropdown.scss。
-   两个浮层共用同一条——收起态浮层与「更多」浮层里的条目都是"导航项"，
-   选中口径必须一致（分开写会长出两套，改一处漏一处）。 */
+/* 选中态：加粗 + **品牌色**。仅补字重与色阶，行高/圆角/hover 仍归 dropdown.scss。
+   ⚠️ 与展开态侧栏的选中态（加粗 + text-1）**刻意不同**：本浮层只在收起态出现
+      （PageFrame.vue 的 v-if="collapsed && item.children"），收起后侧栏只剩图标，
+      选中项藏在浮层里、侧栏上看不出选了哪个；靠加粗不足以一眼定位，故用品牌色点出。
+      展开态侧栏不受影响——那边选中项自带底色块，已经很显眼。
+   两个收起态浮层共用同一口径（见下方 .page-frame-more.is-collapsed 的 .is-active），
+   都是"导航项"，分开写会长出两套、改一处漏一处。 */
 .page-frame-flyout {
   .el-dropdown-menu__item.is-active {
-    color: var(--iflyv-text-1);
+    color: var(--iflyv-brand-primary);
     font-weight: var(--iflyv-font-weight-semibold);
+
+    /* hover 时保持品牌色：dropdown.scss 的通用 hover 会把 color 压回 text-1，
+       不重申的话选中项一 hover 就丢掉品牌色、闪一下。 */
+    &:not(.is-disabled):hover,
+    &:not(.is-disabled):focus {
+      color: var(--iflyv-brand-primary);
+    }
   }
 }
 
@@ -206,10 +216,14 @@
           改 dropdown 条目色阶时记得回来同步。 */
     color: var(--iflyv-text-1);
 
-    /* 选中态仍只改字重（口径同展开态），故此处只需重申字重——
-       font: 简写会把 weight 重置回 regular，不重申会让选中项在收起态丢掉加粗。
-       色阶已在上面统一给到 text-1，此处不必再写。 */
+    /* 选中态：加粗 + **品牌色**，与收起态子菜单浮层同口径（见文件上方
+       .page-frame-flyout 的 .is-active，理由同）——收起后侧栏只剩图标，
+       选中项藏在浮层里，靠加粗不足以一眼定位。
+       ⚠️ 展开态不受影响：展开态的 .page-frame-more__item.is-active 仍是 text-1
+          （见上方那段），本段只在 .is-collapsed 作用域内生效。
+       ⚠️ 字重必须重申——上面的 font: 简写会把 weight 重置回 regular。 */
     &.is-active {
+      color: var(--iflyv-brand-primary);
       font-weight: var(--iflyv-font-weight-semibold);
     }
   }
