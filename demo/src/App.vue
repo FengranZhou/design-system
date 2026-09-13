@@ -227,7 +227,13 @@
       </el-scrollbar>
     </aside>
 
-    <main class="app-content">
+    <!-- 页面主滚动由 el-scrollbar 承载，而非让文档根元素滚动。
+         ⚠️ 原因：根元素滚动用的是**浏览器原生滚动条**，在 Chrome 上写了
+         ::-webkit-scrollbar 后会从悬浮式切成**占位式**，从布局里真切走一列；
+         而 el-scrollbar 是 JS 自绘的 div（position:absolute），天然浮在内容上、
+         不占位——与侧栏、PageFrame 内容区的滚动条完全同款（见 scrollbar.scss ①）。 -->
+    <el-scrollbar ref="contentScrollRef" class="app-content-scroll" view-class="app-content">
+      <main>
       <div v-show="currentTopTab === 'token'">
       <PaletteDemo />
       <SemanticColorDemo />
@@ -339,7 +345,8 @@
       <JudgingIntroDemo />
       <JudgingListDemo />
       </div>
-    </main>
+      </main>
+    </el-scrollbar>
   </div>
   </el-config-provider>
 </template>
@@ -597,8 +604,16 @@ function observeSections() {
   updateActiveSection()
 }
 
+/** 内容区 el-scrollbar 实例：scroll-spy 要监听它的 wrap，而非 window。
+ *  ⚠️ 滚动改由 el-scrollbar 承载后，window 上不再有 scroll 事件——
+ *  不换监听源，左侧导航高亮会整个失效（updateActiveSection 本身无需改，
+ *  它用 getBoundingClientRect 取视口相对位置，与谁在滚无关）。 */
+const contentScrollRef = ref<{ wrapRef?: HTMLElement } | null>(null)
+let spyScrollEl: HTMLElement | null = null
+
 onMounted(() => {
-  window.addEventListener('scroll', onSpyScroll, { passive: true })
+  spyScrollEl = contentScrollRef.value?.wrapRef ?? null
+  spyScrollEl?.addEventListener('scroll', onSpyScroll, { passive: true })
   // 初始 tab 先兜底高亮其首个 section，再按当前位置校正
   const first = firstSectionByTab[currentTopTab.value]
   if (first) activeSection.value = first
@@ -606,6 +621,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', onSpyScroll)
+  spyScrollEl?.removeEventListener('scroll', onSpyScroll)
 })
 </script>
