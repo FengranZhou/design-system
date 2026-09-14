@@ -37,8 +37,10 @@
                                          点击接 @course-menu-click。**框架一项都不写死**——「查看课程首页」
                                          「课程设置」「打开二维码」这类各系统有无不一，由业务方传入
                                          （同 avatarMenus 口径）；不传或空数组 → 不渲染该入口。
-    back-text      string                可选，默认「返回平台」。侧边栏顶部返回按钮文案；传空串隐藏按钮。
-    breadcrumbs    BreadcrumbItem[]      可选。顶栏面包屑（内部复用业务组件 Breadcrumb）；不传则不渲染。
+    back-text      string                可选，默认「我教的课」。侧边栏顶部返回按钮文案；传空串隐藏按钮。
+    breadcrumbs    BreadcrumbItem[]      可选。顶栏面包屑（内部复用业务组件 Breadcrumb）；不传则不渲染
+                                         ——且 #breadcrumb 插槽也没用时，整条 52px 顶栏一并不渲染，
+                                         内容区自动上移贴齐侧栏顶部（不会留下一条空白）。
     back-disabled  boolean               可选。面包屑返回箭头禁用态（透传 Breadcrumb）。判据 = 面包屑倒数第二项
                                          是不是可跳转实体页，不是层数——分组标题、只负责展开子菜单的可折叠父项
                                          都不是实体页，以它们为上一级时须传 true（详见 Breadcrumb 速查）。
@@ -132,7 +134,7 @@
         @mouseenter="onSidebarEnter"
         @mouseleave="onSidebarLeave"
       >
-        <!-- 收起把手：贴侧栏右缘垂直居中，凹口形状用 CSS 遮罩绘制（见样式段），
+        <!-- 收起把手：贴侧栏右缘垂直居中，薄片形状用 CSS 遮罩绘制（见样式段），
              底色随灰底令牌走。收起态图标翻转指向展开方向。 -->
         <!-- 外层 clip 壳固定不动、overflow 裁切：薄片推入/推走时越过壳左缘即被切掉，
              不会跑进侧栏里露脸（壳只做窗口，不接指针事件，点击透传给内部按钮） -->
@@ -506,7 +508,9 @@
 
       <!-- ==================== 主区（顶栏 + 内容卡） ==================== -->
       <div class="page-frame__main">
-        <header class="page-frame__topbar">
+        <!-- 顶栏只承载面包屑：两个来源（breadcrumbs 数据 / #breadcrumb 插槽覆盖）
+             都为空时整条不渲染，否则会留下一条 52px 的空白把内容区压下去。 -->
+        <header v-if="breadcrumbs?.length || $slots.breadcrumb" class="page-frame__topbar">
           <slot name="breadcrumb">
             <Breadcrumb
               v-if="breadcrumbs?.length"
@@ -694,7 +698,7 @@ const props = withDefaults(defineProps<{
   /** 已收进「更多」的导航项 key（v-model:more-keys，保存时才提交） */
   moreKeys?: string[]
 }>(), {
-  backText: '返回平台',
+  backText: '我教的课',
   backDisabled: false,
   moreText: '更多',
   moreKeys: () => [],
@@ -1210,14 +1214,15 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   }
 }
 
-/* 收起把手：14×64 的凹口薄片，贴侧栏右缘垂直居中，浮在内容区白卡之上。
+/* 收起把手：14×70 的薄片（设计稿「联集 82」原图 28×140 的 50%），
+   贴侧栏右缘垂直居中，浮在内容区白卡之上。
    形状用 mask 绘制而非 <img>——设计稿给的 svg 填充是写死的 #F2F5F7，
    贴图会脱离令牌（暗色主题下不跟着变）；mask 只取形状，颜色仍由 background 走灰底令牌。 */
 /* clip 壳：固定窗口，贴侧栏右缘垂直居中，兼任热区扩张层。
    ① 裁切——它不动、只负责 overflow 裁切，薄片的滑动全发生在窗口内（位移不能写在薄片自身
       的 mask/clip-path 上，那会跟着 transform 一起移动、裁不掉）；
-   ② 容纳热区——薄片按钮本体被放大成 24×96 的热区（见下），壳同尺寸才不会把热区裁掉；
-      薄片可见形状仍是 14×64，由 mask-size 锁死、不随按钮放大而拉伸。
+   ② 容纳热区——薄片按钮本体被放大成 24×102 的热区（见下），壳同尺寸才不会把热区裁掉；
+      薄片可见形状仍是 14×70，由 mask-size 锁死、不随按钮放大而拉伸。
       注意左侧不能扩：壳左缘就是「消失线」，往左扩会让推走的薄片露进侧栏。
       壳自身 pointer-events: none，只有内部按钮吃点击，不挡内容区。 */
 .page-frame__handle-clip {
@@ -1227,18 +1232,18 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   transform: translateY(-50%);
   z-index: var(--iflyv-z-sticky);
   width: 24px;
-  height: 96px;
+  height: 102px;
   overflow: hidden;
   pointer-events: none;
 }
 
-/* 把手按钮 = 24×96 热区（薄片只有 14 宽、直接点太细），
-   可见薄片仍是 14×64：mask-size 锁死尺寸不随按钮放大而拉伸，
+/* 把手按钮 = 24×102 热区（比可见薄片四周各留出一圈，直接点薄片边缘太细），
+   可见薄片仍是 14×70：mask-size 锁死尺寸不随按钮放大而拉伸，
    mask-position 让它贴热区左缘垂直居中——热区向右、上下三面无痕扩张。 */
 .page-frame__handle {
   pointer-events: auto;
   width: 24px;
-  height: 96px;
+  height: 102px;
   padding: 0;
   border: none;
   background: var(--iflyv-bg-page);
@@ -1251,10 +1256,13 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   /* 图标随薄片走：靠左 14px 内居中，而非在整个热区里居中 */
   justify-content: flex-start;
   text-indent: 0;
-  /* 凹口形状：右缘中段向内收一个弧，与设计稿 svg 路径同形 */
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='64' viewBox='0 0 14 64'%3E%3Cpath d='M0,58.219868C0,54.915554,1.7845628,51.868858,4.666666,50.252701C10.430874,47.020386,14,40.926994,14,34.318367L14,29.681637C14,23.073008,10.430875,16.979616,4.6666665,13.747299C1.7845626,12.131141,0,9.084445,0,5.7801309L0,58.219868Z' fill='%23000'/%3E%3C/svg%3E");
+  /* 薄片形状：左缘满高平边贴住侧栏，上下各收一道斜边、右缘为圆角竖边，
+     整体向内容区凸出（设计稿「联集 82」原路径，未改比例）。
+     path 与 viewBox 保持设计稿原值 28×140，实际显示尺寸由 mask-size 缩到 50%，
+     等比缩放、斜边角度与圆角比例不变。 */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='140' viewBox='0 0 28 140'%3E%3Cpath d='M0,0L0,140L19.624763,125.98232C24.880686,122.22808,28,116.16666,28,109.70764L28,30.292358C28,23.833336,24.880686,17.771919,19.624763,14.017688L0,0Z' fill='%23000'/%3E%3C/svg%3E");
   mask-repeat: no-repeat;
-  mask-size: 14px 64px;
+  mask-size: 14px 70px;
   mask-position: left center;
   /* hover 提亮渐变过色，与导航项同档，不做突变。
      只写 color——opacity/transform 归进出场的 Transition 管，写进来会打架 */
@@ -1294,6 +1302,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
    偏右显重；用负 margin 而非 translateX——transform 被收起态的 rotate 占着。 */
 .page-frame__handle-icon {
   /* audit-ignore 光学补偿而非间距：16px 图标落在 14px 薄片里本就宽出 2px，
+     且右缘还是收窄的斜边 + 圆角，靠左对齐后偏右显重；
      负 margin 是把它拉回视觉居中，与 spacing 序列无关（序列里也不存在负值）。 */
   margin-inline-start: -2px;
   transition: transform var(--iflyv-duration-fast) var(--iflyv-ease-default);
@@ -1768,6 +1777,15 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   background: var(--iflyv-bg-panel);
   border-radius: var(--iflyv-radius-lg);
   overflow: hidden;
+}
+
+/* 无面包屑（顶栏未渲染）时，内容卡自己补上顶部留白——
+   否则会贴死框架上缘。取值与侧栏 padding-top 同为 10px（同一条结构性尺寸，
+   非 spacing 序列），使内容卡上缘与侧栏顶部返回按钮上缘落在同一条线上。
+   :first-child 即「前面没有 header」，无需额外传参。 */
+.page-frame__content:first-child {
+  /* audit-ignore 与侧栏 padding-top 同源的结构性尺寸，见上方注释 */
+  margin-top: 10px;
 }
 
 /* 页头段（#page-header）：在滚动容器之外，故始终可见、不参与滚动。

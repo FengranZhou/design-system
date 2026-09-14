@@ -27,8 +27,6 @@
         v-model:active="activeKey"
         :menus="menus"
         :course="course"
-        :breadcrumbs="breadcrumbs"
-        :back-disabled="backDisabled"
         avatar-role="teacher-male"
         user-name="王老师"
         :avatar-menus="avatarMenus"
@@ -490,27 +488,6 @@ watch(
   { immediate: true },
 )
 
-// 面包屑随选中项联动：所在分组名 →（父项名 →）当前项名
-const breadcrumbs = computed(() => {
-  // 不分组时导航里没有组这一层 → 面包屑也不能凭空多出一级（否则是个空文案项）
-  const groupLevel = (title?: string) => (grouped.value ? [{ label: title ?? '' }] : [])
-  for (const group of menus.value) {
-    for (const item of group.items) {
-      if (item.key === activeKey.value)
-        return [...groupLevel(group.title), { label: item.label }]
-      const child = item.children?.find((c) => c.key === activeKey.value)
-      if (child)
-        return [...groupLevel(group.title), { label: item.label }, { label: child.label }]
-    }
-  }
-  return grouped.value ? [{ label: '组标题' }] : [{ label: '一级导航' }]
-})
-
-// 返回箭头可用性：看「上一级是不是可跳转的实体页面」——
-// 组标题只是分组文案、可折叠的一级导航点击只展开子菜单，两者都不是实体页面，
-// 所以本 demo 的导航结构里始终没有可返回的上一级 → 箭头恒禁用。
-// 真实项目里若某层确实是实体页（有自己的路由），则该层为当前页时传 false 即可。
-const backDisabled = computed(() => true)
 </script>
 
 <style scoped>
