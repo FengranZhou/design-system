@@ -142,8 +142,12 @@ git tag -l | grep -v -- '-iflytek$' | sort -V | tail -1
 | **tag 说明** | 内网 tag 单独写，删掉任何双仓表述 |
 
 ⚠️ **`Claude-Session:` 链接不得进内网**（`Co-Authored-By` 保留，那是业界惯例）。
-**这条最容易漏，且目前没有自动防护**——2026-09-14 就差点把 6 个带链接的提交推进内网，
-是临推前查提交说明才发现的。**每次在 `iflytek-sync-done` 上提交后、推送前，必须手工查一次**：
+**2026-09-14 就差点把 6 个带链接的提交推进内网**，是临推前查提交说明才发现的。
+
+已在 `~/.claude/settings.json` 里配了 `"attribution": { "sessionUrl": false }` 关掉自动生成
+（配在**全局**而非项目 `.claude/settings.json`——后者会随仓库进内网）。
+但**配置只对新会话生效，且没有任何报错提示它是否真的在起作用**，所以
+**推送前仍要手工查一次**，别把这条保险完全交给配置：
 
 ```bash
 git log --format='%B' iflytek/master..HEAD | grep -i 'Claude-Session' || echo "✓ 干净"
