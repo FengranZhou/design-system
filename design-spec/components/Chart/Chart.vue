@@ -264,6 +264,18 @@ function updateLegendLayout() {
 const visibleLegendItems = computed(() => legendItems.value.slice(0, visibleCount.value))
 const hiddenLegendItems = computed(() => legendItems.value.slice(visibleCount.value))
 
+// 无标题、只有图例时图例靠右：头行右内边距须与绘图区 grid.right 同值，图例右缘才与画布右缘对齐。
+// 三种图型的 grid.right 取值口径不同（散点 457 行 / 默认·柱线 534 行 / 环饼 598 行），此处按同一口径取，
+// 改任一处 grid.right 时同步改这里。textW 与 buildOption 内同名工具同算法（CJK 全宽、ASCII 0.59 倍）。
+const legendRightPadding = computed(() => {
+  const textW = (t: string, fs = 12) =>
+    [...t].reduce((w, ch) => w + (ch.charCodeAt(0) > 255 ? fs : Math.ceil(fs * 0.59)), 0)
+  if (props.type === 'donut' || props.type === 'pie') return '8px'
+  if (props.type === 'scatter') return `${props.xUnit ? Math.max(16, textW(props.xUnit, 14) + 24) : 16}px`
+  const hUnitName = props.percent ? '%' : props.unit
+  return `${props.horizontal && hUnitName ? textW(hUnitName, 14) + 24 : 8}px`
+})
+
 function computeLegendItems() {
   if (!H_LEGEND_TYPES.includes(props.type)) return []
   const names = props.series?.length
