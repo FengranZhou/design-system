@@ -35,17 +35,17 @@ const RULES = [
    'https://code.iflytek.com/EBG_iflyhed/FrontEnd/template/xy-design-system/raw/master/',
    'raw 分发地址'],
   [/FengranZhou\/design-system/g, 'xy-design-system', '仓库名'],
-  [/git@github-personal:[^\s`'")]+/g, '<内网仓地址>', 'SSH 地址'],
+  [/<内网仓地址>`'")]+/g, '<内网仓地址>', 'SSH 地址'],
   [/https:\/\/github\.com\/FengranZhou[^\s`'")]*/g, '<内网仓地址>', 'GitHub 主页'],
   // 泛化措辞：GitHub → 中性说法
-  [/经 GitHub 拉取/g, '经远程仓库拉取', '措辞'],
-  [/经 GitHub 分发/g, '经远程仓库分发', '措辞'],
-  [/推到 GitHub 后/g, '推到远程仓库后', '措辞'],
-  [/从 GitHub raw URL/g, '从远程仓库 raw URL', '措辞'],
-  [/从 GitHub 拉最新/g, '从远程仓库拉最新', '措辞'],
+  [/经远程仓库拉取/g, '经远程仓库拉取', '措辞'],
+  [/经远程仓库分发/g, '经远程仓库分发', '措辞'],
+  [/推到远程仓库后/g, '推到远程仓库后', '措辞'],
+  [/从远程仓库 raw URL/g, '从远程仓库 raw URL', '措辞'],
+  [/从远程仓库拉最新/g, '从远程仓库拉最新', '措辞'],
   // 流程图 / 表格里孤立的 GitHub 字样
   [/→ GitHub$/gm, '→ 远程仓库', '流程图'],
-  [/ GitHub 分发/g, ' 远程仓库分发', '措辞'],
+  [/ 远程仓库分发/g, ' 远程仓库分发', '措辞'],
 ]
 
 /* 白名单：与个人仓无关的第三方 github 域名，不算泄露 */
@@ -53,7 +53,12 @@ const ALLOW = [/jqlang\.github\.io/, /github\.com\/(?!FengranZhou)/]
 
 /* 整段删除：根 CLAUDE.md 的双仓推送流程（公司仓不该有这段） */
 function stripDualRepoSection(text) {
-  const start = text.indexOf('## 🚀 双仓推送流程')
+  // 标题历史上叫过「双仓推送流程」，2026-09-14 改名为「推送流程」——两个都认，
+  // 否则改名后整段删除静默失效、双仓机制会随文件推进公司仓（不报错，最危险的漏法）
+  const start = ['## 🚀 推送流程', '## 🚀 双仓推送流程']
+    .map((h) => text.indexOf(h))
+    .filter((i) => i !== -1)
+    .sort((a, b) => a - b)[0] ?? -1
   if (start === -1) return { text, removed: false }
   // 删到下一个同级标题或文件末尾；连同其前面的分隔线一起去掉
   const rest = text.slice(start + 10)
