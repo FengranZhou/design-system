@@ -1,7 +1,7 @@
 #!/bin/sh
 # 推送前确保 catalog.json 与设计系统一致。
 #
-# 为什么必须自动：catalog.json 是扩展经 GitHub 拉取的产物——推了旧的，
+# 为什么必须自动：catalog.json 是扩展经远程仓库拉取的产物——推了旧的，
 # 所有同事的扩展面板就是旧的，而且没人会收到任何警告。
 # 这跟 rules.generated.json 挂进 pnpm build 是同一个道理：生成物不能靠人记得跑。
 

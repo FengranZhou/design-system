@@ -96,7 +96,7 @@
 
 ```
 demo 导航（有哪些组件）  ─┐
-demo 配置项卡片（形态开关）├─→ build-catalog.mjs → catalog.json → GitHub
+demo 配置项卡片（形态开关）├─→ build-catalog.mjs → catalog.json → 远程仓库
 component-catalog.mjs   ─┘                                          │
 （snippet + mustRules）                                              ↓
                                             扩展打开面板时 fetch raw URL
@@ -109,10 +109,10 @@ component-catalog.mjs   ─┘                                          │
 | snippet + mustRules | `scripts/component-catalog.mjs` | 人（机器提不出的语义） |
 | **合成产物** | `scripts/catalog.json` | **脚本生成，勿手改** |
 
-**扩展不再内联副本**——它每次打开面板都从 GitHub 拉最新的 `catalog.json`：
+**扩展不再内联副本**——它每次打开面板都从远程仓库拉最新的 `catalog.json`：
 
 ```
-https://raw.githubusercontent.com/FengranZhou/design-system/main/scripts/catalog.json
+https://code.iflytek.com/EBG_iflyhed/FrontEnd/template/xy-design-system/raw/master/scripts/catalog.json
 ```
 
 这样**同事装了扩展就能用，不需要本地有这个仓库**（他们也不可能有）。

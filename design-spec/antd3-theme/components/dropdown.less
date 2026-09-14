@@ -1,0 +1,101 @@
+/* ======================================================================== */
+/* ==================== Dropdown 下拉菜单 样式覆盖（antd 3 适配层）======== */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/dropdown.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md。 */
+
+/* ┌─ 接入方速查：Dropdown 能力全在下面，直接复制即可 ─────────────────┐
+   触发器：一律用 Button（轻量入口用 className="btn-text"），不要用裸 span。
+     <Dropdown overlay={menu} onVisibleChange={setOpen}>
+       <Button className="btn-text">
+         更多操作 <ChevronDown className="dropdown-caret" ... />
+       </Button>
+     </Dropdown>
+   菜单：antd3 用 <Menu> 承载，Menu.Item 为可选项，Menu.ItemGroup 做分组抬头。
+     const menu = (
+       <Menu>
+         <Menu.Item>编辑</Menu.Item>
+         <Menu.Divider />
+         <Menu.Item disabled>删除</Menu.Item>
+       </Menu>
+     )
+   分组：
+     <Menu.ItemGroup title="基础操作">
+       <Menu.Item>编辑</Menu.Item>
+     </Menu.ItemGroup>
+   ⚠ 触发器箭头翻转：.dropdown-caret 的 .is-expanded 由使用方绑 onVisibleChange
+     （antd3 展开态无稳定纯 CSS 钩子，与 EP 同理）。箭头样式在 button.less，本文件不管。
+   └────────────────────────────────────────────────────────────────────┘ */
+
+/* ==================== 下拉面板 .ant-dropdown-menu ====================
+   EP：内边距 spacing-1、min-width 120、圆角对齐弹层、阴影用关联浮层档。
+   antd3 默认：padding 4px 0、圆角 4、box-shadow 0 2px 8px rgba(0,0,0,.15)。 */
+.ant-dropdown-menu {
+  padding: var(--iflyv-spacing-1);
+  min-width: 120px;
+  background-color: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-default);
+  border-radius: var(--iflyv-radius-sm);
+  box-shadow: var(--iflyv-shadow-related);
+}
+
+/* ==================== 菜单项 .ant-dropdown-menu-item ====================
+   EP：高 36、圆角 radius-xs、文字 text-1、hover 底 bg-inset。
+   antd3 默认：padding 5px 12px、line-height 22、hover 底 #e6f7ff（蓝）。 */
+.ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu-title {
+  height: 36px;
+  padding: 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-1);
+  font-size: var(--iflyv-font-size-14);
+  line-height: 36px;
+  border-radius: var(--iflyv-radius-xs);
+}
+
+/* hover：EP 用 bg-inset（压掉 antd3 的蓝底 #e6f7ff、蓝字） */
+.ant-dropdown-menu-item:hover,
+.ant-dropdown-menu-submenu-title:hover {
+  color: var(--iflyv-text-1);
+  background-color: var(--iflyv-bg-inset);
+}
+
+/* 选中态：EP 无蓝色选中概念，选中也走常规文字色 + bg-inset（压掉 antd3 的蓝字蓝底） */
+.ant-dropdown-menu-item-selected,
+.ant-dropdown-menu-submenu-title-selected {
+  color: var(--iflyv-text-1);
+  background-color: var(--iflyv-bg-inset);
+}
+
+/* 禁用态：EP 用 text-4（antd3 默认 rgba(0,0,0,0.25)）。
+   hover 时保持禁用色、无底（antd3 默认已如此，仅同步颜色）。 */
+.ant-dropdown-menu-item-disabled,
+.ant-dropdown-menu-item-disabled:hover {
+  color: var(--iflyv-text-4);
+  background-color: transparent;
+}
+
+/* 分割线：EP divided 上下留 4px（antd3 默认 margin 4px 0、色 #e8e8e8）。
+   对齐到 border-default 令牌。 */
+.ant-dropdown-menu-item-divider {
+  margin: var(--iflyv-spacing-1) 0;
+  background-color: var(--iflyv-border-default);
+}
+
+/* ==================== 分组抬头 .ant-dropdown-menu-item-group-title ====================
+   对位 EP 的 .dropdown-group-title：text-3 灰 + 12px，把「抬头」与「可选项」层级拉开。
+   高 36 与菜单项同高、单行用 line-height 居中（不加 padding 免叠高）。
+   左右内边距 spacing-3 对齐菜单项左边缘。 */
+.ant-dropdown-menu-item-group-title {
+  height: 36px;
+  padding: 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-3);
+  font-size: var(--iflyv-font-size-12);
+  line-height: 36px;
+}
+
+/* 分组列表：antd3 默认给 .ant-dropdown-menu-item-group-list 加了 margin: 0 8px 的缩进，
+   会让组内选项比抬头右移、左边缘错位。抹掉缩进，让组内项与抬头左对齐。 */
+.ant-dropdown-menu-item-group-list {
+  margin: 0;
+}

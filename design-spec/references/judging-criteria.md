@@ -86,7 +86,7 @@ references/rules.generated.json   ← 唯一消费入口
 |---|---|---|
 | 按钮类型 | `el-button` 的 type 仅允许 default/primary/danger | 按钮只有默认/主要/危险三种，不应出现其他颜色的按钮 |
 | 纯图标按钮 | 禁用 `circle` 属性做纯图标按钮 | 不应出现圆形的纯图标按钮 |
-| 弹窗 | 弹窗统一用 `el-dialog`，不引入 ElMessageBox | 所有弹窗观感一致，不应有长得不一样的系统弹窗 |
+| 弹窗 | Dialog 与 MessageBox 观感完全对齐（同一套圆角/宽度/标题字阶/图标/按钮规范） | 所有提示弹窗观感一致，不应有长得不一样的系统弹窗 |
 | 空状态 | `el-empty` 必须同时传 `:image` 与档位 class | 空状态应使用设计系统插画，不是默认的灰色纸盒图 |
 
 **三种归属**：

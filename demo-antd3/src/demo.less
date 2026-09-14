@@ -2,6 +2,17 @@
    与 EP 版 demo/src/styles/global.scss 的对应段落保持一致口径。
    ⚠ 这些是 demo 版式，不要抄进业务项目。 */
 
+/* 布局骨架尺寸（对齐 EP 版 global.scss 的 $app-topbar-height / $app-sidebar-width）：
+   非 4px 间距序列上的结构性尺寸，无对应 spacing token，此处单点维护。 */
+@app-topbar-height: 64px;
+@app-sidebar-width: 224px;
+@app-logo-size: 32px;
+@app-nav-item-indent: 28px;
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background: var(--iflyv-bg-page);
@@ -9,8 +20,200 @@ body {
   color: var(--iflyv-text-1);
 }
 
+/* ============ Topbar ============ */
+.app-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: @app-topbar-height;
+  background: var(--iflyv-bg-panel);
+  border-bottom: 1px solid var(--iflyv-border-default);
+  display: flex;
+  align-items: stretch;
+  z-index: var(--iflyv-z-sticky);
+
+  &__brand {
+    width: @app-sidebar-width;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--iflyv-spacing-2);
+    padding: 0 var(--iflyv-spacing-5);
+    border-right: 1px solid var(--iflyv-border-default);
+  }
+
+  &__logo {
+    width: @app-logo-size;
+    height: @app-logo-size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__title {
+    font: var(--iflyv-font-title-module);
+    color: var(--iflyv-text-1);
+  }
+
+  &__subtitle {
+    font: var(--iflyv-font-body-min);
+    color: var(--iflyv-text-3);
+    margin-top: var(--iflyv-spacing-0_5);
+  }
+
+  &__nav {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    padding-left: var(--iflyv-spacing-6);
+    gap: var(--iflyv-spacing-2);
+  }
+
+  &__nav-item {
+    position: relative;
+    border: none;
+    background: transparent;
+    padding: 0 var(--iflyv-spacing-4);
+    color: var(--iflyv-text-2);
+    font: var(--iflyv-font-body-primary);
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--iflyv-brand-text);
+    }
+
+    &.is-active {
+      color: var(--iflyv-brand-text);
+      font-weight: var(--iflyv-font-weight-semibold);
+    }
+
+    &.is-active::after {
+      content: '';
+      position: absolute;
+      left: var(--iflyv-spacing-4);
+      right: var(--iflyv-spacing-4);
+      bottom: 0;
+      height: 2px;
+      background: var(--iflyv-brand-primary);
+      border-radius: 1px;
+    }
+  }
+}
+
+/* ============ Layout ============ */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  padding-top: @app-topbar-height;
+}
+
+/* ============ Sidebar ============ */
+.app-sidebar {
+  position: fixed;
+  top: @app-topbar-height;
+  left: 0;
+  width: @app-sidebar-width;
+  height: calc(100vh - @app-topbar-height);
+  background: var(--iflyv-bg-panel);
+  border-right: 1px solid var(--iflyv-border-default);
+  display: flex;
+  flex-direction: column;
+  z-index: calc(var(--iflyv-z-sticky) - 1);
+
+  &__nav-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--iflyv-spacing-3) 0;
+  }
+
+  &__group-label {
+    padding: var(--iflyv-spacing-4) var(--iflyv-spacing-5) var(--iflyv-spacing-1_5);
+    font: var(--iflyv-font-label-primary);
+    color: var(--iflyv-text-4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li a {
+      display: block;
+      padding: var(--iflyv-spacing-3) var(--iflyv-spacing-5) var(--iflyv-spacing-3) @app-nav-item-indent;
+      color: var(--iflyv-text-1);
+      text-decoration: none;
+      font: var(--iflyv-font-body-primary);
+      border-left: 3px solid transparent;
+      transition: all 0.15s ease;
+
+      &:hover {
+        color: var(--iflyv-brand-text);
+        background: var(--iflyv-brand-bg);
+      }
+
+      &.is-active {
+        color: var(--iflyv-brand-text);
+        font-weight: var(--iflyv-font-weight-semibold);
+        border-left-color: var(--iflyv-brand-primary);
+      }
+    }
+  }
+
+  /* 未接入标记：跟在菜单项名称后的小徽标，用中性灰弱化、不抢主视觉，
+     标识该组件尚未在 antd3 适配层实现（无 render，走占位面板）。 */
+  &__todo-badge {
+    display: inline-block;
+    margin-inline-start: var(--iflyv-spacing-2);
+    padding: 0 var(--iflyv-spacing-1_5);
+    font: var(--iflyv-font-body-min);
+    color: var(--iflyv-text-4);
+    background: var(--iflyv-bg-inset);
+    border: 1px solid var(--iflyv-border-subtle);
+    border-radius: var(--iflyv-radius-xs);
+    vertical-align: middle;
+  }
+}
+
+/* ============ Content ============ */
+.app-content {
+  margin-left: @app-sidebar-width;
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100vw - @app-sidebar-width);
+  padding: var(--iflyv-spacing-3);
+}
+
+/* 未实现子页面的占位内容 */
+.demo-placeholder {
+  padding: var(--iflyv-spacing-10);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-primary);
+  text-align: center;
+  background: var(--iflyv-bg-card);
+  border-radius: var(--iflyv-radius-lg);
+}
+
 .demo-section {
   padding: var(--iflyv-spacing-10);
+  background: var(--iflyv-bg-panel);
+  border-radius: var(--iflyv-radius-lg);
+  margin-bottom: var(--iflyv-spacing-3);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 /* 页面级标题（对齐 EP 版 demo-section__title） */
@@ -25,6 +228,95 @@ body {
   padding: var(--iflyv-spacing-6);
   background: var(--iflyv-bg-card);
   border-radius: var(--iflyv-radius-lg);
+
+  & + .demo-block {
+    margin-top: var(--iflyv-spacing-6);
+  }
+}
+
+/* 素排版（.demo-plain）—— 令牌 / 基础样式展示（色板、字体、间距、圆角、阴影、动效）：
+   这类页面本身在展示底色 / 圆角 / 投影，套灰底圆角卡片会与被展示的内容打架，
+   故不套卡片，仅用大间距分隔。对齐 EP 版 global.scss 的 .demo-plain。 */
+.demo-plain .demo-block {
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  margin-bottom: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4)); /* 48 */
+
+  & + .demo-block {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* 块内小标题（对齐 EP 版 .demo-label） */
+.demo-label {
+  margin: 0 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-title-component);
+}
+
+/* 块内说明文字（对齐 EP 版 .demo-desc） */
+.demo-desc {
+  margin: 0 0 var(--iflyv-spacing-3);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+
+/* 行容器：flex + gap，对齐 EP 版 .demo-row */
+.demo-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--iflyv-spacing-6);
+  margin-bottom: var(--iflyv-spacing-5);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* 左示例 + 右配置卡横向布局（对齐 EP 版 .control-showcase） */
+.control-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));
+}
+.control-showcase__main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ========== Input 专用分栏：input-showcase ==========
+   与 control-showcase 布局一致，但语义独立（Vue 版 InputDemo 用此 class）。 */
+.input-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4)); /* 48 */
+}
+.input-showcase__main {
+  flex: 1;
+  min-width: 0;
+}
+/* Input demo 的 demo-row 允许换行（宽度不足时自动折行） */
+.input-showcase .demo-row {
+  flex-wrap: wrap;
+}
+
+/* config-field：配置卡内的开关字段单元（开关 + hint 竖排为一个整体，与 SelectDemo「可清除」布局一致）。 */
+.config-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+/* switch 行：与 label 等高（组件统一高度）并垂直居中，使 switch 与 label 中线对齐 */
+.config-field__row {
+  display: flex;
+  align-items: center;
+  height: var(--iflyv-a3-component-size);
 }
 
 /* 左侧网格 + 右侧配置卡片横向布局。不含组件外观规则。 */
@@ -81,6 +373,39 @@ body {
 .config-item__label {
   flex: 1;
   text-align: right;
+  /* 不换行：label 被 flex 压窄时（如「文字位置」四字）会逐字竖排，
+     nowrap 保证整体成行；配合 config-card 的 flex-shrink:0 不被主区挤压 */
+  white-space: nowrap;
   color: var(--iflyv-text-1);
   font: var(--iflyv-font-body-sub);
+}
+
+/* Radio 两组连续等距：让两个 RadioGroup 盒子透明化，
+   四个 Radio 直接成为 .demo-row(flex) 的子项，等距排列。
+   对齐 EP 版 .radio-inline-row :deep(.el-radio-group) { display: contents } */
+.radio-inline-row .ant-radio-group {
+  display: contents;
+}
+
+/* Checkbox 六态平级等距：group 盒子透明化，让「选中/未选」两项与后面四个独立项
+   都成为 .demo-row(flex) 的直接子项，六个平级等距（与 radio-inline-row 同手法）。 */
+.checkbox-inline-row .ant-checkbox-group {
+  display: contents;
+}
+/* 抹掉源头 checkbox 之间的 margin，间距统一交给 .demo-row 的 gap 管，避免叠加 */
+.checkbox-inline-row .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+  margin-inline-start: 0;
+}
+
+/* Switch 外置文字：开关与其文字标签为一组，组内文字贴开关一侧留 spacing-2，
+   文字外侧不留白（外侧间距由 .demo-row 的 gap 决定，写这里会叠加）。
+   对齐 EP switch.scss 的 label 单侧补间距口径。 */
+.switch-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-2);
+}
+.switch-label {
+  font: var(--iflyv-font-body-sub);
+  color: var(--iflyv-text-1);
 }

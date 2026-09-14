@@ -378,21 +378,6 @@
       "line": 797
     },
     {
-      "id": "dialog-no-messagebox",
-      "title": "弹窗统一用 el-dialog，不引入 ElMessageBox 命令式 API",
-      "designTitle": "所有弹窗观感一致（标题/按钮/圆角同一套），不应有长得不一样的系统弹窗",
-      "level": "MUST",
-      "cat": "组件选用",
-      "detect": "regex",
-      "views": [
-        "design",
-        "impl"
-      ],
-      "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
-      "line": 1206
-    },
-    {
       "id": "component-no-suspended",
       "title": "不得使用「勿用清单」内已停用的组件（el-menu/el-link/el-collapse/el-progress/el-timeline 等）",
       "designTitle": "组件观感应与规范展示页一致，不应出现明显偏离设计系统的原生样式控件",
@@ -1015,6 +1000,21 @@
       "line": 1403
     },
     {
+      "id": "table-server-sort-custom",
+      "title": "服务端分页表格的 sortable 必须传 custom，不能传 true",
+      "designTitle": "服务端分页的表格，排序结果应是整份数据的顺序而非只有当前页",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/list-item-pattern.md",
+      "line": 96
+    },
+    {
       "id": "metric-strip-class",
       "title": "指标条一律用源头约定 class .metric-strip / .metric-item，禁在使用方自拼",
       "designTitle": "一排指标卡应宽度等分、内容居中，各项不因文字长短而宽窄不齐",
@@ -1460,7 +1460,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/list-item-pattern.md",
-      "line": 109
+      "line": 118
     },
     {
       "id": "search-use-searchmini",

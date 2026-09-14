@@ -48,7 +48,7 @@ updated: 2026-05-10
 | `is-success` | 复杂流程完结反馈（批量操作完成汇总） | `primary` |
 | `is-info` | 中性信息（版本更新、功能说明、引导） | `primary` |
 
-- 危险/警示场景 → 用 `el-dialog + is-*` 变体类，**禁止**：手撸 `<div>` + lucide 图标、用 `<el-alert>` 替代、用 `ElMessageBox.confirm`
+- 危险/警示场景 → 用 `el-dialog + is-*` 变体类或 `ElMessageBox` 命令式（观感完全对齐），**禁止**：手撸 `<div>` + lucide 图标、用 `<el-alert>` 替代
 - 详见 `dialog.examples.vue` 第 5 节「语义化标题」
 
 **el-button type**（仅这 3 种）：

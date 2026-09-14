@@ -1,0 +1,73 @@
+/* ======================================================================== */
+/* ==================== Tooltip 文字提示 样式覆盖（antd 3 适配层）======== */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/tooltip.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md。 */
+
+/* ┌─ 接入方速查：Tooltip 能力全在下面，直接复制即可 ─────────────────┐
+   基础提示：      <Tooltip title="提示文字"><Button>hover me</Button></Tooltip>
+   位置：          placement="top|bottom|left|right|topLeft|topRight|..."（默认 top）
+   触发方式：      trigger="hover|focus|click"（默认 hover）
+   延迟：          mouseEnterDelay={0.1} mouseLeaveDelay={0.1}（单位秒，默认 0.1 / 0.1）
+   受控显示：      visible={bool} onVisibleChange={fn}
+   └───────────────────────────────────────────────────────────────────┘ */
+
+/* ==================== 气泡容器 .ant-tooltip ====================
+   EP 设计：统一白底风格（light/dark 都一样）、无箭头、body-sub 字号（14/20）。
+   antd3 默认：黑底白字、有箭头、12px 字号。
+   对齐到 EP：白底 + border + shadow、藏箭头、改字号行高。 */
+
+.ant-tooltip {
+  /* 字体：EP 用 body-sub（14/20），antd3 默认 12px 太小 */
+  font-size: var(--iflyv-font-size-14);
+  line-height: var(--iflyv-line-height-20);
+}
+
+/* 气泡内容区 .ant-tooltip-inner：白底 + 边框 + 阴影，对齐 EP 的 bg-panel + border-default + shadow */
+.ant-tooltip-inner {
+  min-height: 36px;
+  padding: var(--iflyv-spacing-2) var(--iflyv-spacing-3);
+  color: var(--iflyv-text-1);
+  background-color: var(--iflyv-bg-panel);
+  border: 1px solid var(--iflyv-border-default);
+  border-radius: var(--iflyv-radius-sm);
+  box-shadow: var(--iflyv-shadow-related);
+}
+
+/* 箭头：EP 版无箭头，藏掉 antd3 的 .ant-tooltip-arrow */
+.ant-tooltip-arrow {
+  display: none;
+}
+
+/* 尺寸限制：EP 版限宽 318px、限高 240px + 滚动。
+   antd3 无内置限制，需手动加。 */
+.ant-tooltip-inner {
+  max-width: 318px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+/* ==================== 间距调整 ====================
+   EP 版藏箭头后调了 margin 补偿（让气泡不留空隙）。
+   antd3 默认有 margin-top/bottom 给箭头留空间，藏箭头后要去掉。 */
+.ant-tooltip-placement-top,
+.ant-tooltip-placement-topLeft,
+.ant-tooltip-placement-topRight {
+  padding-bottom: 0;
+}
+.ant-tooltip-placement-bottom,
+.ant-tooltip-placement-bottomLeft,
+.ant-tooltip-placement-bottomRight {
+  padding-top: 0;
+}
+.ant-tooltip-placement-left,
+.ant-tooltip-placement-leftTop,
+.ant-tooltip-placement-leftBottom {
+  padding-right: 0;
+}
+.ant-tooltip-placement-right,
+.ant-tooltip-placement-rightTop,
+.ant-tooltip-placement-rightBottom {
+  padding-left: 0;
+}

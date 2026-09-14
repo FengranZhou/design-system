@@ -42,7 +42,7 @@
 | 元素类型 | 用什么 | 说明 |
 |---|---|---|
 | 勾选 / 多选 | `el-table` 的 `type="selection"` 列 或 `el-checkbox` | 全局功能区 |
-| 排序 | `el-table-column` 的 `sortable` | 表头单元格「带排序」类型 |
+| 排序 | `el-table-column` 的 `sortable`（**服务端分页必须传 `'custom'`**，见 §四.10） | 表头单元格「带排序」类型 |
 | 展开 | `el-table` 的 `type="expand"` | 全局功能区 |
 | 名称 / 纯文字 | 纯文本单元格（`prop` 直出 或 `formatter`） | 主题区 / 关键信息区最常见 |
 | 头像 | 业务组件 `UserAvatar`（`design-spec/components`） | 主题区 |
@@ -93,6 +93,15 @@
    - **用 DataTable 时**：行数据里放 `${prop}Class` 字段（如状态列 `prop:'status'` → 行里写 `statusClass: 'el-tag--gray'`），组件自动透传；走语义色的行该字段留空即可，两者可在同一列共存。字段名要改用 `tagClassProp` 指定。
    - 选色判据见 `component-interaction.md` Tag 段的状态对照表。
 9. **拼装而非硬写**：把行看成"四区拼装"，同类记录复用同一套列定义；不要每个页面重写一版结构和样式。
+10. **排序两种模式别混**（选错**不报错、页面照跑**，只是排序结果是错的）<!-- @rule id=table-server-sort-custom level=MUST cat=组件用法 detect=regex dtitle=服务端分页的表格，排序结果应是整份数据的顺序而非只有当前页 title=服务端分页表格的 sortable 必须传 custom，不能传 true -->：
+    - `sortable: true` → 交给 EP **本地排序**，只对 `data` 里现有的行重排。**仅当 data 是全量数据时才正确。**
+    - `sortable: 'custom'` → EP 只渲染箭头并抛 `sort-change`，排序交给服务端。
+    - **判据：data 是不是全量？** 接口分页（每次只拿一页）→ 必须 `'custom'`。传 `true` 时用户以为按全表排序，实际只排了当前页，**静默出错**。 <!-- @rule-skip dup 已由 table-server-sort-custom 覆盖，本行是该规则的判据细化 -->
+    - `sort-change` 的 `order` 为 `null` 表示用户取消排序（EP 三态循环：升→降→无）。若接口的排序参数必填，须在此回落默认值。
+    - 初始排序用 `default-sort`（DataTable 同名 prop），**不要自己在 data 上预排一遍**——箭头方向会和实际顺序不一致。
+11. **DataTable 装不下时先用列级插槽，别退回手写整表**：某一列的形态四种 `kind`（text/tag/date/amount）表达不了（按钮组 / 图片 / 进度 / 多行富内容）时，传一个**名字等于该列 `prop` 的插槽**接管这一格，作用域同 EP（`{ row, column, $index }`）；其余列继续走 kind。
+    - 同理：空态用 `#empty` 插槽（放 `el-empty` + 设计系统插画 + 档位 class）；序号列传 `show-index`（**跨页连续编号须传 `index-method`**，否则第 2 页又从 1 开始）；树形 / 勾选保持传 `row-key`；内部滚动传 `height` / `max-height`；「默认选中 / 清空选中」用实例方法 `toggleRowSelection` / `clearSelection`。
+    - ⚠️ **能用 kind 表达的列不要用插槽手写**——那等于又回到「每页各写一套」的老路，列配置式的意义就没了。
 
 ---
 

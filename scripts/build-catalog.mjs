@@ -1,14 +1,14 @@
 /**
- * 生成 catalog.json —— 扩展面板的组件数据，经 GitHub 分发
+ * 生成 catalog.json —— 扩展面板的组件数据，经远程仓库分发
  * ============================================================================
  *
  * ## 这份产物解决什么
  *
  * 扩展跑在浏览器沙箱里，读不到任何本地仓库——**同事的机器上根本没有这个仓库**。
  * 所以组件数据必须变成一个可分发的产物：本脚本把三处来源合成 `catalog.json`，
- * 推到 GitHub 后，任何人的扩展都能 fetch 到最新版：
+ * 推到远程仓库后，任何人的扩展都能 fetch 到最新版：
  *
- *   https://raw.githubusercontent.com/FengranZhou/design-system/main/scripts/catalog.json
+ *   https://code.iflytek.com/EBG_iflyhed/FrontEnd/template/xy-design-system/raw/master/scripts/catalog.json
  *
  * ## 三处来源，各管一段
  *
@@ -333,7 +333,7 @@ export function buildCatalog() {
 
   return {
     version: 1,
-    generatedFrom: 'FengranZhou/design-system',
+    generatedFrom: 'xy-design-system',
     groups: GROUPS,
     components,
     _stats: {
