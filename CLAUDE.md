@@ -52,50 +52,66 @@
 
 ---
 
-## 🚀 双仓推送流程（用户说「push 一下，打好 tag 和备注」时照此执行）
+## 🚀 推送流程（用户说「push 一下，打好 tag 和备注」时照此执行）
 
-本仓库同时维护在**两个远程**，两边**内容一致但 commit hash 不同**——因为内网仓强制校验
-提交邮箱，历史被单独改写过一次。**不要试图让两边 hash 一致**（那需要强推个人仓，已排除）。
+本仓库同时维护在**两个远程**，两边**内容一致但 commit hash 不同**。
+**不要试图让两边 hash 一致**（那需要强推个人仓，已排除）。
 
-| remote | 地址 | 分支 | 说明 |
+| remote | 地址 | 分支 | 角色 |
 |---|---|---|---|
-| `origin` | GitHub `FengranZhou/design-system` | `main` | 个人仓，日常开发主线 |
-| `iflytek` | `code.iflytek.com:30004/.../xy-design-system` | `master` | 公司内网仓 |
+| `iflytek` | `code.iflytek.com:30004/.../xy-design-system` | `master` | **公司内网仓 —— 唯一主线，多人协作，以此为准** |
+| `origin` | GitHub `FengranZhou/design-system` | `main` | 个人仓，备份 / 归档，定期从内网单向同步 |
 
-**本地 `iflytek-sync-done` 分支** = 内网那条历史的本地副本，**别删**，增量同步靠它。
+**本地 `iflytek-sync-done` 分支** = 内网主线的本地副本，**日常开发就在这条分支上**，别删。
 
-### 执行步骤
+> **2026-09-14 起方向已反转**：此前是「个人仓开发 → cherry-pick → 脱敏 → 推内网」。
+> 内网开始多人协作（同事直接往 master 推 antd3 适配层、MessageBox 解禁等）后，
+> 个人仓不再能充当主线——**两边都有对方没有的内容 = 真分叉**，每次同步都要解冲突。
+> 现改为内网为唯一主线，个人仓退为备份。
+
+### 日常：推内网（绝大多数情况只做这个）
 
 ```bash
-# ① 正常提交到 main（user.email 已配 frzhou@iflytek.com，两边都合规）
-git add -A && git commit -m "..."
+git checkout iflytek-sync-done
+git pull --rebase iflytek master        # 多人协作，推前先拉
+git add -A && git commit -m "..."       # ⛔ 提交说明不得出现 GitHub / 个人仓 / 双仓 / Claude-Session
+git push iflytek iflytek-sync-done:master
 
-# ② 打 tag（版本号见下方规则），备注写清「新增什么能力 / 改了什么 / 影响面」
-git tag -a vX.Y.Z -F - <<'EOF'
+# 打 tag（版本号规则见下）
+git tag -a vX.Y.Z-iflytek <commit> -F - <<'EOF'
 vX.Y.Z —— 一句话主题
 （分组列出：新增能力 / 组件改进 / 修复 / 仓库变更）
 EOF
-
-# ③ 推个人仓
-git push origin main --follow-tags
-
-# ④ 同步到内网：把 main 上的新提交 cherry-pick 到 sync 分支
-git checkout iflytek-sync-done
-git cherry-pick <上次同步后 main 上的新提交…>     # 多个提交用 A^..B
-
-# ⑤ ⛔ 脱敏（必做，漏了就泄露且写进历史无法撤回）
-node scripts/sanitize-for-iflytek.mjs            # 抹掉文件里的 GitHub 痕迹
-git add -A && git commit --amend --no-edit       # 并进刚 cherry-pick 的提交
-node scripts/sanitize-for-iflytek.mjs --check    # 复查，退出码 0 才算干净
-git checkout main                                  # 立刻切回，避免误在 sync 分支上开发
-
-# ⑥ 推内网（分支名不同，要写映射）
-git push iflytek iflytek-sync-done:master
-git tag -a vX.Y.Z-iflytek <sync分支上对应的commit> -F - <<'EOF'
-（同 ② 的备注内容，但**删掉任何 GitHub / 双仓字样**）
-EOF
 git push iflytek refs/tags/vX.Y.Z-iflytek:refs/tags/vX.Y.Z
 ```
+
+### 定期：反向同步到个人仓（非每次推送都做）
+
+个人仓是备份，滞后无妨。同步时**不要用 `git merge`**——两条平行历史找不到有效共同祖先，
+会把 `demo-antd3/`、`pnpm-lock.yaml` 等整目录当成「双方各自新增」，产生十几个伪冲突
+（2026-09-14 实测 15 个）。正确做法是取内网文件树覆盖，再恢复个人仓独有的两处：
+
+```bash
+# ① 备份个人仓独有内容（内网侧按设计不存在，直接覆盖会丢）
+git show main:scripts/sanitize-for-iflytek.mjs > /tmp/sanitize-backup.mjs
+git show main:CLAUDE.md > /tmp/CLAUDE-main-backup.md
+
+# ② 取内网文件树覆盖工作区（HEAD 仍在 main，历史线不变）
+git checkout main
+git read-tree -m -u iflytek-sync-done
+
+# ③ 恢复个人仓独有的两处
+cp /tmp/sanitize-backup.mjs scripts/sanitize-for-iflytek.mjs
+cp /tmp/CLAUDE-main-backup.md CLAUDE.md
+
+# ④ 核对后提交推送
+node scripts/audit-spec.mjs                 # 退出码 0
+git add -A && git commit -m "chore(sync): 同步内网主线内容（…）"
+git push origin main
+```
+
+⚠️ **③ 之后要核对根 `CLAUDE.md` 有没有漏掉内网侧的实质更新**——备份的是同步前的旧版本。
+本节以外的内容若在内网改过，要手工并回来（同事通常改 `design-spec/CLAUDE.md`，那份随文件树自动过来，不用管）。
 
 ### 版本号规则（语义化，我自行判断后先告知再执行）
 
@@ -116,28 +132,60 @@ git tag -l | grep -v -- '-iflytek$' | sort -V | tail -1
 
 **公司仓那份绝不能看出「同一套代码也提交在 GitHub 个人仓」**——这不是技术问题，是合规要求。
 
-三处都要干净，缺一即泄露：
+方向反转后，脱敏从「推之前清洗」变成「**内网侧从来就不写**」——这是更强的保证，
+因为不存在「忘了跑脚本」这种漏法。三处都要干净，缺一即泄露：
 
 | 位置 | 怎么保证 |
 |---|---|
-| **文件内容** | 步骤 ⑤ 跑 `sanitize-for-iflytek.mjs`（自动替换 URL / 仓库名 / 措辞，并整段删除本节「双仓推送流程」） |
-| **提交说明** | **写 commit message 时就不要出现** GitHub / 个人仓 / 双仓 字样（写了要么 `--amend` 改，要么事后 filter-branch 重写整条历史，代价极大） |
+| **文件内容** | 双仓机制只写在**本节**与 `scripts/sanitize-for-iflytek.mjs`，两者都**只存在于 `main`**。在 `iflytek-sync-done` 上开发时根本碰不到它们 |
+| **提交说明** | **写 commit message 时就不要出现** GitHub / 个人仓 / 双仓 / `Claude-Session:` 字样。写了要么 `--amend` 改，要么事后重写历史，代价极大 |
 | **tag 说明** | 内网 tag 单独写，删掉任何双仓表述 |
 
-⚠️ **`scripts/sanitize-for-iflytek.mjs` 本身不进公司仓**——它讲的就是双仓机制。
-脚本只存在于 `main`；cherry-pick 到 sync 分支后手动 `rm` 掉再提交（或加进脱敏脚本的删除清单）。
+⚠️ **`Claude-Session:` 链接不得进内网**（`Co-Authored-By` 保留，那是业界惯例）。
+**这条最容易漏，且目前没有自动防护**——2026-09-14 就差点把 6 个带链接的提交推进内网，
+是临推前查提交说明才发现的。**每次在 `iflytek-sync-done` 上提交后、推送前，必须手工查一次**：
 
-⚠️ **`Claude-Session:` 链接也已从公司仓历史清除**（`Co-Authored-By` 保留，那是业界惯例）。
-以后写 commit 时，公司仓那侧不要带 session 链接。
+```bash
+git log --format='%B' iflytek/master..HEAD | grep -i 'Claude-Session' || echo "✓ 干净"
+```
+
+⚠️ **万一已经提交但还没推**，只重写未推送部分：
+
+```bash
+git branch backup-before-strip                                    # 先备份
+FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f \
+  --msg-filter 'grep -v "^Claude-Session:"' -- HEAD --not iflytek/master
+git merge-base --is-ancestor iflytek/master HEAD && echo "✓ 内网历史未被触碰"
+```
+
+`-- HEAD --not iflytek/master` 这段**不能省**——只写 `A..B` 的 range 不限定改写范围，
+`--msg-filter` 仍会作用于整条分支（2026-09-14 真实踩过，94 个提交全被重写，
+靠 `refs/original/` 才恢复）。
 
 > **2026-09 已做过一次彻底清理**：重写公司仓全部 83 个提交、强推覆盖、三个 tag 重打。
 > 代价是同事要重新 clone。**别再让痕迹进去第二次。**
 
-### 三条硬纪律
+### 四条硬纪律
 
-1. **绝不强推 `origin`** —— 个人仓历史已发布，强推会破坏它。内网侧的差异用 sync 分支消化。
-2. **`filter-branch` 绝不加 `-- --all`** —— 会把 main 和所有 tag 一起改写（真实踩过，
-   靠 `refs/original/` 才恢复回来）。只对目标分支操作。
-3. **推内网前先测连通** —— `git ls-remote iflytek` 失败时先看是权限还是网络，
-   不要反复重试推送。内网仓拒绝非公司邮箱的提交，报错是
-   `未通过Commit邮箱校验`。
+1. **绝不强推 `origin`** —— 个人仓历史已发布，强推会破坏它。
+2. **绝不强推 `iflytek`** —— 内网是多人协作主线，强推会毁掉同事的工作。
+   推被拒时先 `git pull --rebase iflytek master`，不要用 `--force` 绕过。
+3. **`filter-branch` 必须限定范围** —— 绝不加 `-- --all`（会把 main 和所有 tag 一起改写），
+   且改写未推送部分时要写 `-- HEAD --not iflytek/master`（见上，range 语法不够）。
+4. **推内网前先测连通** —— `git ls-remote iflytek` 失败时先看是权限还是网络，
+   不要反复重试推送。内网仓拒绝非公司邮箱的提交，报错是 `未通过Commit邮箱校验`。
+
+### pre-push hook 会拦什么（两个仓都会）
+
+推送时 hook 自动校验 `catalog.json` 与当前设计系统一致，不一致就阻止并重新生成。
+被拦下时按提示 `git add scripts/catalog.json scripts/component-shots.json` 提交后重推。
+
+**若提示缺组件示意图**，需要先有 `demo/dist`：
+
+```bash
+cd demo && pnpm build                          # 构建失败就先修，别绕过
+node scripts/shoot-components.mjs --missing
+node scripts/build-catalog.mjs
+```
+
+⚠️ **`pnpm build` 失败时不要用 `--no-verify` 绕过**——那会把构建不通过的状态推进内网主线。
