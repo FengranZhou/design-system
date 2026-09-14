@@ -1,0 +1,298 @@
+/* ======================================================================== */
+/* ==================== Radio 单选框 样式覆盖（antd 3 适配层）============== */
+/* ======================================================================== */
+/* 本文件是 el-theme/components/radio.scss 的 antd 3 对位实现。
+   规则口径以 EP 版源头为准，本文件只负责「在 antd 3 的 DOM 上复刻出同样的观感」。
+   偏差记录见同目录 ../DIFF.md —— 凡本文件做不到 EP 版效果的，必须在那里登记。 */
+
+/* ┌─ 接入方速查：Radio 能力全在下面，直接复制即可 ─────────────────────┐
+   基础单选：
+     <RadioGroup value="x" onChange={...}>
+       <Radio value="a">文字</Radio>
+       <Radio value="b">文字</Radio>
+     </RadioGroup>
+   单选按钮组：
+     <RadioGroup value="x">
+       <RadioButton value="a">左</RadioButton>
+       <RadioButton value="b">中</RadioButton>
+     </RadioGroup>
+   状态：
+     禁用       <Radio disabled>
+     选中禁用   <Radio checked disabled>   ← antd3 由 RadioGroup value 控制，
+                                            单个 Radio 的 checked 由 group 决定
+   ⚠ 与 EP 写法差异：
+     - EP `<el-radio value="x">` → antd3 `<Radio value="x">` 同形 ✓
+     - EP `disabled` 属性        → antd3 `disabled` 属性同形 ✓（无需约定 class）
+     - antd3 的 RadioButton 不需 ConfigProvider 即可工作（无两字插空格问题）
+   → 任意组合都已支持，无需在接入方写任何样式。
+     改任何 Radio 外观 = 改本文件，所有接入项目自动同步。
+   └────────────────────────────────────────────────────────────────────┘ */
+
+/* ==================== 基础单选 .ant-radio ====================
+   EP 版尺寸：外框 16×16（antd3 默认也是 16×16 ✓，无需覆盖）
+              中心圆点 6×6（antd3 默认 8×8 ✗，需改）
+   antd3 inner box-sizing: border-box，content 14×14。
+   ::after 默认 8×8 top:3 left:3 → 3..11 居中（3+8+3=14）✓
+   改 6×6 后需 top:4 left:4 才居中（4+6+4=14）。
+   ⚠ 必须显式设 top/left —— 不设会被 antd3 默认 top:3 left:3 压住，
+      6×6 圆点会偏左上 1px。实测发现。 */
+.ant-radio-inner {
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default);
+  /* antd3 transition: all 0.3s 太慢，对齐 EP 的 0.2s 档 */
+  transition: border-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              background-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+
+.ant-radio-inner::after {
+  width: 6px;
+  height: 6px;
+  top: 4px;
+  left: 4px;
+  /* antd3 默认 border-radius: 8px —— 圆点会变椭圆，压回 50% */
+  border-radius: 50%;
+  background-color: var(--iflyv-brand-primary);
+  /* antd3 默认 cubic-bezier(0.78,0.14,0.15,0.86) —— 弹性过冲，EP 用平淡过渡 */
+  transition: transform var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              opacity var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+
+/* 压掉 antd3 选中态的外圈扩散动画 ::after
+   antd3 选中时在 .ant-radio 上挂一个 ::after 伪元素扩散一圈 #1890ff 边框，
+   持续 0.36s。EP 版无此动效 —— Radio 选中由中心圆点指示，外圈不闪。
+   ⚠ 这是 JS 行为的 CSS 等价物（伪元素由 antd3 CSS 自动生成），
+      只能用 visibility/animation 压掉，不能删节点。 */
+.ant-radio-checked::after {
+  visibility: hidden !important;
+  animation: none !important;
+}
+
+/* 选中态：外框边色 = brand-primary（antd3 默认 #1890ff） */
+.ant-radio-checked .ant-radio-inner {
+  border-color: var(--iflyv-brand-primary);
+}
+
+/* hover/focus：外框边色 = brand-primary（压 antd3 的 #1890ff）
+   ⚠ 特异度对位：antd3 是 `.ant-radio-wrapper:hover .ant-radio, .ant-radio:hover .ant-radio-inner,
+                  .ant-radio-input:focus + .ant-radio-inner { border-color: #1890ff }`
+      三条共用一个规则块，特异度最高 0,3,1（三条类名链）。
+      本覆盖层用同等特异度（`.ant-radio-wrapper:hover .ant-radio-inner`）才能压过。
+      只写 `.ant-radio:hover .ant-radio-inner` 单条会输。 */
+.ant-radio-wrapper:hover .ant-radio-inner,
+.ant-radio:hover .ant-radio-inner,
+.ant-radio-input:focus + .ant-radio-inner {
+  border-color: var(--iflyv-brand-primary);
+}
+
+/* 压掉 antd3 input focus 时的蓝色 box-shadow —— EP 版无外圈阴影 */
+.ant-radio-input:focus + .ant-radio-inner {
+  box-shadow: none;
+}
+
+/* ==================== 文字标签 ====================
+   antd3 的文字是 `.ant-radio + span`（紧邻 radio 的兄弟 span），
+   与 EP 的 `.el-radio__label` 结构不同，但对位 EP 口径即可。
+   - 字号 14（antd3 默认 14 ✓）
+   - 文字色 text-1（antd3 默认 rgba(0,0,0,0.65)，需覆盖）
+   - 选中态文字色 = text-1（选中由圆点指示，文字不变色）
+   - 禁用态文字色 = text-4（antd3 默认 rgba(0,0,0,0.25)，需覆盖）
+   ⚠ antd3 选择器 `span.ant-radio + *` 特异度 0,1,1 + 通用 = 0,1,2，
+      我们的覆盖用 `.ant-radio-wrapper` 上的 span 更直接 ——
+      但 antd3 文字 span 没挂类名，只能用 `.ant-radio + span` 同等选择器。 */
+.ant-radio + span {
+  color: var(--iflyv-text-1);
+  /* antd3 默认 padding 8px 8px，EP 是 padding-inline-start 8px —— 左右等距，保留 */
+}
+
+/* 禁用态文字色 = text-4 */
+.ant-radio-disabled + span {
+  color: var(--iflyv-text-4);
+}
+
+/* 禁用态：外框背景 = bg-panel（压 antd3 默认 #f5f5f5）
+   ⚠ antd3 用 `!important` 锁了 border-color: #d9d9d9，
+      我们也用 `!important` 才能压 —— 与 Button 那条"别用 important"的纪律相比，
+      Radio 这里是被迫对位 antd3 自带的 important，不是可选 */
+.ant-radio-disabled .ant-radio-inner {
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default) !important;
+}
+
+/* 禁用选中态：圆点色 = icon-4（与 EP 版同口径） */
+.ant-radio-disabled.ant-radio-checked .ant-radio-inner::after {
+  background-color: var(--iflyv-icon-4);
+}
+
+/* ==================== 单选按钮组 .ant-radio-button-wrapper ====================
+   EP 版：高度 36 (--el-component-size)，padding 0 15px，font-weight 400，
+          字号 14，display inline-flex 居中。
+   antd3 默认：高度 32，padding 0 15px，line-height 30，font-size 14。
+   ⚠ 高度需改 32 → 36（对齐表单控件统一高度）。
+   ⚠ 布局需改 inline-block + line-height → inline-flex + 居中，
+      理由同 Button：line-height 在中文下不保证垂直居中（详见 button.less 注释）。 */
+.ant-radio-button-wrapper {
+  height: var(--iflyv-a3-component-size);
+  padding: 0 15px;
+  font-weight: 400;
+  font-size: var(--iflyv-font-size-14);
+  color: var(--iflyv-text-1);
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default);
+
+  /* 对齐 EP 基类：改 inline-flex 居中，压掉 line-height: 30 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: normal;
+  /* antd3 默认 border-top-width: 1.02px —— 不知何故，压回 1px */
+  border-top-width: 1px;
+  /* antd3 默认 transition: color/background/border 0.3s —— 对齐 EP 0.2s 档 */
+  transition: color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              background-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+              border-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+
+/* 分隔线（每两个 button 之间的 1px 竖线）
+   antd3 默认 #d9d9d9，压到 border-default */
+.ant-radio-button-wrapper:not(:first-child)::before {
+  background-color: var(--iflyv-border-default);
+}
+
+/* 首尾圆角：设计系统组件圆角为 radius-sm（8px），覆盖 antd3 默认 4px。 */
+.ant-radio-button-wrapper:first-child {
+  border-start-start-radius: var(--iflyv-radius-sm);
+  border-end-start-radius: var(--iflyv-radius-sm);
+}
+
+.ant-radio-button-wrapper:last-child {
+  border-start-end-radius: var(--iflyv-radius-sm);
+  border-end-end-radius: var(--iflyv-radius-sm);
+}
+
+.ant-radio-button-wrapper:first-child:last-child {
+  border-radius: var(--iflyv-radius-sm);
+}
+
+/* 首项 border-left：antd3 默认 `.ant-radio-button-wrapper:first-child { border-left: 1px solid #d9d9d9 }`
+   特异度 0,2,1，会压过我们的 border-default。覆盖之。
+   ⚠ 同样要用 0,2,1 特异度才能压过（双类名） */
+.ant-radio-button-wrapper:first-child {
+  border-left-color: var(--iflyv-border-default);
+}
+
+/* 选中首项：antd3 默认 `.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):first-child`
+   特异度 0,4,1（含 :not 和 :first-child），会压过我们的覆盖。
+   ⚠ 需同等特异度才能压 */
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):first-child {
+  border-left-color: var(--iflyv-brand-primary);
+}
+
+/* hover：文字色 → brand-text（antd3 默认文字变 #1890ff）
+   ⚠ 必须覆盖 hover —— antd3 在 hover 时同时变 color 和 border-color，
+      我们要分别对位（color 用 brand-text 弱一档，border 用 brand-primary）。
+      但 EP 版 RadioButton 的 hover 是文字与边框一起变 brand-text？
+      查 el-theme/components/radio.scss —— EP 没单独覆盖 RadioButton hover，
+      沿用 EP 基类。EP 默认是 hover 时所有变 brand-hover？没法直接验证。
+      按 EP 同口径：hover 用 brand-hover 一档色（与文字同色）。 */
+.ant-radio-button-wrapper:hover {
+  color: var(--iflyv-brand-text);
+  border-color: var(--iflyv-brand-text);
+  position: relative; /* antd3 默认有，保留 */
+}
+
+/* 选中态：EP 实际为实心 brand-primary 填充，文字为白色。 */
+.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  color: var(--iflyv-text-on-dark);
+  background-color: var(--iflyv-brand-primary);
+  border-color: var(--iflyv-brand-primary);
+  box-shadow: -1px 0 0 0 var(--iflyv-brand-primary);
+}
+
+/* 选中态分隔线变品牌色淡 10% —— antd3 默认 background-color: #1890ff + opacity: 0.1 */
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+  background-color: var(--iflyv-brand-primary) !important;
+  /* opacity: 0.1 保留（antd3 默认） */
+}
+
+/* 选中态首项：压掉左侧 box-shadow（无前邻居） */
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):first-child {
+  border-color: var(--iflyv-brand-primary);
+  box-shadow: none !important;
+}
+
+/* 实心选中态 hover / active：填充与描边同步切换色阶，文字保持浅色。 */
+.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover {
+  color: var(--iflyv-text-on-dark);
+  background-color: var(--iflyv-brand-hover);
+  border-color: var(--iflyv-brand-hover);
+  box-shadow: -1px 0 0 0 var(--iflyv-brand-hover);
+}
+
+.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):active {
+  color: var(--iflyv-text-on-dark);
+  background-color: var(--iflyv-brand-pressed);
+  border-color: var(--iflyv-brand-pressed);
+  box-shadow: -1px 0 0 0 var(--iflyv-brand-pressed);
+}
+
+/* focus：压掉 antd3 的 outline: 3px solid rgba(24,144,255,0.06) */
+.ant-radio-button-wrapper:focus-within {
+  outline: none;
+}
+
+/* 禁用态：文字 text-4，背景 panel（压 antd3 #f5f5f5），边框 border-default */
+.ant-radio-button-wrapper-disabled {
+  color: var(--iflyv-text-4);
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default);
+  cursor: not-allowed;
+}
+
+.ant-radio-button-wrapper-disabled:first-child,
+.ant-radio-button-wrapper-disabled:hover {
+  color: var(--iflyv-text-4);
+  background-color: var(--iflyv-bg-panel);
+  border-color: var(--iflyv-border-default);
+}
+
+.ant-radio-button-wrapper-disabled:first-child {
+  border-left-color: var(--iflyv-border-default);
+}
+
+/* 禁用选中态：背景 bg-inset（对齐 EP --el-radio-button-disabled-checked-fill） */
+.ant-radio-button-wrapper-disabled.ant-radio-button-wrapper-checked {
+  color: var(--iflyv-text-4);
+  background-color: var(--iflyv-bg-inset);
+  border-color: var(--iflyv-border-default);
+  box-shadow: none;
+}
+
+/* ==================== 关掉 antd3 Radio 的点击波纹 ====================
+   antd3 的 Radio 也会触发 Wave 注入蓝色波纹（同 Button）。
+   波纹由 JS 给节点挂 `ant-click-animating-without-extra-node` 等属性触发，
+   CSS 拦不住注入，但可以压掉其 ::after 效果。
+   ⚠ 这条与 Button 那条重复，按作业指导书 §4.1 应抽进 base.less，
+      目前暂留此处，等 base.less 建立后再迁移。 */
+.ant-radio[ant-click-animating-without-extra-node='true']::after,
+.ant-radio-button-wrapper[ant-click-animating-without-extra-node='true']::after,
+.ant-radio-button-wrapper .ant-click-animating-node {
+  display: none !important;
+  animation: none !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+}
+
+/* ==================== RadioGroup 间距 ====================
+   antd3 .ant-radio-wrapper 默认 margin-right: 8px，EP 是 margin-inline-end: 16px
+   (spacing-4)。压到 spacing-4 与 EP 对齐。
+   ⚠ 用 margin-inline-end 而非 margin-right，对齐 EP 的 RTL 友好口径。 */
+.ant-radio-wrapper {
+  margin-right: unset;
+  margin-inline-end: var(--iflyv-spacing-4);
+}
+
+.ant-radio-group {
+  /* antd3 默认 color: rgba(0,0,0,0.65)，压到 text-1（虽然子项会覆盖，统一兜底） */
+  color: var(--iflyv-text-1);
+  font-size: var(--iflyv-font-size-14);
+}

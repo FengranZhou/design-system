@@ -1007,6 +1007,78 @@ ${buttons}
   },
 
   {
+    id: 'message-box',
+    anchor: 'message-box',
+    name: 'MessageBox 提示确认框',
+    group: 'feedback',
+    desc: '命令式调起的提示弹窗',
+    keywords: ['MessageBox', '确认框', '删除确认', '弹窗', 'confirm', 'alert', 'prompt'],
+    readRefs: [
+      'references/component-interaction.md（Dialog 段 · 语义变体）',
+      'el-theme/components/message-box.scss（顶部速查）',
+    ],
+    mustRules: [
+      '观感与 Dialog 提示弹窗完全对齐（同一套圆角/宽度/标题字阶/图标/按钮规范）',
+      'type 必传（error/warning/success/info），宽度固定 400',
+      'error ≡ is-danger（危险操作），warning ≡ is-warning（警示），success ≡ is-success（成功告知），info ≡ is-info（中性提示）',
+      '主按钮语义在源头强制对齐：error 自动用 danger 按钮、其余三类用 primary 按钮',
+    ],
+    instanceFields: [
+      {
+        key: 'scene',
+        label: '语义',
+        type: 'select',
+        default: 'error',
+        options: [
+          { value: 'error', label: '危险 · 删除等不可撤销操作' },
+          { value: 'warning', label: '警告 · 离开未保存等' },
+          { value: 'success', label: '成功 · 操作完成告知' },
+          { value: 'info', label: '信息 · 版本更新等中性提醒' },
+        ],
+      },
+      { key: 'title', label: '标题', type: 'text', placeholder: '如：删除确认', default: '' },
+      { key: 'message', label: '正文', type: 'text', placeholder: '如：删除后不可恢复，确认删除？', default: '' },
+      { key: 'confirmText', label: '主按钮文案', type: 'text', placeholder: '如：删除', default: '确定' },
+      { key: 'showClose', label: '可关闭', type: 'switch', default: true },
+    ],
+    snippet: ({ scene, title, message, confirmText, showClose }) => {
+      const typeMap = { error: 'error', warning: 'warning', success: 'success', info: 'info' }
+      const titleMap = {
+        error: '删除确认',
+        warning: '离开确认',
+        success: '发布成功',
+        info: '同步说明',
+      }
+      const messageMap = {
+        error: '删除后不可恢复，确认删除？',
+        warning: '当前内容尚未保存，离开将丢失改动。',
+        success: '课程已发布，学生现在可以看到它了。',
+        info: '数据每 10 分钟同步一次，稍后即可看到最新结果。',
+      }
+      const btnMap = { error: '删除', warning: '仍要离开', success: '知道了', info: '好' }
+      const type = typeMap[scene] || 'error'
+      const titleText = title || titleMap[scene] || '确认'
+      const msg = message || messageMap[scene] || '确认执行此操作？'
+      const btn = confirmText || btnMap[scene] || '确定'
+      const close = showClose ?? true
+      return `ElMessageBox.confirm('${msg}', '${titleText}', {
+  type: '${type}',
+  confirmButtonText: '${btn}',
+  cancelButtonText: '取消',
+  showClose: ${close},
+})
+  .then(() => {
+    // 确认后的操作
+    ElMessage({ message: '已确认', type: 'success', showClose: true })
+  })
+  .catch(() => {
+    // 取消 / 关闭按钮走 reject，不是错误
+    ElMessage({ message: '已取消', type: 'info', showClose: true })
+  })`
+    },
+  },
+
+  {
     id: 'alert',
     anchor: 'alert',
     name: 'Alert 提示条',

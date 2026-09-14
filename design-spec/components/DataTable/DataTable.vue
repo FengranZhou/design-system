@@ -50,6 +50,28 @@
       @action="onAction"
       @selection-change="onSelect"
     />
+
+  服务端分页 + 排序 + 序号 + 空态 + 自定义单元格（本组件的常见完整形态）：
+    <DataTable
+      :data="rows"
+      :columns="[{ prop:'stuNo', label:'学号', sortable:'custom' }, { prop:'op', label:'进度' }]"
+      show-index
+      :index-method="(i) => (page - 1) * pageSize + i + 1"
+      :default-sort="{ prop:'stuNo', order:'ascending' }"
+      row-key="id"
+      max-height="420"
+      @sort-change="onSortChange"
+    >
+      <template #empty><el-empty class="empty-block" :image="emptyImg" description="暂无数据" /></template>
+      (列级插槽名 = 该列的 prop，作用域同 EP)
+      <template #op="{ row }"><el-progress :percentage="row.percent" /></template>
+    </DataTable>
+
+  ⚠️ 排序两种模式别混（静默出错）：sortable:true 是 EP 本地排序，**只排当前页**；
+     服务端分页一律 sortable:'custom'，接 @sort-change 自己去请求。
+  ⚠️ 序号列跨页连续要传 index-method，否则第 2 页又从 1 开始。
+  ⚠️ 列级插槽是 kind 覆盖不了时的逃生口；能用 kind 表达的（text/tag/date/amount）不要用插槽手写，
+     否则又回到各页各写一套的老路。
 -->
 <template>
   <!-- ⚠️ 不开 highlight-current-row：本组件不提供 row-click 事件，点击行不产生任何业务效果，
@@ -59,10 +81,29 @@
     ref="tableRef"
     :data="data"
     style="width: 100%"
+    :row-key="rowKey"
+    :height="height"
+    :max-height="maxHeight"
+    :default-sort="defaultSort"
     @selection-change="(rows: any[]) => emit('selection-change', rows)"
+    @sort-change="(p: any) => emit('sort-change', p)"
   >
+    <!-- 空状态：使用方放 el-empty + 设计系统插画 + 档位 class（见 component-interaction.md Empty 段）。
+         不传则保留 EP 默认空文案。 -->
+    <template v-if="$slots.empty" #empty><slot name="empty" /></template>
     <!-- 01 全局功能区：勾选 -->
     <el-table-column v-if="selectable" type="selection" width="48" />
+
+    <!-- 01 全局功能区：序号。跨页连续编号请传 indexMethod（如 i => (page-1)*size + i + 1）。 -->
+    <el-table-column
+      v-if="showIndex"
+      type="index"
+      :label="indexLabel"
+      :width="indexWidth"
+      :index="indexMethod"
+      align="center"
+      :resizable="false"
+    />
 
     <!-- 02 主题区 / 03 关键信息区：按 kind 渲染。resolvedColumns 会在内容超宽时自动给主题列补 fixed:left -->
     <el-table-column
@@ -74,27 +115,31 @@
       :min-width="col.minWidth"
       :sortable="col.sortable"
       :fixed="col.fixed"
-      :align="col.kind === 'amount' ? 'right' : undefined"
+      :align="col.align ?? (col.kind === 'amount' ? 'right' : undefined)"
       :show-overflow-tooltip="col.showOverflowTooltip"
     >
-      <template #default="{ row }">
+      <template #default="scope">
+        <!-- 列级插槽逃生口：传了 #<prop> 插槽即由使用方自行渲染该单元格，
+             四种 kind 覆盖不了的形态（按钮组 / 图片 / 进度 / 多行富内容）走这里，
+             不必退回手写 el-table。作用域同 EP：{ row, column, $index }。 -->
+        <slot v-if="$slots[col.prop]" :name="col.prop" v-bind="scope" />
         <!-- tag：状态 / 分类标签。
              type 走语义色；class 走约定类变体（el-tag--gray 非活跃 / el-tag--ai），
              二者可共存——同一列里某些行灰、某些行走语义色。 -->
         <el-tag
-          v-if="col.kind === 'tag'"
-          :type="row[col.tagTypeProp ?? `${col.prop}Type`]"
-          :class="row[col.tagClassProp ?? `${col.prop}Class`]"
+          v-else-if="col.kind === 'tag'"
+          :type="scope.row[col.tagTypeProp ?? `${col.prop}Type`]"
+          :class="scope.row[col.tagClassProp ?? `${col.prop}Class`]"
           round
-        >{{ row[col.prop] }}</el-tag>
+        >{{ scope.row[col.prop] }}</el-tag>
         <!-- amount：右对齐 + 千分位 -->
-        <span v-else-if="col.kind === 'amount'">{{ formatAmount(row[col.prop]) }}</span>
+        <span v-else-if="col.kind === 'amount'">{{ formatAmount(scope.row[col.prop]) }}</span>
         <!-- date：走文案规范唯一实现 formatTime（本年省年份 / 跨年带年 / 不带秒），
              使用方只管把原始时间放进行数据，不在外面自行格式化。
              详见 references/copywriting/time.md -->
-        <span v-else-if="col.kind === 'date'">{{ formatTime(row[col.prop], col.timePrecision ?? 'minute') }}</span>
+        <span v-else-if="col.kind === 'date'">{{ formatTime(scope.row[col.prop], col.timePrecision ?? 'minute') }}</span>
         <!-- text：纯文本 -->
-        <span v-else>{{ row[col.prop] }}</span>
+        <span v-else>{{ scope.row[col.prop] }}</span>
       </template>
     </el-table-column>
 
@@ -175,6 +220,25 @@ const props = withDefaults(
      * 默认 true；特殊场景可传 false 关闭。使用方仍可在 columns 里手动指定 fixed（优先于自动）。
      */
     autoFreeze?: boolean
+    /** 行 key，同 el-table 的 row-key（树形数据、勾选跨页保持、动态增删行时需要） */
+    rowKey?: string | ((row: any) => string)
+    /** 表格高度：传了即固定表头、表体内部滚动（同 el-table height） */
+    height?: number | string
+    /** 最大高度：内容超出才内部滚动（同 el-table max-height） */
+    maxHeight?: number | string
+    /** 默认排序，如 { prop: 'stuNo', order: 'ascending' }（同 el-table default-sort） */
+    defaultSort?: { prop: string; order: 'ascending' | 'descending' }
+    /** 是否显示序号列（全局功能区，排在勾选列之后） */
+    showIndex?: boolean
+    /** 序号列表头文字 */
+    indexLabel?: string
+    /** 序号列宽度（px） */
+    indexWidth?: number | string
+    /**
+     * 序号计算。默认每页从 1 开始；**服务端分页要跨页连续编号时必须传**，
+     * 如 (i) => (page - 1) * pageSize + i + 1 —— 不传则第 2 页又从 1 开始。
+     */
+    indexMethod?: (index: number) => number
   }>(),
   {
     actions: () => [],
@@ -182,6 +246,9 @@ const props = withDefaults(
     selectable: false,
     operationWidth: 200,
     autoFreeze: true,
+    showIndex: false,
+    indexLabel: '序号',
+    indexWidth: 80,
   },
 )
 
@@ -190,6 +257,12 @@ const emit = defineEmits<{
   action: [payload: { command: string; row: Record<string, any>; index: number }]
   /** 勾选变化 */
   'selection-change': [rows: Record<string, any>[]]
+  /**
+   * 排序变化（透传 el-table 的 sort-change）。
+   * 列的 sortable 为 'custom' 时，排序由使用方 / 服务端执行；
+   * order 为 null 表示用户取消排序（EP 三态循环：升 → 降 → 无）。
+   */
+  'sort-change': [payload: { column: any; prop: string; order: 'ascending' | 'descending' | null }]
 }>()
 
 const formatAmount = (v: number) =>
@@ -208,6 +281,7 @@ const px = (v: number | string | undefined): number => {
 /** 所有列宽之和（勾选列 48 + 各数据列 width/minWidth + 操作列） */
 const totalColumnsWidth = computed(() => {
   let sum = props.selectable ? 48 : 0
+  if (props.showIndex) sum += px(props.indexWidth)
   for (const c of props.columns) sum += px(c.width) || px(c.minWidth) || 80
   if (props.actions.length || props.moreActions.length) sum += px(props.operationWidth)
   return sum
@@ -231,6 +305,21 @@ const resolvedColumns = computed<DataTableColumn[]>(() => {
 const operationFixed = computed<'right' | undefined>(() =>
   props.autoFreeze && overflow.value ? 'right' : undefined
 )
+
+/**
+ * 暴露底层 el-table 的勾选 / 排序方法，供「默认选中某几行」「提交后清空选中」等场景调用。
+ * 只转发 EP 原生能力，不新增行为。需要 EP 其它方法时用 tableRef.value 直接取。
+ */
+defineExpose({
+  /** 勾选 / 取消勾选某一行（同 el-table toggleRowSelection） */
+  toggleRowSelection: (row: any, selected?: boolean) => tableRef.value?.toggleRowSelection(row, selected),
+  /** 清空全部勾选 */
+  clearSelection: () => tableRef.value?.clearSelection(),
+  /** 清除排序状态 */
+  clearSort: () => tableRef.value?.clearSort(),
+  /** 底层 el-table 实例（逃生口） */
+  tableRef,
+})
 
 let ro: ResizeObserver | undefined
 onMounted(() => {

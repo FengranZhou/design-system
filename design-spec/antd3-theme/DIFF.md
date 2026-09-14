@@ -8,7 +8,10 @@
 > - ⚠️ **写法变化** —— 视觉一致，但调用方要写得不一样（研发需知晓）
 > - ⛔ **能力缺失** —— 效果做不出来或语义不同，**需要你决策**
 >
-> 试点范围：Button（`el-theme/components/button.scss` 479 行 → `antd3-theme/components/button.less`）。
+> 试点范围：
+> - Button（`el-theme/components/button.scss` 479 行 → `antd3-theme/components/button.less`）
+> - Radio（`el-theme/components/radio.scss` 96 行 → `antd3-theme/components/radio.less`）
+>
 > 状态标注为「待验证」的，指覆盖层已写、但尚未在浏览器中实测确认。
 
 ---
@@ -280,6 +283,121 @@ css: { preprocessorOptions: { less: { javascriptEnabled: true } } }
 
 我倾向 **①接受 + 在规则文档里写明**：这是两个组件库的机制差异，
 强行对齐（方案 2/3）都会引入新的怪异行为，代价大于收益。**但这属于"不一样的地方"，按你的要求交你决定。**
+
+---
+
+## ==================== Radio（第二批）====================
+
+## DIFF #R1 —— 中心圆点尺寸与位置（**写法变化，已抹平**）
+
+| | EP 版 | antd 3 |
+|---|---|---|
+| 内圈外径 | 16×16 | 16×16 ✓ 同 |
+| 中心圆点 | 6×6 | 8×8（默认） |
+| 圆点位置 | EP 默认 top:3 left:3 + 6×6 | antd3 默认 top:3 left:3 + 8×8 |
+
+**处置**：覆盖层把 `::after` 改为 6×6 + `top:4 left:4`（content box 14×14，4+6+4=14 居中）。
+antd3 默认 8×8 + top:3 left:3 → 3+8+3=14 也居中，但圆点尺寸与 EP 不一致。
+若只改 width/height 不改 top/left，6×6 + top:3 left:3 → 3+6+5=14 偏左上 1px，**实测可发现**。
+
+**调用方无感知**。
+
+---
+
+## DIFF #R2 —— 选中态外圈扩散动画（**写法变化，已抹平**）
+
+| | EP 版 | antd 3 |
+|---|---|---|
+| 选中动效 | 无外圈变化，仅中心圆点 scale(0)→scale(1) | **`.ant-radio-checked::after` 扩散一圈 `#1890ff` 边框 0.36s** |
+
+**处置**：覆盖层把 `.ant-radio-checked::after` 的 `visibility: hidden + animation: none` 压掉。
+EP 选中只由中心圆点指示，外圈不闪。
+
+**调用方无感知**。
+
+---
+
+## DIFF #R3 —— 文字结构：`.el-radio__label` vs `.ant-radio + span`（**写法变化**）
+
+| | EP 版 | antd 3 |
+|---|---|---|
+| 文字节点 | `.el-radio__label`（label 元素） | `.ant-radio + span`（紧邻 radio 的兄弟 span） |
+| 文字色选择器 | `.el-radio__input.is-checked + .el-radio__label` | `.ant-radio + span` / `.ant-radio-disabled + span` |
+
+**处置**：覆盖层用 `.ant-radio + span` 选择器对位文字色（text-1 / 禁用 text-4）。
+**调用方无感知**（写法上 antd3 本来就是 `<Radio>文字</Radio>`，与 EP 同形）。
+
+---
+
+## DIFF #R4 —— 禁用态选择器：`.is-disabled` vs `.ant-radio-disabled`（**写法变化，已对位**）
+
+EP 用 `.is-disabled` 类，antd3 用 `.ant-radio-disabled` 类。
+覆盖层已全部对位改写。**调用方无感知**（两边都写 `disabled`）。
+登记此条是给将来维护者：antd3 层里不能照抄 EP 版的 `.is-disabled` 选择器。
+
+---
+
+## DIFF #R5 —— 单选按钮组（RadioButton）选中态：描边款 vs EP 推断描边款（**写法变化，视觉一致**）
+
+| | EP 版 | antd 3 |
+|---|---|---|
+| 选中态 | el-theme/radio.scss 未单独覆盖选中态背景，推断沿用 EP 基类 = 描边款（白底+品牌色边框+品牌色文字） | 默认描边款（白底+蓝边+蓝字） |
+| 实心模式 | 无（除非加 `data-theme="dark"`） | `.ant-radio-group-solid` 可切换实心款（蓝底+白字） |
+
+**处置**：覆盖层保留 antd3 的描边款机制，只把蓝色 `#1890ff` 系列换成 `--iflyv-brand-*` 语义色。
+**未实装 EP 暗色模式下的"背景/边框 brand-primary"实心款** ——
+该规则在 antd3 栈上不成立（见 DIFF #6，antd3 不支持暗色模式）。
+
+**调用方无感知**（亮色模式下视觉一致）。
+
+---
+
+## DIFF #R6 —— RadioButton 高度 32 vs 36（**已抹平**）
+
+antd3 默认 `.ant-radio-button-wrapper` 高度 32px，EP 是 36px（`--el-component-size`）。
+覆盖层用 `var(--iflyv-a3-component-size)` 改为 36px 对齐。
+**调用方无感知**。
+
+---
+
+## DIFF #R7 —— RadioButton 内部布局：inline-block+line-height vs inline-flex（**已抹平**）
+
+同 Button 的内部布局问题：antd3 用 `inline-block + line-height: 30` 排内容，
+中文下垂直对齐不保证居中。
+覆盖层改为 `inline-flex + align-items:center + justify-content:center`，
+对齐 EP 基类。`line-height: normal` 压掉 antd3 的 30。
+**调用方无感知**。
+
+---
+
+## DIFF #R8 —— antd3 自带的 `!important` 锁禁用态 border（**写法变化，已对位**）
+
+antd3 在 `.ant-radio-disabled .ant-radio-inner` 用 `border-color: #d9d9d9 !important` 锁死。
+覆盖层需用同等 `!important` 才能覆盖到 `--iflyv-border-default`。
+这是被迫对位 antd3 自带的 important，**不是可选**。
+**调用方无感知**。
+
+---
+
+## DIFF #R9 —— Radio 点击波纹（**已抹平**）
+
+同 Button DIFF #10，antd3 的 Radio 也会触发 Wave 注入蓝色波纹。
+覆盖层把 `.ant-radio[ant-click-animating-without-extra-node='true']::after` 与
+`.ant-radio-button-wrapper[...]::after` 压掉。
+**这条应抽进 base.less（见作业指导书 §4.1），目前暂留此处**。
+**调用方无感知**。
+
+---
+
+## DIFF #R10 —— Radio 间距：8px vs 16px（**已抹平**）
+
+| | EP 版 | antd 3 |
+|---|---|---|
+| 单选间距 | `margin-inline-end: 16px` (spacing-4) | `margin-right: 8px` |
+
+覆盖层改为 `margin-inline-end: var(--iflyv-spacing-4)` 对齐 EP，同时改用 `margin-inline-end`
+对齐 EP 的 RTL 友好口径。
+**调用方无感知**。
 
 ---
 

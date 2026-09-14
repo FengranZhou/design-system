@@ -1,0 +1,38 @@
+/* SearchMini 骨架样式 —— 对位 design-spec/components/SearchMini/SearchMini.vue 的 scoped 部分。
+   只装扮组件自己的骨架（宽度、展开动画、可点击放大镜），
+   Input / Button 外观均归 antd3-theme 覆盖层，不在此覆盖。 */
+
+/* 搜索框宽度：与基础输入框默认宽度一致（240px）。
+   使用方可通过 style={{ '--search-mini-width': '320px' }} 覆盖。 */
+.search-mini__input {
+  --search-mini-width: 240px;
+  width: var(--search-mini-width);
+}
+
+/* 右侧可点击放大镜：装扮塞进 suffix 的图标的可点击交互态。
+   antd3 的 allowClear 清除图标在 suffix 区，放大镜排其右侧。 */
+.search-mini__search-icon {
+  /* order:1 使放大镜排在清除叉右侧 → 清除叉在左、放大镜在右 */
+  order: 1;
+  cursor: pointer;
+  color: var(--iflyv-icon-3);
+  transition: color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+.search-mini__search-icon:hover {
+  color: var(--iflyv-brand-primary);
+}
+
+/* 展开态：收起态展开时用宽度动画，营造从按钮「长出」输入框的观感 */
+.search-mini__input--collapsible {
+  animation: search-mini-expand var(--iflyv-duration-normal) var(--iflyv-ease-decelerate);
+}
+@keyframes search-mini-expand {
+  from {
+    width: var(--iflyv-a3-component-size);
+    opacity: 0;
+  }
+  to {
+    width: var(--search-mini-width);
+    opacity: 1;
+  }
+}

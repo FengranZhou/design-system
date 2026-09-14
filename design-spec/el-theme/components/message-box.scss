@@ -1,6 +1,340 @@
 /* ======================================================================== */
 /* ===================== MessageBox 样式覆盖 =============================== */
 /* ======================================================================== */
+/* 目标：让命令式 MessageBox 与 Dialog 的「提示弹窗」形态**长得完全一样**——
+   同一套圆角(12)/宽度(400)/阴影/标题字阶/关闭按钮/footer 按钮规范，
+   以及同一套语义图标（20×20 圆形彩色底板 + 白色 Lucide 图标）。
+   规格全部对齐 dialog.scss 的语义变体段，改那边时这里要一并改（见文末对账清单）。
 
-/* 组件级变量覆盖（EP 在 .el-message-box 作用域声明，:root 级覆盖无效） */
-.el-message-box { --el-messagebox-error-font-size: var(--iflyv-font-size-12); }
+   ┌─ 接入方速查 ──────────────────────────────────────────────────────────┐
+   确认框（危险操作，如删除）：
+     ElMessageBox.confirm('删除后不可恢复，确认删除？', '删除确认', {
+       type: 'error',                 // ← 决定图标：error/warning/success/info
+       confirmButtonText: '删除',
+       cancelButtonText: '取消',
+     })
+   警示确认：type: 'warning'    信息确认：type: 'info'    成功告知：type: 'success'
+
+   ⚠ `type` 必传：不传则无图标，退化成一个只有文字的框，与 Dialog 提示弹窗观感不一致。
+   ⚠ 图标语义对齐 Dialog 的四个变体类：
+       type: 'error'   ≡ <el-dialog class="is-danger">   红底叉号
+       type: 'warning' ≡ <el-dialog class="is-warning">  橙底感叹号
+       type: 'success' ≡ <el-dialog class="is-success">  绿底勾
+       type: 'info'    ≡ <el-dialog class="is-info">     蓝底 i
+     EP 的 `type: 'primary'` **未适配**（Dialog 侧无对应变体，用了拿不到底板）。
+   ⚠ 宽度固定 400（= Dialog 三档最窄档，「确认/单字段」场景）。内容超出这个宽度装不下时
+     说明它不是提示弹窗，应改用 <el-dialog> 走 640/800 档。**不要在使用方改宽度**。
+   ⚠ 何时用 MessageBox、何时用 Dialog / Popconfirm：见
+     references/component-interaction.md「MessageBox」段（选型判据在那里，不在本文件）。
+   └────────────────────────────────────────────────────────────────────┘
+
+   @depends-on: EP 结构 .el-message-box__{header,title,headerbtn,content,container,
+                status,message,btns,input,errormsg} 与 .el-message-box-icon--*。
+   @when-changed: 升级 EP 大版本若改了上述结构需同步；改 dialog.scss 的提示弹窗规格
+                  （圆角/宽度/标题字阶/图标底板尺寸/footer 间距）必须同步改本文件。
+   @see: dialog.scss「语义化标题图标变体」段（本文件的规格来源）。 */
+
+/* ==================== 遮罩层：改 flex 居中 ====================
+   EP 用「inline-block + ::after 撑满高度 + vertical-align: middle」的老式居中，
+   该方案要求 box 是 inline-block，与下面「box 用 flex column 分区」冲突。
+   这里对齐 dialog.scss 的做法：overlay 自己 flex 居中，box 不再依赖 vertical-align。
+   ⚠ 选择器必须带 `.is-message-box` 前缀凑够特异性（EP 原规则就是这个特异性，
+     少写前缀会被 EP 的 padding/text-align 压回去）。 */
+.is-message-box .el-overlay-message-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--iflyv-spacing-4);
+  text-align: start;
+
+  /* 干掉 EP 用来撑高度的伪元素：flex 居中后它会占一格、把 box 挤偏 */
+  &::after {
+    content: none;
+  }
+}
+
+/* ==================== 容器：对齐 Dialog 提示弹窗 ==================== */
+.el-message-box {
+  /* 宽度取 Dialog 最窄档 400（确认/单字段场景）。EP 默认 420 不是本系统档位。 */
+  --el-messagebox-width: 400px;
+  --el-messagebox-border-radius: var(--iflyv-radius-lg);
+  /* 组件级变量：EP 在 .el-message-box 作用域声明，:root 级覆盖无效 */
+  --el-messagebox-error-font-size: var(--iflyv-font-size-12);
+  --el-messagebox-title-color: var(--iflyv-text-1);
+  --el-messagebox-content-color: var(--iflyv-text-2);
+  --el-messagebox-content-font-size: var(--iflyv-font-size-14);
+
+  /* 容器自身不给内边距，改由 header / content / btns 三区各自补齐——
+     与 dialog.scss 同一策略（那边理由是「贴边内容只需去掉一处」，这里为的是两者规格可对账）。
+     补齐后视觉位置与 Dialog 提示弹窗一致：左右 24、上 12、下 20。 */
+  padding: 0;
+  /* EP 用 inline-block 配合老式居中；overlay 已改 flex，这里换成 flex column 分区，
+     与 dialog.scss 一致（header/btns 固定、content 吃剩余高度并内部滚动）。 */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--iflyv-bg-panel);
+  box-shadow: var(--iflyv-shadow-independent);
+  /* 高度下限取 Dialog 的**提示弹窗**档 160（非操作弹窗的 240）——
+     提示内容轻（一两行文案 + 按钮），240 会撑出大片空白。上限同 Dialog。 */
+  min-height: 160px;
+  max-height: calc(100vh - 120px);
+}
+
+/* ==================== 标题栏 Header ====================
+   规格逐项对齐 dialog.scss 的 .el-dialog__header：上 12 / 左右 24 / 下 12 + margin-bottom 8。 */
+.el-message-box__header {
+  flex-shrink: 0;
+  padding: 12px var(--iflyv-spacing-6);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+
+  /* EP 给 show-close 加了物理 padding-right 让文字避开关闭按钮；
+     本层关闭按钮定位方式与 Dialog 一致（绝对定位在右上、不占流），
+     故改用逻辑属性给等量避让，避免 RTL 下让错方向。 */
+  &.show-close {
+    padding-right: unset;
+    padding-inline-end: calc(var(--iflyv-spacing-6) + 24px);
+  }
+}
+
+/* 标题字阶对齐 Dialog：16 / 24 / 600 / text-1 */
+.el-message-box__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--iflyv-font-size-16);
+  line-height: var(--iflyv-line-height-24);
+  font-weight: 600;
+  color: var(--iflyv-text-1);
+}
+
+/* ==================== 关闭按钮 ====================
+   与 dialog.scss 同一实现：EP 自带图标 visibility:hidden，::after 用 SVG mask 画 Lucide X。
+   为什么不复用 EP 图标：EP 用的是自家 icon 字体/组件，与全站 Lucide 风格不统一。 */
+.el-message-box__headerbtn {
+  top: 12px;
+  right: unset;
+  inset-inline-end: var(--iflyv-spacing-6);
+  width: 24px;
+  height: 24px;
+  color: var(--iflyv-icon-3);
+
+  &:hover { color: var(--iflyv-icon-2); }
+
+  /* EP 在 :focus / :hover 时把图标改成品牌色；本系统关闭按钮统一走 icon 色阶，
+     故连 focus 态一并收敛（选择器与 EP 同特异性才压得住）。 */
+  &:focus .el-message-box__close,
+  &:hover .el-message-box__close {
+    color: inherit;
+  }
+
+  .el-message-box__close { visibility: hidden; }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: currentColor;
+    pointer-events: none;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / 16px;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") no-repeat center / 16px;
+  }
+}
+
+/* ==================== 内容区 Content ====================
+   对齐 dialog.scss 的 .el-dialog__body：左右 24、上下不补（间距由 header 的 margin-bottom
+   与 btns 的 padding-top 给），内容超高时仅本区滚动、header/btns 固定。 */
+.el-message-box__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 var(--iflyv-spacing-6);
+  color: var(--iflyv-text-2);
+  font-size: var(--iflyv-font-size-14);
+}
+
+.el-message-box__message {
+  min-width: 0;
+  margin: 0;
+
+  p {
+    margin: 0;
+    line-height: var(--iflyv-line-height-22);
+  }
+}
+
+/* ==================== 语义图标：从内容区移到标题前 ====================
+   ⚠ 这是本文件最关键的一处结构差异，也是「与 Dialog 长得一样」的成立前提：
+     · Dialog  的语义图标由 .el-dialog__title::before 画，在**标题前**；
+     · MessageBox 的图标是 DOM 里的真实元素 .el-message-box__status，
+       EP 把它放在 __content > __container 内、与文案**并排**（图标在左、文字在右）。
+     两者位置根本不同，只调色调不出同一个东西。故这里把 status 元素**移出内容区、
+     定位到标题前**，再按 Dialog 的规格重画成「圆形彩色底板 + 白色图标」。
+
+   做法：__container 恢复块级（取消 EP 的 flex 并排），status 绝对定位到 header 的标题位。
+   定位基准是 .el-message-box（EP 已给它 position: relative）。
+   坐标 = header 的 padding（上 12 / 左 24），与标题文字同一条基线；
+   标题的 gap: 8 + 图标 20 宽，正好让文字从 24+20+8=52 处开始（与 Dialog 一致）。 */
+.el-message-box__container {
+  display: block;
+}
+
+.el-message-box__status {
+  position: absolute;
+  top: 12px;
+  inset-inline-start: var(--iflyv-spacing-6);
+  /* 底板 20×20，与 dialog.scss 的 ::before 同尺寸 */
+  width: 20px;
+  height: 20px;
+  /* EP 给 status 设了 24px 字号来撑自家 icon 字体；这里图标改用 background-image，
+     字号不再参与渲染，归零避免影响行盒高度。 */
+  font-size: 0;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* 内部图标 14×14，与 dialog.scss 一致 */
+  background-size: 14px 14px;
+
+  /* EP 用 ::before 塞自家 icon 字体的字形，且给 status 上了语义色 color；
+     本层图标走 background-image（白色 SVG），故把字形隐掉。 */
+  &::before {
+    content: none;
+  }
+
+  /* EP 的 el-icon（svg 形态）也要隐掉——不同 EP 小版本二者其一 */
+  > svg {
+    display: none;
+  }
+}
+
+/* 标题需要给图标让位：left padding 之外再让出 20(图标) + 8(gap)。
+   ⚠ 只在有 status 时让位——不传 type 时没有该元素，让位会让标题凭空缩进。
+   :has() 作用域限定在 .el-message-box 内，不影响其他组件。 */
+.el-message-box:has(.el-message-box__status) .el-message-box__title {
+  padding-inline-start: calc(20px + 8px);
+}
+
+/* ==================== 四个语义图标（底板色 + 白色 Lucide 图标）====================
+   SVG 与配色逐个对齐 dialog.scss 的 is-danger / is-warning / is-success / is-info，
+   两处必须一致——同一个语义在 Dialog 与 MessageBox 里不能长得不一样。
+   白色图标颜色硬编码在 SVG 内：「彩色底板 + 白色图标」在亮/暗模式都成立。 */
+
+/* error ≡ Dialog 的 is-danger：红底 + 叉号（Lucide X） */
+.el-message-box__status.el-message-box-icon--error {
+  background-color: var(--iflyv-danger-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E");
+}
+
+/* warning ≡ is-warning：橙底 + 感叹号（笔画拉长到 7px 以匹配 X/Check 的视觉跨度） */
+.el-message-box__status.el-message-box-icon--warning {
+  background-color: var(--iflyv-warning-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 6v7'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+}
+
+/* success ≡ is-success：绿底 + 勾（Lucide Check） */
+.el-message-box__status.el-message-box-icon--success {
+  background-color: var(--iflyv-success-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+
+/* info ≡ is-info：蓝底 + 字母 i（与感叹号镜像对称） */
+.el-message-box__status.el-message-box-icon--info {
+  background-color: var(--iflyv-info-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 18v-7'/%3E%3Cpath d='M12 7h.01'/%3E%3C/svg%3E");
+}
+
+/* EP 的 type: 'primary' 未适配——Dialog 侧没有对应语义变体（品牌色不用于提示语义）。
+   显式画成中性灰底问号，让误用**看得见**（而不是拿到无底板的裸图标，
+   排查时误以为样式没加载）。正确做法：改用上面四类之一。 */
+.el-message-box__status.el-message-box-icon--primary {
+  background-color: var(--iflyv-text-3);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+}
+
+/* ==================== 按钮区 Btns ====================
+   对齐 dialog.scss 的 .el-dialog__footer：上 20 / 左右 24 / 下 20、右对齐、gap 12。
+   按钮顺序同 Dialog：DOM 里「取消 → 确认」，flex-end 让其整体右对齐
+   （主按钮贴右 = 主按钮贴边原则在右对齐容器里的结果）。 */
+.el-message-box__btns {
+  flex-shrink: 0;
+  padding: 20px var(--iflyv-spacing-6);
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  /* EP 默认 flex-wrap: wrap；400 宽装两个按钮不会换行，不换行更可控 */
+  flex-wrap: nowrap;
+
+  /* 与 button.scss 的全局清零策略一致（双保险）：间距一律由父容器 gap 给 */
+  .el-button + .el-button {
+    margin-inline-start: 0;
+  }
+}
+
+/* ==================== prompt 输入框与校验错误 ====================
+   ElMessageBox.prompt() 用。输入框与上方文案间距取 spacing-3(12)，
+   同 Dialog 内「说明文字 + 单字段」的贴合关系。 */
+.el-message-box__input {
+  padding-top: var(--iflyv-spacing-3);
+}
+
+/* 错误提示：字号走组件变量（顶部已映射 font-size-12），色走语义 danger。
+   位置在输入框下方——与 form-pattern「错误提示放输入域下方」一致。 */
+.el-message-box__errormsg {
+  color: var(--iflyv-danger-primary);
+  line-height: var(--iflyv-line-height-20);
+}
+
+/* ==================== EP 的 --center 居中形态：未启用 ====================
+   本系统提示弹窗统一「图标 + 标题左对齐、按钮右对齐」（同 Dialog），不提供居中形态。
+   EP 的 center: true 会把标题与按钮都拉到中间，与 Dialog 观感分叉。
+   这里不写任何 --center 适配：传了只会拿到半成品（标题居中但图标仍在绝对定位上），
+   **这是有意的**——让误用看得出来，而不是静默支持两套观感。 */
+
+/* ==================== 与 dialog.scss 的对账清单 ====================
+   本文件规格全部来自 dialog.scss 的「提示弹窗」形态。改那边时逐条核对这里：
+
+   | 规格项        | dialog.scss                    | 本文件                           |
+   |---------------|--------------------------------|----------------------------------|
+   | 圆角          | .el-dialog radius-lg           | --el-messagebox-border-radius    |
+   | 宽度          | 三档 400/640/800               | 固定 400（仅最窄档）             |
+   | 高度下限      | 语义变体 160px                 | .el-message-box min-height       |
+   | 高度上限      | calc(100vh - 120px)            | 同值                             |
+   | 遮罩居中      | .el-overlay-dialog flex 居中   | .el-overlay-message-box 同       |
+   | header 内边距 | 12 / 24 / 12 + mb 8            | 同值                             |
+   | 标题字阶      | 16 / 24 / 600 / text-1         | 同值                             |
+   | 图标底板      | ::before 20×20 圆 + 图标 14×14 | __status 绝对定位，同尺寸        |
+   | 图标 SVG × 4  | is-danger/warning/success/info | icon--error/warning/success/info |
+   | 关闭按钮      | 24×24、mask Lucide X、icon-3   | 同值                             |
+   | body 内边距   | 左右 24、上下不补              | __content 同                     |
+   | footer        | 20 / 24 / 20、flex-end、gap 12 | __btns 同                        |
+
+   ⚠ 「宽度」一行是有意的差异：MessageBox 只做提示，不承载 640/800 档的富内容。 */
+
+/* ==================== 主按钮语义强制对齐 ====================
+   规范 component-interaction.md:1236 要求变体类与主按钮 type 必须匹配语义：
+     is-danger 配 type="danger"，其余三类配 type="primary"。
+   EP 不会根据 type: 'error' 自动改按钮色，需下游手动传 confirmButtonClass，
+   漏传就拿到绿色主按钮（危险标题 + 品牌色按钮，让用户误判危险性）。
+   这里用 CSS 强制对齐：检测到 icon--error 时，把 footer 里的 primary 按钮外观
+   改成 danger（背景/边框/文字色 + hover/active 态），下游零成本拿到正确观感。
+
+   ⚠ 为什么不在 button.scss 做：那是基础组件，不该反向依赖 MessageBox 的语义；
+     MessageBox 是应用层组合（调用 button），这里做符合依赖方向。
+   ⚠ 为什么不要求下游传 confirmButtonClass：能在源头保证的观感不该依赖下游纪律，
+     且 EP 默认值不报错、漏传静默拿到错误观感，正是源头规则要兜住的形态。
+   ⚠ warning / success / info 不改：它们配 primary 主按钮已是正确观感，不动。 */
+
+/* 有 error 图标时，btns 里的 primary 按钮外观改用 danger */
+.el-message-box:has(.el-message-box-icon--error) .el-message-box__btns .el-button--primary {
+  /* 三态对齐 button.scss 的 el-button--danger */
+  --el-button-bg-color: var(--iflyv-danger-primary);
+  --el-button-border-color: var(--iflyv-danger-primary);
+  --el-button-text-color: var(--el-color-white);
+  --el-button-hover-bg-color: var(--iflyv-danger-hover);
+  --el-button-hover-border-color: var(--iflyv-danger-hover);
+  --el-button-hover-text-color: var(--el-color-white);
+  --el-button-active-bg-color: var(--iflyv-danger-active);
+  --el-button-active-border-color: var(--iflyv-danger-active);
+}

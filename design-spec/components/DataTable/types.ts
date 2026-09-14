@@ -37,8 +37,20 @@ export interface DataTableColumn {
   width?: number | string
   /** 最小列宽（px） */
   minWidth?: number | string
-  /** 是否可排序（表头「带排序」类型） */
-  sortable?: boolean
+  /**
+   * 是否可排序（表头「带排序」类型）。一律用本字段，禁在表头塞图标自接 click 造排序箭头
+   * （会丢 sort-change / 多列排序，箭头也与源头 table.scss 的 Lucide 风格对不上）。
+   *   true     → 交给 EP 本地排序，**仅当 data 是全量数据时才正确**；
+   *   'custom' → 只渲染箭头并抛 sort-change，排序由服务端做。
+   * ⚠️ **服务端分页的表格必须用 'custom'** —— 传 true 时 EP 只对「当前页」重排，
+   *    用户以为是全量排序，实际是本页内排序，**静默出错、不报错不告警**。
+   */
+  sortable?: boolean | 'custom'
+  /**
+   * 单元格对齐。不传时 kind='amount' 自动右对齐（数值右对齐便于比较），其余左对齐。
+   * 传值优先于 kind 的自动判断。
+   */
+  align?: 'left' | 'center' | 'right'
   /** 是否固定（主题区常 'left'、其它按需） */
   fixed?: 'left' | 'right' | boolean
   /**

@@ -30,7 +30,7 @@
  */
 
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs'
-import { join, dirname } from 'node:path'
+import { join, dirname, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -83,7 +83,18 @@ const walk = (dir, ext = '.md') => {
     return e.isDirectory() ? walk(p, ext) : e.name.endsWith(ext) ? [p] : []
   })
 }
-const rel = (p) => p.replace(ROOT + '/', '')
+/**
+ * 绝对路径 → 仓库内相对路径（POSIX 分隔符）。
+ *
+ * ⚠️ 生成物入库，所以本函数的输出必须**与操作系统无关** ——
+ *    原实现是 `p.replace(ROOT + '/', '')`，在 Windows 上 ROOT 是反斜杠路径
+ *    （`D:\...\xy-design-system`），拼上 '/' 永不匹配，replace 静默不生效，
+ *    于是把**绝对路径**写进了 rules.generated.json：换台机器（甚至换个盘符）
+ *    重跑就是全文件抖动 → 每次都与他人的提交冲突，且冲突全是噪音。
+ *    改用 path.relative 求相对路径，再统一转成 '/'，Windows 与 mac 产出一致。
+ * @when-changed: 保持输出为 POSIX 分隔符；这是 CI 的 --check 能跨平台通过的前提。
+ */
+const rel = (p) => relative(ROOT, p).replace(/\\/g, '/')
 
 // ── 解析标记 ─────────────────────────────────────────────
 // 形如：<!-- @rule id=xxx level=MUST cat=颜色 detect=regex -->
@@ -148,7 +159,8 @@ const seenIds = new Map()
 for (const file of walk(REFS)) {
   // 提取产物自身与评判标准文档不参与扫描（避免自我引用循环）
   if (file.endsWith('rules.generated.json')) continue
-  const lines = readFileSync(file, 'utf8').split('\n')
+  // 统一换行符为 LF（Windows CRLF → LF），避免行号计算偏移
+  const lines = readFileSync(file, 'utf8').replace(/\r\n/g, '\n').split('\n')
 
   // 围栏代码块内的标记是「文档在讲语法」，不是真条目 —— 跳过，
   // 否则 judging-criteria.md 里的示例会被当成重复 id 报错。
@@ -258,7 +270,8 @@ if (CHECK_ONLY) {
   }
   console.log(`✓ 条目提取一致（${payload.total} 条）`)
 } else {
-  writeFileSync(OUT, json)
+  // 写入时显式 utf8 编码，确保 JSON 里的 \n 保持 LF（不被 Windows 转 CRLF）
+  writeFileSync(OUT, json, 'utf8')
   const auto = payload.byDetect.regex + payload.byDetect.ast
   console.log(`✓ 提取 ${payload.total} 条评判条目 → ${rel(OUT)}`)
   console.log(

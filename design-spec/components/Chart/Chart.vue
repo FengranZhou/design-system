@@ -72,9 +72,9 @@
   <div class="iflyv-chart">
     <!-- 标题与横排图例同处一个 flex 行：垂直居中是布局事实，不再依赖 canvas 内像素偏移估算；
          图例过多放不下时收纳成「+N」（头行高度恒定），点开 el-dropdown 面板查看并开关其余序列 -->
-    <div v-if="title || legendItems.length" class="iflyv-chart__head">
+    <div v-if="title || (props.showLegend && legendItems.length)" class="iflyv-chart__head" :class="{ 'iflyv-chart__head--legend-only': !title && props.showLegend && legendItems.length }" :style="!title && props.showLegend && legendItems.length ? { paddingRight: legendRightPadding } : {}">
       <span v-if="title" class="iflyv-chart__title" :class="titleLevel !== 'component' && `iflyv-chart__title--${titleLevel}`">{{ title }}</span>
-      <div v-if="legendItems.length" class="iflyv-chart__legend">
+      <div v-if="props.showLegend && legendItems.length" class="iflyv-chart__legend">
         <button
           v-for="it in visibleLegendItems"
           :key="it.name"
@@ -85,7 +85,8 @@
           @mouseenter="hoverSeries(it.name, true)"
           @mouseleave="hoverSeries(it.name, false)"
         >
-          <i class="iflyv-chart__legend-dot" :style="{ background: it.color }"></i>{{ it.name }}
+          <i v-if="it.kind === 'line'" class="iflyv-chart__legend-line" :style="{ background: it.color }"></i>
+          <i v-else class="iflyv-chart__legend-dot" :style="{ background: it.color }"></i>{{ it.name }}
         </button>
         <el-dropdown v-if="hiddenLegendItems.length" trigger="hover" :hide-on-click="false" @command="toggleLegend">
           <button type="button" class="iflyv-chart__legend-item iflyv-chart__legend-more">+{{ hiddenLegendItems.length }}</button>
@@ -93,7 +94,8 @@
             <el-dropdown-menu>
               <el-dropdown-item v-for="it in hiddenLegendItems" :key="it.name" :command="it.name">
                 <span class="iflyv-chart__legend-option" :class="{ 'is-off': legendOff[it.name] }">
-                  <i class="iflyv-chart__legend-dot" :style="{ background: it.color }"></i>{{ it.name }}
+                  <i v-if="it.kind === 'line'" class="iflyv-chart__legend-line" :style="{ background: it.color }"></i>
+                  <i v-else class="iflyv-chart__legend-dot" :style="{ background: it.color }"></i>{{ it.name }}
                 </span>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -164,6 +166,8 @@ const props = withDefaults(
     titleLevel?: 'component' | 'module' | 'regular'
     /** 单序列的序列名：传了就展示图例（规范：只有一组数据也展示图例，保持多图统一） */
     seriesName?: string
+    /** 是否显示图例：默认 true，设为 false 可隐藏图例 */
+    showLegend?: boolean
     /** 数值单位（如 '%'、'万'）：展示在数值轴顶部并拼进浮层数值 */
     unit?: string
     /** 仅 bar-line：右轴（折线）单位 */
@@ -175,7 +179,7 @@ const props = withDefaults(
     centerLabel?: string
     option?: Record<string, unknown>
   }>(),
-  { data: () => [], height: 240, titleLevel: 'component' },
+  { data: () => [], height: 240, titleLevel: 'component', showLegend: true },
 )
 
 const canvasEl = ref<HTMLElement | null>(null)
@@ -186,7 +190,7 @@ let chart: echarts.ECharts | null = null
 // 挪进同一个 flex 行后居中是布局事实，且图例过多时自动换行、绘图区自动让位。
 // 环形/饼保留 canvas 纵排图例（带数值占比、与圆心天然同轴，无对齐痛点）。
 const H_LEGEND_TYPES = ['bar', 'line', 'bar-line', 'scatter', 'radar']
-const legendItems = ref<{ name: string; color: string }[]>([])
+const legendItems = ref<{ name: string; color: string; kind?: 'line' | 'bar' }[]>([])
 const legendOff = ref<Record<string, boolean>>({})
 // 横排图例（legendItems）与环/饼纵排图例（pieRows）二者只会有其一非空，合并映射即可通吃
 const legendSelected = () => Object.fromEntries([...legendItems.value, ...pieRows.value].map((it) => [it.name, !legendOff.value[it.name]]))
@@ -263,11 +267,15 @@ const hiddenLegendItems = computed(() => legendItems.value.slice(visibleCount.va
 function computeLegendItems() {
   if (!H_LEGEND_TYPES.includes(props.type)) return []
   const names = props.series?.length
-    ? props.series.map((sr) => sr.name)
+    ? props.series.map((sr) => ({ name: sr.name, kind: sr.kind }))
     : props.seriesName
-      ? [props.seriesName]
+      ? [{ name: props.seriesName, kind: undefined }]
       : []
-  return names.map((name, i) => ({ name, color: token(SERIES_COLOR_TOKENS[i % SERIES_COLOR_TOKENS.length]) }))
+  return names.map((item, i) => ({
+    name: item.name,
+    kind: item.kind,
+    color: token(SERIES_COLOR_TOKENS[i % SERIES_COLOR_TOKENS.length])
+  }))
 }
 legendItems.value = computeLegendItems()
 
@@ -746,6 +754,10 @@ watch(
   min-height: 20px;
   margin-bottom: var(--iflyv-spacing-2);
 }
+/* 只有图例没有标题时：图例靠右对齐 */
+.iflyv-chart__head--legend-only {
+  justify-content: flex-end;
+}
 /* 标题：组件标题字阶 */
 /* 标题字阶按 title-level 取档：图表标题的层级由它在页面里的位置决定，不是图表自带属性——
    卡片内的一张图＝组件级（默认）；独占一个模块/分区时＝模块级或常规标题 */
@@ -793,6 +805,13 @@ watch(
   width: 12px;
   height: 12px;
   border-radius: 2px;
+  flex: none;
+}
+/* 折线图例：水平线条样式 */
+.iflyv-chart__legend-line {
+  width: 16px;
+  height: 2px;
+  border-radius: 1px;
   flex: none;
 }
 /* 关闭态：整体降透明（与 ECharts 原生图例灰化同语义） */
