@@ -1428,7 +1428,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--iflyv-spacing-1_5);
+  gap: var(--iflyv-spacing-1);
   color: var(--iflyv-text-on-dark);
   /* 10/14：卡内元信息比 body-min(12) 再收一档
      TODO 待令牌化：字阶最小为 12，用户确认先硬编码 */
@@ -1442,7 +1442,12 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
 }
 
 .page-frame__course-meta-divider {
-  color: var(--iflyv-border-on-dark);
+  /* audit-ignore 经用户确认此处特殊处理、不走令牌：分隔符压在课程卡封面图上，
+     语义令牌 border-on-dark（白 10%）是给「深底描边」用的，压在图片上几乎看不见；
+     而把它整体调亮又会让今后所有深底描边跟着变重。故此处单独硬编码白 50%——
+     它既不是描边也不是文字（text-on-dark 纯白会比两侧文字还抢眼），
+     当前无对应语义档位，不新增令牌。 */
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* 侧栏滚动区（el-scrollbar 外壳）：课程卡 + 导航同处其中，一起滚动（课程卡不吸顶） */
