@@ -1,0 +1,43 @@
+.ant-calendar-picker,
+.ant-time-picker {
+  font-size: var(--iflyv-font-size-14);
+}
+
+.ant-calendar-picker-input,
+.ant-time-picker-input {
+  border-color: var(--iflyv-border-default);
+  border-radius: var(--iflyv-radius-sm);
+  color: var(--iflyv-text-1);
+}
+
+.ant-calendar-picker-input:hover,
+.ant-time-picker-input:hover {
+  border-color: var(--iflyv-brand-primary);
+}
+
+.ant-calendar-picker:focus .ant-calendar-picker-input,
+.ant-calendar-picker-open .ant-calendar-picker-input,
+.ant-time-picker-input:focus {
+  border-color: var(--iflyv-brand-primary);
+  box-shadow: none;
+}
+
+.ant-calendar-selected-day .ant-calendar-date,
+.ant-calendar-today .ant-calendar-date {
+  border-color: var(--iflyv-brand-primary);
+}
+
+.ant-calendar-selected-date .ant-calendar-date,
+.ant-calendar-selected-start-date .ant-calendar-date,
+.ant-calendar-selected-end-date .ant-calendar-date {
+  background: var(--iflyv-brand-primary);
+  color: var(--iflyv-text-on-dark);
+}
+
+.ant-calendar-date:hover {
+  background: var(--iflyv-brand-bg);
+}
+
+.ant-calendar-range .ant-calendar-in-range-cell::before {
+  background: var(--iflyv-brand-bg);
+}

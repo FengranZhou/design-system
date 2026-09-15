@@ -25,8 +25,6 @@
         v-model:active="activeKey"
         :menus="menus"
         :course="course"
-        :breadcrumbs="breadcrumbs"
-        :back-disabled="true"
         avatar-role="teacher-male"
         user-name="王老师"
       >
@@ -135,9 +133,6 @@ const course: PageFrameCourse = {
     { key: 'qrcode', label: '打开二维码' },
   ],
 }
-
-// 面包屑首项 = 所在分组的组标题（同 PageFrameDemo 口径）；组标题非实体页 → 返回箭头禁用
-const breadcrumbs = [{ label: '典型页面' }, { label: '公开信息设置' }]
 
 // —— 页面内容数据 ——
 const activeTab = ref('ai')

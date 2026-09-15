@@ -319,6 +319,90 @@ body {
   height: var(--iflyv-a3-component-size);
 }
 
+/* 配置项释义：单选/开关下方的补充说明文字 */
+.config-card__hint {
+  margin: var(--iflyv-spacing-1) 0 0;
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-min);
+}
+
+/* Slider 定宽容器（纯本页排版，源头无默认宽度） */
+.slider-host {
+  width: 400px;
+  max-width: 100%;
+}
+
+/* 左示例 + 右配置卡横向布局的通用变体（Avatar / Badge / Descriptions / Empty 共用） */
+.avatar-showcase,
+.badge-showcase,
+.descriptions-showcase,
+.empty-showcase {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--iflyv-spacing-8) + var(--iflyv-spacing-4));
+}
+.avatar-showcase__main,
+.badge-showcase__main,
+.descriptions-showcase__main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 头像：独立展示每个角色，纵向图 + 名 */
+.avatar-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--iflyv-spacing-2);
+}
+.avatar-cell__label {
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-sub);
+}
+
+/* 头像组：叠加显示 */
+.avatar-group {
+  display: flex;
+}
+.avatar-group__item {
+  display: inline-flex;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--iflyv-bg-panel);
+}
+.avatar-group__item:not(:first-child) {
+  margin-inline-start: calc(-1 * var(--avatar-overlap, 12px));
+}
+
+/* Badge 说明与示例行间距放大（角标会向上溢出宿主顶边） */
+.badge-showcase .demo-desc {
+  margin-bottom: var(--iflyv-spacing-5);
+}
+
+/* Empty 预览：左预览居中 + 右配置卡加宽一档 */
+.empty-preview {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+.empty-showcase .config-card {
+  width: 280px;
+}
+
+/* 配置项多的页面配置卡加宽一档（Alert / Dialog / Drawer / Notification 共用） */
+.config-card--wide {
+  flex: 0 0 auto;
+  width: 400px;
+}
+
+/* Skeleton 白底衬底：灰条铺在浅灰上对比弱，套白底衬托 */
+.skeleton-panel {
+  width: 300px;
+  padding: var(--iflyv-spacing-4);
+  background: var(--iflyv-bg-panel);
+  border-radius: var(--iflyv-radius-md);
+}
+
 /* 左侧网格 + 右侧配置卡片横向布局。不含组件外观规则。 */
 .button-showcase {
   display: flex;

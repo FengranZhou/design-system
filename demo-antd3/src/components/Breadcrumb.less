@@ -1,0 +1,23 @@
+/* Breadcrumb 业务组件骨架样式 —— 对位 design-spec/components/Breadcrumb/Breadcrumb.vue 的 scoped 部分。
+   只装扮组件自己的骨架（flex 对齐容器、`…` 折叠触发器），
+   返回箭头外观（图标/间距/色态）与面包屑外观均归 antd3-theme/breadcrumb.less 源头，不在此覆盖。 */
+
+/* 只装扮自己的骨架：flex 让返回箭头与面包屑基线对齐 */
+.biz-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* `…` 折叠触发器：本组件自己的骨架元素（非基础组件），做成可点击的路径占位。
+   字号继承 ant-breadcrumb（源头 13/18）；色态对齐路径项：常态 text-3、hover 品牌绿。 */
+.breadcrumb-more__trigger {
+  cursor: pointer;
+  color: var(--iflyv-text-3);
+  line-height: 1;
+  letter-spacing: var(--iflyv-spacing-0_5); /* … 三点略微拉开，视觉更像省略号 */
+  transition: color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+
+.breadcrumb-more__trigger:hover {
+  color: var(--iflyv-brand-primary);
+}

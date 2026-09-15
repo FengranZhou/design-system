@@ -1624,34 +1624,59 @@ ${steps}
 
   {
     id: 'page-frame', anchor: 'page-frame', name: 'PageFrame 页面框架', group: 'business',
-    desc: '整页骨架（侧边导航 + 顶栏 + 内容区）', keywords: ['页面框架', 'pageframe', '布局', '骨架', '侧边导航'],
+    desc: '整页骨架（侧边导航 + 底部用户区 + 内容区）', keywords: ['页面框架', 'pageframe', '布局', '骨架', '侧边导航'],
     readRefs: ['components/PageFrame/PageFrame.vue（顶部速查注释）'],
     mustRules: [
       '先判粒度：要整页骨架才用 PageFrame；只是页面内部加局部导航不要套（过重），用 el-tabs 或 el-anchor',
       '禁手写 aside/header 拼同款框架、禁用 el-menu/el-container 复刻（el-menu 已暂停启用）',
       '页面内容放默认插槽（白色圆角内容卡内的滚动区）',
       '含页面级 tab 的工具栏放 #page-header 插槽（滚动区之外、始终可见）；纯页面标题工具栏仍放默认插槽、跟着内容滚走',
+      '框架不提供顶栏、也没有面包屑相关的 prop/插槽/事件：层级返回归业务在内容区自行处理（需要时在 #page-header 或内容里用业务组件 Breadcrumb）；传 :breadcrumbs 不报错但什么都不渲染',
       '导航是否分组由 menus 每组传不传 title 决定：传了才渲染组标题，不传即平铺成一条连续列表',
       '头像下拉菜单项由业务方传 :avatar-menus，框架一项不写死；divided 分段、danger 标红破坏性项，禁自写红色或自插分隔线',
       '侧栏底部用户区分列两端：左=头像+user-name 身份区，右=帮助/消息图标组；不需要某个入口用 show-help / show-notice 关掉',
+      '导航末尾的「更多」收纳入口由 show-more 控制、默认关闭；开启后接 v-model:more-keys，关掉时已收纳的项会回到主导航',
+      '课程卡右上「更多」下拉由 course.menus 有没有内容决定（无额外 prop），菜单项全部由业务方传入、框架一项不写死；不需要就不传 menus',
+      '只换课程卡里那行课程名/元信息用 #course-info 插槽（封面图、右上「更多」入口、压暗蒙层与定位仍由源头给）；整块换掉含封面的卡片才用 #course-card。禁止为改文字去写 :deep(.page-frame__course-name) —— 那是局部私货，直接复用该约定 class 即可（源头已用 :slotted 放行）',
     ],
     instanceFields: [
       { key: 'grouped', label: '导航分组', type: 'switch', default: true },
+      { key: 'showMore', label: '「更多」入口', type: 'switch', default: false },
+      { key: 'courseMenuEnabled', label: '课程卡更多', type: 'switch', default: false },
+      { key: 'courseInfoCustom', label: '课程卡信息区自定义', type: 'switch', default: false },
     ],
-    snippet: ({ grouped }) => {
+    snippet: ({ grouped, showMore, courseMenuEnabled, courseInfoCustom }) => {
       // 分组与否只体现在 menus 每组传不传 title —— 组件无需任何 prop
       const groupTitle = grouped === false ? '' : `\n    title: '教学管理',`
+      // 「更多」默认关闭：不开就一行都不写，避免下游照抄出用不上的 prop
+      const more = showMore ? `\n  show-more\n  v-model:more-keys="moreKeys"` : ''
+      // 课程卡右上「更多」下拉：由 course.menus 有没有内容决定，组件无需额外 prop
+      const courseMenus = courseMenuEnabled ? `
+  // 卡片右上「更多」下拉：菜单项按自己系统的功能配，框架一项不写死
+  menus: [
+    { key: 'detail', label: '查看课程首页' },
+    { key: 'setting', label: '课程设置' },
+  ],` : ''
+      // #course-info：只换卡内信息区，封面/更多入口/蒙层与定位仍归源头
+      const courseInfoSlot = courseInfoCustom ? `
+  <!-- 只替换课程卡信息区：封面图 / 右上「更多」入口 / 压暗蒙层与定位仍由源头给。
+       课程名沿用源头约定 class（源头已用 :slotted 放行），不要自己复刻字号字重。 -->
+  <template #course-info="{ course }">
+    <p class="page-frame__course-name">{{ course.name }}</p>
+    <p class="my-course-extra">高二(3)班 · 已上 12 / 32 课时</p>
+  </template>
+` : ''
       return `<PageFrame
   :menus="menus"
   v-model:active="activeMenu"
   :course="course"
-  :breadcrumbs="breadcrumbs"
   :notice-count="3"
   avatar-role="teacher-male"
   user-name="王老师"
   :avatar-menus="avatarMenus"
-  @avatar-menu-click="key => handleAvatarMenu(key)"
->
+  @avatar-menu-click="key => handleAvatarMenu(key)"${courseMenuEnabled ? `
+  @course-menu-click="key => handleCourseMenu(key)"` : ''}${more}
+>${courseInfoSlot}
   <template #page-header>
     <!-- 含页面级 tab 的工具栏放这里；纯标题工具栏放下面默认插槽 -->
   </template>
@@ -1659,7 +1684,12 @@ ${steps}
 </PageFrame>
 
 <!-- 脚本 -->
-import { PageFrame, type PageFrameMenuGroup, type PageFrameAvatarMenuItem } from '<path>/design-spec/components'
+import { PageFrame, type PageFrameMenuGroup, type PageFrameCourse, type PageFrameAvatarMenuItem } from '<path>/design-spec/components'
+
+const course: PageFrameCourse = {
+  name: '《课程名称》',
+  meta: ['2023年春', '全网公开'],${courseMenus}
+}
 
 const menus: PageFrameMenuGroup[] = [
   {${groupTitle}
@@ -1672,7 +1702,10 @@ const menus: PageFrameMenuGroup[] = [
 const avatarMenus: PageFrameAvatarMenuItem[] = [
   { key: 'profile', label: '个人中心' },
   { key: 'logout', label: '退出登录', divided: true, danger: true },
-]`
+]${showMore ? `
+
+// 已收进「更多」的导航项 key（增删由入口浮层的 ⚙ 配置弹窗提交）
+const moreKeys = ref<string[]>([])` : ''}`
     },
   },
 

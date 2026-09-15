@@ -8,7 +8,14 @@
       <div class="control-showcase__main">
         <p class="demo-desc">常与"触发器"（按钮、图标、下拉选择器等）组合使用，当页面上的操作命令过多时，用此组件可以收纳操作元素。</p>
         <div class="demo-row">
-          <el-dropdown @visible-change="dropdownVisible = $event">
+          <!-- ⚠ 临时对比用：ref + onMounted handleOpen 常驻展开 + teleported=false 就地渲染，
+               便于与 antd3 版并排比对边框。比对完成后删除 ref/teleported/onMounted。 -->
+          <el-dropdown
+            ref="dropdownRef"
+            :teleported="false"
+            :hide-on-click="false"
+            @visible-change="dropdownVisible = $event"
+          >
             <!-- 轻量入口触发器：用 <el-button text> 承载，不用裸 span。
                  文字色 / hover 变色 / inline-flex 全在源头 button.scss，
                  且原生 <button> 自带键盘可聚焦与 role，使用方零 scoped。 -->
@@ -64,11 +71,17 @@
 
 <script setup lang="ts">
 import CopyToCC from './CopyToCC.vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 
 // Dropdown 展开态：驱动触发器箭头翻转
 const dropdownVisible = ref(false)
+
+// ⚠ 临时对比用：挂载后强制展开弹层，便于与 antd3 版并排比对边框。比对完成后删除。
+const dropdownRef = ref<any>(null)
+onMounted(() => {
+  nextTick(() => dropdownRef.value?.handleOpen?.())
+})
 
 /** 配置项：分组（打开后菜单按语义分段，每段前加抬头） */
 const grouped = ref(false)
