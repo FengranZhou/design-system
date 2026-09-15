@@ -1,19 +1,20 @@
 <!-- ============================================================================
   PageFrame 页面框架（业务组件）——接入方速查
   ----------------------------------------------------------------------------
-  何时用：整页级后台框架（左侧边导航 + 底部用户区 + 顶栏面包屑 + 白色圆角内容区），
+  何时用：整页级后台框架（左侧边导航 + 底部用户区 + 白色圆角内容区），
          如课程空间、管理后台等「进入某对象后的工作区」页面骨架。
+  ⛔ 无顶栏：本框架**不提供**顶栏，也没有面包屑相关的 prop / 插槽 / 事件。
+         层级返回归业务在内容区自行处理——需要时在 #page-header 或内容里
+         用业务组件 Breadcrumb（见 component-interaction.md Breadcrumb 段）。
   引用：  import { PageFrame } from '<path>/design-spec/components'
   用法：
     <PageFrame
       v-model:active="activeKey"
       :menus="menus"
       :course="{ name: '《智能启思从零懂智能》', meta: ['2023年春', '全网公开'] }"
-      :breadcrumbs="[{ label: '教学内容' }, { label: '课程工具' }]"
       :notice-count="13"
       avatar-role="teacher-female"
       user-name="王老师"
-      @back="router.back()"
       @back-platform="router.push('/')"
     >
       <template #page-header>                ← 不滚的页头（**仅**放含页面级 tab 的工具栏）
@@ -38,12 +39,6 @@
                                          「课程设置」「打开二维码」这类各系统有无不一，由业务方传入
                                          （同 avatarMenus 口径）；不传或空数组 → 不渲染该入口。
     back-text      string                可选，默认「我教的课」。侧边栏顶部返回按钮文案；传空串隐藏按钮。
-    breadcrumbs    BreadcrumbItem[]      可选。顶栏面包屑（内部复用业务组件 Breadcrumb）；不传则不渲染
-                                         ——且 #breadcrumb 插槽也没用时，整条 52px 顶栏一并不渲染，
-                                         内容区自动上移贴齐侧栏顶部（不会留下一条空白）。
-    back-disabled  boolean               可选。面包屑返回箭头禁用态（透传 Breadcrumb）。判据 = 面包屑倒数第二项
-                                         是不是可跳转实体页，不是层数——分组标题、只负责展开子菜单的可折叠父项
-                                         都不是实体页，以它们为上一级时须传 true（详见 Breadcrumb 速查）。
     show-help / show-notice  boolean     可选，默认 true。侧栏底部帮助 / 通知铃铛图标
                                          （均自带 el-tooltip 全称提示，向上展开）。
     help-text / notice-text  string      可选，默认「帮助中心」「消息提醒」。上述两个图标的 tooltip 文案，
@@ -60,11 +55,16 @@
                                          这类各系统有无不一）。`divided: true` = 与上一项之间加分隔线（用来分段）；
                                          `danger: true` = 破坏性操作转红字（退出登录、注销账号）。
                                          不传或空数组 → 头像只是纯点击入口（仍 emit avatar-click），不出下拉。
-    more-text      string                可选，默认「更多」。导航末尾「更多」入口的文案——该入口
-                                         **恒定存在、无开关**：它是收纳不常用功能的固定位置
-                                         （与「常用功能」相反：把低频项从主导航挪走，主导航保持精简），
-                                         没收纳任何项时也在，浮层里提示去哪配置。
-    v-model:more-keys  string[]          已收进「更多」的一级导航 key。**收进来的项从主导航消失**、
+    show-more      boolean               可选，**默认 false（不启用）**。是否在导航末尾放「更多」入口——
+                                         它是收纳不常用功能的固定位置（与「常用功能」相反：把低频项
+                                         从主导航挪走，主导航保持精简）。导航本就精简的系统不必开，
+                                         多一个空入口反而是噪音。开启后没收纳任何项时入口也在，
+                                         浮层里提示去哪配置。
+                                         ⚠️ **关闭时已收进「更多」的项会回到主导航**（moreKeys 数据保留、
+                                         重新开启原样恢复）——否则它们既不在主导航也没有浮层入口，会彻底消失。
+    more-text      string                可选，默认「更多」。「更多」入口的文案（show-more 开启时才有意义）。
+    v-model:more-keys  string[]          已收进「更多」的一级导航 key（**需 show-more 开启才生效**）。
+                                         **收进来的项从主导航消失**、
                                          只在 hover 浮层里出现；整组被收空时该组连标题一起不渲染。
                                          浮层只列出已收纳项、点即跳转；**增删配置走抬头 ⚙ 调起的配置弹窗**
                                          （800 档双栏：左「已展示」/ 右「收进更多」，⊖⊕ 互相搬运，
@@ -84,8 +84,6 @@
     走横向滚动、布局不再变化，故不存在更低的断点。）
   emits：
     menu-select(key, item)  选中某菜单项（父项展开/收起不触发）
-    back                    点击面包屑返回箭头
-    breadcrumb-click(item, index)  点击某面包屑路径项
     collapse-change(collapsed)  侧边栏收起 / 展开切换
     update:more-keys(keys)      「更多」收纳项变更（点保存才触发）
     more-select(key, item)      点击「更多」浮层里的某一项
@@ -105,7 +103,10 @@
                   内边距由 `.toolbar` 页面级档自带（上下 16 / 左右 24），本插槽不再给。
                   范本见 demo 的 CourseDashboardPageDemo / PublicInfoPageDemo。
     #course-card  整体替换侧边栏课程卡
-    #breadcrumb   整体替换顶栏左侧面包屑区
+    #course-info  只替换课程卡内的信息区（课程名 + 元信息），封面图 / 更多入口 / 蒙层
+                  与定位仍由源头给。作用域参数 `course` 可直接取用已传入的数据：
+                  <template #course-info="{ course }"> … </template>
+                  ⚠️ 整块换掉封面在内的卡片才用 #course-card，别拿本插槽重拼整卡。
     #sidebar-bottom     侧栏底部追加自定义入口，插在内置入口【之前】（展开态=头像左侧 / 收起态=最下方）
     #sidebar-bottom-end 侧栏底部追加自定义入口，插在内置入口【之后】（展开态=铃铛右侧 / 收起态=最上方）
                         ⚠ 收起态整排反向竖排（消息→帮助→头像），故"之前/之后"在竖排时上下颠倒
@@ -212,14 +213,19 @@
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
+              <!-- 信息区（课程名 + 元信息）可整块替换：封面图、更多入口、蒙层与
+                   定位仍由源头给，业务方只换这块文字内容（如换成班级/学期等自有字段）。
+                   作用域暴露 course，替换内容可直接取用数据、不必自己再传一份。 -->
               <div class="page-frame__course-info">
-                <p class="page-frame__course-name">{{ course.name }}</p>
-                <p v-if="course.meta?.length" class="page-frame__course-meta">
-                  <template v-for="(m, i) in course.meta" :key="i">
-                    <span v-if="i > 0" class="page-frame__course-meta-divider">|</span>
-                    <span>{{ m }}</span>
-                  </template>
-                </p>
+                <slot name="course-info" :course="course">
+                  <p class="page-frame__course-name">{{ course.name }}</p>
+                  <p v-if="course.meta?.length" class="page-frame__course-meta">
+                    <template v-for="(m, i) in course.meta" :key="i">
+                      <span v-if="i > 0" class="page-frame__course-meta-divider">|</span>
+                      <span>{{ m }}</span>
+                    </template>
+                  </p>
+                </slot>
               </div>
             </div>
           </slot>
@@ -326,7 +332,10 @@
               </template>
             </template>
 
-            <!-- ========== 「更多」入口：收纳不常用导航，恒在队列末尾 ==========
+            <!-- ========== 「更多」入口：收纳不常用导航，在队列末尾 ==========
+                 由 `show-more` 控制是否启用（默认关闭）：不是所有系统都需要收纳机制，
+                 导航本就精简的系统多一个空入口反而是噪音。关闭时入口不渲染，
+                 已收纳的项由 effectiveMoreKeys 一并放回主导航（数据保留，重开即恢复）。
                  浮层用 el-popover 而非 el-dropdown：它不是「一列命令，点一个就收」的菜单，
                  而是一块自定义内容面板（抬头 + 标题 + ⚙ 入口 + 可滚条目列），
                  属于 popover「自定义内容浮层」的职责。
@@ -340,6 +349,7 @@
                    故 popper 默认落在侧栏内部、压着侧栏。偏移补成 20（= 内缩 12 +
                    EP 自带 8）后，面板左缘正好落在侧栏右缘上，与内容区同起一条竖线。 -->
             <el-popover
+              v-if="showMore"
               ref="morePopoverRef"
               :visible="moreVisible"
               placement="right-start"
@@ -506,21 +516,10 @@
         </div>
       </aside>
 
-      <!-- ==================== 主区（顶栏 + 内容卡） ==================== -->
+      <!-- ==================== 主区（内容卡） ====================
+           框架不再提供顶栏：面包屑等层级返回由业务在内容区自行处理
+           （需要时在 #page-header 或内容里用业务组件 Breadcrumb）。 -->
       <div class="page-frame__main">
-        <!-- 顶栏只承载面包屑：两个来源（breadcrumbs 数据 / #breadcrumb 插槽覆盖）
-             都为空时整条不渲染，否则会留下一条 52px 的空白把内容区压下去。 -->
-        <header v-if="breadcrumbs?.length || $slots.breadcrumb" class="page-frame__topbar">
-          <slot name="breadcrumb">
-            <Breadcrumb
-              v-if="breadcrumbs?.length"
-              :items="breadcrumbs"
-              :back-disabled="backDisabled"
-              @back="emit('back')"
-              @item-click="(item, index) => emit('breadcrumb-click', item, index)"
-            />
-          </slot>
-        </header>
         <!-- 内容区：白底圆角卡，内部分「不滚的页头」+「滚动区」两段。
              #page-header 在滚动容器**之外**：只放含页面级 tab 的工具栏（须常驻），
              于是滚动条轨道只覆盖真正会滚的内容（放进滚动区里则轨道会连页头一起算进去）。
@@ -654,8 +653,6 @@ import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 // ElMessage 是函数式调用，拿不到自动按需导入，必须显式引
 import { ElMessage } from 'element-plus'
 import { House, ChevronDown, ChevronLeft, CircleHelp, Bell, Settings, Ellipsis } from 'lucide-vue-next'
-import { Breadcrumb } from '../Breadcrumb'
-import type { BreadcrumbItem } from '../Breadcrumb'
 import { UserAvatar, type AvatarRole } from '../UserAvatar'
 import type { PageFrameMenuGroup, PageFrameMenuItem, PageFrameMenuChild, PageFrameCourse, PageFrameAvatarMenuItem, PageFrameCourseMenuItem } from './types'
 // 组件自包含资源：课程卡缺省封面（使用方不传 cover 时用它，无需在自己项目放图）
@@ -672,10 +669,6 @@ const props = withDefaults(defineProps<{
   course?: PageFrameCourse
   /** 侧边栏顶部返回按钮文案；空串隐藏 */
   backText?: string
-  /** 顶栏面包屑路径项；不传则不渲染 */
-  breadcrumbs?: BreadcrumbItem[]
-  /** 面包屑返回箭头禁用态 */
-  backDisabled?: boolean
   /** 侧栏底部帮助图标 */
   showHelp?: boolean
   /** 帮助图标的 tooltip 文案（纯图标入口必须有全称，故不允许空串） */
@@ -693,13 +686,15 @@ const props = withDefaults(defineProps<{
   avatarMenus?: PageFrameAvatarMenuItem[]
   /** 头像右侧的用户名；不传则只显示头像。收起态（64px 放不下）自动隐藏 */
   userName?: string
+  /** 是否启用「更多」入口（收纳不常用导航）；关闭时入口与已收纳项一并回到主导航 */
+  showMore?: boolean
   /** 「更多」入口文案 */
   moreText?: string
   /** 已收进「更多」的导航项 key（v-model:more-keys，保存时才提交） */
   moreKeys?: string[]
 }>(), {
   backText: '我教的课',
-  backDisabled: false,
+  showMore: false,
   moreText: '更多',
   moreKeys: () => [],
   avatarMenus: () => [],
@@ -719,10 +714,6 @@ const collapsed = defineModel<boolean>('collapsed', { default: false })
 const emit = defineEmits<{
   /** 选中某菜单项（含子项）；父项的展开/收起不触发 */
   'menu-select': [key: string, item: PageFrameMenuItem | PageFrameMenuChild]
-  /** 点击面包屑返回箭头 */
-  back: []
-  /** 点击某面包屑路径项 */
-  'breadcrumb-click': [item: BreadcrumbItem, index: number]
   'back-platform': []
   'course-click': []
   'help-click': []
@@ -806,7 +797,12 @@ const toggleCollapse = () => {
 /** 「更多」入口自身是否高亮：当前选中项被收进「更多」时入口亮起，
  *  否则侧栏里没有任何一项亮着、看起来像"没选中"。
  *  提成 computed 而非在模板里写两遍——选中态 class 与双态图标都要用它。 */
-const isMoreActive = computed(() => !!active.value && props.moreKeys.includes(active.value))
+/** 实际生效的收纳 key：关掉「更多」时恒为空 —— 已收纳的项必须回到主导航，
+ *  否则它们既不在主导航、也没有浮层入口，会彻底从界面上消失。
+ *  只在读取时清空、不动 moreKeys 数据本身，重新开启即原样恢复。 */
+const effectiveMoreKeys = computed(() => (props.showMore ? props.moreKeys : []))
+
+const isMoreActive = computed(() => !!active.value && effectiveMoreKeys.value.includes(active.value))
 /** 浮层显隐：popover 走受控 visible，两态行为直接用状态表达（无需 EP 实例句柄） */
 const moreVisible = ref(false)
 
@@ -848,7 +844,7 @@ const flatSelectable = computed<(PageFrameMenuItem | PageFrameMenuChild)[]>(() =
 
 /** 收进「更多」的项（按 moreKeys 顺序取，保证与用户配置的顺序一致） */
 const moreItems = computed(() =>
-  props.moreKeys
+  effectiveMoreKeys.value
     .map((key) => flatSelectable.value.find((i) => i.key === key))
     .filter((i): i is PageFrameMenuItem | PageFrameMenuChild => !!i),
 )
@@ -864,12 +860,12 @@ const visibleMenus = computed<PageFrameMenuGroup[]>(() =>
       items: g.items
         .map((i) =>
           i.children?.length
-            ? { ...i, children: i.children.filter((c) => !props.moreKeys.includes(c.key)) }
+            ? { ...i, children: i.children.filter((c) => !effectiveMoreKeys.value.includes(c.key)) }
             : i,
         )
         // 可折叠父项：子项被收光即整项隐藏；普通一级项：自身被收才隐藏
         .filter((i) =>
-          i.children ? i.children.length > 0 : !props.moreKeys.includes(i.key),
+          i.children ? i.children.length > 0 : !effectiveMoreKeys.value.includes(i.key),
         ),
     }))
     .filter((g) => g.items.length),
@@ -1405,9 +1401,17 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   padding: var(--iflyv-spacing-5) var(--iflyv-spacing-3) var(--iflyv-spacing-1);
   background: linear-gradient(180deg, transparent 0%, var(--iflyv-mask-primary) 100%);
   text-align: center;
+  /* 定在容器而非仅子元素上：#course-info 插槽的自定义内容同样处在压暗蒙层之上，
+     由此默认即拿到可读的浅色文字，业务方不必自己配色 */
+  color: var(--iflyv-text-on-dark);
 }
 
-.page-frame__course-name {
+/* :slotted —— 让本规则同时命中 #course-info 插槽里由调用方写的同名元素。
+   scoped 样式默认只作用于本组件模板；插槽内容带的是**调用方**的 scope id，
+   不加 :slotted 的话调用方写 class="page-frame__course-name" 会完全不生效
+   （静默无样式），于是被迫在自己页面里复刻一份字号字重 = 局部私货。 */
+.page-frame__course-name,
+:slotted(.page-frame__course-name) {
   margin: 0;
   color: var(--iflyv-text-on-dark);
   font: var(--iflyv-font-body-sub);
@@ -1622,17 +1626,6 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   display: flex;
   flex-direction: column;
   min-height: 0;
-}
-
-/* 顶栏：52px 结构高度（非间距序列，单点维护），只承载面包屑（用户区已移至侧栏底部），透明底融入 bg-page；
-   左侧不留内边距（与内容卡左缘对齐），右侧留 spacing-3 */
-.page-frame__topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 52px;
-  flex-shrink: 0;
-  padding: 0 var(--iflyv-spacing-3) 0 0;
 }
 
 /* 侧栏底部用户区：在滚动区之外，恒贴侧栏底缘。

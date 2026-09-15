@@ -22,8 +22,6 @@
         v-model:active="activeKey"
         :menus="menus"
         :course="course"
-        :breadcrumbs="breadcrumbs"
-        :back-disabled="true"
         avatar-role="teacher-male"
         user-name="王老师"
       >
@@ -104,9 +102,6 @@ const course: PageFrameCourse = {
     { key: 'qrcode', label: '打开二维码' },
   ],
 }
-
-// 面包屑首项 = 组标题；组标题非实体页 → 返回箭头禁用
-const breadcrumbs = [{ label: '典型页面' }, { label: '课程工具' }]
 
 // —— 工具分组（结构与文案沿用参考页）——
 // 图标按顺序分配、每个工具一款不重样（**固定映射而非运行时随机**，保证每次渲染/截图一致——

@@ -22,8 +22,6 @@
         v-model:active="activeKey"
         :menus="menus"
         :course="course"
-        :breadcrumbs="breadcrumbs"
-        :back-disabled="true"
         avatar-role="teacher-male"
         user-name="王老师"
       >
@@ -134,8 +132,6 @@ const course: PageFrameCourse = {
     { key: 'qrcode', label: '打开二维码' },
   ],
 }
-
-const breadcrumbs = [{ label: '典型页面' }, { label: '课程画像' }]
 
 const activeTab = ref('board')
 

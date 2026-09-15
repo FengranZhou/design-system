@@ -7,7 +7,7 @@
         <h2 class="demo-section__title">PageFrame 页面框架</h2>
       </div>
       <div class="toolbar__right">
-        <CopyToCC anchor="page-frame" :values="{ grouped }" />
+        <CopyToCC anchor="page-frame" :values="{ grouped, showMore, courseMenuEnabled, courseInfoCustom }" />
         <!-- 次按钮（默认款）：带文字标签，不再是纯图标入口，故无需 tooltip 补全称 -->
         <el-button @click="toggleFullscreen">
           <template #icon>
@@ -30,9 +30,20 @@
         avatar-role="teacher-male"
         user-name="王老师"
         :avatar-menus="avatarMenus"
+        :show-more="showMore"
         v-model:more-keys="moreKeys"
         @avatar-menu-click="onAvatarMenuClick"
+        @course-menu-click="onCourseMenuClick"
       >
+        <!-- #course-info：只替换卡内信息区，封面图 / 右上「更多」入口 / 压暗蒙层与
+             定位仍由源头给。作用域参数 course 可直接取已传入的数据，不必再传一份。
+             这里不写任何颜色——浅色文字由源头 .page-frame__course-info 容器给，
+             自定义内容默认即可读（要整块换掉含封面的卡片才用 #course-card）。 -->
+        <template v-if="courseInfoCustom" #course-info="{ course: c }">
+          <p class="page-frame__course-name">{{ c.name }}</p>
+          <p class="course-info-demo__progress">高二(3)班 · 已上 12 / 32 课时</p>
+        </template>
+
         <!-- 配置项放进内容区（默认插槽）：逐层独立编辑导航结构，
              每层可任意增删，改动实时反映在左侧导航上。
              整体按「列表条目模式」组织：一行 = 一条记录 = 四区拼装
@@ -48,8 +59,12 @@
               <h3 class="toolbar__title">配置项</h3>
             </div>
             <div class="toolbar__right">
-              <!-- 开关文字默认 active-text（右侧），字重/间距/取色全在源头 switch.scss -->
+              <!-- 开关文字默认 active-text（右侧），字重/间距/取色全在源头 switch.scss。
+                   两个开关并排：间距由 .toolbar__right 的 flex gap 给（源头 toolbar.scss） -->
               <el-switch v-model="grouped" active-text="分组" />
+              <el-switch v-model="showMore" active-text="更多" />
+              <el-switch v-model="courseMenuEnabled" active-text="课程卡更多" />
+              <el-switch v-model="courseInfoCustom" active-text="课程卡信息区自定义" />
             </div>
           </div>
 
@@ -229,16 +244,30 @@ import aiSettingActiveSvg from '../../assets/nav-icons/ai-setting-active.svg?raw
 import releaseProcessSvg from '../../assets/nav-icons/release-process.svg?raw'
 import releaseProcessActiveSvg from '../../assets/nav-icons/release-process-active.svg?raw'
 
-const course: PageFrameCourse = {
+// 课程卡右上「更多」下拉是否启用（源头据 course.menus 有没有内容决定渲不渲染，
+// 无需额外 prop）。开关关掉时不传 menus —— 与业务方「本系统没有这些功能」的情形一致。
+// 默认关闭：菜单项各系统有无不一，框架一项不写死，开了才看得到形态。
+const courseMenuEnabled = ref(false)
+
+// 是否自定义课程卡信息区（源头 #course-info 插槽）。打开后卡内那行文字换成业务
+// 自有字段（此处示意「班级 + 课时进度」），封面图 / 右上「更多」入口 / 压暗蒙层
+// 与定位仍由源头给——业务方只换文字内容，不碰卡片结构。
+const courseInfoCustom = ref(false)
+
+const course = computed<PageFrameCourse>(() => ({
   name: '《智能启思从零懂智能》',
   meta: ['2023年春', '全网公开', '教务开课'],
   // 卡片右上「更多」下拉：框架一项都不写死，由业务方按自身功能传入
-  menus: [
-    { key: 'detail', label: '查看课程首页' },
-    { key: 'setting', label: '课程设置' },
-    { key: 'qrcode', label: '打开二维码' },
-  ],
-}
+  ...(courseMenuEnabled.value
+    ? {
+        menus: [
+          { key: 'detail', label: '查看课程首页' },
+          { key: 'setting', label: '课程设置' },
+          { key: 'qrcode', label: '打开二维码' },
+        ],
+      }
+    : {}),
+}))
 
 // demo 导航只演示「组标题 / 一级导航 / 二级导航」三层标准结构，
 // 不铺具体业务菜单（业务菜单由各接入方按自身信息架构传入 menus）。
@@ -427,7 +456,11 @@ const ICONS = [
 // 默认关闭 —— 真实课程空间的导航就是一条连续列表，打开开关可看分组形态。
 const grouped = ref(false)
 
-// 「更多」入口恒定存在（无开关）。默认没收纳任何项 —— 由用户在浮层里点⚙自行配置
+// 是否启用「更多」入口（源头 show-more，默认关闭）。关掉时已收纳的项会回到主导航，
+// moreKeys 数据仍保留，开关拨回来即原样恢复。
+const showMore = ref(false)
+
+// 默认没收纳任何项 —— 由用户开启「更多」后在浮层里点⚙自行配置
 const moreKeys = ref<string[]>([])
 
 // 头像下拉菜单：**这里只是示例数据**。个数 / 文案 / 从哪分段 / 哪项是危险项
@@ -442,6 +475,10 @@ const avatarMenus: PageFrameAvatarMenuItem[] = [
   { key: 'logout', label: '退出登录', divided: true, danger: true },
 ]
 const onAvatarMenuClick = (_key: string, item: PageFrameAvatarMenuItem) => {
+  ElMessage({ message: `点击了「${item.label}」`, showClose: true })
+}
+
+const onCourseMenuClick = (_key: string, item: { label: string }) => {
   ElMessage({ message: `点击了「${item.label}」`, showClose: true })
 }
 
@@ -696,5 +733,16 @@ watch(
    纯本页排版留白，按钮自身外观全部来自 button.scss 源头。 */
 .nav-config__add-group {
   margin-top: var(--iflyv-spacing-8);
+}
+
+/* #course-info 插槽演示里那行业务自有文案。
+   课程名沿用源头的 .page-frame__course-name（不在此重定义外观）；
+   这一行是源头没有的**新增内容**，故只在本页给它字阶——
+   属"业务方自带内容的样式"，不是覆盖组件既有外观。
+   文字颜色不写：由源头 .page-frame__course-info 容器统一给浅色。 */
+.course-info-demo__progress {
+  margin: 0;
+  font: var(--iflyv-font-body-min);
+  white-space: nowrap;
 }
 </style>
