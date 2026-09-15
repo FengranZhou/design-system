@@ -7,7 +7,7 @@
         <h2 class="demo-section__title">PageFrame 页面框架</h2>
       </div>
       <div class="toolbar__right">
-        <CopyToCC anchor="page-frame" />
+        <CopyToCC anchor="page-frame" :values="{ grouped }" />
         <!-- 次按钮（默认款）：带文字标签，不再是纯图标入口，故无需 tooltip 补全称 -->
         <el-button @click="toggleFullscreen">
           <template #icon>
@@ -27,10 +27,11 @@
         v-model:active="activeKey"
         :menus="menus"
         :course="course"
-        :breadcrumbs="breadcrumbs"
-        :back-disabled="backDisabled"
-        :notice-count="13"
         avatar-role="teacher-male"
+        user-name="王老师"
+        :avatar-menus="avatarMenus"
+        v-model:more-keys="moreKeys"
+        @avatar-menu-click="onAvatarMenuClick"
       >
         <!-- 配置项放进内容区（默认插槽）：逐层独立编辑导航结构，
              每层可任意增删，改动实时反映在左侧导航上。
@@ -46,12 +47,20 @@
             <div class="toolbar__left">
               <h3 class="toolbar__title">配置项</h3>
             </div>
+            <div class="toolbar__right">
+              <!-- 开关文字默认 active-text（右侧），字重/间距/取色全在源头 switch.scss -->
+              <el-switch v-model="grouped" active-text="分组" />
+            </div>
           </div>
 
           <div class="nav-config__groups">
-            <section v-for="(group, gi) in groups" :key="group.id" class="nav-group">
-              <!-- 组标题行：模块级工具栏（标题加 --module 降字阶） -->
-              <div class="toolbar nav-group__toolbar">
+            <!-- 不分组时 sections 已把各组合并成单个区块 → 只渲染一张卡、一个「添加一级导航」，
+                 序号也跨原组连续（见 sections 计算属性） -->
+            <section v-for="(group, gi) in sections" :key="group.id" class="nav-group">
+              <!-- 组标题行：模块级工具栏（标题加 --module 降字阶）。
+                   不分组时整行不渲染 —— 导航已平铺成一条列表，「第 N 组」与
+                   「删除该组」都失去了指代对象。 -->
+              <div v-if="grouped" class="toolbar nav-group__toolbar">
                 <div class="toolbar__left">
                   <h4 class="toolbar__title toolbar__title--module">第 {{ gi + 1 }} 组</h4>
                 </div>
@@ -75,7 +84,35 @@
                   <template v-for="(item, ii) in group.items" :key="item.id">
                     <!-- 一级导航行 -->
                     <div class="nav-row">
-                      <span class="nav-row__name">一级导航 {{ ii + 1 }}</span>
+                      <!-- 就地重命名：点名字进入编辑，回车/失焦提交，Esc 取消。
+                           用 el-input 而非自写 contenteditable —— 输入框是标准控件，
+                           尺寸/描边/聚焦态全在源头。 -->
+                      <el-input
+                        v-if="editingKey === `l1-${item.id}`"
+                        ref="renameInputRef"
+                        v-model="editingName"
+                        class="nav-row__rename"
+                        @keyup.enter="commitRename(item)"
+                        @keyup.esc="cancelRename"
+                        @blur="commitRename(item)"
+                      />
+                      <span v-else class="nav-row__name-cell">
+                        <span
+                          class="nav-row__name nav-row__name--editable"
+                          @click="startRename(`l1-${item.id}`, item.name)"
+                        >{{ item.name }}</span>
+                        <!-- 铅笔入口：纯图标按规范配 tooltip 给全称。
+                             hover 整行才显现——常显会让列表被一排铅笔占满、喧宾夺主。 -->
+                        <el-tooltip content="重命名" :show-after="300">
+                          <el-button
+                            text
+                            class="nav-row__rename-btn"
+                            @click="startRename(`l1-${item.id}`, item.name)"
+                          >
+                            <template #icon><Pencil :size="16" :stroke-width="2" /></template>
+                          </el-button>
+                        </el-tooltip>
+                      </span>
                       <div class="nav-row__info">
                         <!-- 文字置左（inactive-text）：本行开关右侧还有删除按钮，
                              文字若落右侧会夹在开关与按钮之间、看不出归属。 -->
@@ -101,7 +138,30 @@
                         :key="child.id"
                         class="nav-row nav-row--child"
                       >
-                        <span class="nav-row__name">二级导航 {{ ci + 1 }}</span>
+                        <el-input
+                          v-if="editingKey === `l2-${child.id}`"
+                          ref="renameInputRef"
+                          v-model="editingName"
+                          class="nav-row__rename"
+                          @keyup.enter="commitRename(child)"
+                          @keyup.esc="cancelRename"
+                          @blur="commitRename(child)"
+                        />
+                        <span v-else class="nav-row__name-cell">
+                          <span
+                            class="nav-row__name nav-row__name--editable"
+                            @click="startRename(`l2-${child.id}`, child.name)"
+                          >{{ child.name }}</span>
+                          <el-tooltip content="重命名" :show-after="300">
+                            <el-button
+                              text
+                              class="nav-row__rename-btn"
+                              @click="startRename(`l2-${child.id}`, child.name)"
+                            >
+                              <template #icon><Pencil :size="16" :stroke-width="2" /></template>
+                            </el-button>
+                          </el-tooltip>
+                        </span>
                         <div class="nav-row__info" />
                         <div class="nav-row__actions">
                           <!-- 每条都可删；删空后由 removeChild 自动关掉「可展开」，
@@ -122,7 +182,7 @@
                     </template>
                   </template>
                 </template>
-                <p v-else class="nav-row nav-row--empty">该组暂无一级导航</p>
+                <p v-else class="nav-row nav-row--empty">{{ grouped ? '该组暂无一级导航' : '暂无一级导航' }}</p>
 
                 <div class="nav-row nav-row--add">
                   <el-button text type="primary" @click="addItem(group)">
@@ -137,6 +197,7 @@
                  与组内「添加一级/二级导航」的文字按钮拉开层级 —— 组是最外层结构，
                  新增它是本页最主要的操作。 -->
             <el-button
+              v-if="grouped"
               type="primary"
               class="nav-config__add-group"
               @click="addGroup"
@@ -153,10 +214,10 @@
 
 <script setup lang="ts">
 import CopyToCC from '../CopyToCC.vue'
-import { ref, computed, watch, onMounted, onBeforeUnmount, h } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount, h } from 'vue'
 import { ElMessage } from 'element-plus'
-import { CirclePlus, Trash2, Maximize, Minimize } from 'lucide-vue-next'
-import { PageFrame, type PageFrameMenuGroup, type PageFrameCourse } from '../../../../design-spec/components'
+import { CirclePlus, Trash2, Maximize, Minimize, Pencil } from 'lucide-vue-next'
+import { PageFrame, type PageFrameMenuGroup, type PageFrameCourse, type PageFrameAvatarMenuItem } from '../../../../design-spec/components'
 import NavIcon from './NavIcon.vue'
 // 导航图标双态切图（?raw 内联，currentColor 才能生效——<img> 拿不到父级色）
 import establishSvg from '../../assets/nav-icons/establish.svg?raw'
@@ -171,6 +232,12 @@ import releaseProcessActiveSvg from '../../assets/nav-icons/release-process-acti
 const course: PageFrameCourse = {
   name: '《智能启思从零懂智能》',
   meta: ['2023年春', '全网公开', '教务开课'],
+  // 卡片右上「更多」下拉：框架一项都不写死，由业务方按自身功能传入
+  menus: [
+    { key: 'detail', label: '查看课程首页' },
+    { key: 'setting', label: '课程设置' },
+    { key: 'qrcode', label: '打开二维码' },
+  ],
 }
 
 // demo 导航只演示「组标题 / 一级导航 / 二级导航」三层标准结构，
@@ -180,9 +247,12 @@ const course: PageFrameCourse = {
 //   区块（组标题） → 一级导航（可独立开关是否可展开） → 二级导航（仅可展开时存在）
 // 每个节点带自增 id 而非用数组下标做 key —— 删中间项时下标会整体前移，
 // 用下标派生的 menu key 会让选中态 / 展开态错位跟到别的项上。
-interface ConfigChild { id: number }
+// name 存在数据里而非由下标推导（原先是渲染时拼 `一级导航 {{ ii+1 }}`）：
+// 改名后要能跟着这条记录走，删掉中间项时其余项的名字也不该跟着重排。
+interface ConfigChild { id: number; name: string }
 interface ConfigItem {
   id: number
+  name: string
   /** 是否可展开（带二级导航）；关闭时保留 children 数据，重新开启可复原 */
   expandable: boolean
   children: ConfigChild[]
@@ -191,28 +261,116 @@ interface ConfigGroup { id: number; items: ConfigItem[] }
 
 let uid = 0
 const nextId = () => ++uid
-const createChild = (): ConfigChild => ({ id: nextId() })
+/** 新建时给个默认名（序号只用于取默认名，之后与下标无关） */
+let l1Seq = 0
+let l2Seq = 0
+const createChild = (name?: string): ConfigChild => ({
+  id: nextId(),
+  name: name ?? `二级导航 ${++l2Seq}`,
+})
 const createItem = (expandable = false, childCount = 0): ConfigItem => ({
   id: nextId(),
+  name: `一级导航 ${++l1Seq}`,
   expandable,
-  children: Array.from({ length: childCount }, createChild),
+  children: Array.from({ length: childCount }, () => createChild()),
+})
+/** 按真实业务名建项（用于 demo 初始数据；children 传名字数组，非空即自动可展开） */
+const namedItem = (name: string, children: string[] = []): ConfigItem => ({
+  id: nextId(),
+  name,
+  expandable: children.length > 0,
+  children: children.map((c) => createChild(c)),
 })
 const createGroup = (itemCount = 1): ConfigGroup => ({
   id: nextId(),
   items: Array.from({ length: itemCount }, () => createItem()),
 })
 
-// 初始结构：一块纯一级项 + 一块含可展开项，同屏对照两种形态
+// 初始结构：取自真实课程空间的导航配置，比「一级导航 1/2/3」更能看出实际观感。
+// 仍分两块 —— 分组开关打开时能看到组标题形态；关掉则合并成一条连续列表。
+// 其中 3 项带二级导航（分组管理 / 直播课堂 / 课程管理），同屏对照两种形态。
 const groups = ref<ConfigGroup[]>([
-  { id: nextId(), items: [createItem(), createItem(), createItem()] },
-  { id: nextId(), items: [createItem(true, 2), createItem()] },
+  {
+    id: nextId(),
+    items: [
+      namedItem('备授课'),
+      namedItem('作业任务'),
+      namedItem('课程图谱'),
+      namedItem('AI 工作台'),
+      namedItem('课程题库'),
+      namedItem('分组管理', ['分组方案一']),
+      namedItem('直播课堂', ['腾讯会议']),
+    ],
+  },
+  {
+    id: nextId(),
+    items: [
+      namedItem('学生学情'),
+      namedItem('课程画像'),
+      namedItem('成员管理'),
+      namedItem('课程管理', ['课程设置', '课程工具', '学生学习设置', '优质课程评审', '督导反馈', '学生评教']),
+      namedItem('课程公告'),
+    ],
+  },
 ])
+
+// 配置区渲染用的区块列表：分组时 = 真实的组；不分组时 = 合并成单个区块。
+// 合并只在**渲染层**做，底层 groups 数据结构不动 —— 开关切回来时原分组原样恢复。
+// 用第一组的 id 作 key，避免切换时整块重建（丢失开关的过渡动画）。
+const sections = computed<ConfigGroup[]>(() =>
+  grouped.value
+    ? groups.value
+    : [{ id: groups.value[0]?.id ?? 0, items: groups.value.flatMap((g) => g.items) }],
+)
+
+/* ==================== 就地重命名 ====================
+   点名字 → 换成输入框；回车或失焦提交、Esc 取消。
+   editingKey 用 `l1-${id}` / `l2-${id}` 区分层级，保证同一时刻只有一处在编辑。 */
+const editingKey = ref('')
+const editingName = ref('')
+const renameInputRef = ref()
+
+const startRename = async (key: string, current: string) => {
+  editingKey.value = key
+  editingName.value = current
+  await nextTick()
+  // ref 在 v-for 里是数组，取当前渲染出的那一个
+  const input = Array.isArray(renameInputRef.value) ? renameInputRef.value[0] : renameInputRef.value
+  input?.focus?.()
+  input?.select?.()
+}
+
+const cancelRename = () => {
+  editingKey.value = ''
+  editingName.value = ''
+}
+
+/** 提交改名；空名视为取消（不允许改成空白，否则侧栏会出现无名项） */
+const commitRename = (target: { name: string }) => {
+  if (!editingKey.value) return          // Esc 已清空时 blur 还会再触发一次
+  const next = editingName.value.trim()
+  if (next) target.name = next
+  cancelRename()
+}
 
 /** 单个区块内一级导航数上限：超出后侧边栏需滚动，仍可继续加，仅作提示 */
 const addGroup = () => groups.value.push(createGroup())
 const removeGroup = (gi: number) => groups.value.splice(gi, 1)
-const addItem = (group: ConfigGroup) => group.items.push(createItem())
-const removeItem = (group: ConfigGroup, ii: number) => group.items.splice(ii, 1)
+// 不分组时 section 是合并出来的临时对象，增删要落回真实的组：
+//   新增 → 追加到最后一组；删除 → 按扁平序号定位到「哪一组的第几项」
+const addItem = (group: ConfigGroup) => {
+  if (grouped.value) return group.items.push(createItem())
+  const last = groups.value[groups.value.length - 1]
+  last.items.push(createItem())
+}
+const removeItem = (group: ConfigGroup, ii: number) => {
+  if (grouped.value) return group.items.splice(ii, 1)
+  let i = ii
+  for (const g of groups.value) {
+    if (i < g.items.length) return g.items.splice(i, 1)
+    i -= g.items.length
+  }
+}
 const addChild = (item: ConfigItem) => item.children.push(createChild())
 // 删空二级导航后自动关掉「可展开」——开着开关却没有子项是自相矛盾的状态。
 // 不用禁用最后一条的删除按钮来拦：那要求用户先自己想到「去关开关」，
@@ -265,18 +423,42 @@ const ICONS = [
   // 预置双态后包成组件；选中态由 PageFrame 透传 active，与这里的 attrs 合并
 ].map((pair) => (props: Record<string, unknown>) => h(NavIcon, { ...pair, ...props }))
 
+// 是否分组：关掉后导航不再渲染组标题（menus 不传 title），其余结构不变。
+// 默认关闭 —— 真实课程空间的导航就是一条连续列表，打开开关可看分组形态。
+const grouped = ref(false)
+
+// 「更多」入口恒定存在（无开关）。默认没收纳任何项 —— 由用户在浮层里点⚙自行配置
+const moreKeys = ref<string[]>([])
+
+// 头像下拉菜单：**这里只是示例数据**。个数 / 文案 / 从哪分段 / 哪项是危险项
+// 全部由业务方按自己系统的功能传入，框架一项都不写死
+// （「我的好友」「模型备案信息」这类各系统有无不一，固化进框架会多出无效项）。
+const avatarMenus: PageFrameAvatarMenuItem[] = [
+  { key: 'profile', label: '个人中心' },
+  { key: 'friends', label: '我的好友' },
+  { key: 'feedback', label: '反馈建议', divided: true },
+  { key: 'record', label: '模型备案信息' },
+  { key: 'report', label: '投诉举报' },
+  { key: 'logout', label: '退出登录', divided: true, danger: true },
+]
+const onAvatarMenuClick = (_key: string, item: PageFrameAvatarMenuItem) => {
+  ElMessage({ message: `点击了「${item.label}」`, showClose: true })
+}
+
 const menus = computed<PageFrameMenuGroup[]>(() => {
   // 图标序号跨组连续：若用组内索引，每组都从 0 开始，第 4 个图标永远轮不到
   let iconSeq = 0
   return groups.value.map((group) => ({
-    title: '组标题',
+    // 不分组：不传 title —— 源头 `v-if="group.title"` 据此不渲染组标题行，
+    // 导航项照常按组顺序依次排下来（分组间距仍在，只是没有抬头文案）
+    ...(grouped.value ? { title: '组标题' } : {}),
     items: group.items.map((item) => ({
       key: `l1-${item.id}`,
-      label: '一级导航',
+      label: item.name,
       icon: ICONS[iconSeq++ % ICONS.length],
       // 关掉「可展开」或子项被删空时不传 children —— 组件据此判定是否为可折叠父项
       ...(item.expandable && item.children.length
-        ? { children: item.children.map((child) => ({ key: `l2-${child.id}`, label: '二级导航' })) }
+        ? { children: item.children.map((child) => ({ key: `l2-${child.id}`, label: child.name })) }
         : {}),
     })),
   }))
@@ -306,25 +488,6 @@ watch(
   { immediate: true },
 )
 
-// 面包屑随选中项联动：所在分组名 →（父项名 →）当前项名
-const breadcrumbs = computed(() => {
-  for (const group of menus.value) {
-    for (const item of group.items) {
-      if (item.key === activeKey.value)
-        return [{ label: group.title ?? '' }, { label: item.label }]
-      const child = item.children?.find((c) => c.key === activeKey.value)
-      if (child)
-        return [{ label: group.title ?? '' }, { label: item.label }, { label: child.label }]
-    }
-  }
-  return [{ label: '组标题' }]
-})
-
-// 返回箭头可用性：看「上一级是不是可跳转的实体页面」——
-// 组标题只是分组文案、可折叠的一级导航点击只展开子菜单，两者都不是实体页面，
-// 所以本 demo 的导航结构里始终没有可返回的上一级 → 箭头恒禁用。
-// 真实项目里若某层确实是实体页（有自己的路由），则该层为当前页时传 false 即可。
-const backDisabled = computed(() => true)
 </script>
 
 <style scoped>
@@ -441,6 +604,46 @@ const backDisabled = computed(() => true)
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 名字 + 铅笔成一组：名字按内容宽（不再撑满整列），铅笔紧跟其后 */
+.nav-row__name-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iflyv-spacing-1);
+  min-width: 0;
+}
+
+/* 可点改名：hover 时给底色提示「这里能点」，不改字色/字重（避免与选中态混淆） */
+.nav-row__name--editable {
+  padding: 0 var(--iflyv-spacing-1);
+  margin-inline-start: calc(var(--iflyv-spacing-1) * -1);  /* 抵消内边距，文字仍与其它行左缘对齐 */
+  border-radius: var(--iflyv-radius-xs);
+  cursor: pointer;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+.nav-row__name--editable:hover {
+  background-color: var(--iflyv-bg-inset);
+}
+
+/* 铅笔：平时隐身、hover 该行才显现——常显会让列表被一排铅笔占满、喧宾夺主。
+   用 opacity 而非 v-if/display:none：不占位变化，行宽不会随 hover 跳动。 */
+.nav-row__rename-btn {
+  opacity: 0;
+  transition: opacity var(--iflyv-duration-fast) var(--iflyv-ease-default);
+}
+.nav-row:hover .nav-row__rename-btn,
+.nav-row__rename-btn:focus-visible {
+  opacity: 1;
+}
+
+/* 重命名输入框：占住名字列的宽度，避免进出编辑态时整行宽度跳变 */
+.nav-row__rename {
+  width: 200px;
 }
 
 /* 关键信息区：宽度由内容（开关 + 文字）决定。

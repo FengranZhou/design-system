@@ -13,6 +13,28 @@
   &--divided { margin: 4px 0; }
 }
 
+/* ==================== 危险菜单项约定 .is-danger ====================
+   下拉里的破坏性/不可逆操作（删除、注销、退出登录）——文字转 danger 色，
+   与同面板其它项拉开，让用户点前有一次视觉停顿。
+
+     <el-dropdown-item divided class="is-danger">退出登录</el-dropdown-item>
+
+   ⚠️ 只转文字色、不铺红底：下拉项是「一列等价选项」，给其中一条铺底会
+      读成"选中态"；且大面积红与「装饰有度」不符。hover 仍走通用 bg-inset 底，
+      只把文字压深一档（danger-hover = red-5，比 red-6 深），与其它项的
+      hover 反馈节奏一致。
+   ⚠️ 不是「禁用」也不是「警告」——禁用走 EP 原生 is-disabled，
+      本类只表达"这一步有后果"。 */
+.el-dropdown-menu__item.is-danger {
+  color: var(--iflyv-danger-primary);
+
+  &:not(.is-disabled):hover,
+  &:not(.is-disabled):focus {
+    color: var(--iflyv-danger-hover);
+    background-color: var(--iflyv-bg-inset);
+  }
+}
+
 /* ==================== 面板内分组标题约定 .dropdown-group-title ====================
    下拉面板里给一组选项加抬头（非可选项，故不是 el-dropdown-item，用裸 <li> 承载）：
 

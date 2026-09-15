@@ -30,6 +30,15 @@
   }
 }
 
+/* ⚠️ 圆角必须跟随外层容器：EP 给 `.el-scrollbar` 写了 `overflow: hidden` 却**没给圆角**，
+   于是它把内容裁成**直角**。内容不满时看不出来；一旦内容铺满（如下拉面板选项变多），
+   里面那层不透明底色就被裁成方的、糊住外层的圆角——**表现为面板四角变直角**。
+   `inherit` 而非写死值：跟着所在容器的圆角走，改令牌一处生效，不长出第二个要同步的硬编码。
+   （真实翻车：Dropdown 面板选项一多，四角就成直角。） */
+.el-scrollbar {
+  border-radius: inherit;
+}
+
 /* EP 原生 bar 恒定 6px，hover 只改 thumb 透明度、粗细不变。
    本层补「hover 变粗 6→8px」并给过渡，让粗细与显隐一起平滑。 */
 .el-scrollbar__bar {
@@ -59,13 +68,23 @@
 /* 逐项对齐 ①，保证全站一致：宽 6px / 圆角 4px / thumb = text-2 30%（hover 50%）/ track 透明。
    ⚠ 原生滚动条无法只在 hover 时变宽（改 ::-webkit-scrollbar 宽度会引起布局回流），
    故主滚动条恒 6px，仅 thumb 颜色随 hover 加深；el-scrollbar 那侧才有 6→8 变粗。
-   ⚠ 仅 WebKit·Blink（Chrome/Edge/Safari）生效；Firefox 走下方 scrollbar-width/color 降级。 */
-html {
-  /* Firefox 降级：只能给「细」档 + 拇指/轨道两色，无 hover 变粗 */
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--iflyv-text-2) 30%, transparent) transparent;
-}
+   ⚠ 仅 WebKit·Blink（Chrome/Edge/Safari）生效；Firefox 拿浏览器默认滚动条，不跟设计系统。
 
+   ⛔ 禁止在 html/body 上加标准属性 `scrollbar-width`——它与 ::-webkit-scrollbar 不是
+      「各浏览器各走一套」的互补关系：两者同时存在时 Chrome 优先标准属性，
+      下方整段 6px 会被静默压掉（实测 thin=11px / auto=15px，且 thin 是占位式、
+      会从布局里真切走一列，观感与悬浮式的 6px 完全不同）。
+      曾为「Firefox 降级」加过 scrollbar-width: thin，结果把 Chrome 主滚动条顶成 11px。 */
+
+/* ⛔ 原生滚动条**只能改宽窄、改不掉「占位」**：macOS 上系统默认是悬浮式（不占位），
+      但 Chrome 一旦读到 ::-webkit-scrollbar 的自定义样式，就切成**经典占位式**——
+      从布局里真切走一列。想要「细 + 不占位」，原生条给不了。
+      ⭐ 所以**页面主滚动应交给 `<el-scrollbar>` 承载**（JS 自绘 div、position:absolute，
+      天然浮在内容上），本仓库 demo 即如此：根元素 overflow:hidden 不滚，
+      滚动发生在内容区的 el-scrollbar 里（见 demo/src/App.vue 的 .app-content-scroll）。
+      下方这段只是**兜底**：当接入方确实让 html/body 滚动时，至少把宽度与配色对齐，
+      不是推荐用法。 */
+html,
 body {
   &::-webkit-scrollbar {
     width: 6px;

@@ -28,6 +28,7 @@
         :breadcrumbs="breadcrumbs"
         :back-disabled="true"
         avatar-role="teacher-male"
+        user-name="王老师"
       >
         <!-- 页面级 tab 工具栏放 #page-header：在滚动区之外、始终可见，
              滚动条轨道于是只覆盖下方真正会滚的内容。 -->
@@ -127,6 +128,12 @@ const activeKey = ref('public-info')
 const course: PageFrameCourse = {
   name: '《智能启思从零懂智能》',
   meta: ['2023年春', '全网公开', '教务开课'],
+  // 卡片右上「更多」下拉：框架一项都不写死，由业务方按自身功能传入
+  menus: [
+    { key: 'detail', label: '查看课程首页' },
+    { key: 'setting', label: '课程设置' },
+    { key: 'qrcode', label: '打开二维码' },
+  ],
 }
 
 // 面包屑首项 = 所在分组的组标题（同 PageFrameDemo 口径）；组标题非实体页 → 返回箭头禁用
@@ -208,9 +215,14 @@ onBeforeUnmount(() => {
 /* 页面内容区：左右/底部留白一次给全，卡片纵向排布 */
 /* 撑满 PageFrame 内容区，使不满一屏的内容（如整页空态）能拿到高度基准、
    在内容区内垂直居中；内容超出时照常向下撑开并滚动 */
-/* 内容块之间的间距。⚠ 用「前一个不是工具栏」限定——工具栏与其下方内容的间距
-   已由源头 .toolbar 的 padding-block-end 给出，此处再加会叠成双倍。 */
-.public-info > :not(.toolbar) + * {
+/* 内容块之间的间距。⚠ 两处限定各有原因：
+   · 「前一个不是工具栏」——工具栏与其下方内容的间距已由源头 .toolbar 的
+     padding-block-end 给出，此处再加会叠成双倍。
+   · 「自己不是操作区」——操作区靠 margin-top: auto 推到底部，这里不能占用它的 margin。
+     必须在**本选择器**排除，不能靠操作区自己写 margin 覆盖：本选择器特异性 (0,2,0)
+     （.public-info + :not(.toolbar)）高于 .public-info__actions 的 (0,1,0)，
+     scoped 属性给两者各加 1 后大小关系不变，写在那边会被静默忽略。 */
+.public-info > :not(.toolbar) + :not(.public-info__actions) {
   margin-top: var(--iflyv-spacing-4);
 }
 .public-info {
@@ -285,22 +297,33 @@ onBeforeUnmount(() => {
    吸底：内容超出一屏时 sticky 贴住滚动容器底缘（在流内、随内容滚动，非常驻悬浮条）；
    白底内衬遮住从其下滚过的卡片。
 
+   ⚠ 贴底靠 margin-top: auto，**不是**靠 sticky：sticky 只在元素会被滚出视口时才约束它，
+     内容不满一屏时元素本就完整可见、sticky 不产生任何位移，按钮会停在末张卡片之后。
+     纵向 flex 里由 auto margin 吸收底部剩余空间才真正推到底；内容溢出时剩余空间为 0、
+     auto 收敛成 0，按钮回到流内紧随内容，再由 sticky 接管吸底——两态由此统一。
+     （前提：父级 .public-info 的 min-height:100% 有确定基准，由 PageFrame 滚动区的
+     scroll-fill 保证 wrap/view 满高，业务层不必再传导高度。）
+
    ⚠ 上下都要内衬（白底才能盖住从其下滚过的卡片），但**只有下方能用负 margin 抵消**：
-     上方若也写负 margin-top，会把 `.public-info > :not(.toolbar) + *` 提供的
-     块间距一起吃掉（16 被抵成 4），导致「吸底时」与「滚到底时」按钮上方间距不一致。
-     故上方直接把块间距让给 padding-top（二者同为 spacing-4，视觉位置不变），
-     并用 margin-top: 0 取消那条兄弟间距规则，避免 16+16 叠成 32。 */
+     上方的块间距改由自身 padding-top 提供（同为 spacing-4，视觉位置不变），
+     把 margin-top 腾给 auto；兄弟间距规则已在其自身选择器里排除本元素。 */
 .public-info__actions {
   position: sticky;
   bottom: 0;
   display: flex;
   gap: var(--iflyv-spacing-3);
   background: var(--iflyv-bg-panel);
-  /* 上：吃掉兄弟间距、改由自身内衬提供（白底覆盖到位，且不吃掉间距） */
-  margin-top: 0;
+  /* 上：auto 吸收底部剩余空间，把自己推到容器底部（内容溢出时收敛为 0）；
+     上方间距改由下面的 padding-top 提供，白底也随之覆盖到位 */
+  margin-top: auto;
   padding-top: var(--iflyv-spacing-4);
-  /* 下：内衬 + 等量负 margin 相抵，未吸底时流内几何与无内衬一致 */
-  padding-bottom: var(--iflyv-spacing-3);
-  margin-bottom: calc(-1 * var(--iflyv-spacing-3));
+  /* 下：内衬 + 等量负 margin 相抵，未吸底时流内几何与无内衬一致。
+     ⚠ 取值必须与容器 .public-info 的 padding-bottom 同为 spacing-6——两态的
+     「按钮到底缘」读的是**不同来源**：吸底态 bottom:0 把自身边框盒钉在滚动视口底缘，
+     可见间距 = 自身 padding-bottom；未吸底（滚到底）时元素回到流内，负 margin 抵掉
+     自身内衬，可见间距 = 容器 padding-bottom。二者不等就会在滚到底那一刻跳动
+     （曾为 12 / 24，滚到底跳 12px）。改容器底部留白时这里要一并改。 */
+  padding-bottom: var(--iflyv-spacing-6);
+  margin-bottom: calc(-1 * var(--iflyv-spacing-6));
 }
 </style>

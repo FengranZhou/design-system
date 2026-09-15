@@ -40,7 +40,6 @@ const fontWeightTokens = [
   { name: '--iflyv-font-weight-regular' },
   { name: '--iflyv-font-weight-semibold' },
   { name: '--iflyv-font-weight-bold', note: '抖音美好体专用' },
-  { name: '--iflyv-font-weight-extrabold', note: '阿里普惠体专用' },
 ]
 
 // lineHeights：每个字号配 1.5×(向上取双) 与 2× 两档行高；26 额外加 36 / 48

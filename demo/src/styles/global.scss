@@ -36,10 +36,11 @@ $app-nav-item-indent: 28px;
 $app-nav-active-bar: 3px;
 $app-nav-label-tracking: 0.5px;
 
+// 页面主滚动已交给 .app-content-scroll（el-scrollbar）承载，根元素不再滚动。
+// 故 scroll-behavior / scroll-padding-top 也一并移到那个容器上（见下方），
+// 留在 html 上不会生效——锚点跳转时标题会被固定顶栏盖住。
 html {
-  scroll-behavior: smooth;
-  // 锚点跳转停靠时避开固定顶栏，额外留一档间距避免标题贴边
-  scroll-padding-top: calc(#{$app-topbar-height} + var(--iflyv-spacing-3));
+  overflow: hidden;
 }
 
 * {
@@ -225,8 +226,27 @@ body {
 // ============ Layout ============
 .app-layout {
   display: flex;
-  min-height: 100vh;
+  // 固定视口高 + 自身不滚：滚动全部发生在内部的 .app-content-scroll 里。
+  // 用 height 而非 min-height——min-height 会让布局随内容长高、根元素重新出现滚动条。
+  height: 100vh;
+  overflow: hidden;
   padding-top: $app-topbar-height;
+  box-sizing: border-box;
+}
+
+// 内容区滚动容器（el-scrollbar 外壳）：只负责在 flex 行里占位，
+// 版面（内边距 / 宽度约束）仍归它的 view —— 即下方的 .app-content。
+.app-content-scroll {
+  flex: 1;
+  min-width: 0;
+  // 锚点停靠避开固定顶栏（原在 html 上，随主滚动一起迁到这里）。
+  // ⚠️ el-scrollbar 的滚动发生在内部 wrap 上，故这两条要落到 wrap，
+  //    写在外壳上不生效（外壳 overflow:hidden，不是滚动容器）。
+  //    本文件是全局样式（非 SFC scoped），直接写后代选择器即可，不用 :deep()。
+  .el-scrollbar__wrap {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(#{$app-topbar-height} + var(--iflyv-spacing-3));
+  }
 }
 
 // ============ Sidebar ============
@@ -410,7 +430,6 @@ body {
 // ============ Content ============
 .app-content {
   margin-inline-start: $app-sidebar-width;
-  flex: 1;
   /* flex 子项默认 min-width:auto，会被内部不可压缩的宽内容（如 Transfer）顶破容器 →
      显式 min-width:0 让容器正确约束宽度，内部该换行/收缩的正常收缩，消除横向滚动条。 */
   min-width: 0;
@@ -431,12 +450,7 @@ body {
   }
 
   &__title {
-    /* 阿里普惠字体名含空格，不能用 font: 简写（会被解析失败/覆盖），
-       故按规范拆分属性但字号/行高/字重一个不漏 —— 规格同 --iflyv-font-title-page */
-    font-family: var(--iflyv-font-family-emphasis);
-    font-size: var(--iflyv-font-size-26);
-    line-height: var(--iflyv-line-height-48);
-    font-weight: var(--iflyv-font-weight-extrabold);
+    font: var(--iflyv-font-title-page);
     color: var(--iflyv-text-1);
     margin-bottom: var(--iflyv-spacing-4);
     padding-bottom: var(--iflyv-spacing-4);

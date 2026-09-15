@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 118,
-  "totalWeight": 338,
+  "total": 126,
+  "totalWeight": 359,
   "byLevel": {
-    "MUST": 102,
-    "SHOULD": 16,
+    "MUST": 107,
+    "SHOULD": 19,
     "MAY": 0
   },
   "byDetect": {
     "regex": 76,
     "ast": 7,
-    "manual": 35
+    "manual": 43
   },
   "byView": {
-    "design": 99,
-    "impl": 110
+    "design": 107,
+    "impl": 118
   },
   "categoryOrder": [
     "单一数据源",
@@ -124,7 +124,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 633
+      "line": 688
     },
     {
       "id": "color-no-hardcode",
@@ -319,6 +319,21 @@
       "line": 507
     },
     {
+      "id": "popover-only-custom-panel",
+      "title": "el-popover 仅用于自定义内容面板；一列命令项必须用 el-dropdown",
+      "designTitle": "浮层里若只是一列可点选项，应做成下拉菜单而不是自定义面板",
+      "level": "MUST",
+      "cat": "组件选用",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 664
+    },
+    {
       "id": "aibutton-use-component",
       "title": "AI 按钮一律用业务组件 AiButton，禁在 el-button 上自贴渐变复刻",
       "designTitle": "AI 功能入口应是统一的渐变按钮样式，不应各处自调渐变",
@@ -331,7 +346,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 665
+      "line": 720
     },
     {
       "id": "breadcrumb-use-component",
@@ -346,7 +361,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 692
+      "line": 747
     },
     {
       "id": "anchor-vertical-ask-first",
@@ -360,26 +375,11 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 742
-    },
-    {
-      "id": "dialog-no-messagebox",
-      "title": "弹窗统一用 el-dialog，不引入 ElMessageBox 命令式 API",
-      "designTitle": "所有弹窗观感一致（标题/按钮/圆角同一套），不应有长得不一样的系统弹窗",
-      "level": "MUST",
-      "cat": "组件选用",
-      "detect": "regex",
-      "views": [
-        "design",
-        "impl"
-      ],
-      "weight": 3,
-      "source": "design-spec/references/component-interaction.md",
-      "line": 1151
+      "line": 797
     },
     {
       "id": "component-no-suspended",
-      "title": "不得使用「勿用清单」内已停用的组件（el-popover/el-menu/el-link/el-collapse/el-progress/el-timeline 等）",
+      "title": "不得使用「勿用清单」内已停用的组件（el-menu/el-link/el-collapse/el-progress/el-timeline 等）",
       "designTitle": "组件观感应与规范展示页一致，不应出现明显偏离设计系统的原生样式控件",
       "level": "MUST",
       "cat": "组件选用",
@@ -390,7 +390,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1399
+      "line": 1456
     },
     {
       "id": "chart-use-component",
@@ -464,7 +464,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1306
+      "line": 1361
     },
     {
       "id": "button-icon-color-source",
@@ -733,6 +733,81 @@
       "line": 595
     },
     {
+      "id": "dropdown-divided-native",
+      "title": "下拉分段一律用 el-dropdown-item 的 divided 属性，禁自插 li 画线或塞 el-divider",
+      "designTitle": "下拉菜单的分段横线用组件自带能力，别自己插一条线",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 626
+    },
+    {
+      "id": "dropdown-danger-class",
+      "title": "下拉危险项必须用约定 class .is-danger，禁在使用方自写红色或铺红底",
+      "designTitle": "下拉里的删除、退出登录等不可逆操作要标红，且不要铺红底",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 628
+    },
+    {
+      "id": "popover-controlled-visible",
+      "title": "el-popover 显隐走受控 :visible，禁用钉死 trigger + 外部句柄模拟",
+      "designTitle": "浮层的显示隐藏应由明确的状态控制，不应靠\"钉一个用不到的触发方式\"绕过去",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 671
+    },
+    {
+      "id": "popover-scroll-use-scrollbar",
+      "title": "el-popover 内容超长时用 el-scrollbar 包住可滚区，禁让 popover 自身 overflow:auto",
+      "designTitle": "内容很长的浮层要在内部滚动，且滚动条浮在内容上、不占一列宽度",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 674
+    },
+    {
+      "id": "popover-exclude-from-tooltip-maxheight",
+      "title": "内部自带 el-scrollbar 的 popover 必须加进 tooltip.scss 限高规则的 :not() 排除名单，禁在使用方写高权重选择器反压",
+      "designTitle": "自带滚动的浮层面板会出现两条并排的滚动条",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 677
+    },
+    {
       "id": "anchor-select-scroll-top",
       "title": "第一节紧贴容器顶部时，el-anchor 必须传 select-scroll-top",
       "designTitle": "页面滚回顶部时锚点导航不应全部失去高亮",
@@ -745,7 +820,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 750
+      "line": 805
     },
     {
       "id": "anchor-stale-hash",
@@ -759,7 +834,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 759
+      "line": 814
     },
     {
       "id": "pagination-hide-single-page",
@@ -774,7 +849,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 856
+      "line": 911
     },
     {
       "id": "pagination-small-layout",
@@ -789,7 +864,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 867
+      "line": 922
     },
     {
       "id": "scrollbar-scroll-fill",
@@ -804,7 +879,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 904
+      "line": 959
     },
     {
       "id": "message-show-close",
@@ -819,7 +894,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 934
+      "line": 989
     },
     {
       "id": "alert-title-prop",
@@ -833,7 +908,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 964
+      "line": 1019
     },
     {
       "id": "loading-no-custom-spinner",
@@ -848,7 +923,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1009
+      "line": 1064
     },
     {
       "id": "result-icon-two-values",
@@ -863,7 +938,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1072
+      "line": 1127
     },
     {
       "id": "notification-h-actions",
@@ -877,7 +952,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1104
+      "line": 1159
     },
     {
       "id": "dialog-footer-left-slot",
@@ -892,7 +967,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1270
+      "line": 1325
     },
     {
       "id": "dialog-body-flush",
@@ -907,7 +982,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1285
+      "line": 1340
     },
     {
       "id": "scrollbar-no-raw-overflow",
@@ -922,7 +997,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1348
+      "line": 1403
     },
     {
       "id": "table-server-sort-custom",
@@ -1029,6 +1104,36 @@
       "line": 553
     },
     {
+      "id": "dropdown-divider-or-group-title",
+      "title": "下拉分段：divided 分隔线与 .dropdown-group-title 抬头二选一，不叠加",
+      "designTitle": "菜单分段：要么加一行小标题，要么画一条线，不要既画线又加标题",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 627
+    },
+    {
+      "id": "dropdown-lock-flip-variation",
+      "title": "要求面板左缘对齐触发器时，用 flip 的 fallbackPlacements 锁成 ['top-start']，禁依赖 preventOverflow 的 altAxis",
+      "designTitle": "选项很多时下拉面板会整体左移、不再对齐入口，需要锁定翻转方向",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 645
+    },
+    {
       "id": "dialog-fullscreen-content-fill",
       "title": "全屏弹窗的主内容块须给 flex:1 吃满内容区高度",
       "designTitle": "全屏弹窗里内容只占上面一小条、下方一大片空白",
@@ -1041,7 +1146,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1308
+      "line": 1363
     },
     {
       "id": "scrollbar-view-class",
@@ -1055,7 +1160,22 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1360
+      "line": 1415
+    },
+    {
+      "id": "scrollbar-page-level-use-el-scrollbar",
+      "title": "页面主滚动交给 el-scrollbar 承载，根元素 overflow:hidden；原生滚动条无法既自定义样式又不占位",
+      "designTitle": "页面主滚动条也应是浮在内容上的细条，不该占掉右侧一列宽度",
+      "level": "SHOULD",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1418
     },
     {
       "id": "grid-no-el-row",
@@ -1490,7 +1610,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 886
+      "line": 941
     },
     {
       "id": "skeleton-animated",
@@ -1505,7 +1625,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1038
+      "line": 1093
     },
     {
       "id": "skeleton-on-panel",
@@ -1520,7 +1640,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1039
+      "line": 1094
     },
     {
       "id": "loading-no-blank-screen",
@@ -1549,7 +1669,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1202
+      "line": 1257
     },
     {
       "id": "number-thousands-separator",

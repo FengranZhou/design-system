@@ -18,11 +18,666 @@
 
    接入方无需引用本文件里的任何类——它们由 PageFrame 内部渲染，不是对外 API。 */
 
+/* 选中态：加粗 + **品牌色**。仅补字重与色阶，行高/圆角/hover 仍归 dropdown.scss。
+   ⚠️ 与展开态侧栏的选中态（加粗 + text-1）**刻意不同**：本浮层只在收起态出现
+      （PageFrame.vue 的 v-if="collapsed && item.children"），收起后侧栏只剩图标，
+      选中项藏在浮层里、侧栏上看不出选了哪个；靠加粗不足以一眼定位，故用品牌色点出。
+      展开态侧栏不受影响——那边选中项自带底色块，已经很显眼。
+   两个收起态浮层共用同一口径（见下方 .page-frame-more.is-collapsed 的 .is-active），
+   都是"导航项"，分开写会长出两套、改一处漏一处。 */
 .page-frame-flyout {
-  /* 选中态：与侧栏一致（加粗 + text-1）。仅补字重与色阶，
-     行高/圆角/hover 仍归 dropdown.scss。 */
   .el-dropdown-menu__item.is-active {
+    color: var(--iflyv-brand-primary);
+    font-weight: var(--iflyv-font-weight-semibold);
+
+    /* hover 时保持品牌色：dropdown.scss 的通用 hover 会把 color 压回 text-1，
+       不重申的话选中项一 hover 就丢掉品牌色、闪一下。 */
+    &:not(.is-disabled):hover,
+    &:not(.is-disabled):focus {
+      color: var(--iflyv-brand-primary);
+    }
+  }
+}
+
+
+/* ======================================================================== */
+/* ============ PageFrame「更多」浮层（收纳不常用导航，约定类） ============= */
+/* ======================================================================== */
+
+/* 与上方收起态浮层同理：面板被 teleport 到 <body>，scoped 构不着，故样式在此。
+
+   ⚠️ 本浮层用 el-popover 承载（不是 dropdown）：它不是「一列命令，点一个就收」的菜单，
+   而是带浏览/编辑两态的小型编辑面板——理由与 dropdown 时期的两处 hack 见 PageFrame.vue
+   模板注释。故条目、抬头都不再复用 dropdown.scss 的定义，本段自带一套（仍在源头、非私货）。
+
+   · 面板宽度 → 定宽 200，见下方 .page-frame-more__panel。
+     **不能靠内容自然撑开**：浏览态（一列条目）与编辑态（添加按钮 + 已选项）
+     内容宽度差很多，面板会在两态之间跳一下（实测踩过）。
+     200 = 侧边栏展开宽（.page-frame__aside 的结构宽度），浮层从侧栏弹出、
+     与它同宽视觉上成一体，不是另拍的值。
+   · 条目 → .page-frame-more__item，规格整套对齐**侧栏导航项**（44 高 / radius-sm /
+     body-primary），因为收进来的本就是一级导航项、只是换个地方出现。
+   · 抬头 → .page-frame-more__title，走 body-min 档（12/18 regular + text-3 灰）。
+     ⚠️ 它不是「面板标题」而是**面板身份的一句注脚**：面板由左侧「更多」入口 hover 出来，
+     用户已经知道自己点开的是什么，抬头只做兜底标识，压到辅助信息档、不与下方条目争视线。
+     故也不套 .dropdown-group-title——那一档的职责是「把分组抬头与可选项拉开层级」，
+     此处没有需要分组的多列选项。 */
+
+/* popover 外壳：EP 默认给 12px 内边距，这里对齐 dropdown 面板的内边距节奏。
+   ⚠️ 必须把 tooltip.scss 那条浅色 popper 通用限高（max-height 264 + overflow:auto）
+      在本面板上解除：那条的 :not() 排除了 picker/select/cascader/dropdown，**没排除
+      el-popover**，于是本面板会吃到一个**原生** overflow:auto ——Chrome 下占位、
+      从布局里真切走一列、track 白底还去不掉（正是 scrollbar.scss 全文在禁的事）。
+      本面板的滚动改由内部 .page-frame-more__scroll 的 el-scrollbar 承担（自绘条、
+      浮在内容上），故这里把外壳的限高与溢出交还 auto/visible。
+   ⚠️ 只解本面板、不动 tooltip.scss 那条通用规则——那条还管着别的文字型浮层，
+      动它影响面过大。其它 popover 若也遇到同样问题，按同一思路各自解除。 */
+/* ⚠️ 本面板已在 tooltip.scss 那条通用限高的 :not() 排除名单里（`:not(.page-frame-more)`）。
+   不能靠在这里写高权重选择器去反压——那条是 7 个类的权重，这边压不过、只会静默失效；
+   排除必须加在那条规则自己的名单上。 */
+.el-popover.page-frame-more {
+  padding: var(--iflyv-spacing-2);
+  min-width: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+
+/* 「更多」面板宽：160。
+   ⚠️ 声明在 :root 而非面板自身——编辑态的候选下拉被 teleport 到 <body>，
+   已不在面板子树内，挂在面板上的变量它取不到；而这两处必须同源
+   （候选面板要与「添加」按钮等宽，按钮宽 = 面板宽 − 外壳内边距），
+   分别写死会改一漏一。 */
+:root {
+  --page-frame-more-width: 160px;
+}
+
+/* 面板定宽：两态同宽，避免进出编辑态时宽度跳变。 */
+.page-frame-more__panel {
+  width: var(--page-frame-more-width);
+  box-sizing: border-box;
+}
+
+/* 主体高度过渡（浏览↔编辑两态内容高度不同）。
+   ⚠️ 面板高度本由内容撑开（auto），而 auto 不可过渡——直接写 transition: height 无效。
+   故由组件在切换时量出目标高度、写成像素值（见 PageFrame.vue 的 animateMoreBody），
+   过渡结束再还原成 auto，保证后续增删已选项仍自适应。
+   inner 溢出隐藏：过渡中途容器比内容矮，不裁会露出来。 */
+/* ⚠️ .page-frame-more__body 现在是 el-scrollbar 的 **view**（由 view-class 指定），
+   不再是一个普通 div——高度过渡挂在 view 上，限高挂在它的父层 wrap 上，两者各司其职：
+   view 按内容长高并做过渡，wrap 到 264 就开始滚。组件里 animateMoreBody 量的
+   也是这个 class，改名/挪层会同时断掉过渡与限高。 */
+.page-frame-more__body {
+  transition: height var(--iflyv-duration-normal) var(--iflyv-ease-default);
+}
+
+.page-frame-more__body-inner {
+  overflow: hidden;
+}
+
+/* 抬头行：左标题 + 右操作。
+   它是这个面板的操作出口（保存/取消），必须常驻——做法是把它留在**滚动区之外**
+   （滚动只发生在下方 .page-frame-more__scroll 里），于是天然不动、不需要 sticky。
+   ⚠️ 曾用 `position: sticky; top: -8px` + 补底 + 负外边距实现常驻，前提是
+      「滚动的是 .el-popover 本身」——那要给 popover 写 overflow:auto，即**原生**
+      滚动条：Chrome 下占位、真切走一列、track 白底去不掉（见 scrollbar.scss）。
+      改由 el-scrollbar 承担滚动后，那套补偿（负 top / 负外边距 / 补底 / z-index）
+      全部随之作废：抬头本来就在滚动区外，没有任何东西会从它下面滚过去。
+   ⚠️ 左右内边距仍取 spacing-4（16）：popover 自带 8，故用负外边距吃掉 8 后
+      抬头内容左右缘落在 16，与下方条目（popover 8 + 编辑区 8）对齐成一条竖线。 */
+.page-frame-more__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  margin-inline: calc(-1 * var(--iflyv-spacing-2));
+  padding-inline: var(--iflyv-spacing-4);
+  padding-block: var(--iflyv-spacing-2);
+}
+
+/* 主体滚动区：收纳项多时在此滚，滚动条是 el-scrollbar 的自绘条——
+   浮在内容上、不占布局宽度。限高 264 与候选面板同档，两个浮层滚动起点一致。
+   ⚠️ 限高写在 EP 的 .el-scrollbar__wrap 上（滚动发生在那一层），不是外壳。 */
+.page-frame-more__scroll {
+  .el-scrollbar__wrap {
+    max-height: 264px;
+  }
+}
+
+/* 面板标题：展开态整档取用 body-sub（14/20 regular），色阶 text-3（理由见文件头抬头段）。
+   ⚠️ 取 body-sub 而非同为 14/20 的 title-component——那一档是 semibold。
+      本行是"面板身份的注脚"、刻意压在辅助层，走 semibold 会把它重新拉回标题层级，
+      与上一轮从 title-component 降下来的初衷相反。同尺寸两档只差字重，别挑错。
+   收起态更小一档，见下方 .is-collapsed 段。 */
+.page-frame-more__title {
+  font: var(--iflyv-font-body-sub);
+  color: var(--iflyv-text-3);
+}
+
+/* 浏览态条目：规格**整套对齐侧栏导航项** .page-frame__item
+   （44 高 / 左右 spacing-3 / radius-sm / body-primary 16-24 / 选中加粗 + text-1）。
+   ⚠️ 为什么不沿用 dropdown 条目那档（36 高 / radius-xs / body-sub）：
+   收进「更多」的本来就是一级导航项，只是换个地方出现；它们与侧栏里那些项是
+   同一类东西、同一层级，观感必须一致，否则同一个导航项在侧栏和面板里长得两样。 */
+.page-frame-more__item {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding-inline: var(--iflyv-spacing-3);
+  border-radius: var(--iflyv-radius-sm);
+  color: var(--iflyv-text-3);
+  font: var(--iflyv-font-body-primary);
+  cursor: pointer;
+  transition: background-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+  &:hover {
+    background-color: var(--iflyv-bg-inset);
+  }
+
+  /* 选中态口径同侧栏：只在选中项加粗，不是所有条目常驻 600 */
+  &.is-active {
     color: var(--iflyv-text-1);
     font-weight: var(--iflyv-font-weight-semibold);
   }
+}
+
+/* ==================== 收起态：条目规格改为对齐「收起态子菜单」 ====================
+   展开态维持现状（44 / radius-sm / body-primary，对齐侧栏导航项——见上一段理由）。
+   收起态下侧栏只剩图标、没有"文字导航项"可对齐了，此时用户看到的同类浮层只有
+   收起态子菜单（.page-frame-flyout，el-dropdown 承载）；两个浮层并存却一个 44 一个 36，
+   会读成两种不同的东西。故收起时整套切到子菜单那一档。
+
+   @depends-on: dropdown.scss 的 .el-dropdown-menu__item（36 高 / radius-xs / color: text-1）
+                + font.scss 的 body-sub（14/20）。
+   ⚠️ 这四个值必须与 dropdown.scss 保持同步——两个浮层 DOM 不同
+      （这边是 el-popover，那边是 el-dropdown），无法靠共用选择器自动对齐，
+      只能在此复述。改 dropdown 条目规格时记得回来同步这一段。
+   ⚠️ **面板宽度不跟着改**：仍是定宽 200（见文件头）。那条定宽是为了消除
+      浏览态/编辑态的宽度跳变（实测踩过），不是为了对齐侧栏宽度，故不受收起态影响。 */
+.el-popover.page-frame-more.is-collapsed {
+  /* 抬头维持收起态原档 body-min（12/18）：展开态已升到 body-sub，
+     收起态面板整体更紧凑（条目 36 高），抬头跟着升会压过条目、喧宾夺主。 */
+  .page-frame-more__title {
+    font: var(--iflyv-font-body-min);
+  }
+
+  .page-frame-more__item {
+    height: 36px;
+    border-radius: var(--iflyv-radius-xs);
+    font: var(--iflyv-font-body-sub);
+
+    /* 未选中项色阶也跟着切到子菜单那档 text-1（展开态仍是 text-3）。
+       ⚠️ 这不是"给收起态单挑一个深色"，而是补齐对齐：收起态子菜单的条目走
+          dropdown.scss 的 .el-dropdown-menu__item（color: text-1），本面板原写
+          text-3，于是收起时两个浮层并排、同为导航项却一深一浅——正是本段
+          要消除的那种"读成两种不同的东西"。
+       @depends-on: dropdown.scss 的 .el-dropdown-menu__item color: text-1。
+          与上方 36/radius-xs/body-sub 三项同理，DOM 不同无法共用选择器，只能复述；
+          改 dropdown 条目色阶时记得回来同步。 */
+    color: var(--iflyv-text-1);
+
+    /* 选中态：加粗 + **品牌色**，与收起态子菜单浮层同口径（见文件上方
+       .page-frame-flyout 的 .is-active，理由同）——收起后侧栏只剩图标，
+       选中项藏在浮层里，靠加粗不足以一眼定位。
+       ⚠️ 展开态不受影响：展开态的 .page-frame-more__item.is-active 仍是 text-1
+          （见上方那段），本段只在 .is-collapsed 作用域内生效。
+       ⚠️ 字重必须重申——上面的 font: 简写会把 weight 重置回 regular。 */
+    &.is-active {
+      color: var(--iflyv-brand-primary);
+      font-weight: var(--iflyv-font-weight-semibold);
+    }
+  }
+}
+
+/* ⏸ 以下整段已停用（2026-09）：面板原本有「浏览 / 编辑」两态，编辑态已整体移入
+   ⚙ 调起的「导航设置」弹窗（见本文件末尾 .page-frame-nav-config 段），
+   这些类在 PageFrame.vue 里已无任何引用。
+
+   为什么注释留着而不删：编辑态是"暂时不用"而非"永久废弃"——若将来要在窄面板里
+   恢复就地编辑，这套（已选项竖排 / 候选面板限高 / 增删过渡）是调通过的实现，
+   含多条实测结论（统一 gap、候选面板 264 限高的由来等），重写代价远高于留着。
+   ⚠️ 用 // 行注释而非块注释：本段内部本身含块注释，CSS 块注释不可嵌套。
+   ⚠️ 若确认永久不再需要，整段删除即可，不会影响任何在用样式。 */
+// /* 编辑态的取消/保存：按钮组间距一律父容器 flex+gap（源头已清零相邻 margin） */
+// .page-frame-more__actions {
+//   display: flex;
+//   align-items: center;
+//   gap: var(--iflyv-spacing-2);
+// }
+
+/* 空态：面板太窄放不下 el-empty 的任何一档插画，故用一句说明文案。
+   色阶取 text-2（正文级）——它是面板空时唯一的内容、要能读清，
+   不取 text-3 那档说明性灰；在面板内居中。 */
+.page-frame-more__empty {
+  /* 居中：面板定宽 200，这句文案会折成两行——
+     flex 居中管「整块在面板里居中」，text-align 管「两行各自居中」，缺后者第二行会左对齐 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 0;
+  padding: var(--iflyv-spacing-2) var(--iflyv-spacing-2) var(--iflyv-spacing-3);
+  color: var(--iflyv-text-2);
+  font: var(--iflyv-font-body-sub);
+}
+
+/* ⏸ 以下整段已停用（2026-09）：面板原本有「浏览 / 编辑」两态，编辑态已整体移入
+   ⚙ 调起的「导航设置」弹窗（见本文件末尾 .page-frame-nav-config 段），
+   这些类在 PageFrame.vue 里已无任何引用。
+
+   为什么注释留着而不删：编辑态是"暂时不用"而非"永久废弃"——若将来要在窄面板里
+   恢复就地编辑，这套（已选项竖排 / 候选面板限高 / 增删过渡）是调通过的实现，
+   含多条实测结论（统一 gap、候选面板 264 限高的由来等），重写代价远高于留着。
+   ⚠️ 用 // 行注释而非块注释：本段内部本身含块注释，CSS 块注释不可嵌套。
+   ⚠️ 若确认永久不再需要，整段删除即可，不会影响任何在用样式。 */
+// /* 编辑态：已选项逐行竖排、「添加」恒在最底部，一列到底。
+//    ⚠️ 统一一个 gap：已选项之间、以及「最后一个已选项 ↔ 添加」之间，都是
+//    "这一列里相邻两项"的同一种间隔，分两档会看出错位（实测踩过）。
+//    为什么已选项不按内容宽换行铺开：面板只有 200 宽，导航名稍长就排不下两个，
+//    于是时而一行两个、时而一行一个，宽度参差不齐；统一成一列更稳定，
+//    也与「添加」按钮、浏览态条目共用同一条左右边界。 */
+// .page-frame-more__edit {
+//   display: flex;
+//   flex-direction: column;
+//   gap: var(--iflyv-spacing-2);
+//   /* ⚠️ 四周一律 spacing-2（8）：外层 .el-popover 外壳自己还有一圈 spacing-2 内边距，
+//      两层相加 = 视觉留白 16。**要调这块留白时改的是「两层之和」**——曾把本层直接
+//      写成 16，结果视觉留白变成 24（16+8），比原先还大。 */
+//   padding: var(--iflyv-spacing-2);
+//
+//   /* 已选项撑满面板内容宽（文字过长的省略已在 PickedItem 源头处理） */
+//   .picked-item { width: 100%; }
+//
+//   /* 「添加」与下方已选项之间单独加宽一档：列 gap 的 spacing-2(8) 再补 spacing-1(4) = 12。
+//      ⚠️ 为什么只补这一处、不把整列 gap 提到 12：「添加」是**入口**、下面是**已选值列表**，
+//      两者不是同类项；而已选项彼此才是同类项，它们之间保持 spacing-2 才读得出"同一组"。
+//      ⚠️ **只在下面真有已选项时才补**：这 4px 是「入口与列表之间」的间隔，一项都没加时
+//      下面空无一物，它就变成面板底部一段无来由的空白（实测踩过）。
+//      判据用 `:has(.picked-item)` 而非 `:has(+ .page-frame-more__picked)`——
+//      承载已选项的 TransitionGroup 用了 `tag="div"`，**空列表时容器照样渲染**，
+//      只判断"有没有这个兄弟"永远为真，必须判断它**里面有没有项**。 */
+//   > .el-dropdown:has(~ .page-frame-more__picked .picked-item) {
+//     margin-block-end: var(--iflyv-spacing-1);
+//   }
+// }
+//
+// /* 已选项列表：承接列间距（与 __edit 的 gap 同档，一列到底看不出分界），
+//    并作为 TransitionGroup 的实体容器供增删位移用。 */
+// .page-frame-more__picked {
+//   display: flex;
+//   flex-direction: column;
+//   gap: var(--iflyv-spacing-2);
+//   /* 锚住离场项：下面的 leave-active 用 absolute 脱离文档流，
+//      没有这条的话它的 width:100% 会参照更外层的盒子、瞬间撑出面板（实测踩过） */
+//   position: relative;
+// }
+//
+// /* 增删：单项**原位淡入淡出，不做位移**；其余项平滑让位。
+//    ⚠️ 进出场只过渡 opacity——这一列是「已选值」清单，加/删一条时该项原地出现或消失，
+//    附带位移会把注意力从"选了哪些"引到动效本身。
+//    位移只保留在 .more-picked-move 上：那不是进出场动效，而是**其余项给增删让位**
+//    的必要位移（删掉中间一项时下面的项平滑上移），去掉会变成硬跳。
+//    ⚠️ leave 必须 position: absolute——否则被删的项在离场动画期间仍占位，
+//    下方各项要等它彻底消失才开始移动，看起来是"先卡一下再跳"。 */
+// .more-picked-move {
+//   transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+// }
+// .more-picked-enter-active,
+// .more-picked-leave-active {
+//   transition: opacity var(--iflyv-duration-normal) var(--iflyv-ease-default);
+// }
+// .more-picked-enter-from,
+// .more-picked-leave-to {
+//   opacity: 0;
+// }
+// /* 离场项：**留在原位淡出**，不脱离文档流。
+//    ⚠️ 曾用 `position: absolute` 让下方各项立刻上移（不必等离场动画走完）。
+//    但 absolute 且不给 top 时，它会锚到容器 padding box 的**顶部**——
+//    删中间某项时，该项瞬间跳到第一项的位置、与那一项文字叠在一起（实测踩过）。
+//    以前看不出来是因为离场还带 translateY 把它挪走了；改成"原位淡出"后就暴露了。
+//    现在保持在流内：它一边淡出一边由 max-height 收拢高度，下方各项跟着平滑上移，
+//    既不重叠、也不会"先卡一下再跳"。 */
+// .more-picked-leave-active {
+//   overflow: hidden;
+//   transition:
+//     opacity var(--iflyv-duration-normal) var(--iflyv-ease-default),
+//     max-height var(--iflyv-duration-normal) var(--iflyv-ease-default),
+//     margin-block-start var(--iflyv-duration-normal) var(--iflyv-ease-default);
+//   /* 起点要有确定值，max-height 才可过渡。直接取 PickedItem 自身的定高
+//      （它写死 height: var(--el-component-size)），而不是拍一个"够大就行"的上限——
+//      值对齐后收拢速度才是匀的，改控件高度时这里也自动跟随。 */
+//   max-height: var(--el-component-size);
+// }
+// .more-picked-leave-to {
+//   max-height: 0;
+//   /* 抵消 flex gap：高度归零后那道 8px 列间距仍在，不抵消会留一条空隙 */
+//   margin-block-start: calc(-1 * var(--iflyv-spacing-2));
+// }
+//
+//
+// /* ======================================================================== */
+// /* ============== PageFrame 头像下拉（侧栏底部身份入口，约定类） ============= */
+// /* ======================================================================== */
+//
+// /* 同上：面板被 teleport 到 <body>，scoped 构不着。
+//
+//    ⚠️ 本段只写「面板宽度」一件源头没有的事——条目行高/圆角/hover、分隔线、
+//    危险项红字全部复用 dropdown.scss 源头：
+//      · 条目 → .el-dropdown-menu__item（36 高 / radius-xs / bg-inset hover）
+//      · 分段 → EP 原生 divided（线色已由 var-mapping 映射到 --iflyv-border-subtle）
+//      · 退出登录 → dropdown.scss 的通用约定 .is-danger
+//
+//    宽度 160 而非默认 min-width 120：菜单项是「个人中心」「模型备案信息」这类
+//    4~6 字的功能名，120 只够 4 字 + 左右内边距，6 字就贴边。定宽而非 min-width——
+//    各项字数不齐时，min-width 会让面板宽度随最长项浮动，不同页面点开宽窄不一。 */
+// .el-dropdown-menu.page-frame-avatar-menu__panel {
+//   width: 160px;
+//   box-sizing: border-box;
+// }
+//
+// /* 课程卡右上「更多」下拉面板：与头像下拉同理只定宽，行高/圆角/hover/danger
+//    全归 dropdown.scss 源头。定宽而非内容宽——各系统传的项文案长短不一
+//    （「打开二维码」vs「查看课程首页」），不定宽面板右缘会随菜单内容漂移。
+//    160 = 与头像下拉同档，两处都是从侧栏弹出的短命令列表，宽度口径保持一致。 */
+// .el-dropdown-menu.page-frame-course-menu__panel {
+//   width: 160px;
+//   box-sizing: border-box;
+// }
+//
+// /* 编辑态「添加」下拉触发器的占位与对齐。
+//    ⚠️ 不碰按钮的外观（圆角/字阶/取色/hover 全归 button.scss），只定它在本面板里的
+//    占位方式——这是"排自己面板的版"，不是"改按钮长什么样"。
+//    **热区只包图标+文字、不撑满整行**：撑满会让按钮右侧一大片空白也可点，
+//    鼠标扫过时凭空亮起一条底色，读起来像"整行是个条目"；按内容宽才符合
+//    它「一个轻量入口」的身份。靠左由外壳的 flex 起点负责，不靠按钮自己撑开。 */
+// .page-frame-more__edit .el-dropdown {
+//   /* 按内容宽、靠左：不撑满整行——撑满时 popper 会参照外壳左缘定位，
+//      候选面板就比「添加」按钮更靠左一截（实测踩过）。
+//      align-self 而非 width，让它在竖向 flex 列里只占自身宽度。 */
+//   align-self: flex-start;
+// }
+//
+// /* 候选面板：与「更多」面板等宽，左右缘落在同一条竖线上。
+//    ⚠️ 不定宽会按内容宽（各导航名长短不一）、右缘参差。
+//    由面板宽推导而非写死像素——改面板宽时这里自动跟随。
+//    条目行高/圆角/hover 仍全归 dropdown.scss。 */
+// .page-frame-more__add-panel .el-dropdown-menu {
+//   width: calc(var(--page-frame-more-width) - var(--iflyv-spacing-2) * 2);
+//   box-sizing: border-box;
+//
+// }
+//
+// /* 候选多时限高滚动。
+//    ⚠️ **限高写在 EP 自己的 `.el-scrollbar__wrap` 上**——el-dropdown 内部本来就用
+//    <el-scrollbar> 包着菜单，只是默认没有高度上限。给它一个上限，滚动就由 el-scrollbar
+//    自绘条承担：**浮在内容上、不占布局宽度**（见 scrollbar.scss ① 段）。
+//    三层里只有这一层是对的，另两层都踩过：
+//      · 写外层 popper（`.page-frame-more__add-panel`）+ `overflow: auto` ——
+//        那是**原生**滚动条，Chrome 下占位、从布局里真切走一列，且 track 白底去不掉。
+//        这正是 scrollbar.scss 全文在禁的事（"禁在 div 上直接写 overflow:auto"），
+//        本文件曾自己违反了一次（实测踩过，2026-09 修正）。
+//      · 写内层菜单 <ul>：滚动条画在内层右边界、外层盒子还包在外面，条悬在两层之间；
+//        且外层仍按内容全高撑开、照样溢出视口被水平推走。
+//    ⚠️ 为什么要单独写：tooltip.scss 那条浅色 popper 通用限高用 :not(.el-dropdown__popper)
+//    把 dropdown 整类排除了（为的是不干扰日期/时间/级联等功能性浮层的自有高度），
+//    所以候选面板默认没有任何上限。与「更多」面板同档，两个浮层滚动起点一致。 */
+// .el-popper.page-frame-more__add-panel .el-scrollbar__wrap {
+//   max-height: 264px;
+// }
+
+
+/* ======================================================================== */
+/* ============ PageFrame「更多」配置弹窗（双栏穿梭，约定类） ============== */
+/* ======================================================================== */
+
+/* 点面板抬头的 ⚙ 后调起的配置弹窗：左栏「已展示的导航项」、右栏「收进『更多』中的
+   导航项」，条目右侧 ⊖ / ⊕ 互相搬运，点确认才提交。
+
+   ⚠️ 为什么样式在这里而不在 PageFrame.vue 的 scoped 里：
+      el-dialog 与浮层同样被 teleport 到 <body>，scoped 与 :deep() 都构不着。
+
+   ⚠️ 与 el-transfer 的关系：EP 的穿梭框在勿用清单里（整体停用），本弹窗**不使用**
+      el-transfer，而是用 el-dialog + 令牌自行搭建——因为这里搬运的是「带层级的导航项」
+      （二级项要缩进并连竖线），el-transfer 只吃扁平列表，装不下这个结构。
+      规则口径见 references/component-interaction.md 勿用清单该条的补充说明。
+
+   宽度取弹窗三档里的 800：内容是**两栏并列的列表**（非表单），正是 800 档的适用场景。 */
+
+/* 两栏容器：栅格思路做二等分。列间距 spacing-8（32）= 设计稿两栏 392-360 的间隔。
+   ⚠️ 不用 .grid/.grid__col-12：那是**页面级分栏**的栅格（24 列 + 16 水槽），
+      弹窗内部的两栏并列不是页面分栏，水槽也对不上，故就地二等分。 */
+.page-frame-nav-config {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--iflyv-spacing-8);
+}
+
+/* 单栏：抬头 + 列表。抬头与首个条目间距 spacing-3（12）= 设计稿 32-20。 */
+.page-frame-nav-config__col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 栏抬头：整档取用 title-component（14/20 semibold），色阶 text-1——
+   它是真正的区域标题（左右两栏靠它区分职责），与「更多」浮层那行注脚性质不同。 */
+.page-frame-nav-config__col-title {
+  margin-block-end: var(--iflyv-spacing-3);
+  font: var(--iflyv-font-title-component);
+  color: var(--iflyv-text-1);
+}
+
+/* 列表滚动区：限高 = 设计稿两栏内容高 376 - 抬头 20 - 抬头下间距 12 = 344。
+   ⚠️ 用 el-scrollbar 承担滚动（自绘条浮在内容上），不给 div 写 overflow:auto
+      ——原生条在 Chrome 下占位、track 白底去不掉（见 scrollbar.scss）。
+   ⚠️ 限高写在 EP 的 .el-scrollbar__wrap 上（滚动发生在那一层），不是外壳。
+   两栏各自独立滚动：条目数天然不等，绑在一起滚会让短的那栏留一片空白。 */
+.page-frame-nav-config__scroll {
+  .el-scrollbar__wrap {
+    max-height: 344px;
+  }
+
+  /* 空态要占满整栏高度（见 __empty 注释），故这条链上每一层都得能被撑开：
+     EP 的 view 默认不是 flex 容器，不给它 height:100% 的话 __list 撑不起来。
+     ⚠️ 只能是 min-height 不能是 height——写死 height 会让**有内容**时
+        的列表被强行拉到 344 高，条目少时底部留一大片空白。 */
+  .el-scrollbar__view {
+    display: flex;
+    flex-direction: column;
+    min-height: 344px;
+    /* ⚠️ 必须锁宽：EP 的 view 默认按内容宽度撑开，而二级项带 40 的
+       左外边距 → 内容总宽 = 栏宽 + 40，于是横向滚动条冒出来
+       （表现为整栏可左右拖、一级项文字被推出左边界）。
+       锁成 100% 后二级项在栏内收缩，右缘仍与一级项齐平。 */
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* 条目列：行间距 spacing-3（12）= 设计稿相邻条目 84-72 的间隔。
+   flex:1 是为了空态能撑满整栏（见 __empty），有内容时不影响——
+   条目是 flex:none 的自然高度，多出来的空间只落给空态那个 flex:1 的 <p>。 */
+.page-frame-nav-config__list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--iflyv-spacing-3);
+  /* 离场项要 absolute 到「它原本所在的位置」，故容器必须是定位上下文。
+     缺这一条，离场项会锚到更外层的已定位祖先上、跳到别处（见下方过渡段）。 */
+  position: relative;
+}
+
+/* 条目：白底 + 描边 + radius-sm，规格照设计稿（40 高 / 上下 8 左右 12 / 两端对齐）。
+   ⚠️ 高度不写死 40：改用上下 padding + 内容自然撑开，文案换行时不会被压扁。
+      单行时 8+24+8 = 40，与设计稿一致。 */
+/* ⚠️ 条目可能渲染成 <button>（可搬运的行，整条即热区）或 <div>（不可搬运的父项），
+   故这里要把按钮的浏览器默认样式一并压掉（宽度、字体、对齐、外观都不能留默认）。 */
+.page-frame-nav-config__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--iflyv-spacing-2);
+  width: 100%;                       /* button 默认按内容收缩，要显式撑满列宽 */
+  padding: var(--iflyv-spacing-2) var(--iflyv-spacing-3);
+  border: 1px solid var(--iflyv-border-default);
+  border-radius: var(--iflyv-radius-sm);
+  background-color: var(--iflyv-bg-panel);
+  color: var(--iflyv-text-1);
+  font: var(--iflyv-font-body-primary);
+  text-align: start;                 /* button 默认文字居中 */
+  appearance: none;                  /* 去掉系统按钮外观（Safari 尤其明显） */
+
+  /* ⚠️ transition 是**单个属性、不是可叠加的列表**：更高特异性的一条
+     `transition:` 会把别处写的整条冲掉。本组件有三方要加过渡（条目自身的
+     淡入淡出 / .is-actionable 的 hover / 增删过渡的高度收拢），故**一次性
+     在这里把三方的属性全列齐**，下面各处只改值、不再重写 transition。
+     真实翻车两次：① .is-actionable（0-2-0）漏写 opacity → 淡入淡出失效成瞬间显隐；
+     ② 增删过渡在 .nav-config-*-active（0-1-0）里加 height，被 .is-actionable
+        整条盖掉，实测 transition-property 只剩 "opacity, border-color,
+        background-color"，height 压根没参与、邻项补位全程瞬移。
+     （也试过用 CSS 变量拼装 transition 列表，空槽位 + 前导逗号的写法很脆，
+       浏览器解析失败会静默退回 `all`，实测确实退成了 all——故放弃，老实列全。） */
+  transition:
+    opacity var(--iflyv-duration-normal) var(--iflyv-ease-default),
+    height var(--iflyv-duration-normal) var(--iflyv-ease-default),
+    margin-block-start var(--iflyv-duration-normal) var(--iflyv-ease-default),
+    padding-block-start var(--iflyv-duration-normal) var(--iflyv-ease-default),
+    padding-block-end var(--iflyv-duration-normal) var(--iflyv-ease-default),
+    border-block-start-width var(--iflyv-duration-normal) var(--iflyv-ease-default),
+    border-block-end-width var(--iflyv-duration-normal) var(--iflyv-ease-default),
+    border-color var(--iflyv-duration-fast) var(--iflyv-ease-default),
+    background-color var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+  /* 整行热区：只有可搬运的行才有指针与 hover 反馈——
+     父项是纯结构上下文，给它 hover 会让人以为能点。
+     ⚠️ 这里**不要再写 `transition:`**，属性已在上面列齐（写了就又把别人盖掉了）。 */
+  &.is-actionable {
+    cursor: pointer;
+
+    /* hover 只换底色、**不动描边**——描边保持 border-default。
+       条目本来就带边框，再让边框变深会和"选中/聚焦"的视觉语义撞上；
+       底色变化已足够表达"这行可点"。 */
+    &:hover {
+      background-color: var(--iflyv-bg-inset);
+    }
+  }
+}
+
+/* 条目文字：长名字省略号截断，不把 ⊖/⊕ 挤出条目 */
+.page-frame-nav-config__item-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 二级项：整条右缩 spacing-10（40）并在左侧连一条竖线，表达"隶属于上一项"。
+   竖线用伪元素画在缩进区中点（设计稿 x=20，恰是 40 的一半），
+   高度由 JS 无关的 flex 拉伸决定——连续多个二级项各画一段、首尾相接成一条通线。
+   ⚠️ 用 border-inline-start 而非 background 画线：RTL 下自动翻边。
+   ⚠️ 缩进靠**自身变窄**（width: calc(100% - 40)）而不是 margin 往右推：
+      margin 方案下条目总宽 = 栏宽 + 40，会把滚动区撑出横向滚动条
+      （表现为整栏能左右拖、一级项文字被切掉左边、二级项右缘探出栏外）。
+      层级越深条目越窄，右缘始终与一级项齐平，这才是"在左栏内保持右对齐"。 */
+.page-frame-nav-config__item.is-child {
+  margin-inline-start: var(--iflyv-spacing-10);
+  width: calc(100% - var(--iflyv-spacing-10));
+  position: relative;
+}
+
+/* 竖线段：向左伸到缩进区中点，纵向覆盖本条 + 与下一条之间的间距，
+   故连续二级项之间不断线；最后一条只覆盖自身高度（由 :last-of-type 收尾）。 */
+.page-frame-nav-config__child-rail {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(-1 * var(--iflyv-spacing-5));
+  border-inline-start: 1px solid var(--iflyv-border-default);
+}
+/* 中间的二级项：竖线向下延伸一个行间距，与下一条的竖线接成通线。
+   ⚠️ 判据是「**下一条也是二级项**」，不是 `:not(:last-child)`——列表里父项与
+      子项混排，某组的最后一个子项后面往往跟着下一个一级项；用 :not(:last-child)
+      会让那条线继续向下探进一级项的间隔里，画出一截悬空的线头。 */
+.page-frame-nav-config__item.is-child:has(+ .page-frame-nav-config__item.is-child) .page-frame-nav-config__child-rail {
+  inset-block-end: calc(-1 * var(--iflyv-spacing-3));
+}
+
+/* 搬运按钮 ⊖ / ⊕：24 热区内一个 16 实心圆 + 白色字形，颜色走令牌。
+   ⚠️ 用 <button> 而非裸 span：可聚焦、有按钮语义（键盘可达），
+      与「纯图标入口」的通用要求一致。 */
+/* 搬运图标：**纯展示**，不是独立按钮——整行才是热区（见 .is-actionable）。
+   24 是设计稿给的图标框尺寸（内含 16 的实心圆），保留它让图标在行内占位稳定。 */
+.page-frame-nav-config__move {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--iflyv-brand-primary);
+
+  /* 移出（⊖）用辅色蓝、移入（⊕）用主色绿——照设计稿。
+     两者是**一对反向操作**，靠色相区分方向比靠图形区分更快读出。 */
+  &.is-remove {
+    color: var(--iflyv-info-primary);
+  }
+}
+
+/* 空栏提示：与「更多」浮层空态同口径（text-2 正文级、居中）。
+   ⚠️ 撑满整栏高度（flex:1 → 344，与另一栏滚动区等高）而不是只占一小条：
+      两栏是并排对照的关系，空的那栏若只有一行字，视觉上会读成"这栏比较矮/没内容区"，
+      而实际它是可接收条目的投放区。撑满后两栏边界一致、提示居中于该区。 */
+.page-frame-nav-config__empty {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-block: var(--iflyv-spacing-8);
+  color: var(--iflyv-text-2);
+  font: var(--iflyv-font-body-sub);
+  text-align: center;
+}
+
+/* ==================== 两栏条目的增删过渡 ====================
+   搬运一项时：该项**原位淡出/淡入**（不位移），其余项平滑让位或补位。
+
+   ⚠️ 离场项**必须留在文档流里自己收拢高度**——补位动画正是由这个收拢驱动的。
+      曾写成 `position: absolute` 想"立刻腾出空间、交给 .nav-config-move 的 FLIP
+      补位"，逐帧采样（rAF + computed style）实测：整个 300ms 里
+      `.nav-config-move` **一次都没挂上**、各项 transform 恒为 none，
+      下方条目的 y 在最后一帧从 507 直接跳到 561——absolute 让离场项瞬间脱流，
+      存活项的布局位置在过渡期间压根没变过，FLIP 无从触发，
+      真正的位移发生在幽灵被移除的那一帧，观感就是"点完突变"。
+
+   ⚠️ 收拢必须过渡 **height 而不是 max-height**：max-height 的起点是 `none`，
+      `none → 0` 不可插值、浏览器直接跳；就算给 active 态补一个 60px 起点，
+      收拢也只会从 60 跑到 0（而条目实际高 40），前 1/3 时间是"空跑"，
+      看起来仍像卡一下才动。故用 JS 钩子量出真实高度写进行内样式，
+      过渡精确的 40px → 0（见 PageFrame.vue 的 onLeave/onEnter）。
+
+   ⚠️ 列表用 gap 12 拉开条目，gap 不可过渡；收拢时必须同时把上边距吃掉
+      （负 margin 抵消），否则会残留 12px 空隙、补位停在半路。 */
+.nav-config-move {
+  transition: transform var(--iflyv-duration-normal) var(--iflyv-ease-default);
+}
+
+/* 过渡属性已在条目上列齐，这里只管"收拢期间不露出内容"。
+   ⚠️ 不要在这里写 `transition:`——见条目那条注释。 */
+.nav-config-enter-active,
+.nav-config-leave-active {
+  overflow: hidden;
+}
+
+/* 进场起点 / 离场终点：透明 + 高度与所有纵向占位归零。
+   height 的具体像素值由 JS 钩子写行内样式，这里只归零其余占位属性。 */
+.nav-config-enter-from,
+.nav-config-leave-to {
+  opacity: 0;
+  padding-block: 0;
+  border-block-width: 0;
+  margin-block-start: calc(-1 * var(--iflyv-spacing-3));
+}
+
+/* 已在淡出、不该再响应鼠标（否则搬运中误点会触发第二次搬运） */
+.nav-config-leave-active {
+  pointer-events: none;
 }

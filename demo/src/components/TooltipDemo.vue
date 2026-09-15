@@ -31,7 +31,8 @@
       </aside>
     </div>
 
-    <!-- ⏸ 暂停展示：弹出框（Popover，点击/悬浮触发）。暂时不用，保留代码，需要时放开。
+    <!-- 弹出框（Popover）：浮层里放一块自定义内容面板。
+         ⚠️ 适用面很窄——一列可点选项一律用 el-dropdown，别拿它自拼菜单（见 Popover 段）。 -->
     <div class="demo-block">
       <p class="demo-label">弹出框</p>
       <div class="demo-row">
@@ -49,7 +50,6 @@
         </el-popover>
       </div>
     </div>
-    -->
   </section>
 </template>
 

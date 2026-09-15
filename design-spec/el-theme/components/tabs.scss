@@ -135,13 +135,13 @@
       color var(--iflyv-duration-normal) var(--iflyv-ease-default);
   }
 
-  /* 激活项：26px / 阿里普惠 95 ExtraBold / 强调黑，顶部 padding 6px（仅激活项） */
-  /* 用拆分属性而非 font 简写：含空格字体名 "Alibaba PuHuiTi 3.0" 用在 font 简写里易整条解析失败回退默认字号 */
+  /* 激活项：26px / semibold / 强调黑，顶部 padding 6px（仅激活项） */
+  /* 用拆分属性而非 font 简写：与上方未选中项对称，且 font-weight 需单独可过渡（见上方 transition） */
   .el-tabs__item.is-active {
     padding-top: 6px !important;
-    font-family: var(--iflyv-font-family-emphasis);
+    font-family: var(--iflyv-font-family-base);
     font-size: var(--iflyv-font-size-26);
-    font-weight: var(--iflyv-font-weight-extrabold);
+    font-weight: var(--iflyv-font-weight-semibold);
     line-height: var(--iflyv-line-height-36);
     color: var(--iflyv-text-1);
   }

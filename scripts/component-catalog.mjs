@@ -1007,6 +1007,78 @@ ${buttons}
   },
 
   {
+    id: 'message-box',
+    anchor: 'message-box',
+    name: 'MessageBox 提示确认框',
+    group: 'feedback',
+    desc: '命令式调起的提示弹窗',
+    keywords: ['MessageBox', '确认框', '删除确认', '弹窗', 'confirm', 'alert', 'prompt'],
+    readRefs: [
+      'references/component-interaction.md（Dialog 段 · 语义变体）',
+      'el-theme/components/message-box.scss（顶部速查）',
+    ],
+    mustRules: [
+      '观感与 Dialog 提示弹窗完全对齐（同一套圆角/宽度/标题字阶/图标/按钮规范）',
+      'type 必传（error/warning/success/info），宽度固定 400',
+      'error ≡ is-danger（危险操作），warning ≡ is-warning（警示），success ≡ is-success（成功告知），info ≡ is-info（中性提示）',
+      '主按钮语义在源头强制对齐：error 自动用 danger 按钮、其余三类用 primary 按钮',
+    ],
+    instanceFields: [
+      {
+        key: 'scene',
+        label: '语义',
+        type: 'select',
+        default: 'error',
+        options: [
+          { value: 'error', label: '危险 · 删除等不可撤销操作' },
+          { value: 'warning', label: '警告 · 离开未保存等' },
+          { value: 'success', label: '成功 · 操作完成告知' },
+          { value: 'info', label: '信息 · 版本更新等中性提醒' },
+        ],
+      },
+      { key: 'title', label: '标题', type: 'text', placeholder: '如：删除确认', default: '' },
+      { key: 'message', label: '正文', type: 'text', placeholder: '如：删除后不可恢复，确认删除？', default: '' },
+      { key: 'confirmText', label: '主按钮文案', type: 'text', placeholder: '如：删除', default: '确定' },
+      { key: 'showClose', label: '可关闭', type: 'switch', default: true },
+    ],
+    snippet: ({ scene, title, message, confirmText, showClose }) => {
+      const typeMap = { error: 'error', warning: 'warning', success: 'success', info: 'info' }
+      const titleMap = {
+        error: '删除确认',
+        warning: '离开确认',
+        success: '发布成功',
+        info: '同步说明',
+      }
+      const messageMap = {
+        error: '删除后不可恢复，确认删除？',
+        warning: '当前内容尚未保存，离开将丢失改动。',
+        success: '课程已发布，学生现在可以看到它了。',
+        info: '数据每 10 分钟同步一次，稍后即可看到最新结果。',
+      }
+      const btnMap = { error: '删除', warning: '仍要离开', success: '知道了', info: '好' }
+      const type = typeMap[scene] || 'error'
+      const titleText = title || titleMap[scene] || '确认'
+      const msg = message || messageMap[scene] || '确认执行此操作？'
+      const btn = confirmText || btnMap[scene] || '确定'
+      const close = showClose ?? true
+      return `ElMessageBox.confirm('${msg}', '${titleText}', {
+  type: '${type}',
+  confirmButtonText: '${btn}',
+  cancelButtonText: '取消',
+  showClose: ${close},
+})
+  .then(() => {
+    // 确认后的操作
+    ElMessage({ message: '已确认', type: 'success', showClose: true })
+  })
+  .catch(() => {
+    // 取消 / 关闭按钮走 reject，不是错误
+    ElMessage({ message: '已取消', type: 'info', showClose: true })
+  })`
+    },
+  },
+
+  {
     id: 'alert',
     anchor: 'alert',
     name: 'Alert 提示条',
@@ -1557,22 +1629,51 @@ ${steps}
     mustRules: [
       '先判粒度：要整页骨架才用 PageFrame；只是页面内部加局部导航不要套（过重），用 el-tabs 或 el-anchor',
       '禁手写 aside/header 拼同款框架、禁用 el-menu/el-container 复刻（el-menu 已暂停启用）',
-      '页面内容放默认插槽（白色圆角内容卡）',
+      '页面内容放默认插槽（白色圆角内容卡内的滚动区）',
+      '含页面级 tab 的工具栏放 #page-header 插槽（滚动区之外、始终可见）；纯页面标题工具栏仍放默认插槽、跟着内容滚走',
+      '导航是否分组由 menus 每组传不传 title 决定：传了才渲染组标题，不传即平铺成一条连续列表',
+      '头像下拉菜单项由业务方传 :avatar-menus，框架一项不写死；divided 分段、danger 标红破坏性项，禁自写红色或自插分隔线',
+      '侧栏底部用户区分列两端：左=头像+user-name 身份区，右=帮助/消息图标组；不需要某个入口用 show-help / show-notice 关掉',
     ],
-    instanceFields: [],
-    snippet: () => `<PageFrame
+    instanceFields: [
+      { key: 'grouped', label: '导航分组', type: 'switch', default: true },
+    ],
+    snippet: ({ grouped }) => {
+      // 分组与否只体现在 menus 每组传不传 title —— 组件无需任何 prop
+      const groupTitle = grouped === false ? '' : `\n    title: '教学管理',`
+      return `<PageFrame
   :menus="menus"
   v-model:active="activeMenu"
   :course="course"
   :breadcrumbs="breadcrumbs"
   :notice-count="3"
   avatar-role="teacher-male"
+  user-name="王老师"
+  :avatar-menus="avatarMenus"
+  @avatar-menu-click="key => handleAvatarMenu(key)"
 >
+  <template #page-header>
+    <!-- 含页面级 tab 的工具栏放这里；纯标题工具栏放下面默认插槽 -->
+  </template>
   <!-- 页面内容 -->
 </PageFrame>
 
 <!-- 脚本 -->
-import { PageFrame, type PageFrameMenuGroup } from '<path>/design-spec/components'`,
+import { PageFrame, type PageFrameMenuGroup, type PageFrameAvatarMenuItem } from '<path>/design-spec/components'
+
+const menus: PageFrameMenuGroup[] = [
+  {${groupTitle}
+    items: [{ key: 'a', label: '一级导航' }],
+  },
+]
+
+// 头像下拉：菜单项按自己系统的功能配，框架不写死
+// divided = 与上一项之间加分隔线；danger = 破坏性操作转红字
+const avatarMenus: PageFrameAvatarMenuItem[] = [
+  { key: 'profile', label: '个人中心' },
+  { key: 'logout', label: '退出登录', divided: true, danger: true },
+]`
+    },
   },
 
   {

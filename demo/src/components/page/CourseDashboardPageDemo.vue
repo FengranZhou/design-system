@@ -25,6 +25,7 @@
         :breadcrumbs="breadcrumbs"
         :back-disabled="true"
         avatar-role="teacher-male"
+        user-name="王老师"
       >
         <!-- 页面级 tab + 同排主操作 → 按 toolbar-pattern 分支① 组织。
              整条放 #page-header：在滚动区之外、始终可见（tab 与主操作不分离），
@@ -126,6 +127,12 @@ const activeKey = ref('course-dashboard')
 const course: PageFrameCourse = {
   name: '《智能启思从零懂智能》',
   meta: ['2023年春', '全网公开', '教务开课'],
+  // 卡片右上「更多」下拉：框架一项都不写死，由业务方按自身功能传入
+  menus: [
+    { key: 'detail', label: '查看课程首页' },
+    { key: 'setting', label: '课程设置' },
+    { key: 'qrcode', label: '打开二维码' },
+  ],
 }
 
 const breadcrumbs = [{ label: '典型页面' }, { label: '课程画像' }]

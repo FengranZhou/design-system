@@ -70,7 +70,7 @@ const FONT_SIZE_PX = {
 /**
  * 拆开基础令牌却没设齐字号+行高+字重（自造档位）。
  *
- * ⚠️ 规范允许一种拆分：含空格字体名（如 "Alibaba PuHuiTi"）不能用 font: 简写时，
+ * ⚠️ 规范允许一种拆分：含空格字体名（如 "Segoe UI"）不能用 font: 简写时，
  *    拆分属性但**字号/行高/字重一个不漏**。故不能见到 font-size-* 就报违规——
  *    要看同一规则块里三者是否齐全。
  */
@@ -134,10 +134,11 @@ const SUSPENDED_COMPONENTS = {
   hint: '该组件在「⏸ 勿用清单」内已停用，写出来会拿到 EP 原生观感。见 component-interaction.md 文末清单选替代方案',
 }
 
-/** ElMessageBox 命令式弹窗 */
+/** ElMessageBox 命令式弹窗 — 已适配（观感对齐 Dialog 提示弹窗），检测器改为指导性提示 */
 const MESSAGE_BOX = {
   find: /ElMessageBox\s*\.\s*(confirm|alert|prompt)\b|\$msgbox\s*\(/,
-  hint: '弹窗统一用 <el-dialog>，命令式 API 拿不到语义变体/宽度三档/footer 规范',
+  hint: 'MessageBox 已适配（观感对齐 Dialog 提示弹窗）；type 必传（error/warning/success/info），宽度固定 400',
+  level: 'info', // 不再判违规，改为使用提示
 }
 
 /** el-row / el-col 栅格 */
@@ -172,6 +173,26 @@ function requireProp(tag, propRe, hint, extraSkip) {
     },
     hint,
   }
+}
+
+/** 一个色值是不是"红"——用于识别使用方自写的危险色（正确写法是挂 .is-danger 走源头）。
+    hex 解析后比通道：R 明显高于 G 和 B 才算红，避免把橙/棕/粉之外的色误判。 */
+function isReddish(value) {
+  const v = String(value).toLowerCase()
+  if (/var\(--iflyv-(danger|red)|var\(--el-color-danger|\bred\b|\bcrimson\b/.test(v)) return true
+  const hex = /#([a-f0-9]{3}|[a-f0-9]{6})\b/.exec(v)
+  if (hex) {
+    let h = hex[1]
+    if (h.length === 3) h = h.split('').map((c) => c + c).join('')
+    const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16))
+    return r > 150 && r - g > 60 && r - b > 60
+  }
+  const rgb = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/.exec(v)
+  if (rgb) {
+    const [r, g, b] = [1, 2, 3].map((i) => Number(rgb[i]))
+    return r > 150 && r - g > 60 && r - b > 60
+  }
+  return false
 }
 
 export const DETECTORS = {
@@ -951,6 +972,42 @@ export const DETECTORS = {
       return hits
     },
     hint: '下拉触发器箭头用约定 class .dropdown-caret + @visible-change 绑 .is-expanded，展开翻转在源头',
+  },
+
+  /** 下拉危险项必须用约定类 .is-danger，禁在使用方自写红色 */
+  'dropdown-danger-class': {
+    custom: (ctx) => {
+      const hits = []
+
+      // ① scoped 里给 dropdown 条目自写红色（脱离源头，改源头它不动）
+      if (ctx.style) {
+        const lines = ctx.style.split('\n')
+        let inDropdownRule = false
+        lines.forEach((line, i) => {
+          if (/\.el-dropdown(-menu)?(__item)?\b/.test(line)) inDropdownRule = true
+          else if (/^\s*}/.test(line)) inDropdownRule = false
+          if (!inDropdownRule) return
+          // 红字或红底：danger/red 令牌、EP danger 变量、关键字 red、或"偏红"的裸色值
+          const m = /(?:^|[;{\s])(?:color|background|background-color)\s*:\s*([^;}]+)/.exec(line)
+          if (m && isReddish(m[1])) {
+            hits.push({ line: i + 1 + ctx.styleOffset, text: line.trim().slice(0, 80) })
+          }
+        })
+      }
+
+      // ② 模板里给 dropdown item 挂内联红色 style
+      if (ctx.template) {
+        const root = parseTemplate(ctx.template)
+        for (const item of findAll(root, /^el-dropdown-item$/)) {
+          const inline = String(item.attrs.style || item.attrs[':style'] || '')
+          if (/color/i.test(inline) && isReddish(inline)) {
+            hits.push({ line: item.line + ctx.templateOffset, text: '<el-dropdown-item> 内联红色 style' })
+          }
+        }
+      }
+      return hits
+    },
+    hint: '下拉危险项用约定 class .is-danger（源头 dropdown.scss：只转红字不铺红底），使用方不自写红色',
   },
 
   /** 分页小型档：small 与精简 layout 必须同时做 */
