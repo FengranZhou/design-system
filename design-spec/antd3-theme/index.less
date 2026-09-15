@@ -20,6 +20,10 @@
   --iflyv-a3-component-size: 2.25rem; /* 36px —— 对齐 EP 版 --el-component-size */
 }
 
+/* 全站基线层（非组件覆盖，是所有元素共享的地基）——必须在组件层之前加载，
+   组件才能在它之上做特化（如 danger 按钮焦点框换红色）。 */
+@import './base/focus.less';   /* 焦点框：鼠标无框 + 键盘品牌绿（修 Windows UA 黑框） */
+
 @import './components/button.less';
 @import './components/radio.less';
 @import './components/checkbox.less';

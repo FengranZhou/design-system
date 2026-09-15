@@ -41,19 +41,20 @@
     transform: translateY(1px);
   }
 
-  /* 鼠标点击不显示外框；键盘 Tab 聚焦显示外框
-     @depends-on: 以下两条规则配套使用才能实现「鼠标无框 + 键盘有框」的 a11y 体验。
-     @when-changed: 删除任一条都会破坏可访问性——
-       - 删 :focus 那条 → 鼠标点击后框留着不消失
-       - 删 :focus-visible 那条 → 键盘 Tab 聚焦无框，无障碍用户失去聚焦反馈
+  /* 「鼠标无框 + 键盘品牌绿框」的**基线**已上移到 base/focus.scss 全局层
+     （原来只有本文件管了 el-button，其余 12 个原生 <button> 与 EP 注入 tabindex 的
+      容器全部裸奔、在 Windows 上吃 UA 黑框——那不是 button 一个组件的事）。
+
+     ⚠️ 但本条**不能删**：EP 自带 `.el-button:focus-visible`（0,2,0）比基线
+     `:focus-visible`（0,1,0）特异性更高，会盖住基线，且它取的
+     `--el-button-outline-color` = `primary-light-5`（**浅淡色**，不是品牌绿本色）、
+     offset 也是 1px。删掉本条 = 按钮焦点框悄悄退化成淡色 + 偏移不一致，
+     且不报错。故这里以同等特异性把它抢回来，值与基线保持一致。
      @see: 仅靠 outline 不构成完整 a11y——还需配合 disabled 状态的 aria-disabled、
            loading 状态的 aria-busy 等 ARIA 属性（由使用方在模板上声明）。 */
-  &:focus {
-    outline: none;
-  }
   &:focus-visible {
     outline: 2px solid var(--iflyv-brand-primary);
-    outline-offset: 1px;
+    outline-offset: 2px;
   }
   &--danger:focus-visible {
     outline-color: var(--iflyv-danger-primary);

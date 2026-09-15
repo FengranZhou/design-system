@@ -1,0 +1,37 @@
+/* ==========================================================================
+   全站焦点基线（base layer）
+   --------------------------------------------------------------------------
+   为什么需要这条全局规则（不是某个组件的事）：
+
+   浏览器 UA 默认样式里有
+       :focus-visible { outline: -webkit-focus-ring-color auto 1px; }
+   而 `-webkit-focus-ring-color` **在 Windows 上解析为黑色**（macOS 上是系统强调色）。
+   于是同一套代码在 Windows 打开、鼠标一交互就会冒出黑色方框，Mac 上却看不到
+   —— 这是最典型的「本机没问题、用户那儿有问题」的跨平台观感事故。
+
+   过去只有 `components/button.scss` 给 el-button 接管了焦点框，其余
+   12 个原生 <button>（PageFrame 的把手/返回/帮助/铃铛、Chart 图例、
+   OptionCard、PickedItem、AiButton…）与所有被 EP 注入 tabindex 的容器
+   （el-dropdown 触发器、el-tabs 的 tab 项、el-select …）全部裸奔、直接吃 UA 黑框。
+   逐个组件补堵不住——新增任何可聚焦元素都会再漏一次，所以基线必须放在全局层。
+
+   两条规则配套，缺一即坏：
+     · :focus { outline: none }        —— 鼠标点击不留框（Windows 黑框的正解）
+     · :focus-visible { …品牌绿… }     —— 键盘 Tab 聚焦仍有清晰反馈，保住 a11y
+   ⚠️ 只写前者 = 用无障碍换观感，键盘用户彻底失去焦点指示，不允许。
+
+   outline-offset 取 2px：侧栏图标按钮彼此贴得近，1px 会让焦点框与相邻元素挤在一起。
+   （button.scss 原为 1px，已一并对齐到 2px，保持全站单一口径。）
+
+   组件如需特化（如 danger 按钮换红色），在自己的 scss 里只覆盖 outline-color，
+   不要重写整条 outline，也不要在使用方 scoped 里改——那是局部私货。
+   ========================================================================== */
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--iflyv-brand-primary);
+  outline-offset: 2px;
+}

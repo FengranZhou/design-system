@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 126,
-  "totalWeight": 359,
+  "total": 128,
+  "totalWeight": 365,
   "byLevel": {
-    "MUST": 107,
+    "MUST": 109,
     "SHOULD": 19,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 76,
+    "regex": 78,
     "ast": 7,
     "manual": 43
   },
   "byView": {
-    "design": 107,
-    "impl": 118
+    "design": 109,
+    "impl": 120
   },
   "categoryOrder": [
     "单一数据源",
@@ -287,6 +287,36 @@
       "weight": 3,
       "source": "design-spec/references/foundations.md",
       "line": 280
+    },
+    {
+      "id": "no-custom-focus-outline",
+      "title": "焦点框由源头 base/focus 全局基线统一提供，下游禁止自写 outline 或 outline:none",
+      "designTitle": "界面里不应出现黑色的焦点方框，键盘 Tab 聚焦时应是品牌绿描边",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 533
+    },
+    {
+      "id": "no-bare-outline-none",
+      "title": "禁止单写 outline:none 而不配套 :focus-visible（破坏键盘可达性）",
+      "designTitle": "不能为了消掉焦点框就把它关掉——键盘用户会看不出焦点在哪",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 537
     },
     {
       "id": "gradient-cross-hue",

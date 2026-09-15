@@ -86,17 +86,11 @@
     transform: translateY(1px);
   }
 
-  /* 鼠标点击不显示外框；键盘 Tab 聚焦显示外框（a11y，与 EP 版同口径）
-     @depends-on: 两条配套使用才能实现「鼠标无框 + 键盘有框」。
-     @when-changed: 删 :focus 那条 → 鼠标点击后框留着不消失；
-                    删 :focus-visible 那条 → 键盘用户失去聚焦反馈。 */
-  &:focus {
-    outline: none;
-  }
-  &:focus-visible {
-    outline: 2px solid var(--iflyv-brand-primary);
-    outline-offset: 1px;
-  }
+  /* 「鼠标无框 + 键盘品牌绿框」的基线已上移到 base/focus.less 全局层
+     （原来只有本文件管了 ant-btn，其余原生 <button> 与 antd 注入 tabindex 的容器
+      全部裸奔、在 Windows 上吃 UA 黑框——那不是 button 一个组件的事）。
+     此处只保留 danger 的特化：仅换颜色、不重写整条 outline，
+     粗细与偏移仍跟随基线统一调整。与 EP 版同口径。 */
   &.btn-danger:focus-visible {
     outline-color: var(--iflyv-danger-primary);
   }
