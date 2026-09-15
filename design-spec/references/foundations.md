@@ -514,3 +514,32 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 > **下游接入**：写自己的固定顶栏 / 侧边栏用 `z-index: var(--iflyv-z-sticky)`，即自然低于组件库的所有浮层，不会互相盖住。需要新浮层时按其性质选对应档（触发类→popper、抽屉→drawer、弹窗→dialog、全局提示→message）。
 >
 > 档间留了足够间隔（100→2000→3000…）便于必要时插档；EP 内置的 `--el-index-popper`(2000) 等仍可用，但本设计系统的浮层（如 popconfirm/notification/message）已在源头接上上表令牌，确保跨接入方层级一致。
+
+---
+
+## 焦点框（键盘可达性）——源头已统一，下游不要自己写
+
+**结论先行：焦点框（`outline`）已由源头全局基线接管，下游一行都不用写，也不要写。**
+
+源头 `el-theme/base/focus.scss`（antd3 为 `antd3-theme/base/focus.less`）定义了全站基线：
+
+```scss
+:focus         { outline: none; }                        /* 鼠标点击不留框 */
+:focus-visible { outline: 2px solid var(--iflyv-brand-primary); outline-offset: 2px; }  /* 键盘 Tab 有框 */
+```
+
+### 为什么必须有这条（跨平台事故，Mac 上看不见）
+
+浏览器 UA 默认样式是 `:focus-visible { outline: -webkit-focus-ring-color auto 1px; }`，而 **`-webkit-focus-ring-color` 在 Windows 上解析为黑色**（macOS 上是系统强调色）。结果是**同一套代码，Windows 用户鼠标一交互就冒出黑色方框，Mac 上完全复现不了**——典型的"本机没问题、用户那儿有问题"。<!-- @rule id=no-custom-focus-outline level=MUST cat=设计令牌 detect=regex dtitle=界面里不应出现黑色的焦点方框，键盘 Tab 聚焦时应是品牌绿描边 title=焦点框由源头 base/focus 全局基线统一提供，下游禁止自写 outline 或 outline:none -->
+
+### 下游硬规则
+
+- **禁止**为了"消掉那个框"而在任何地方写 `outline: none`（不带配套的 `:focus-visible`）。那是**用无障碍换观感**——键盘用户会彻底失去焦点指示，屏幕上完全看不出焦点在哪。 <!-- @rule id=no-bare-outline-none level=MUST cat=设计令牌 detect=regex dtitle=不能为了消掉焦点框就把它关掉——键盘用户会看不出焦点在哪 title=禁止单写 outline:none 而不配套 :focus-visible（破坏键盘可达性） -->
+- **禁止**自写 `outline` 颜色 / 粗细 / 偏移去"对齐设计稿"。粗细 2px、偏移 2px、品牌绿是全站单一口径，改它等于让这一处脱离源头。 <!-- @rule-skip dup 与 no-custom-focus-outline 同义（同一条「焦点框不自写」规则的展开说明） -->
+- **组件特化只允许改 `outline-color`**（如 danger 按钮换红：`&--danger:focus-visible { outline-color: var(--iflyv-danger-primary); }`），不重写整条 `outline`，粗细与偏移才能继续跟随基线统一调整。
+
+### ⚠️ 一个反直觉的坑：EP 自带规则特异性更高
+
+EP 自己给部分组件写了 `:focus-visible`（`.el-button` / `.el-pager li` / `.el-switch` …）。这些是 **(0,2,0)**，比基线 **(0,1,0)** 高，会**盖住基线**。其中 `.el-button:focus-visible` 取的是 `--el-button-outline-color` = `primary-light-5`（**浅淡色，不是品牌绿本色**）、偏移也是 1px。
+
+所以 `components/button.scss` 里那条 `&:focus-visible` **不是冗余、不能删**——删了按钮焦点框会**悄悄退化**成淡色 + 偏移不一致，**不报错、编译通过、页面照跑**。其余 EP 组件的 focus 规则取 `--el-color-primary`（已映射到品牌绿），观感正确，无需逐个覆盖。

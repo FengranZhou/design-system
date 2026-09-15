@@ -1459,6 +1459,44 @@ export const DETECTORS = {
     },
     hint: '服务端分页的表格排序列改用 sortable="custom" 并接 @sort-change 去请求接口；sortable=true 只会重排当前页。见 patterns/list-item-pattern.md §四.10',
   },
+
+  /**
+   * 焦点框一律由源头全局基线 base/focus.scss 提供，下游不自写 outline。
+   *
+   * 只查 <style> 段：template 里 outline 极少出现，且 `outline` 也是
+   * el-tag--outline / AiButton type="outline" 的形态名，查模板必然大面积误报。
+   */
+  'no-custom-focus-outline': {
+    scope: 'style',
+    find: /\boutline(-color|-offset|-width|-style)?\s*:/,
+    // 豁免：注释行；以及 outline-color（组件特化唯一允许改的属性，见 foundations.md 焦点框段）
+    skip: /^\s*(\/\/|\/\*|\*)|outline-color\s*:/,
+    hint: '删掉自写的 outline —— 焦点框已由源头 el-theme/base/focus.scss 全局统一提供（2px 品牌绿 + offset 2px）。组件特化只允许改 outline-color。见 foundations.md 焦点框段',
+  },
+
+  /**
+   * 单写 outline:none 而不配套 :focus-visible ＝ 用无障碍换观感。
+   *
+   * 按「块」判定而非按行：只要该 <style> 段里出现了 outline:none，
+   * 就要求同段内必须能找到 :focus-visible —— 两者本就是配套规则，
+   * 隔几行写也算配套，逐行判会把正确写法误报成违规。
+   */
+  'no-bare-outline-none': {
+    custom: (ctx) => {
+      if (!ctx.style) return []
+      // 同段内已有 :focus-visible ＝ 配套齐全，不违规（是否该自写由上一条管）
+      if (/:focus-visible/.test(ctx.style)) return []
+      const hits = []
+      ctx.style.split('\n').forEach((line, i) => {
+        if (/^\s*(\/\/|\/\*|\*)/.test(line)) return          // 注释行
+        if (/\boutline\s*:\s*(none|0)\b/.test(line)) {
+          hits.push({ line: i + 1 + (ctx.styleOffset || 0), text: line.trim().slice(0, 90) })
+        }
+      })
+      return hits
+    },
+    hint: 'outline:none 不能单独写——键盘用户会彻底失去焦点指示。焦点框已由源头 base/focus.scss 统一提供，直接删掉这行即可；确需特化请配套写 :focus-visible。见 foundations.md 焦点框段',
+  },
 }
 
 /** 有检测器且能真正执行的条目 id（find 为 null 表示暂未实现） */
