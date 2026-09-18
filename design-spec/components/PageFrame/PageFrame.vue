@@ -1,7 +1,7 @@
 <!-- ============================================================================
   PageFrame 页面框架（业务组件）——接入方速查
   ----------------------------------------------------------------------------
-  何时用：整页级后台框架（左侧边导航 + 底部用户区 + 白色圆角内容区），
+  何时用：整页级后台框架（左侧边导航 + 底部用户区 + 白色内容区），
          如课程空间、管理后台等「进入某对象后的工作区」页面骨架。
   ⛔ 无顶栏：本框架**不提供**顶栏，也没有面包屑相关的 prop / 插槽 / 事件。
          层级返回归业务在内容区自行处理——需要时在 #page-header 或内容里
@@ -60,7 +60,7 @@
                                          且白卡四边 margin 全部归零、直接铺满承载容器。
                                          用于「整页框架的内容区被单独嵌进别处」的场景
                                          （外壳导航由宿主页面提供，只想复用本框架的内容卡
-                                         ——白底圆角 + 不滚页头 + 滚动区 + 滚动分割线时间线）。
+                                         ——白底 + 不滚页头 + 滚动区 + 滚动分割线时间线）。
                                          ⚠️ 此模式下侧边栏相关 props / emits / 插槽
                                          （menus·course·avatar·show-more·#course-card…）全部不生效；
                                          留白归承载方（外层容器自己给），本组件一律不给。
@@ -100,7 +100,7 @@
     course-menu-click(key, item)  点击课程卡右上「更多」下拉里的某一项
     back-platform / course-click / help-click / notice-click / avatar-click
   slots：
-    默认插槽      内容区（白色圆角卡内的**滚动区**）。滚动由框架提供，内容超出即在此滚动。
+    默认插槽      内容区（白色内容卡内的**滚动区**）。滚动由框架提供，内容超出即在此滚动。
                   ⚠️ **留白仍归业务层**：内容根自己给 padding（与左右边缘 spacing-6），
                   框架不给内边距。
     #page-header  页面级页头（可选），在**滚动区之外**——始终可见、不参与滚动。
@@ -136,7 +136,7 @@
        滚动条用 el-scrollbar（同侧边栏 / 内容区），不用原生 overflow-x。 -->
   <!-- content-only：只渲染内容卡本身——不套横向滚动壳（壳只为 1200 下限而存在）、
        不渲染侧边栏、白卡四边 margin 归零直接铺满承载容器。
-       宿主页面自带导航时复用本框架内容卡（白底圆角 + 不滚页头 + 滚动区 + 滚动分割线时间线）。 -->
+       宿主页面自带导航时复用本框架内容卡（白底 + 不滚页头 + 滚动区 + 滚动分割线时间线）。 -->
   <main v-if="contentOnly" class="page-frame__content is-content-only">
     <div v-if="$slots['page-header']" class="page-frame__page-header">
       <slot name="page-header" />
@@ -541,7 +541,7 @@
            框架不再提供顶栏：面包屑等层级返回由业务在内容区自行处理
            （需要时在 #page-header 或内容里用业务组件 Breadcrumb）。 -->
       <div class="page-frame__main">
-        <!-- 内容区：白底圆角卡，内部分「不滚的页头」+「滚动区」两段。
+        <!-- 内容区：白底内容卡（直角、四边无外边距，直接铺满主区），内部分「不滚的页头」+「滚动区」两段。
              #page-header 在滚动容器**之外**：只放含页面级 tab 的工具栏（须常驻），
              于是滚动条轨道只覆盖真正会滚的内容（放进滚动区里则轨道会连页头一起算进去）。
              留白仍归业务层：本框架不给内边距，页头与内容各自给。 -->
@@ -1204,7 +1204,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   height: 100%;
 }
 
-/* 页面框架骨架：左侧边栏 + 右主区（顶栏 + 白色圆角内容卡），整体铺在 bg-page 灰底上。
+/* 页面框架骨架：左侧边栏 + 右主区（顶栏 + 白色内容卡），整体铺在 bg-page 灰底上。
    高度撑满承载容器（真实项目通常是 100vh 视口），侧边导航与内容区各自独立滚动。
    最小宽度 1200：窄于此值不再压缩，改由外层壳出横向滚动条（值走令牌，勿硬写）。 */
 .page-frame {
@@ -1529,7 +1529,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   overflow: hidden;
 }
 
-/* 导航项：44px 行高，图标 + 文字，选中 = 加粗 + text-1（无底色，靠字重/色阶导航） */
+/* 导航项：44px 行高，图标 + 文字。未选中 text-2，选中 = 加粗 + text-1（无底色，靠字重/色阶导航） */
 .page-frame__item {
   display: flex;
   align-items: center;
@@ -1538,7 +1538,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   padding: 0 var(--iflyv-spacing-3);
   margin-bottom: var(--iflyv-spacing-0_5);
   border-radius: var(--iflyv-radius-sm);
-  color: var(--iflyv-text-3);
+  color: var(--iflyv-text-2);
   font: var(--iflyv-font-body-primary);
   cursor: pointer;
   transition:
@@ -1631,7 +1631,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   padding-inline-end: var(--iflyv-spacing-3);
   margin-bottom: var(--iflyv-spacing-0_5);
   border-radius: var(--iflyv-radius-sm);
-  color: var(--iflyv-text-3);
+  color: var(--iflyv-text-2);
   font: var(--iflyv-font-body-primary);
   cursor: pointer;
   /* 同 __group-title / __item-label：收起过渡中宽度仍在变（且本项缩进占掉 40px+），
@@ -1664,9 +1664,9 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
 
 /* 侧栏底部用户区：在滚动区之外，恒贴侧栏底缘。
    展开态横排；收起态（64px 只容一列 40px 方块）竖排成一列。
-   自身不留上下内边距，只用 margin-bottom 与侧栏底缘隔开 spacing-3——
-   与内容卡跟窗口底缘的间距同档（.page-frame__content 的 margin-bottom），
-   两者在视觉上落在同一条底线上。
+   自身不留上下内边距，只用 margin-bottom 与侧栏底缘隔开 spacing-3。
+   ⚠️ 内容卡已改为四边无外边距、直接铺满主区，故此处不再与内容卡底缘对齐——
+   这条留白只服务侧栏自身（避免用户区贴死窗口底缘）。
 
    ⚠️ 展开态用 grid 等分而非 flex + space-between：几个入口宽度并不一致
    （头像 36 含左右留白 / 图标按钮 28），space-between 是按内容宽排布，
@@ -1780,18 +1780,17 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   margin-top: 0;
 }
 
-/* 内容区：白色圆角大卡。**只给外观与占位，不给版面**——
+/* 内容区：白色内容大卡（直角，四边无外边距，直接铺满主区）。**只给外观与占位，不给版面**——
    内边距 / 滚动 / 分区 / 空态摆放全部交给业务层自己写（各页版面差异大，
    框架替业务定死只会处处被覆盖）。
 
    四条各自不可省：
-     · background + border-radius —— 卡片外观，框架的职责；
+     · background —— 卡片底色，框架的职责（无圆角、无外边距：内容区直接铺满主区）；
      · flex:1 + min-height:0     —— 在主区纵向 flex 里占满剩余高度。
        **这不是「版面」，是让卡片有确定高度的前提**：少了它卡片会塌成内容高度，
        业务层内部再写 height:100% / el-scrollbar / empty-page 居中就全都拿不到基准。
-     · margin —— 与页面灰底的呼吸缝（右/下）。
-     · overflow: hidden —— **属于卡片外观，不是版面**：只有 border-radius 不裁切子元素，
-       内部的滚动内容会盖住四角、把圆角画成直角。它只把内容裁到卡片形状，不产生滚动条。
+     · overflow: hidden —— **属于卡片外观，不是版面**：把内部滚动内容裁到卡片边界内，
+       不产生滚动条。（内容卡现为直角无外边距、与主区边界重合，此条仍保留以裁切溢出。）
      · display: flex + column —— 让「不滚的页头」与「滚动区」上下分段，
        滚动区吃掉页头之外的剩余高度（见下方两条）。
    ⚠️ 有意不写 padding：留白归业务层（页头与内容各自给）。 */
@@ -1800,34 +1799,17 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  margin: 0 var(--iflyv-spacing-3) var(--iflyv-spacing-3) 0;
+  margin: 0;
   background: var(--iflyv-bg-panel);
-  border-radius: var(--iflyv-radius-lg);
   overflow: hidden;
 }
 
-/* content-only：内容卡脱离框架单独使用，此时不存在「与页面灰底的呼吸缝」这回事——
-   四边 margin 全部归零（含下方 :first-child 那条顶部留白：content-only 时它同样是
-   自己父级的第一个子元素，会被那条规则命中，故必须在此显式压掉），
-   由承载方自己决定留白。
+/* content-only：内容卡脱离框架单独使用，留白由承载方自己决定。
    ⚠️ 高度改回 100%：完整框架里靠 flex:1 在 .page-frame__main 的纵向 flex 里占满剩余高度；
    脱离框架后父级不再是那个 flex 容器，flex:1 拿不到基准、卡片会塌成内容高度，
    业务层内部的 el-scrollbar / empty-page 居中随之全部失效（同下方注释所述的前提）。 */
 .page-frame__content.is-content-only {
-  margin: 0;
   height: 100%;
-}
-
-/* 无面包屑（顶栏未渲染）时，内容卡自己补上顶部留白——
-   否则会贴死框架上缘。取值与侧栏 padding-top 同为 10px（同一条结构性尺寸，
-   非 spacing 序列），使内容卡上缘与侧栏顶部返回按钮上缘落在同一条线上。
-   :first-child 即「前面没有 header」，无需额外传参。 */
-/* ⚠️ 必须排除 content-only：该模式下内容卡同样是自己父级的第一个子元素，会被本条命中，
-   而 .is-content-only 那条与本条特异性相同(0,2,0)、且写在前面，压不住（改选择器而非调顺序：
-   顺序约束是隐形的，来日谁重排一下样式就又坏了）。 */
-.page-frame__content:first-child:not(.is-content-only) {
-  /* audit-ignore 与侧栏 padding-top 同源的结构性尺寸，见上方注释 */
-  margin-top: 10px;
 }
 
 /* 页头段（#page-header）：在滚动容器之外，故始终可见、不参与滚动。
