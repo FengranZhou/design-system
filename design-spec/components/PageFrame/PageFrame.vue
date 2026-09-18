@@ -55,6 +55,15 @@
                                          这类各系统有无不一）。`divided: true` = 与上一项之间加分隔线（用来分段）；
                                          `danger: true` = 破坏性操作转红字（退出登录、注销账号）。
                                          不传或空数组 → 头像只是纯点击入口（仍 emit avatar-click），不出下拉。
+    content-only   boolean               可选，默认 false。**只渲染主内容区**（page-frame__content 白卡），
+                                         不渲染侧边栏、不套横向滚动壳、不吃 1200 最小宽度，
+                                         且白卡四边 margin 全部归零、直接铺满承载容器。
+                                         用于「整页框架的内容区被单独嵌进别处」的场景
+                                         （外壳导航由宿主页面提供，只想复用本框架的内容卡
+                                         ——白底圆角 + 不滚页头 + 滚动区 + 滚动分割线时间线）。
+                                         ⚠️ 此模式下侧边栏相关 props / emits / 插槽
+                                         （menus·course·avatar·show-more·#course-card…）全部不生效；
+                                         留白归承载方（外层容器自己给），本组件一律不给。
     show-more      boolean               可选，**默认 false（不启用）**。是否在导航末尾放「更多」入口——
                                          它是收纳不常用功能的固定位置（与「常用功能」相反：把低频项
                                          从主导航挪走，主导航保持精简）。导航本就精简的系统不必开，
@@ -125,7 +134,19 @@
   <!-- 最外层横向滚动壳：整页框架有 1200px 最小宽度（--iflyv-layout-min-width），
        容器窄于此值时由本壳出横向滚动条，而非把侧边栏 + 内容区继续压到不可用。
        滚动条用 el-scrollbar（同侧边栏 / 内容区），不用原生 overflow-x。 -->
-  <el-scrollbar class="page-frame-shell" view-class="page-frame-shell__view">
+  <!-- content-only：只渲染内容卡本身——不套横向滚动壳（壳只为 1200 下限而存在）、
+       不渲染侧边栏、白卡四边 margin 归零直接铺满承载容器。
+       宿主页面自带导航时复用本框架内容卡（白底圆角 + 不滚页头 + 滚动区 + 滚动分割线时间线）。 -->
+  <main v-if="contentOnly" class="page-frame__content is-content-only">
+    <div v-if="$slots['page-header']" class="page-frame__page-header">
+      <slot name="page-header" />
+    </div>
+    <el-scrollbar class="page-frame__scroll-area scroll-fill" view-class="page-frame__scroll-area-view">
+      <slot />
+    </el-scrollbar>
+  </main>
+
+  <el-scrollbar v-else class="page-frame-shell" view-class="page-frame-shell__view">
     <div class="page-frame">
       <!-- ==================== 侧边栏 ==================== -->
       <!-- hover 整条侧栏才浮出收起把手（把手常显会成为持续的视觉噪音） -->
@@ -692,9 +713,17 @@ const props = withDefaults(defineProps<{
   moreText?: string
   /** 已收进「更多」的导航项 key（v-model:more-keys，保存时才提交） */
   moreKeys?: string[]
+  /**
+   * 只渲染主内容区（page-frame__content 白卡）：不渲染侧边栏、不套横向滚动壳、
+   * 不吃 1200 最小宽度，且白卡四边 margin 归零、直接铺满承载容器。
+   * 用于「内容区被单独嵌进宿主页面」——外壳导航由宿主提供，只复用本框架的内容卡。
+   * ⚠️ 此模式下侧边栏相关 props / emits / 插槽全部不生效；留白归承载方。
+   */
+  contentOnly?: boolean
 }>(), {
   backText: '我教的课',
   showMore: false,
+  contentOnly: false,
   moreText: '更多',
   moreKeys: () => [],
   avatarMenus: () => [],
@@ -1777,11 +1806,26 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   overflow: hidden;
 }
 
+/* content-only：内容卡脱离框架单独使用，此时不存在「与页面灰底的呼吸缝」这回事——
+   四边 margin 全部归零（含下方 :first-child 那条顶部留白：content-only 时它同样是
+   自己父级的第一个子元素，会被那条规则命中，故必须在此显式压掉），
+   由承载方自己决定留白。
+   ⚠️ 高度改回 100%：完整框架里靠 flex:1 在 .page-frame__main 的纵向 flex 里占满剩余高度；
+   脱离框架后父级不再是那个 flex 容器，flex:1 拿不到基准、卡片会塌成内容高度，
+   业务层内部的 el-scrollbar / empty-page 居中随之全部失效（同下方注释所述的前提）。 */
+.page-frame__content.is-content-only {
+  margin: 0;
+  height: 100%;
+}
+
 /* 无面包屑（顶栏未渲染）时，内容卡自己补上顶部留白——
    否则会贴死框架上缘。取值与侧栏 padding-top 同为 10px（同一条结构性尺寸，
    非 spacing 序列），使内容卡上缘与侧栏顶部返回按钮上缘落在同一条线上。
    :first-child 即「前面没有 header」，无需额外传参。 */
-.page-frame__content:first-child {
+/* ⚠️ 必须排除 content-only：该模式下内容卡同样是自己父级的第一个子元素，会被本条命中，
+   而 .is-content-only 那条与本条特异性相同(0,2,0)、且写在前面，压不住（改选择器而非调顺序：
+   顺序约束是隐形的，来日谁重排一下样式就又坏了）。 */
+.page-frame__content:first-child:not(.is-content-only) {
   /* audit-ignore 与侧栏 padding-top 同源的结构性尺寸，见上方注释 */
   margin-top: 10px;
 }
