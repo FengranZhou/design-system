@@ -1529,7 +1529,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   overflow: hidden;
 }
 
-/* 导航项：44px 行高，图标 + 文字，选中 = 加粗 + text-1（无底色，靠字重/色阶导航） */
+/* 导航项：44px 行高，图标 + 文字。未选中 text-2，选中 = 加粗 + text-1（无底色，靠字重/色阶导航） */
 .page-frame__item {
   display: flex;
   align-items: center;
@@ -1538,7 +1538,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   padding: 0 var(--iflyv-spacing-3);
   margin-bottom: var(--iflyv-spacing-0_5);
   border-radius: var(--iflyv-radius-sm);
-  color: var(--iflyv-text-3);
+  color: var(--iflyv-text-2);
   font: var(--iflyv-font-body-primary);
   cursor: pointer;
   transition:
@@ -1631,7 +1631,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   padding-inline-end: var(--iflyv-spacing-3);
   margin-bottom: var(--iflyv-spacing-0_5);
   border-radius: var(--iflyv-radius-sm);
-  color: var(--iflyv-text-3);
+  color: var(--iflyv-text-2);
   font: var(--iflyv-font-body-primary);
   cursor: pointer;
   /* 同 __group-title / __item-label：收起过渡中宽度仍在变（且本项缩进占掉 40px+），
