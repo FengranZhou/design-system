@@ -50,11 +50,11 @@
    而是带浏览/编辑两态的小型编辑面板——理由与 dropdown 时期的两处 hack 见 PageFrame.vue
    模板注释。故条目、抬头都不再复用 dropdown.scss 的定义，本段自带一套（仍在源头、非私货）。
 
-   · 面板宽度 → 定宽 200，见下方 .page-frame-more__panel。
+   · 面板宽度 → 定宽 160，见下方 .page-frame-more__panel 与 --page-frame-more-width。
      **不能靠内容自然撑开**：浏览态（一列条目）与编辑态（添加按钮 + 已选项）
      内容宽度差很多，面板会在两态之间跳一下（实测踩过）。
-     200 = 侧边栏展开宽（.page-frame__aside 的结构宽度），浮层从侧栏弹出、
-     与它同宽视觉上成一体，不是另拍的值。
+     ⚠️ 本值**不跟随侧栏宽度**（侧栏 220 时面板仍是 160）——面板是从导航项弹出的
+     独立浮层，按自身内容定宽即可，别看到侧栏改宽就顺手跟着改。
    · 条目 → .page-frame-more__item，规格整套对齐**侧栏导航项**（44 高 / radius-sm /
      body-primary），因为收进来的本就是一级导航项、只是换个地方出现。
    · 抬头 → .page-frame-more__title，走 body-min 档（12/18 regular + text-3 灰）。

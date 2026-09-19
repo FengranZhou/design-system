@@ -419,7 +419,7 @@
                 <div class="page-frame-more__head">
                   <span class="page-frame-more__title">{{ moreText }}</span>
                   <!-- 纯图标入口：按规范必须配 tooltip 给出全称，否则语义靠猜。
-                       点击调起配置弹窗（不再在面板内就地编辑）——面板宽 200，
+                       点击调起配置弹窗（不再在面板内就地编辑）——面板宽 160，
                        放不下「已展示 / 已收纳」两栏对照，搬运时看不到全局。 -->
                   <el-tooltip content="编辑" :show-after="300">
                     <el-button text @click="openNavConfig">
@@ -821,7 +821,7 @@ const toggleCollapse = () => {
 /* ==================== 「更多」入口：收纳不常用导航 ====================
    收进「更多」的项从主导航里消失、只在 hover 浮层里出现。
    浮层**只有浏览态**（列出已收纳项，点即跳转）；增删配置走 ⚙ 调起的配置弹窗
-   （见下方 navConfig* ）——面板宽 200，放不下「已展示 / 已收纳」两栏对照，
+   （见下方 navConfig* ）——面板宽 160，放不下「已展示 / 已收纳」两栏对照，
    在里面就地增删看不到全局，故把编辑搬进 800 档弹窗。 */
 /** 「更多」入口自身是否高亮：当前选中项被收进「更多」时入口亮起，
  *  否则侧栏里没有任何一项亮着、看起来像"没选中"。
@@ -838,8 +838,8 @@ const moreVisible = ref(false)
 /** 面板横向偏移：让面板左缘正好落在侧栏右缘上，与内容区同起一条竖线。
  *  20 = 导航项相对侧栏的内缩 12（spacing-3）+ EP popper 自带的 8 基础间距。
  *  popper 的锚点是**导航项**而非侧栏边缘，不补这一段面板会压进侧栏里。
- *  ⚠️ 展开态（侧栏 200）与收起态（64）实测所需补偿都是 20 —— 两态导航项的
- *  内缩一致，故不按 collapsed 分支（曾误以为要分，实测两态同值）。 */
+ *  ⚠️ 锚点是**导航项**，而导航项的内缩两态同为 spacing-3，故补偿不分档。
+ *    侧栏自身左右内边距（展开 16 / 收起 12）不参与此式——别看见侧栏改宽就跟着调。 */
 /** popover 实例：两态切换后要手动让它重算位置（见下方 watch） */
 const morePopoverRef = ref<{ popperRef?: { popperInstanceRef?: { update?: () => void } } } | null>(null)
 
@@ -1217,23 +1217,33 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
 }
 
 /* ==================== 侧边栏 ==================== */
-/* 200px 结构宽度（含左右 spacing-3 内边距），列向排布：返回按钮 → 课程卡 → 导航（独立滚动）。
+/* 220px 结构宽度，列向排布：返回按钮 → 课程卡 → 导航（独立滚动）。
+   ⚠️ 左右 16 的内缩**不写在侧栏自身**，而是下放给各直接子项（__back / __scroll-view /
+   __userbar）各自给——为的是让滚动区 .page-frame__scroll 铺到侧栏结构右缘，
+   el-scrollbar 的滚动条才会贴在灰底与白卡的分界线上，而不是浮在导航文字旁边碍事。
+   （滚动条由 EP 贴在滚动容器右缘，容器缩进多少它就跟着往里挪多少。）
+   ⚠️ 这 16 与导航项/分组标题自身的左右内边距（12，见 __item / __group-title）是
+   **两档独立的值**，有意不同源：前者是侧栏与内容区的外缘留白，后者是导航项
+   hover 底板的内缩。改其中一处不要顺手把另一处对齐成同值。
    顶部内边距与子项间垂直缝均为 10px 结构性缝隙（非间距序列，单点维护） */
 .page-frame__sidebar {
   position: relative;
   flex: 0 0 auto;
-  width: 200px;
+  width: 220px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  /* audit-ignore 侧边栏自身的结构性尺寸，与同段的 200px 栏宽 / 64px 收起宽 / 40px 图标方块同性质，
+  /* audit-ignore 侧边栏自身的结构性尺寸，与同段的 220px 栏宽 / 64px 收起宽 / 40px 图标方块同性质，
      不是「内容之间的间距」，故不进 spacing 序列（该序列只有 8 和 12，无 10）。单点维护于此。 */
   gap: 10px;
-  padding: 10px var(--iflyv-spacing-3) 0;
+  /* 左右为 0：内缩下放给子项（见本段顶部注释），滚动条才能贴侧栏右缘 */
+  padding: 10px 0 0;
   min-height: 0;
   transition: width var(--iflyv-duration-normal) var(--iflyv-ease-default);
 
-  /* 收起态：64px 只容一列 40px 图标方块（左右各 spacing-3 内边距） */
+  /* 收起态：64px 只容一列 40px 图标方块（左右内缩 12，同样由子项各自给）。
+     ⚠️ 收起态内缩是 12（spacing-3），不跟展开态的 16 走——64 = 12+40+12 是
+     图标方块的紧凑推导，改成 16 会把栏宽顶到 72、白占一截。 */
   &.is-collapsed {
     width: 64px;
   }
@@ -1337,8 +1347,10 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   }
 }
 
-/* 返回平台按钮：整行浅灰底块（border-subtle 6% 深色墨水铺在 gray-1 上，参考 StepBar 用描边令牌做中性填充的先例） */
+/* 返回平台按钮：整行浅灰底块（border-subtle 6% 深色墨水铺在 gray-1 上，参考 StepBar 用描边令牌做中性填充的先例）。
+   左右 margin = 侧栏内缩（侧栏自身已不给内边距，见 __sidebar 段注释）。 */
 .page-frame__back {
+  margin-inline: var(--iflyv-spacing-4);
   display: flex;
   align-items: center;
   gap: var(--iflyv-spacing-1_5);
@@ -1364,6 +1376,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
     width: 40px;
     padding: 0;
     justify-content: center;
+    margin-inline: var(--iflyv-spacing-3);
   }
 }
 
@@ -1492,6 +1505,9 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   /* audit-ignore 与 __sidebar 的 10px 同一条结构缝（课程卡 ↕ 导航），侧边栏结构性尺寸，
      非 spacing 序列（同上：序列只有 8 和 12）。两处必须一致，改一处要同步另一处。 */
   gap: 10px;
+  /* 左右内缩写在 view（内容层）上而非外层 el-scrollbar：滚动条贴的是外层容器右缘，
+     内缩若写在外层会把滚动条一起推离侧栏右缘——那正是本次要修的问题。 */
+  padding-inline: var(--iflyv-spacing-4);
   padding-bottom: var(--iflyv-spacing-4);
   /* 展开过渡中导航按展开态定宽铺开（见 __nav），这里锁住 view 宽度并裁切，
      让超出的部分被侧栏遮住，而不是把滚动区撑出一条横向滚动条 */
@@ -1499,13 +1515,20 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   overflow-x: hidden;
 }
 
+/* 收起态内缩回 12（同 __back / __userbar 的收起态）。
+   ⚠️ 必须另起一条而不是嵌进上面那块：`:deep()` 必须在选择器最前，
+   嵌套写 `.is-collapsed &` 会编译成 `.is-collapsed :deep(…)`，scoped 属性落错位置、静默失效。 */
+.page-frame__sidebar.is-collapsed :deep(.page-frame__scroll-view) {
+  padding-inline: var(--iflyv-spacing-3);
+}
+
 .page-frame__nav {
   flex-shrink: 0;
   /* 展开过渡中侧栏宽度还在 64→200 之间，此刻文字已回到 DOM：
-     导航整块按展开态宽度（200 - 左右 spacing-3）铺开、由侧栏 overflow 裁切，
+     导航整块按展开态宽度（220 - 左右 spacing-4）铺开、由侧栏 overflow 裁切，
      文字全程横排、未展开的部分被遮住（同 __group-title 的处理思路）。
      收起态交给 .is-collapsed 分支重新收成一列图标宽。 */
-  width: calc(200px - var(--iflyv-spacing-3) * 2);
+  width: calc(220px - var(--iflyv-spacing-4) * 2);
 
   .is-collapsed & {
     width: 40px;
@@ -1683,6 +1706,11 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
      用内边距而非外边距：分隔线以上是导航、以下是用户区，
      这段留白属于用户区自己的上下呼吸，跟着线走才不会在两侧长短不一。 */
   padding-block: var(--iflyv-spacing-4);
+  /* 左右内缩同其它子项（侧栏自身不给内边距，见 __sidebar 段注释），但必须走 margin 而非 padding：
+     ⚠️ 分隔线是本元素的 border-top，border 在 **padding 之外**——内缩若给 padding，
+     线仍会通栏铺到侧栏左右边缘（padding 只推内容、推不动线）。
+     故用 margin-inline：线与内容一起内缩 16，与滚动区内容同一左右缘。 */
+  margin-inline: var(--iflyv-spacing-4);
   border-top: 1px solid var(--iflyv-border-subtle);
 
   /* 收起态：64px 只容一列，改为竖排堆叠、取消左右分列。
@@ -1694,6 +1722,8 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
     flex-direction: column-reverse;
     justify-content: center;
     gap: var(--iflyv-spacing-2);
+    /* 收起态内缩 12（同其它子项收起态） */
+    margin-inline: var(--iflyv-spacing-3);
   }
 }
 
