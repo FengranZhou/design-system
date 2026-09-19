@@ -854,8 +854,10 @@ const MORE_POPPER_OPTIONS = {
  *  ⚠️ 本值按实际观感调定，不是从侧栏几何推出来的——锚点是贴在课程卡右缘的按钮，
  *  而课程卡比侧栏窄一截，光靠 popper 默认间距面板会压在侧栏上。
  *  与「更多」浮层的 20 不能共用：那个锚点是导航项（相对侧栏内缩 spacing-3），
- *  锚点不同 → 补偿不同，别看见同一条竖线就照抄另一处的值。 */
-const COURSE_MENU_OFFSET = 18
+ *  锚点不同 → 补偿不同，别看见同一条竖线就照抄另一处的值。
+ *  ⚠️ 不按收起态分档：课程卡只在展开态渲染（见模板 v-if="!collapsed"），
+ *  收起态根本没有这个入口，一个值即可。 */
+const COURSE_MENU_OFFSET = 22
 
 const COURSE_MENU_POPPER_OPTIONS = {
   modifiers: [{ name: 'offset', options: { offset: [0, COURSE_MENU_OFFSET] } }],
@@ -1225,7 +1227,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
    ⚠️ 这 16 与导航项/分组标题自身的左右内边距（12，见 __item / __group-title）是
    **两档独立的值**，有意不同源：前者是侧栏与内容区的外缘留白，后者是导航项
    hover 底板的内缩。改其中一处不要顺手把另一处对齐成同值。
-   顶部内边距与子项间垂直缝均为 10px 结构性缝隙（非间距序列，单点维护） */
+   顶部内边距取 spacing-4，与左右内缩同档；子项之间的竖缝不用 gap（见下方注释）。 */
 .page-frame__sidebar {
   position: relative;
   flex: 0 0 auto;
@@ -1233,11 +1235,13 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  /* audit-ignore 侧边栏自身的结构性尺寸，与同段的 220px 栏宽 / 64px 收起宽 / 40px 图标方块同性质，
-     不是「内容之间的间距」，故不进 spacing 序列（该序列只有 8 和 12，无 10）。单点维护于此。 */
-  gap: 10px;
+  /* ⚠️ 有意不用 gap：侧栏竖排三个子项（返回按钮 / 滚动区 / 用户区），
+     一个 gap 会同时撑开「返回按钮 ↕ 滚动区」与「滚动区 ↕ 分隔线」两条缝，
+     而这两条要的值不同——前者需留白 16，后者要紧贴（导航一直排到线为止，
+     否则滚动到底时空出一截、看着像没内容了）。
+     故改由返回按钮自己给 margin-block-end，只撑上面那条缝。 */
   /* 左右为 0：内缩下放给子项（见本段顶部注释），滚动条才能贴侧栏右缘 */
-  padding: 10px 0 0;
+  padding: var(--iflyv-spacing-4) 0 0;
   min-height: 0;
   transition: width var(--iflyv-duration-normal) var(--iflyv-ease-default);
 
@@ -1354,17 +1358,20 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   display: flex;
   align-items: center;
   gap: var(--iflyv-spacing-1_5);
-  height: 32px;
-  padding: 0 var(--iflyv-spacing-4);
+  /* 36 高：与下方导航项（44）拉开一档但不至于过扁，属侧栏结构性尺寸
+     （同 44 / 40 / 28，无高度令牌，单点维护于各自处）。 */
+  height: 36px;
+  /* audit-ignore 经用户确认此处不走令牌：左右 14 落在 spacing 序列的 12 与 16 之间，
+     序列无此档。按 36 高的按钮观感定值（12 偏挤、16 偏松），单点维护于此。 */
+  padding: 0 14px;
+  /* 与下方滚动区的唯一一条竖缝（侧栏不给 gap，见 __sidebar 段注释） */
+  margin-block-end: var(--iflyv-spacing-4);
   border: none;
   border-radius: var(--iflyv-radius-sm);
   background: var(--iflyv-bg-back);
   color: var(--iflyv-text-1);
-  /* 13/18 紧凑字阶：在 body-sub 基础上收一档（shorthand 后两行覆盖字号+行高，成套设置） */
+  /* 整档取用语义字阶 body-sub（14/20 regular），不再拆开基础令牌自拼档位 */
   font: var(--iflyv-font-body-sub);
-  font-size: var(--iflyv-font-size-13);
-  line-height: var(--iflyv-line-height-18);
-  font-weight: var(--iflyv-font-weight-semibold);
   cursor: pointer;
   /* 收起/展开的那一帧宽度仍在变，此刻文字仍在 DOM 里：
      不锁 nowrap 会被挤成一列竖排字，必须裁切而非折行（同 __item-label 的处理） */
@@ -1502,13 +1509,14 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
 :deep(.page-frame__scroll-view) {
   display: flex;
   flex-direction: column;
-  /* audit-ignore 与 __sidebar 的 10px 同一条结构缝（课程卡 ↕ 导航），侧边栏结构性尺寸，
-     非 spacing 序列（同上：序列只有 8 和 12）。两处必须一致，改一处要同步另一处。 */
-  gap: 10px;
+  /* 与 __sidebar 的 gap 同一条结构缝（课程卡 ↕ 导航），两处必须一致，改一处要同步另一处。 */
+  gap: var(--iflyv-spacing-4);
   /* 左右内缩写在 view（内容层）上而非外层 el-scrollbar：滚动条贴的是外层容器右缘，
      内缩若写在外层会把滚动条一起推离侧栏右缘——那正是本次要修的问题。 */
   padding-inline: var(--iflyv-spacing-4);
-  padding-bottom: var(--iflyv-spacing-4);
+  /* ⚠️ 有意不给 padding-bottom：底部紧邻用户区分隔线，留白会在"最后一个导航项 ↕ 分隔线"
+     之间空出一截，且滚动到底时那截空白让人以为已经没有内容了（实际下面还有半行被裁）。
+     导航一直排到分隔线为止，滚动到底即真的到底。 */
   /* 展开过渡中导航按展开态定宽铺开（见 __nav），这里锁住 view 宽度并裁切，
      让超出的部分被侧栏遮住，而不是把滚动区撑出一条横向滚动条 */
   width: 100%;
@@ -1535,18 +1543,14 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   }
 }
 
-/* 分组小标题：与导航项文字同一左缘（spacing-3 缩进）
-   ⚠ 待办：语义层没有 13/18 这一档，下面用基础层令牌在 body-sub 之上收一档，
-   按铁律属「自造档位」，正解是补一个语义档（如 --iflyv-font-body-nav）。
-   沿用既有实现，待与设计负责人确认后回归语义档。 */
+/* 分组小标题：与导航项文字同一左缘（spacing-3 缩进）。
+   层级靠色阶（text-3）拉开，不靠缩字号——故与正文同档即可。 */
 .page-frame__group-title {
   margin: var(--iflyv-spacing-4) 0 var(--iflyv-spacing-2);
   padding: 0 var(--iflyv-spacing-3);
   color: var(--iflyv-text-3);
-  /* 13/18 紧凑字阶：在 body-sub 基础上收一档（后两行成套覆盖字号+行高） */
+  /* 整档取用语义字阶 body-sub（14/20 regular），不拆开基础令牌自拼档位 */
   font: var(--iflyv-font-body-sub);
-  font-size: var(--iflyv-font-size-13);
-  line-height: var(--iflyv-line-height-18);
   /* 收起/展开的那一帧宽度仍在变，不锁 nowrap 会折成两行 */
   white-space: nowrap;
   overflow: hidden;
