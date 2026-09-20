@@ -788,6 +788,35 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 
 - **反例**：角标被裁后在页面 scoped 写 `overflow: visible` 修补；给 tab 上的 badge 手写 offset 对齐选中态——这两类正是 `.badge-tabs` / `.tab-badge` 要防的局部私货。
 
+#### tab 文案长度不可控 → 用业务组件 `TabBar`
+
+分区名来自**业务数据 / 用户自定义命名 / 接口返回**时，长度不可控——真实翻车：一个 tab 的文案是「自定义能力图谱」重复 4 次，把整条工具栏撑到 1830px。
+
+**判据**：tab 文案是你写死的字面量（「全部 / 待批改 / 已批改」）→ 裸 `el-tabs` 即可；**文案来自数据** → 用 `TabBar`。
+
+```vue
+<div class="toolbar">
+  <div class="toolbar__left">
+    <TabBar v-model="active" :tabs="graphNames" />          <!-- 默认页面级 -->
+    <TabBar v-model="active" :tabs="graphNames" level="sub" />  <!-- 三档仍用 level 传 -->
+  </div>
+  <div class="toolbar__right"><el-button type="primary">图谱管理</el-button></div>
+</div>
+```
+
+它把超长项收成省略号，并**只在真被截断时**挂 tooltip（悬停出全称）。宽度上限 `:max-label-width`（默认 200），传 `0` 关闭省略。<!-- @rule id=tabbar-for-dynamic-labels level=SHOULD cat=组件选用 detect=manual dtitle=分区名来自业务数据时，某一项特别长会把整条标签栏撑破，应改用会自动省略的标签页组件 title=tab 文案长度不可控时用业务组件 TabBar，不用裸 el-tabs -->
+
+- ⛔ **禁在使用方给 `.el-tabs__item` 自写 `max-width` / `text-overflow`** —— 那是改基础组件外观（局部私货）；而且**纯 CSS 做不出**「只在真截断时才弹 tooltip」，必须 JS 量 `scrollWidth > clientWidth`，没截断的项也挂气泡会让鼠标扫过一排 tab 时连片弹出。这正是它做成业务组件、而不是进 scss 源头的原因。<!-- @rule-skip dup 与 no-deep-override-ep 同义（「不在使用方覆盖基础组件外观」在 tab 省略场景的展开） -->
+
+#### ⚠️ 「整条被撑破 + 不出左右箭头」是同一个根因，且已在源头修掉
+
+这两个现象**看着是两个 bug，其实是一件事**：flex 子项默认 `min-width: auto`（= 内容最小尺寸）**不会收缩到比内容更窄**，于是 tab 一多就把容器一路撑宽；而 EP 靠 JS 比较「nav 内容宽 > nav 可视宽」决定是否加 `.is-scrollable`（出左右箭头），容器被撑开后两者恒等，**判定永远为假、箭头永不出现**——尽管源头早就给 `.el-tabs__nav-prev/next` 写好了样式。
+
+**源头已修**（`el-theme/components/tabs.scss` 给 `.el-tabs` / `__header` / `__nav-wrap` 逐层 `min-width: 0`，`patterns/toolbar.scss` 给 `__left` 可收缩、`__right` 不收缩），**下游一行都不用写**。
+
+- ⛔ 不要自写 `overflow: hidden` 去"压住"撑开——那只是把溢出藏了，箭头仍然不出，用户再也够不到后面的 tab。
+- ⛔ 不要手拼左右滚动按钮——EP 自带，缺的只是触发条件。<!-- @rule id=no-diy-tab-scroll level=MUST cat=组件用法 detect=manual dtitle=标签栏放不下时不要自己做左右翻页按钮，也不要用隐藏溢出把放不下的标签藏起来 title=tab 溢出滚动由 EP 提供、源头已修好触发条件，禁自写 overflow:hidden 或手拼滚动按钮 -->
+
 ### Anchor 锚点
 
 **何时用**：需要展现当前页面上可供跳转的锚点链接，以及快速在锚点之间跳转。用作页内 tab 式分节导航（长页分节、表单分组跳转）。

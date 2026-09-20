@@ -1758,6 +1758,33 @@ const points = ref(['${label || '人工智能'}'])
 const remove = (k) => { points.value = points.value.filter(p => p !== k) }`,
   },
   {
+    id: 'tab-bar', anchor: 'tab-bar', name: 'TabBar 标签页', group: 'business',
+    desc: '带超长省略 + tooltip 的标签页', keywords: ['标签页', 'tabbar', 'tab', '分区切换', '标签超长', 'tab 省略', 'tab 撑开'],
+    readRefs: ['components/TabBar/TabBar.vue（顶部速查注释）', 'references/component-interaction.md（Tabs 段三档选型）'],
+    mustRules: [
+      'tab 文案长度不可控时（来自业务数据 / 用户自定义命名 / 接口返回）一律用 TabBar，它会把超长项收成省略号并在悬停时给出全称',
+      '三档仍是同一套：level="page"（页面级，默认）/ "module"（模块级）/ "sub"（组件级），对应 .tabs-page / 裸 el-tabs / .tabs-sub，不要另造档位',
+      '各 tab 数据必须「无交集」——一条记录只能落在一个 tab 里；「我创建的 / 我关注的」这类可同时成立的，应放筛选下拉而不是 tab（见 Tabs 段硬规则）',
+      '禁在使用方 scoped 里给 .el-tabs__item 写 max-width / text-overflow 去自行实现省略——那是改基础组件外观（局部私货），且纯 CSS 做不出「只在真截断时才弹 tooltip」',
+      '宽度上限用 :max-label-width（默认 200），传 0 关闭省略；不要为了排版整齐把所有 tab 拉成同宽',
+      '页面级 tab 仍须放进 .toolbar 里（源头据此让整条自动吸顶），禁裸放或手拼 flex 容器',
+    ],
+    snippet: ({ level, ellipsis }) =>
+      `<div class="toolbar">
+  <div class="toolbar__left">
+    <TabBar v-model="active" :tabs="tabs"${level && level !== 'page' ? ` level="${level}"` : ''}${ellipsis === false ? ' :max-label-width="0"' : ''} />
+  </div>
+  <div class="toolbar__right">
+    <el-button type="primary">主操作</el-button>
+  </div>
+</div>
+
+<!-- 脚本 -->
+import { TabBar } from '<path>/design-spec/components'
+const tabs = ['知识图谱', '问题图谱', '能力图谱']   // 也可传 [{ label, name, disabled }]
+const active = ref('知识图谱')`,
+  },
+  {
     id: 'option-card', anchor: 'option-card', name: 'OptionCard 卡片单选', group: 'business',
     desc: '带图标的卡片式单选', keywords: ['卡片单选', 'optioncard', '题型', '选项卡片', '带图标单选', '模板选择'],
     readRefs: ['components/OptionCard/OptionCard.vue（顶部速查注释）', 'references/patterns/select-pattern.md（Radio 三形态选型）'],

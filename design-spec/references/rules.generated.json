@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 128,
-  "totalWeight": 365,
+  "total": 132,
+  "totalWeight": 375,
   "byLevel": {
-    "MUST": 109,
-    "SHOULD": 19,
+    "MUST": 111,
+    "SHOULD": 21,
     "MAY": 0
   },
   "byDetect": {
     "regex": 78,
     "ast": 7,
-    "manual": 43
+    "manual": 47
   },
   "byView": {
-    "design": 109,
-    "impl": 120
+    "design": 113,
+    "impl": 124
   },
   "categoryOrder": [
     "单一数据源",
@@ -405,7 +405,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 797
+      "line": 826
     },
     {
       "id": "component-no-suspended",
@@ -420,7 +420,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1456
+      "line": 1485
     },
     {
       "id": "chart-use-component",
@@ -482,6 +482,21 @@
       "line": 70
     },
     {
+      "id": "tabbar-for-dynamic-labels",
+      "title": "tab 文案长度不可控时用业务组件 TabBar，不用裸 el-tabs",
+      "designTitle": "分区名来自业务数据时，某一项特别长会把整条标签栏撑破，应改用会自动省略的标签页组件",
+      "level": "SHOULD",
+      "cat": "组件选用",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 807
+    },
+    {
       "id": "dialog-fullscreen-not-fourth-tier",
       "title": "三档宽度装不下时应按四维判据改用页面，而非升级为全屏弹窗",
       "designTitle": "内容装不下就把弹窗放到全屏，多半说明这件事本该是一个独立页面",
@@ -494,7 +509,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1361
+      "line": 1390
     },
     {
       "id": "button-icon-color-source",
@@ -838,6 +853,21 @@
       "line": 677
     },
     {
+      "id": "no-diy-tab-scroll",
+      "title": "tab 溢出滚动由 EP 提供、源头已修好触发条件，禁自写 overflow:hidden 或手拼滚动按钮",
+      "designTitle": "标签栏放不下时不要自己做左右翻页按钮，也不要用隐藏溢出把放不下的标签藏起来",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 818
+    },
+    {
       "id": "anchor-select-scroll-top",
       "title": "第一节紧贴容器顶部时，el-anchor 必须传 select-scroll-top",
       "designTitle": "页面滚回顶部时锚点导航不应全部失去高亮",
@@ -850,7 +880,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 805
+      "line": 834
     },
     {
       "id": "anchor-stale-hash",
@@ -864,7 +894,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 814
+      "line": 843
     },
     {
       "id": "pagination-hide-single-page",
@@ -879,7 +909,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 911
+      "line": 940
     },
     {
       "id": "pagination-small-layout",
@@ -894,7 +924,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 922
+      "line": 951
     },
     {
       "id": "scrollbar-scroll-fill",
@@ -909,7 +939,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 959
+      "line": 988
     },
     {
       "id": "message-show-close",
@@ -924,7 +954,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 989
+      "line": 1018
     },
     {
       "id": "alert-title-prop",
@@ -938,7 +968,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1019
+      "line": 1048
     },
     {
       "id": "loading-no-custom-spinner",
@@ -953,7 +983,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1064
+      "line": 1093
     },
     {
       "id": "result-icon-two-values",
@@ -968,7 +998,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1127
+      "line": 1156
     },
     {
       "id": "notification-h-actions",
@@ -982,7 +1012,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1159
+      "line": 1188
     },
     {
       "id": "dialog-footer-left-slot",
@@ -997,7 +1027,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1325
+      "line": 1354
     },
     {
       "id": "dialog-body-flush",
@@ -1012,7 +1042,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1340
+      "line": 1369
     },
     {
       "id": "scrollbar-no-raw-overflow",
@@ -1027,7 +1057,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1403
+      "line": 1432
     },
     {
       "id": "table-server-sort-custom",
@@ -1176,7 +1206,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1363
+      "line": 1392
     },
     {
       "id": "scrollbar-view-class",
@@ -1190,7 +1220,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1415
+      "line": 1444
     },
     {
       "id": "scrollbar-page-level-use-el-scrollbar",
@@ -1205,7 +1235,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1418
+      "line": 1447
     },
     {
       "id": "grid-no-el-row",
@@ -1281,6 +1311,21 @@
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
       "line": 33
+    },
+    {
+      "id": "sidebar-no-auto-collapse",
+      "title": "侧边栏禁止按视口宽度自动折叠，PageFrame 不监听 resize，下游也不得自行实现",
+      "designTitle": "侧边导航不能因为窗口变窄就自己收起来，收放只由用户点击决定",
+      "level": "MUST",
+      "cat": "设计模式",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/efficiency-guide.md",
+      "line": 158
     },
     {
       "id": "dialog-single-footer",
@@ -1640,7 +1685,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 941
+      "line": 970
     },
     {
       "id": "skeleton-animated",
@@ -1655,7 +1700,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1093
+      "line": 1122
     },
     {
       "id": "skeleton-on-panel",
@@ -1670,7 +1715,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1094
+      "line": 1123
     },
     {
       "id": "loading-no-blank-screen",
@@ -1688,6 +1733,21 @@
       "line": 105
     },
     {
+      "id": "blur-after-modal-exit",
+      "title": "Esc/模态切换类退出交互须主动 blur() 断掉残留焦点，不得改用 outline:none",
+      "designTitle": "按 Esc 关闭全屏或弹窗后，不该凭空出现一圈绿色焦点描边",
+      "level": "SHOULD",
+      "cat": "状态设计",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 2,
+      "source": "design-spec/references/foundations.md",
+      "line": 572
+    },
+    {
       "id": "dialog-title-specific",
       "title": "弹窗标题必须写清操作对象，禁「确认操作」「提示」这类通用文案",
       "designTitle": "弹窗标题必须写清操作对象，禁「确认操作」「提示」这类通用文案",
@@ -1699,7 +1759,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1257
+      "line": 1286
     },
     {
       "id": "number-thousands-separator",
