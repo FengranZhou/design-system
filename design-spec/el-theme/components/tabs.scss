@@ -53,6 +53,28 @@
 .el-tabs__active-bar { display: none; }
 .el-tabs__nav-wrap::after { display: none; }
 .el-tabs__header { margin-bottom: 0; }
+
+/* ============ 放进 flex 容器时可收缩（否则溢出，且箭头永不出现）============
+   flex 子项默认 `min-width: auto`（= 内容最小尺寸），**不会收缩到比内容更窄**。
+   tabs 一旦被放进 flex 容器（典型：`.toolbar__left`），tab 项一多就一路把容器撑破。
+
+   ⚠️ 这同时是「tab 溢出却不出左右箭头」的根因，**两个现象是同一件事**：
+      EP 靠 JS 比较 `nav 内容宽 > nav-wrap 可视宽` 决定是否加 `.is-scrollable`（出箭头）。
+      容器被撑开后两者恒等，判定永远为假——箭头因此**永不出现**，
+      尽管本文件上方早就给 `.el-tabs__nav-prev/next` 与 `.is-scrollable` 写好了样式。
+
+   ⚠️ 必须**逐层**给，漏一层撑开的链路就下移一层（实测：只给 .el-tabs，
+      撑开点就跑到 __header；EP 把 __header 设成了 flex、__nav-wrap 是其 `flex:auto` 子项，
+      两层都默认 min-width:auto）。实测链路修复前后：
+        修复前 __nav-wrap 可视 1124 = __nav 内容 1124 → 判定 false，无箭头、容器被撑破
+        修复后 __nav-wrap 可视  800 < __nav 内容 1124 → 判定 true，箭头出现、宽度收住
+
+   对不在 flex 容器里的 tabs 无副作用（block 元素的 min-width:auto 本就解析为 0）。 */
+.el-tabs,
+.el-tabs__header,
+.el-tabs__nav-wrap {
+  min-width: 0;
+}
 .el-tabs__item {
   color: var(--iflyv-text-3);
   font-weight: var(--iflyv-font-weight-regular);

@@ -243,6 +243,9 @@ body {
   // ⚠️ el-scrollbar 的滚动发生在内部 wrap 上，故这两条要落到 wrap，
   //    写在外壳上不生效（外壳 overflow:hidden，不是滚动容器）。
   //    本文件是全局样式（非 SFC scoped），直接写后代选择器即可，不用 :deep()。
+  // audit-ignore 这两条是本页外壳的滚动行为（锚点停靠偏移 / 平滑滚动），不是组件外观——
+  //   没有动 scrollbar 的粗细/颜色/圆角/过渡（那些在源头 components/scrollbar.scss，一概不碰）。
+  //   scroll-padding-top 取决于「本页顶栏多高」，属于使用方版面上下文，进源头反而是污染。
   .el-scrollbar__wrap {
     scroll-behavior: smooth;
     scroll-padding-top: calc(#{$app-topbar-height} + var(--iflyv-spacing-3));

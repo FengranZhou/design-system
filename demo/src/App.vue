@@ -174,6 +174,7 @@
           <li><a href="#ai-button" :class="{ 'is-active': activeSection === 'ai-button' }">AiButton Ai按钮</a></li>
           <li><a href="#picked-item" :class="{ 'is-active': activeSection === 'picked-item' }">PickedItem 已选项</a></li>
           <li><a href="#option-card" :class="{ 'is-active': activeSection === 'option-card' }">OptionCard 卡片单选</a></li>
+          <li><a href="#tab-bar" :class="{ 'is-active': activeSection === 'tab-bar' }">TabBar 标签页</a></li>
         </ul>
         </template>
 
@@ -322,6 +323,7 @@
       <StepBarDemo />
       <AiButtonDemo />
       <PickedItemDemo />
+      <TabBarDemo />
       <OptionCardDemo />
       </div>
       <div v-show="currentTopTab === 'pattern'" class="no-title-divider">
@@ -519,6 +521,7 @@ import JudgingListDemo from './components/JudgingListDemo.vue'
 import StepBarDemo from './components/biz/StepBarDemo.vue'
 import PageFrameDemo from './components/biz/PageFrameDemo.vue'
 import AiButtonDemo from './components/biz/AiButtonDemo.vue'
+import TabBarDemo from './components/biz/TabBarDemo.vue'
 // 临时预览 examples 的 import（已注释挂载，需要时取消注释）：
 // import ButtonExamples from '../../design-spec/examples/button.examples.vue'
 // import FormExamples from '../../design-spec/examples/form.examples.vue'

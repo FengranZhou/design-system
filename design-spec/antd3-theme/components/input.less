@@ -69,6 +69,22 @@
               0 0 0 2px var(--iflyv-input-focus-ring);
 }
 
+/* 输入类控件豁免全局焦点基线（与 el-theme/components/input.scss 同一处理，口径一致）：
+   聚焦指示由上面那条 border + box-shadow 承担，不再叠 base/focus.less 的 outline
+   —— 否则「框中框」。antd3 的 .ant-input 本身就是那个 <input> 元素，两套指示
+   直接叠在同一个盒子上，比 EP 版更明显。
+
+   ⚠️ base 的 `:focus{outline:none}` 兜不住：UA 规定「支持键盘输入的元素」恒定匹配
+      `:focus-visible`，文本框鼠标点击也照样命中，赢的永远是 `:focus-visible` 那条。
+   ⚠️ 只豁免这几个已有替代指示的，不写裸 `input:focus-visible`——那会让下游原生
+      <input> 失去全部焦点指示（拿 a11y 换观感，违反 foundations「焦点框」段）。 */
+.ant-input:focus-visible,
+.ant-input-number-input:focus-visible,
+.ant-calendar-picker-input:focus-visible,
+.ant-time-picker-input:focus-visible {
+  outline: none;
+}
+
 /* 禁用态：EP 底色 bg-inset、文字 text-4、边框 border-default（antd3 默认 #f5f5f5 / #d9d9d9）。
    ⚠ antd3 用 .ant-input-disabled 与 [disabled] 两套选择器并存，两者都要覆盖。 */
 .ant-input-disabled,

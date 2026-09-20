@@ -164,6 +164,30 @@
   gap: var(--iflyv-spacing-3);
 }
 
+/* ============ 内容过多时的收缩分工：左组让，右组不让 ============
+   flex 子项默认 `min-width: auto`（= 内容最小尺寸），**不会收缩到比内容更窄**。
+   于是 __left 里 tab 一多，它就一路撑宽、把整条工具栏顶破容器
+   （真实翻车：页面级 tab 6 项 + 其中一项文案超长 → __left 实测 1830px，工具栏溢出）。
+
+   ⚠️ 这同时是「tab 溢出却不出左右箭头」的根因，**两个现象是同一件事**：
+      EP 靠 JS 比较 `nav 内容宽 > nav 可视宽` 来决定是否加 `.is-scrollable`（出箭头）。
+      容器被撑开后可视宽永远等于内容宽，判定永远为假 —— 箭头因此**永不出现**，
+      而源头其实早就给 `.el-tabs__nav-prev/next` 和 `.is-scrollable` 写好了样式适配。
+      给了 min-width: 0，__left 才会收缩、nav 才真正溢出、箭头才出得来。
+
+   分工判据：**谁该为空间不足让步**——
+     · __left（标题 / tab / 筛选）是可滚动、可省略的浏览信息 → 可收缩
+     · __right（操作按钮）是必须完整可点的操作入口 → 不收缩，否则按钮被挤变形
+   ⚠️ min-width 要**逐层传下去**，只给 __left 的话撑开的链路只是下移一层。
+      tabs 自己那几层（.el-tabs / __header / __nav-wrap）归 **components/tabs.scss**
+      —— 那是组件内部结构，任何把 tabs 放进 flex 容器的场景都需要，不是工具栏特有的。 */
+.toolbar__left {
+  min-width: 0;
+}
+.toolbar__right {
+  flex-shrink: 0;
+}
+
 /* 标题：默认页面级字阶；模块级加 --module 降一档 */
 .toolbar__title {
   margin: 0;

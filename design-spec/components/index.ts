@@ -11,6 +11,7 @@ export { UserAvatar, AVATAR_MAP, AVATAR_LABEL, type AvatarRole } from './UserAva
 export { DataTable, type DataTableColumn, type DataTableAction, type ColumnKind } from './DataTable'
 export { Breadcrumb, type BreadcrumbItem } from './Breadcrumb'
 export { StepBar } from './StepBar'
+export { TabBar, type TabBarItem } from './TabBar'
 export { AiButton } from './AiButton'
 export { PickedItem } from './PickedItem'
 export { OptionCard, type OptionCardItem } from './OptionCard'

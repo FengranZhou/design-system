@@ -36,7 +36,7 @@
         <el-table-column width="180"
           :formatter="(row: any) => formatTime(row.date)" />
         <el-table-column prop="amount" width="160" align="right"
-          :formatter="(_r: any, _c: any, val: number) => `¥${val.toLocaleString()}`" />
+          :formatter="(_r: any, _c: any, val: number) => `¥${formatNumber(val)}`" />
         <el-table-column min-width="200">
           <template #default>
             <!-- 一个 class 全包：.table-operation 源头保证无底/紧贴文案/相邻间距 16/hover 绿。 -->
@@ -76,7 +76,9 @@ import CopyToCC from './CopyToCC.vue'
 // 内容单元格 show-header=false 只留内容行），排序/边框/hover 皆 el-table 原生，无私货。
 import { SquarePen, Eye, MoreHorizontal } from 'lucide-vue-next'
 // 日期列走文案规范唯一实现 formatTime（省本年年份 / 跨年带年 / 不带秒），不硬编码日期字符串。
+// 金额列同理走 formatNumber 打千分位——禁 toLocaleString（随运行环境 locale 漂移，且脱离源头）。
 import { formatTime } from '../../../design-spec/utils/format-time'
+import { formatNumber } from '../../../design-spec/utils/format-number'
 
 const contentRow = [
   // 原始时间带到分钟；formatTime 决定展示是否省略年份

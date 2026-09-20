@@ -10,6 +10,11 @@
   接入方速查：
     内置角色：  <UserAvatar role="teacher-male" />
     自定义图：  <UserAvatar :src="url" :size="24" />
+
+  ⚠️ 头像底色为 **transparent**（源头 el-theme/components/avatar.scss 已统一）：
+     用户上传的去背 / 镂空 PNG 不会从透明处透出一圈色底——图是什么样就是什么样。
+     无图或图加载失败时不会变成白洞：EP 自带 1px 浅描边仍界定出头像位置。
+     ⛔ 不要在使用方给头像补背景色「填上那个洞」，那是改基础组件外观（局部私货）。
 -->
 <template>
   <el-avatar :size="size" :src="src" :shape="shape" />
