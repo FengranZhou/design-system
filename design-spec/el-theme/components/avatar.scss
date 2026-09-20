@@ -2,7 +2,30 @@
 /* ========================= Avatar 样式覆盖 =============================== */
 /* ======================================================================== */
 
-.el-avatar { --el-avatar-bg-color: var(--iflyv-avatar-default-bg); }
+/* 底色透明：头像图片若带透明通道（去背头像、镂空 logo），任何底色都会从透明处
+   透出来变成一圈色环——真实反馈过「上传透明 PNG 显示绿底」。
+   EP 默认是 `--el-text-color-disabled` 灰底，本系统曾改成品牌浅色（--iflyv-accent-3），
+   两者都会透出；改为 transparent 后图片是什么样就是什么样。
+
+   ⚠️ 去掉底色必须同时补两件事，否则「无图 / 加载失败 / 文字兜底」会彻底不可见：
+      ① **描边**——EP 自带的 `border: 1px` 挂在 `.el-avatar-group .el-avatar` 上，
+         **只对头像组生效**，单个头像根本没有（实测：单个头像 border 为 0）。
+         故这里显式给所有头像补一圈 border-subtle，无图时仍能界定位置与形状。
+      ② **文字色**——EP 默认 `--el-avatar-text-color: white`，那是为深色实底配的；
+         底透明后白字落在白底上＝看不见，改用 text-2。
+   ⚠️ 文字 / 图标兜底（EP 在「无 src 或图加载失败」时渲染默认插槽）因此变成
+      「描边 + 深色字」而非「色块 + 白字」。**但本设计系统够不到这个形态**：
+      人员头像一律走业务组件 UserAvatar，而它内部是自闭合的 <el-avatar />、
+      不接默认插槽，图挂了只会得到一个空的淡描边圈（已决定不做姓氏兜底）。
+      这里把文字色一并改掉，只是为了让「万一有人裸用 el-avatar 塞了文字」时不至于
+      白字白底看不见——属于兜底，不是推荐用法。
+   ⚠️ 需要实底的场景由使用方给自己的容器上底色，不改回源头
+      （改回来透明头像就又会透出色环）。 */
+.el-avatar {
+  --el-avatar-bg-color: transparent;
+  --el-avatar-text-color: var(--iflyv-text-2);
+  border: 1px solid var(--iflyv-border-subtle);
+}
 
 /* RTL：覆盖 EP 硬编码物理 margin */
 .el-avatar-group .el-avatar:not(:first-child) { margin-left: unset; margin-inline-start: var(--el-avatar-group-item-gap); }

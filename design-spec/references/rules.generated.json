@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 132,
-  "totalWeight": 375,
+  "total": 133,
+  "totalWeight": 378,
   "byLevel": {
-    "MUST": 111,
+    "MUST": 112,
     "SHOULD": 21,
     "MAY": 0
   },
   "byDetect": {
     "regex": 78,
     "ast": 7,
-    "manual": 47
+    "manual": 48
   },
   "byView": {
-    "design": 113,
-    "impl": 124
+    "design": 114,
+    "impl": 125
   },
   "categoryOrder": [
     "单一数据源",
@@ -1058,6 +1058,21 @@
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
       "line": 1432
+    },
+    {
+      "id": "avatar-transparent-bg",
+      "title": "头像底色为 transparent，禁在使用方补背景色",
+      "designTitle": "用户上传去背头像时不该出现一圈彩色底环，也不要给头像补底色",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/component-interaction.md",
+      "line": 1548
     },
     {
       "id": "table-server-sort-custom",

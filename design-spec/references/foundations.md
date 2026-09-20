@@ -142,7 +142,7 @@ green / red / orange / blue 在语义场景中含义固定，不因页面类型�
 > 亮色下两者同值，**暗色下 `brand-text` 会自动提亮一级**（`accent-7`）——因为品牌绿在深色底上对比度不足，直接用 `brand-primary` 当文字色会看不清。
 > **判据**：这个颜色是用在**文字/图标**上，还是用作**填充块**（按钮底、进度条）？文字 → `brand-text`；块面 → `brand-primary`。四个语义色族没有 `-text` 变体，文字直接用 `-primary`。
 
-> **其余令牌**：`--iflyv-mask-primary` / `--iflyv-mask-on-dark`（遮罩层黑）、`--iflyv-scroller-*`（滚动条滑块，源头已统一、下游不碰）、`--iflyv-message-border-*`（Message 各语义描边）、`--iflyv-tag-gray-bg`（灰 Tag 底色）、`--iflyv-input-focus-ring` / `--iflyv-input-hover-border`（输入框聚焦环 / hover 边框）、`--iflyv-loading-path` / `--iflyv-avatar-default-bg`——**都是组件源头内部使用的桥接变量，下游不直接引用**。
+> **其余令牌**：`--iflyv-mask-primary` / `--iflyv-mask-on-dark`（遮罩层黑）、`--iflyv-scroller-*`（滚动条滑块，源头已统一、下游不碰）、`--iflyv-message-border-*`（Message 各语义描边）、`--iflyv-tag-gray-bg`（灰 Tag 底色）、`--iflyv-input-focus-ring` / `--iflyv-input-hover-border`（输入框聚焦环 / hover 边框）、`--iflyv-loading-path`——**都是组件源头内部使用的桥接变量，下游不直接引用**。
 
 ### 文本 / 图标色阶 → 用途（层级语义，选色阶时照此对号入座）
 

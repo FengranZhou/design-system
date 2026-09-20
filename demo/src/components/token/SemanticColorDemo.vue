@@ -148,7 +148,6 @@ const colorGroups = [
     tokens: [
       { name: '--iflyv-input-focus-ring', desc: '聚焦光圈' },
       { name: '--iflyv-input-hover-border', desc: '悬浮边' },
-      { name: '--iflyv-avatar-default-bg', desc: '头像默认底' },
     ],
   },
 ]

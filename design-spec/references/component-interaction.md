@@ -1545,5 +1545,5 @@ loading.close()
 | `el-statistic` 统计数值 | 标题行高对齐令牌；前后缀间距 RTL 化。⚠️ 大号强调数字请用字阶 `--iflyv-font-number-display`（见 `foundations.md`） |
 | `el-page-header` 页头 | 行高与左侧间距对齐令牌 + RTL 化。⚠️ **整页骨架请用业务组件 `PageFrame`**，本组件仅用于独立的返回式页头 |
 | `el-tour` 引导 | 正文 14 / 标题 16 字号对齐令牌 |
-| `el-avatar` 头像 | 默认底色走令牌；头像组间距 RTL 化。⚠️ **人员头像一律用业务组件 `UserAvatar`**（内置角色图 + 三档尺寸），裸 `el-avatar` 仅用于非人员的图形占位 |
+| `el-avatar` 头像 | **底色为 `transparent`**（2026-09 起，此前是品牌浅色）——用户上传的去背 / 镂空 PNG 不会从透明处透出色环；无图或加载失败也不会成白洞，EP 自带的 1px 浅描边仍界定出位置。⛔ **别在使用方补背景色「填上那个洞」**（改基础组件外观＝局部私货）；确需实底的非人员图形占位，自己的容器给底、不改头像源头。头像组间距 RTL 化。⚠️ **人员头像一律用业务组件 `UserAvatar`**（内置角色图 + 三档尺寸），裸 `el-avatar` 仅用于非人员的图形占位 <!-- @rule id=avatar-transparent-bg level=MUST cat=组件用法 detect=manual dtitle=用户上传去背头像时不该出现一圈彩色底环，也不要给头像补底色 title=头像底色为 transparent，禁在使用方补背景色 --> |
 | `el-popper` 浮层底座 | 各类浮层（下拉/气泡/提示）共用的定位与阴影底座，**由上层组件自动使用，下游不直接写** |
