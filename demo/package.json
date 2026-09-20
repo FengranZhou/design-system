@@ -6,8 +6,8 @@
   "scripts": {
     "extract-rules": "node ../scripts/extract-rules.mjs",
     "check-rules": "node ../scripts/extract-rules.mjs --check",
-    "audit:page": "node ../scripts/audit-page.mjs demo/src",
-    "audit:page:warn": "node ../scripts/audit-page.mjs demo/src --quiet || true",
+    "audit:page": "node ../scripts/audit-page.mjs",
+    "audit:page:warn": "node ../scripts/audit-page.mjs --quiet || true",
     "audit:spec": "node ../scripts/audit-spec.mjs",
     "dev": "npm run extract-rules && vite",
     "build": "npm run extract-rules && vue-tsc && vite build && npm run audit:page:warn",

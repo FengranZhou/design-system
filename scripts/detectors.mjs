@@ -127,10 +127,17 @@ const SPACING_PX = {
  * 于是 `<el-collapse-transition>`（过渡动画组件，未停用）会被 `el-collapse`（折叠面板，已停用）
  * 误伤。同类还有 el-image-viewer / el-menu-item-group / el-text-… 等一族「同前缀不同组件」。
  * 原先靠 `el-tree(?!-select)` 逐个打补丁，漏一个就是误报——改成统一后瞻，一次堵死。
- * 需要匹配的多词组件（el-menu-item / el-collapse-item / el-timeline-item）已各自单列。 */
+ * 需要匹配的多词组件（el-menu-item / el-collapse-item / el-timeline-item）已各自单列。
+ *
+ * ⚠ 本名单是 component-interaction.md「⏸ 勿用清单」的投影，**解禁 / 新增停用时必须两边一起改**
+ *   （「改一处 = 扫全部引用」在本层的落法）。曾真实脱节：`el-popover` 2026-09 已解禁并补了
+ *   完整用法段，本名单却仍留着它，于是每个合规的 popover 都被误报成 MUST 违规——
+ *   而当时 `audit:page` 因路径 bug 一直空跑，这个误报两个月没人发现。
+ * ⚠ 带 `-v2` / `-viewer` 的变体必须单列且排在主名前面：后瞻 `(?![-\w])` 会让 `el-tree`
+ *   匹配不到 `el-tree-v2`（后面跟 `-`）。反过来这也正是 `el-tree-select`（未停用）不被误伤的原因。 */
 const SUSPENDED_COMPONENTS = {
   scope: 'template',
-  find: /<(el-popover|el-menu|el-menu-item|el-submenu|el-sub-menu|el-link|el-collapse|el-collapse-item|el-progress|el-timeline|el-timeline-item|el-upload|el-transfer|el-tree|el-backtop|el-input-tag|el-card|el-autocomplete|el-carousel|el-image|el-affix|el-space|el-text|el-segmented|el-check-tag|el-watermark|el-countdown|el-mention|el-splitter)(?![-\w])/,
+  find: /<(el-menu|el-menu-item|el-submenu|el-sub-menu|el-link|el-collapse|el-collapse-item|el-progress|el-timeline|el-timeline-item|el-upload|el-transfer|el-tree-v2|el-tree|el-table-v2|el-backtop|el-input-tag|el-card|el-autocomplete|el-carousel|el-calendar|el-image-viewer|el-image|el-affix|el-space|el-text|el-segmented|el-check-tag|el-watermark|el-countdown|el-mention|el-splitter)(?![-\w])/,
   hint: '该组件在「⏸ 勿用清单」内已停用，写出来会拿到 EP 原生观感。见 component-interaction.md 文末清单选替代方案',
 }
 
