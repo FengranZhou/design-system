@@ -88,9 +88,10 @@
   收起交互（内置，接入方无需做任何事）：
     hover 侧边栏 → 右缘垂直居中浮出收起把手 → 点击收起为 64px 图标栏
     （返回平台收成图标、课程卡与分组标题隐藏）→ hover 某图标弹出下拉面板补回分组标题与子项。
-    窄屏自动折叠：视口 < 1440 时自动收起（把宽度让给内容区）；**用户手动切换过之后
-    不再自动干预**。接入方无需写任何 media query。（1200 是页面硬下限，更窄时整页
-    走横向滚动、布局不再变化，故不存在更低的断点。）
+    ⛔ **收放只由用户决定，系统不自动干预**——不按视口宽度自动折叠（该行为已于 2026-09 移除）。
+    侧栏的收放是用户的显式选择，不该因为拖窗口 / 切显示器 / 分屏就自己变形。
+    因此组件**不监听 resize**，collapsed 只会被「用户点把手」或「外部 v-model」改变。
+    要记住用户偏好：传 v-model:collapsed 自行持久化，组件不会覆盖它。
   emits：
     menu-select(key, item)  选中某菜单项（父项展开/收起不触发）
     collapse-change(collapsed)  侧边栏收起 / 展开切换
@@ -670,7 +671,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, nextTick, onBeforeUnmount } from 'vue'
 // ElMessage 是函数式调用，拿不到自动按需导入，必须显式引
 import { ElMessage } from 'element-plus'
 import { House, ChevronDown, ChevronLeft, CircleHelp, Bell, Settings, Ellipsis } from 'lucide-vue-next'
@@ -782,38 +783,26 @@ const onSidebarLeave = () => {
 
 onBeforeUnmount(() => clearTimeout(handleHideTimer))
 
-/* ==================== 窄屏自动折叠 ====================
-   1200~1439 区间内自动收起侧边栏为图标栏，把宽度让给内容区
-   （规则见 references/efficiency-guide.md「响应式策略」）。
-   ⚠️ 只在 ≥1200 区间内生效——窄于 1200 时整页走横向滚动、布局不再变化
-      （--iflyv-layout-min-width 是硬下限），故无需也不该设更低的断点。
-   ⚠️ 用户手动切换过之后就不再自动干预（userToggled 锁）：自动折叠只是
-      「默认初始状态」的智能化，用户的显式选择优先级更高，否则拖窗口会
-      不断覆盖用户刚做的操作。 */
-const AUTO_COLLAPSE_BELOW = 1440
-/** 用户是否手动切换过收起态——一旦为 true，窗口尺寸变化不再改 collapsed */
-let userToggled = false
+/* ==================== 收起 / 展开：只由用户决定 ====================
+   ⛔ **不做窄屏自动折叠**——曾按视口 < 1440 自动收起，已于 2026-09 移除。
+      去掉的理由：侧边导航的收放是**用户的显式选择**，系统不该替他做决定。
+      自动折叠看起来"聪明"，代价是用户拖动窗口、外接显示器切换、分屏时，
+      侧栏会在他没操作的情况下自己变形，反而失去可预期性——
+      而「一致性高于创意 / 可预测性比新鲜感更重要」是本设计系统的设计原则之一。
+   ⚠️ 因此这里**不监听 resize、不读 window.innerWidth**，也不需要「用户是否手动
+      切换过」的锁（原 userToggled）——没有自动行为要让位，锁自然也没有存在意义。
+   ⚠️ 需要「记住用户偏好」的项目：自己传 v-model:collapsed 并持久化即可，
+      组件不再有任何会覆盖它的内部逻辑（这正是去掉自动折叠后多出来的确定性）。 */
 
-const syncCollapseByWidth = () => {
-  if (userToggled) return
-  collapsed.value = window.innerWidth < AUTO_COLLAPSE_BELOW
-}
-
-onMounted(() => {
-  syncCollapseByWidth()
-  window.addEventListener('resize', syncCollapseByWidth)
-})
 /** 「更多」面板 hover 关闭的延迟定时器（声明在此以便卸载时清理，用法见下方 onMoreLeave） */
 let moreHoverTimer: ReturnType<typeof setTimeout> | undefined
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', syncCollapseByWidth)
   clearTimeout(moreHoverTimer) // 待关闭的定时器不能跨卸载留着
   morePanelRO?.disconnect()
 })
 
 const toggleCollapse = () => {
-  userToggled = true
   collapsed.value = !collapsed.value
   emit('collapse-change', collapsed.value)
 }
