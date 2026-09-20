@@ -543,3 +543,30 @@ yellow / cyan / purple / magenta 为扩展色板，**不绑定功能语义**，�
 EP 自己给部分组件写了 `:focus-visible`（`.el-button` / `.el-pager li` / `.el-switch` …）。这些是 **(0,2,0)**，比基线 **(0,1,0)** 高，会**盖住基线**。其中 `.el-button:focus-visible` 取的是 `--el-button-outline-color` = `primary-light-5`（**浅淡色，不是品牌绿本色**）、偏移也是 1px。
 
 所以 `components/button.scss` 里那条 `&:focus-visible` **不是冗余、不能删**——删了按钮焦点框会**悄悄退化**成淡色 + 偏移不一致，**不报错、编译通过、页面照跑**。其余 EP 组件的 focus 规则取 `--el-color-primary`（已映射到品牌绿），观感正确，无需逐个覆盖。
+
+### ⚠️ 第二个坑：输入框恒定命中 `:focus-visible`，基线的 `:focus{outline:none}` 压不住
+
+基线那对规则的分工——「鼠标点击无框 / 键盘 Tab 有框」——**只对按钮类成立**。UA 规定「支持键盘输入的元素」**恒定匹配** `:focus-visible`：`<input>` / `<textarea>` **即使是鼠标点的也照样命中**。于是赢的永远是 `:focus-visible` 那条，用户一点输入框就必然多出一圈绿描边。
+
+而 EP 输入家族的聚焦指示**早已由 wrapper 的 `box-shadow` 提供**（`components/input.scss` 里 8 处 `0 0 0 1px 品牌绿 inset, 0 0 0 2px focus-ring`），a11y 本就满足。基线再叠一圈 outline = **框中框**（内圈贴边、外圈又偏出 2px）。
+
+**源头已豁免这几个内部输入元素**（`input.scss` 末段；antd3 为 `.ant-input` 等）：`.el-input__inner` / `.el-textarea__inner` / `.el-select__input` / `.el-input-tag__input` / `.el-range-input`。**下游什么都不用做**，看到输入框只有一圈内描边就是对的。
+
+- ⛔ **下游遇到别处的框中框，也不要自己写 `input:focus-visible { outline: none }`** —— 裸标签选择器会连带豁免原生 `<input>`（那些没有 wrapper 的 box-shadow 兜底，一豁免就真的失去焦点指示了）。**豁免只允许给「外层已有替代聚焦指示」的元素，且必须写进源头**。<!-- @rule-skip dup 与 no-custom-focus-outline 同义（「下游禁止自写 outline」在输入框场景的展开说明，裸 input:focus-visible{outline:none} 已被其 style 段检测器命中） -->
+
+### ⚠️ 第三个坑：Esc / 模态切换后，焦点框会「凭空」冒出来
+
+鼠标点过的按钮会**一直保留 focus**。此时若发生键盘交互（典型是按 **Esc** 关全屏 / 关弹窗），浏览器切进「键盘模态」，那个仍聚焦的按钮**当场开始命中 `:focus-visible`**——于是操作结束后凭空多出一圈绿描边，用户完全没按 Tab。
+
+这不是基线的 bug（「鼠标点击不显框」本身是对的），而是**焦点没被收走**。做法：这类"退出/关闭"交互里主动断焦。
+
+```ts
+const onKeydown = (e: KeyboardEvent) => {
+  if (e.key !== 'Escape' || !isFullscreen.value) return
+  isFullscreen.value = false
+  // 退出全屏并非要把焦点交还给触发按钮，主动断掉即可
+  ;(document.activeElement as HTMLElement | null)?.blur()
+}
+```
+
+**判据**：该交互结束后，焦点**是否应当回到触发它的那个元素**？不应当 → `blur()`；应当（如关闭弹窗把焦点还给列表行）→ 保留，那圈框是正确的键盘指示。⛔ 不要为此去写 `outline: none`。<!-- @rule id=blur-after-modal-exit level=SHOULD cat=状态设计 detect=manual dtitle=按 Esc 关闭全屏或弹窗后，不该凭空出现一圈绿色焦点描边 title=Esc/模态切换类退出交互须主动 blur() 断掉残留焦点，不得改用 outline:none -->

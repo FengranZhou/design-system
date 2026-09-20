@@ -81,6 +81,27 @@
   box-shadow: 0 0 0 1px var(--iflyv-brand-primary) inset, 0 0 0 2px var(--iflyv-input-focus-ring);
 }
 
+/* 输入类控件豁免全局焦点基线：聚焦指示由上面各 wrapper 的 box-shadow 承担，
+   内部那个真实 <input>/<textarea> 不再叠第二圈 outline——否则是「框中框」
+   （内圈 box-shadow 贴边、外圈 outline 又偏出 2px，观感散）。
+
+   ⚠️ 为什么必须在这里显式写、base/focus.scss 的 `:focus{outline:none}` 兜不住：
+      UA 规定「支持键盘输入的元素」**恒定匹配** `:focus-visible`——文本输入框即使
+      是鼠标点的也照样命中。于是基线那对规则里赢的永远是 `:focus-visible` 那条，
+      用户一点输入框就必然多出一圈绿描边。这与按钮不同（按钮鼠标点击不匹配
+      focus-visible，基线分工成立），所以只能按元素豁免。
+
+   ⚠️ 只豁免「外层已有替代聚焦指示」的这几个，**不写成裸 `input:focus-visible`**：
+      那会连带豁免下游项目里的原生 <input>，那些没有 wrapper 兜底，一豁免就真的
+      失去焦点指示了 —— 等于拿 a11y 换观感，违反 foundations「焦点框」段硬规则。 */
+.el-input__inner:focus-visible,
+.el-textarea__inner:focus-visible,
+.el-select__input:focus-visible,
+.el-input-tag__input:focus-visible,
+.el-range-input:focus-visible {
+  outline: none;
+}
+
 /* 字数提示 show-word-limit */
 .el-input__wrapper .el-input__count,
 .el-textarea .el-input__count {
