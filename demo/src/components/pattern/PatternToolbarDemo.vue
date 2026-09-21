@@ -77,12 +77,12 @@
       <!-- 工具栏：外层 space-between 分左右两组，组内 gap 12（均在源头）。
            每个元素按三分支 filterSide/actionSide 落在左组还是右组。
            内边距上下16左右24 由本页给出（源头不含内边距）。 -->
-      <div class="toolbar">
-          <div class="toolbar__left">
+      <div class="iflyv-toolbar">
+          <div class="iflyv-toolbar__left">
             <!-- 标题：4 选 1，仅在归左时渲染 -->
             <template v-if="titleSide === 'left'">
-              <h3 v-if="titleType === 'page'" class="toolbar__title">项目列表</h3>
-              <h4 v-else-if="titleType === 'module'" class="toolbar__title toolbar__title--module">我的项目</h4>
+              <h3 v-if="titleType === 'page'" class="iflyv-toolbar__title">项目列表</h3>
+              <h4 v-else-if="titleType === 'module'" class="iflyv-toolbar__title iflyv-toolbar__title--module">我的项目</h4>
               <el-tabs v-else :class="titleType === 'page-tab' ? 'tabs-page' : ''" v-model="pageTab">
                 <el-tab-pane label="概览" name="overview" />
                 <el-tab-pane label="统计" name="stat" />
@@ -112,7 +112,7 @@
             </template>
           </div>
 
-          <div v-if="hasRight" class="toolbar__right">
+          <div v-if="hasRight" class="iflyv-toolbar__right">
             <!-- 筛选类（归右时） -->
             <template v-if="filterSide === 'right'">
               <el-tabs v-if="showTab" class="tabs-sub" v-model="view">
@@ -240,7 +240,7 @@ const hasRight = computed(() => filterSide.value === 'right' || actionSide.value
       上下取页面级档位 16（模块级标题时下方应收为 12）。
    ② 让范例在模式卡里浮起成形的展示性装饰 —— 非工具栏规则，故不进源头
       （真实页面的工具栏通常不需要底色描边）。 */
-.toolbar {
+.iflyv-toolbar {
   padding: var(--iflyv-spacing-4) var(--iflyv-spacing-6);
   background: var(--iflyv-bg-panel);
   border: 1px solid var(--iflyv-border-subtle);

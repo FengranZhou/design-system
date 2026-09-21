@@ -39,15 +39,15 @@ updated: 2026-04-12
 栅格样式在源头 `el-theme/patterns/grid.scss`，接入方**只写约定 class**，不自己拼 grid/flex：
 
 ```vue
-<div class="grid">
-  <div class="grid__col-16">主内容</div>
-  <div class="grid__col-8">侧边信息栏</div>
+<div class="iflyv-grid">
+  <div class="iflyv-grid__col-16">主内容</div>
+  <div class="iflyv-grid__col-8">侧边信息栏</div>
 </div>
 ```
 
-- `.grid` = 24 列容器（列数、水槽全走令牌）；`.grid__col-<N>` = 跨 N 列。
+- `.iflyv-grid` = 24 列容器（列数、水槽全走令牌）；`.grid__col-<N>` = 跨 N 列。
 - **只提供 `col-6/8/10/12/14/16/18/20/24` 九档**——「不得小于 6 列」的硬规则直接由源头保证，写不出 `col-3` 这种违规值。 <!-- @rule-skip dup 同 grid-min-6col，且该约束由源头栅格类保证 -->
-- **不用 `el-row` / `el-col`**：EP 走 flex + 负 margin，与「间距一律走令牌」纪律冲突，且 `:gutter` 只接数字、拿不到 CSS 变量。 <!-- @rule id=grid-no-el-row level=MUST cat=布局与栅格 detect=regex dtitle=分栏宽度应落在标准档位上，各栏间距均匀一致 title=分栏用源头栅格类 .grid/.grid__col-*，禁用 el-row/el-col、禁自拼 flex -->
+- **不用 `el-row` / `el-col`**：EP 走 flex + 负 margin，与「间距一律走令牌」纪律冲突，且 `:gutter` 只接数字、拿不到 CSS 变量。 <!-- @rule id=grid-no-el-row level=MUST cat=布局与栅格 detect=regex dtitle=分栏宽度应落在标准档位上，各栏间距均匀一致 title=分栏用源头栅格类 .iflyv-grid/.iflyv-grid__col-*，禁用 el-row/el-col、禁自拼 flex -->
 - 水槽要改 → 改 `--iflyv-grid-gutter` 令牌，全站同步；**不在使用方写 `gap`**。
 
 ---
@@ -61,9 +61,9 @@ updated: 2026-04-12
 | 层 | 是什么 | 用什么 |
 |---|---|---|
 | **页面框架侧栏** | 整页骨架的一部分：侧边导航 + 课程卡 + 底部用户区（头像 / 帮助 / 通知） | 业务组件 **`PageFrame`** 已内置，传 `:menus` / `:course` / `:notice-count` / `avatar-role` 即可，**不自己拼**。⚠️ **框架不提供顶栏**：层级返回（面包屑）归业务在内容区自行处理 |
-| **内容区操作条** | 内容区里某个区块的头部：标题 + tab + 筛选 + 搜索 + 操作按钮 | 源头约定类 **`.toolbar`**，详见 `patterns/toolbar-pattern.md` |
+| **内容区操作条** | 内容区里某个区块的头部：标题 + tab + 筛选 + 搜索 + 操作按钮 | 源头约定类 **`.iflyv-toolbar`**，详见 `patterns/toolbar-pattern.md` |
 
-> 页面标题走 `.toolbar__title`（页面级）或加 `--module`（模块级），字阶已在源头 `el-theme/patterns/toolbar.scss` 给定——**不要在此另写一套页头 div**，那会绕过源头（属最高铁律判定的「局部私货」）。
+> 页面标题走 `.iflyv-toolbar__title`（页面级）或加 `--module`（模块级），字阶已在源头 `el-theme/patterns/toolbar.scss` 给定——**不要在此另写一套页头 div**，那会绕过源头（属最高铁律判定的「局部私货」）。
 
 ---
 
@@ -157,6 +157,6 @@ updated: 2026-04-12
 
 - **侧边栏折叠**：⛔ **不随视口自动折叠，也不要自己实现**。`PageFrame` 曾按「视口 < 1440 自动收起」处理，**已于 2026-09 移除**——侧边导航的收放是**用户的显式选择**，系统替他做决定的代价是：拖动窗口、外接显示器切换、分屏时侧栏会在用户没操作的情况下自己变形，失去可预期性（与设计原则「一致性高于创意、可预测性比新鲜感更重要」相悖）。现在 `PageFrame` **不监听 resize**，收放只由用户点右缘把手触发。<!-- @rule id=sidebar-no-auto-collapse level=MUST cat=设计模式 detect=manual dtitle=侧边导航不能因为窗口变窄就自己收起来，收放只由用户点击决定 title=侧边栏禁止按视口宽度自动折叠，PageFrame 不监听 resize，下游也不得自行实现 -->
   - 需要**记住用户偏好**时：传 `v-model:collapsed` 自行持久化，组件内部没有任何会覆盖它的逻辑。
-- **栅格降等分**：`.grid__col-6`（四等分）在 1200~1439 可换成 `.grid__col-8`（三等分），避免卡片过窄。
+- **栅格降等分**：`.iflyv-grid__col-6`（四等分）在 1200~1439 可换成 `.iflyv-grid__col-8`（三等分），避免卡片过窄。
 - **弹窗宽度**：三档 400/640/800 均 < 1200，任何情况下都装得下，**不需要按视口收窄**。
 - **不写 `<1200` 的断点**：包括 `calc(100vw - Npx)` 这类随视口收缩的宽度——它们在横向滚动语境下会算出错误值。

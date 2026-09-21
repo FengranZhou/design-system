@@ -3,20 +3,24 @@
           标题 / tab / 下拉 / 搜索 / 操作按钮 中两类及以上"的横向组织。
    规则全文见 references/patterns/toolbar-pattern.md（固定顺序 + 左右分配三分支）。
 
+   ⚠️ 类名统一带 `iflyv-` 前缀（2026-09 起）——裸 `.toolbar` 是通用词，会命中宿主项目
+      里同名的 DOM（真实翻车：富文本编辑器自己的 `.toolbar` 被本模式的 flex/gap 打中，
+      工具栏排版被改坏）。前缀即命名空间，详见文末「旧类名过渡期」段。
+
    ---------------------------- 接入方速查 ----------------------------
    分支①（有标题）—— 标题左，其余全右：
-     <div class="toolbar">
-       <div class="toolbar__left">
-         <h3 class="toolbar__title">页面标题</h3>
+     <div class="iflyv-toolbar">
+       <div class="iflyv-toolbar__left">
+         <h3 class="iflyv-toolbar__title">页面标题</h3>
        </div>
-       <div class="toolbar__right">
+       <div class="iflyv-toolbar__right">
          组件级 tab → 下拉 → 搜索 → 次按钮 → 主按钮（固定顺序）
        </div>
      </div>
 
    标题两档（按层级选字阶）：
-     页面级：<h3 class="toolbar__title">                    ← 默认，title-page 26/48
-     模块级：<h4 class="toolbar__title toolbar__title--module">  ← title-module 18/36
+     页面级：<h3 class="iflyv-toolbar__title">                          ← 默认，title-page 26/48
+     模块级：<h4 class="iflyv-toolbar__title iflyv-toolbar__title--module">  ← title-module 18/36
 
    分支②（无标题、有筛选类）：筛选类放 __left，操作按钮放 __right。
    分支③（无标题无筛选）：只有操作按钮，放 __left 即可（无 __right）。
@@ -26,7 +30,7 @@
        页面级工具栏是页面骨架的一部分，与页面边缘、与下方内容的关系固定、
        不随放在哪改变，故归工具栏自己。左右用「负外边距 + 等量内边距」出血实现：
        页面容器照常给 padding-inline: 24，工具栏把底色撑回整宽（吸顶时才不会漏内容）。
-     · **模块级**（.toolbar__title--module / 裸 el-tabs）—— 上下左右**全交外部布局**。
+     · **模块级**（.iflyv-toolbar__title--module / 裸 el-tabs）—— 上下左右**全交外部布局**。
        模块级工具栏取决于被放进哪个容器（卡片内 / 面板内 / 裸区块），
        留白属于"放在哪"的属性，由布局方给，档位见 references 的「留白」段。
    ⚠ 相邻元素间距由 __left / __right 的 gap 提供，禁在元素上写 margin。
@@ -35,7 +39,7 @@
    改外观：回本文件改，改一次所有引用方同步（勿在使用方 scoped 复刻）。
    @see: demo「设计模式 → Toolbar 工具栏布局」标准范例（配置项可实时切三分支）。
    ==================================================================== */
-.toolbar {
+.iflyv-toolbar, .toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -53,7 +57,7 @@
      两种方式都成立，按容器结构选。
 
    为什么是「整条工具栏」而不是「tab 元素本身」：按本模式，页面级 tab 属标题区、
-   主按钮属操作区，二者本就在同一个 .toolbar 内。只吸 tab 会让按钮滚走、一排裂开。
+   主按钮属操作区，二者本就在同一个 .iflyv-toolbar 内。只吸 tab 会让按钮滚走、一排裂开。
 
    ⚠ 只对**页面级** tab 生效。模块级（裸 el-tabs）/ 组件级（.tabs-sub）不吸顶：
    它们从属于某个模块，跟着模块一起滚走才符合层级预期。
@@ -68,6 +72,8 @@
                 el-scrollbar 的 wrap 上、view 不裁切，故此处成立。
    @when-changed: 若使用方自行在工具栏外层套了带 overflow 的容器，吸顶会失效——
                   那是接入方式问题，不要在使用方补 :deep 覆盖，回来查外层 overflow。 */
+.iflyv-toolbar:has(.tabs-page),
+/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
 .toolbar:has(.tabs-page) {
   position: sticky;
   top: 0;
@@ -130,6 +136,8 @@
 /* ⚠ 仅限**含页面级 tab** 的工具栏——与上方吸顶段同一条判据：
    页面级 tab 是「我在哪个分区」的定位信息、且要能就地切换，故常驻；
    纯页面标题 / 模块级没有这层作用，应跟着内容一起滚走，**不要放进 #page-header**。 */
+.page-frame__page-header .iflyv-toolbar:has(.tabs-page),
+/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
 .page-frame__page-header .toolbar:has(.tabs-page) {
   position: relative;
 
@@ -149,6 +157,7 @@
 }
 
 @supports (animation-timeline: --x) {
+  .page-frame__page-header .iflyv-toolbar:has(.tabs-page)::after,
   .page-frame__page-header .toolbar:has(.tabs-page)::after {
     animation: toolbar-stuck-line linear both;
     animation-timeline: --page-scroll;
@@ -157,8 +166,8 @@
 }
 
 /* 左右两组：组内相邻元素间距 12 */
-.toolbar__left,
-.toolbar__right {
+.iflyv-toolbar__left, .toolbar__left,
+.iflyv-toolbar__right, .toolbar__right {
   display: flex;
   align-items: center;
   gap: var(--iflyv-spacing-3);
@@ -181,27 +190,28 @@
    ⚠️ min-width 要**逐层传下去**，只给 __left 的话撑开的链路只是下移一层。
       tabs 自己那几层（.el-tabs / __header / __nav-wrap）归 **components/tabs.scss**
       —— 那是组件内部结构，任何把 tabs 放进 flex 容器的场景都需要，不是工具栏特有的。 */
-.toolbar__left {
+.iflyv-toolbar__left, .toolbar__left {
   min-width: 0;
 }
-.toolbar__right {
+.iflyv-toolbar__right, .toolbar__right {
   flex-shrink: 0;
 }
 
 /* 标题：默认页面级字阶；模块级加 --module 降一档 */
-.toolbar__title {
+.iflyv-toolbar__title, .toolbar__title {
   margin: 0;
   color: var(--iflyv-text-1);
   font: var(--iflyv-font-title-page);
 
-  &--module {
+  &--module,
+  &.toolbar__title--module {
     font: var(--iflyv-font-title-module);
   }
 }
 
 /* tab 落在工具栏内时无内容面板，清掉 EP header 默认下边距，
    使其与同排下拉 / 搜索 / 按钮垂直居中对齐 */
-.toolbar .el-tabs__header {
+.iflyv-toolbar .el-tabs__header, .toolbar .el-tabs__header {
   margin-bottom: 0;
 }
 
@@ -212,7 +222,7 @@
      模块级则取决于被放进哪个容器（卡片内 / 面板内 / 裸区块），
      属于「放在哪」的属性，留给外部布局（本层不给，见 references「留白」段）。
 
-   页面级 = 工具栏内含页面标题（.toolbar__title 未挂 --module）或页面级 tab（.tabs-page）。
+   页面级 = 工具栏内含页面标题（.iflyv-toolbar__title 未挂 --module）或页面级 tab（.tabs-page）。
 
    取值依据 foundations.md 间距速查：
      页面内容与页面左右边缘之间      spacing-6（24）
@@ -225,9 +235,34 @@
      视觉位置不变，只是底色更宽。
    ⚠ 使用方不要再给容器 gap 或给工具栏写 margin-bottom，会与本条叠加成双倍
      （实测翻车过：容器 gap 16 + 本条 16 = 32）。 */
+.iflyv-toolbar:has(.tabs-page),
+.iflyv-toolbar:has(.iflyv-toolbar__title:not(.iflyv-toolbar__title--module)),
+/* ⏳ 旧类名过渡期（见文件末「旧类名过渡期」段），迁移完成后删除这两行 */
 .toolbar:has(.tabs-page),
 .toolbar:has(.toolbar__title:not(.toolbar__title--module)) {
   padding-block: var(--iflyv-spacing-4);
   margin-inline: calc(-1 * var(--iflyv-spacing-6));
   padding-inline: var(--iflyv-spacing-6);
 }
+
+/* ==================== ⏳ 旧类名过渡期（计划删除） ====================
+   2026-09 起类名统一加 `iflyv-` 前缀。裸 `.toolbar` 是通用词，作为**全局样式**
+   发布时会命中宿主项目里任何同名 DOM —— 真实翻车：某项目富文本编辑器自带
+   `.toolbar`，被本模式的 `display:flex / justify-content / gap` 直接打中，
+   编辑器工具栏排版被改坏，且排查困难（样式来自"别人的库"，本地搜不到）。
+
+   本文件内凡标有「⏳ 旧类名过渡期」的选择器行，都是让旧类名继续生效的兼容写法。
+   它们与新类名**并列在同一条规则上**（不是复制一份），因此改源头两边同步变，
+   不存在新旧规则漂移。
+
+   ⚠️ 过渡期内污染问题**依然存在**（旧裸类名还在全局生效）——
+      兼容行是临时措施，删掉它们隔离才真正完成。
+
+     · 迁移做法：`class="toolbar"` → `class="iflyv-toolbar"`，
+       `__left / __right / __title / __title--module` 同理，全部只是加前缀。
+     · 删除时机：确认所有下游已迁移后，删掉本文件内全部 `.toolbar*` 兼容行。
+     · 删除后表现：仍写旧类名处样式**直接消失**（不报错）——属预期，
+       问题立刻暴露、好定位，优于静默错位。
+
+   ⚠️ 新代码一律用带前缀的类名。
+   ==================================================================== */

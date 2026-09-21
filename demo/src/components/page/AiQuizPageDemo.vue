@@ -1,11 +1,11 @@
 <template>
   <section id="page-ai-quiz" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右（同其余典型页） -->
-    <div class="toolbar ai-quiz-demo__toolbar">
-      <div class="toolbar__left">
+    <div class="iflyv-toolbar ai-quiz-demo__toolbar">
+      <div class="iflyv-toolbar__left">
         <h2 class="demo-section__title">AI Quiz AI 出题</h2>
       </div>
-      <div class="toolbar__right">
+      <div class="iflyv-toolbar__right">
         <el-button @click="toggleFullscreen">
           <template #icon>
             <Minimize v-if="isFullscreen" :size="16" :stroke-width="2" />
@@ -38,7 +38,7 @@
         </header>
 
         <!-- 主体两栏：左设置定宽、右结果吃剩余。
-             ⚠️ 不走比例栅格 .grid/.grid__col-*：那套是 24 列 1fr 比例列，左栏会随窗口
+             ⚠️ 不走比例栅格 .iflyv-grid/.iflyv-grid__col-*：那套是 24 列 1fr 比例列，左栏会随窗口
              一起缩水，把题型三列网格挤到裁切（见 efficiency-guide 栅格段「定宽栏例外」）。
              左栏内容宽度是固定的（表单控件 + 题型三列），故用 定宽 + 1fr。 -->
         <div class="ai-quiz__body">

@@ -59,29 +59,29 @@
 以下**已固化在 `el-theme/patterns/toolbar.scss`**，写上约定 class 即生效，**使用方不必也不应重写**：
 
 - **外层 `space-between` 分左右两组**（`__left` / `__right` 各自 flex）。分支 ③（只有操作按钮）时不写 `__right` 即可，左组自然靠左。
-- **相邻元素水平间距** `12px`（`spacing-3`）：由 `.toolbar__left` / `.toolbar__right` 的 gap 提供，**不在元素上写 margin**（同按钮间距规范）。
-- **标题字阶两档**：`.toolbar__title` 默认页面级（`title-page` 26/48），加 `--module` 降为模块级（`title-module` 18/36）。
+- **相邻元素水平间距** `12px`（`spacing-3`）：由 `.iflyv-toolbar__left` / `.iflyv-toolbar__right` 的 gap 提供，**不在元素上写 margin**（同按钮间距规范）。
+- **标题字阶两档**：`.iflyv-toolbar__title` 默认页面级（`title-page` 26/48），加 `--module` 降为模块级（`title-module` 18/36）。
 - **工具栏内 tab** 的 header 下边距清零（使其与同排元素垂直居中）。
 - **含页面级 tab 的工具栏自动吸顶**（见下条）。
 
-#### 含页面级 tab 时整条吸顶（源头自动，使用方零成本） <!-- @rule id=toolbar-sticky-page-tabs level=MUST cat=设计模式 detect=manual dtitle=页面级分区切换栏滚动时应始终停在顶部，不能随内容滚走 title=页面级 tab 必须放进 .toolbar（源头据此自动吸顶），禁裸放或手拼 flex -->
+#### 含页面级 tab 时整条吸顶（源头自动，使用方零成本） <!-- @rule id=toolbar-sticky-page-tabs level=MUST cat=设计模式 detect=manual dtitle=页面级分区切换栏滚动时应始终停在顶部，不能随内容滚走 title=页面级 tab 必须放进 .iflyv-toolbar（源头据此自动吸顶），禁裸放或手拼 flex -->
 
-**工具栏里放了 `.tabs-page` → 整条自动吸顶**，源头 `.toolbar:has(.tabs-page)` 提供，
+**工具栏里放了 `.tabs-page` → 整条自动吸顶**，源头 `.iflyv-toolbar:has(.tabs-page)` 提供，
 **使用方不写任何吸顶样式、也不必额外挂 class**。
 
 **为什么吸顶**：页面级 tab 充当页面标题层，是「我在哪个分区」的定位信息——
 内容滚走后它必须留在视口里，否则用户滚到深处会失去所属分区的上下文、也无法就地切换分区。
 
 **为什么是整条工具栏、而不是 tab 元素本身**：按本模式，页面级 tab 属**标题区**、
-主按钮属**操作区**，二者本就在同一个 `.toolbar` 内（如「课程画像」页的 tab + 「查看课程群画像」）。
+主按钮属**操作区**，二者本就在同一个 `.iflyv-toolbar` 内（如「课程画像」页的 tab + 「查看课程群画像」）。
 只吸 tab 会让按钮滚走、一排裂开。
 
 **只对页面级生效**：模块级（裸 `el-tabs`）/ 组件级（`.tabs-sub`）**不吸顶**——
 它们从属于某个模块，跟着模块一起滚走才符合层级预期。
 
-⚠️ **由此得出一条硬要求**：**页面级 tab 必须放进 `.toolbar`**（哪怕同排没有其它元素，
+⚠️ **由此得出一条硬要求**：**页面级 tab 必须放进 `.iflyv-toolbar`**（哪怕同排没有其它元素，
 如「公开信息设置」页），否则拿不到吸顶能力。**禁裸放 `<el-tabs class="tabs-page">`、
-禁手拼 flex 容器**（手拼的容器没有 `.toolbar` 类名，`:has()` 匹配不到）。
+禁手拼 flex 容器**（手拼的容器没有 `.iflyv-toolbar` 类名，`:has()` 匹配不到）。
 
 细线：吸顶后底部浮现一条 `border-subtle` 细线作分界，**静止时不可见**
 （符合「分隔优先级：间距 > 色差 > 细线」）。纯 CSS 实现，无需监听滚动。
@@ -96,7 +96,7 @@
 ```vue
 <PageFrame …>
   <template #page-header>
-    <div class="toolbar">…页面级 tab / 标题…</div>
+    <div class="iflyv-toolbar">…页面级 tab / 标题…</div>
   </template>
   <div class="my-page">页面内容</div>
 </PageFrame>
@@ -183,7 +183,7 @@
 
 ## 四、反例（禁止）
 
-- ❌ **页面级 tab 裸放或手拼 flex 容器**（不套 `.toolbar`）——拿不到源头的自动吸顶，
+- ❌ **页面级 tab 裸放或手拼 flex 容器**（不套 `.iflyv-toolbar`）——拿不到源头的自动吸顶，
   滚动时分区切换栏跟着内容滚走，用户滚到深处不知道自己在哪个分区。
   真实翻车：「课程画像」页曾用 `<div class="dashboard__head">` 手拼 flex 放 tab + 主按钮，
   既绕过了工具栏模式，也拿不到吸顶。
@@ -204,18 +204,18 @@
 ## 五、可照抄骨架
 
 > ⛔ **工具栏样式的唯一数据源在 `el-theme/patterns/toolbar.scss`（全局层）。**
-> 使用方**只写约定 class**——布局 / 元素间距 / 标题字阶 / 工具栏内 tab 对齐，全部已在源头处理好。 <!-- @rule id=toolbar-convention-class level=MUST cat=设计模式 detect=manual dtitle=工具栏标题、筛选、按钮的间距与对齐应各页一致 title=工具栏一律用源头约定 class .toolbar/__left/__right/__title，禁在使用方复刻 -->
+> 使用方**只写约定 class**——布局 / 元素间距 / 标题字阶 / 工具栏内 tab 对齐，全部已在源头处理好。 <!-- @rule id=toolbar-convention-class level=MUST cat=设计模式 detect=manual dtitle=工具栏标题、筛选、按钮的间距与对齐应各页一致 title=工具栏一律用源头约定 class .iflyv-toolbar/__left/__right/__title，禁在使用方复刻 -->
 > 在使用方 scoped 里重写这几条 = 局部私货（源头改了它不动），一律禁止。
 > **需要页面自己写的只有留白**（见「三、留白」）：左右归页面内容区容器统一给，上下按标题层级取档（页面级 16 / 模块级下方 12）。
 
 ```vue
 <template>
   <!-- 分支①：有标题 —— 标题左，其余全右 -->
-  <div class="toolbar">
-    <div class="toolbar__left">
-      <h3 class="toolbar__title">页面标题</h3>
+  <div class="iflyv-toolbar">
+    <div class="iflyv-toolbar__left">
+      <h3 class="iflyv-toolbar__title">页面标题</h3>
     </div>
-    <div class="toolbar__right">
+    <div class="iflyv-toolbar__right">
       <!-- 顺序：组件级 tab → 下拉 → 搜索 → 次按钮 → 主按钮 -->
       <el-tabs class="tabs-sub" v-model="view"><!-- 组件级 tab --></el-tabs>
       <el-select v-model="type" /><!-- 下拉选择器 -->
@@ -226,20 +226,20 @@
   </div>
 
   <!-- 分支②：无标题、有筛选类 —— 筛选类左，操作按钮右 -->
-  <!-- <div class="toolbar">
-    <div class="toolbar__left"> 组件级 tab / 下拉 / 搜索 </div>
-    <div class="toolbar__right"> 次按钮 / 主按钮 </div>
+  <!-- <div class="iflyv-toolbar">
+    <div class="iflyv-toolbar__left"> 组件级 tab / 下拉 / 搜索 </div>
+    <div class="iflyv-toolbar__right"> 次按钮 / 主按钮 </div>
   </div> -->
 
   <!-- 分支③：无标题、无筛选类 —— 只有操作按钮，靠左 -->
-  <!-- <div class="toolbar">
-    <div class="toolbar__left"> 次按钮 / 主按钮 </div>
+  <!-- <div class="iflyv-toolbar">
+    <div class="iflyv-toolbar__left"> 次按钮 / 主按钮 </div>
   </div> -->
 </template>
 
 <style scoped>
 /* 左右由页面内容区容器统一给（spacing-6），工具栏只写上下 */
-.toolbar { padding-block: var(--iflyv-spacing-4); }
+.iflyv-toolbar { padding-block: var(--iflyv-spacing-4); }
 </style>
 ```
 
@@ -247,16 +247,16 @@
 
 | 层级 | 标题标签（字阶，源头） | 页面自写的下边距 |
 |---|---|---|
-| **页面级**（页面标题 / 页面级 tab 栏） | `<h3 class="toolbar__title">` → `title-page` 26/48 | `spacing-4`（16） |
-| **模块级**（模块标题 / 模块级 tab 栏） | `<h4 class="toolbar__title toolbar__title--module">` → `title-module` 18/36 | `spacing-3`（12） |
+| **页面级**（页面标题 / 页面级 tab 栏） | `<h3 class="iflyv-toolbar__title">` → `title-page` 26/48 | `spacing-4`（16） |
+| **模块级**（模块标题 / 模块级 tab 栏） | `<h4 class="iflyv-toolbar__title toolbar__title--module">` → `title-module` 18/36 | `spacing-3`（12） |
 
 ```vue
 <!-- 模块级：标题加 --module 降字阶即可，无需额外类 -->
-<div class="toolbar">
-  <div class="toolbar__left">
-    <h4 class="toolbar__title toolbar__title--module">我的项目</h4>
+<div class="iflyv-toolbar">
+  <div class="iflyv-toolbar__left">
+    <h4 class="iflyv-toolbar__title toolbar__title--module">我的项目</h4>
   </div>
-  <div class="toolbar__right">…</div>
+  <div class="iflyv-toolbar__right">…</div>
 </div>
 ```
 
