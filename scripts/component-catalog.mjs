@@ -777,7 +777,7 @@ import emptyImg from '<path>/design-spec/el-theme/assets/empty/${img}.png'`
     keywords: ['工具栏', 'toolbar', '页头', '操作条', '筛选'],
     readRefs: ['references/patterns/toolbar-pattern.md'],
     mustRules: [
-      '一律用源头约定 class .toolbar / __left / __right / __title，禁在使用方 scoped 复刻',
+      '两种等价写法：① 业务组件 Toolbar（推荐，<Toolbar> + #left / #right 插槽）② 源头约定 class .iflyv-toolbar / __left / __right / __title；禁在使用方 scoped 复刻',
       '固定顺序：标题→组件级 tab→下拉→搜索→次按钮→主按钮',
       '左右分配三分支：有标题→标题左其余右 / 无标题有筛选→筛选左按钮右 / 都无→按钮左',
       '过滤条件不超过两行，并列同义的条件必须合并',
@@ -797,12 +797,13 @@ import emptyImg from '<path>/design-spec/el-theme/assets/empty/${img}.png'`
       { key: 'search', label: '带搜索', type: 'switch', default: false },
       { key: 'primaryBtn', label: '主按钮文案', type: 'text', placeholder: '如：新建课程', default: '' },
     ],
-    snippet: ({ title, level, search, primaryBtn }) => `<div class="toolbar">
-  <div class="toolbar__left">${title ? `\n    <h3 class="toolbar__title${level === 'module' ? ' toolbar__title--module' : ''}">${title}</h3>` : ''}
-  </div>
-  <div class="toolbar__right">${search ? '\n    <SearchMini v-model="keyword" placeholder="搜索" />' : ''}${primaryBtn ? `\n    <el-button type="primary">${primaryBtn}</el-button>` : ''}
-  </div>
-</div>`,
+    snippet: ({ title, level, search, primaryBtn }) => `<!-- import { Toolbar } from '<path>/design-spec/components' -->
+<Toolbar>
+  <template #left>${title ? `\n    <h3 class="iflyv-toolbar__title${level === 'module' ? ' iflyv-toolbar__title--module' : ''}">${title}</h3>` : ''}
+  </template>
+  <template #right>${search ? '\n    <SearchMini v-model="keyword" placeholder="搜索" />' : ''}${primaryBtn ? `\n    <el-button type="primary">${primaryBtn}</el-button>` : ''}
+  </template>
+</Toolbar>`,
   },
 
   {
