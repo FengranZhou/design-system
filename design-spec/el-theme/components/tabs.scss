@@ -226,8 +226,21 @@
   animation-name: tab-active-expand-rtl;
 }
 
+/* 底板宽度 = 内容宽度（不通栏），但**上限收在容器内**。
+   ⚠️ 只写 `width: fit-content` 会让组件级永远出不来左右箭头：
+      fit-content 使 header 宽度恒等于内容宽度，EP 的滚动判定
+      （nav 内容宽 > nav-wrap 可视宽，见本文件上方 min-width 链路那段注释）
+      两边永远相等 → `.is-scrollable` 永不挂上 → 箭头永不出现。
+      实测（三档同一组超长 tab，容器 720）：
+        页面级 wrap 620 < nav 670 → true，出箭头
+        模块级 wrap 620 < nav 638 → true，出箭头
+        组件级 wrap 586 = nav 586 → false，无箭头（本条修复前）
+      补 max-width: 100% 后，底板到容器边界即止，可视宽 < 内容宽成立，
+      箭头样式（本文件顶部 .el-tabs__nav-prev/next）随之生效。
+   短 tab 场景不受影响：内容没到容器宽时 fit-content 仍按内容收缩。 */
 .tabs-sub .el-tabs__header {
   width: fit-content;
+  max-width: 100%;
   background-color: var(--iflyv-bg-inset);
   border-radius: var(--iflyv-radius-sm);
   padding: var(--iflyv-spacing-1);   /* 4px：header 总高 = item 28 + padding 4×2 = 36 */

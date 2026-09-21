@@ -814,6 +814,8 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 
 **源头已修**（`el-theme/components/tabs.scss` 给 `.el-tabs` / `__header` / `__nav-wrap` 逐层 `min-width: 0`，`patterns/toolbar.scss` 给 `__left` 可收缩、`__right` 不收缩），**下游一行都不用写**。
 
+> **组件级（`.tabs-sub`）曾额外漏了一条**：它的灰色底板为「包住内容、不通栏」写了 `width: fit-content`，而 fit-content 让 header 宽度**恒等于内容宽度**，同样使上述判定两边相等 → 箭头永不出现（页面级 / 模块级没有这行，故不受影响）。已补 `max-width: 100%` 让底板到容器边界即止，短 tab 时仍按内容收缩。**判据可复用**：凡给 tab 容器写 `fit-content` / `width: max-content` 一类「按内容定宽」的声明，都会掐死 EP 的滚动判定，必须同时给出上限。
+
 - ⛔ 不要自写 `overflow: hidden` 去"压住"撑开——那只是把溢出藏了，箭头仍然不出，用户再也够不到后面的 tab。
 - ⛔ 不要手拼左右滚动按钮——EP 自带，缺的只是触发条件。<!-- @rule id=no-diy-tab-scroll level=MUST cat=组件用法 detect=manual dtitle=标签栏放不下时不要自己做左右翻页按钮，也不要用隐藏溢出把放不下的标签藏起来 title=tab 溢出滚动由 EP 提供、源头已修好触发条件，禁自写 overflow:hidden 或手拼滚动按钮 -->
 
