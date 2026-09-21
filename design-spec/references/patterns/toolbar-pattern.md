@@ -54,6 +54,30 @@
 - 判定顺序 ① → ② → ③，**从上往下第一个命中的分支即为最终布局**。
 - 左右两侧各自内部，**元素仍按「二」的固定顺序**排列。
 
+### 0. 两种写法：业务组件 `Toolbar` / 约定 class（等价，任选）
+
+**推荐用业务组件 `Toolbar`**（`design-spec/components/`）——省掉手写 div + 记类名：
+
+```vue
+import { Toolbar } from '<path>/design-spec/components'
+
+<Toolbar>
+  <template #left><h3 class="iflyv-toolbar__title">课程工具</h3></template>
+  <template #right><el-button type="primary">新建</el-button></template>
+</Toolbar>
+```
+
+- 分支③（只有操作按钮）→ **不写 `#right`**，内容直接放默认插槽即可。
+- 含页面级 tab 时照常自动吸顶（`:has()` 匹配后代，插槽内容仍是后代）。
+
+**也可继续手写约定 class**（`<div class="iflyv-toolbar">` + `__left` / `__right`），
+两者产出的 DOM **完全一致**、样式来源同一份，已有代码无需改写。
+
+> **组件只是约定 class 的标签化封装**：它没有 props、没有 scoped 样式，
+> 内容完全由插槽给。**顺序与左右分配仍是本文档的规则，不由组件强制**——
+> 因为工具栏的内容组合是开放的（标题/tab/下拉/搜索/各类按钮 + 业务事件），
+> 穷举成 props 既盖不全、又会让每加一种元素都要改源头。
+
 ### 2. 布局、间距、标题字阶 —— **在源头，使用方不写**
 
 以下**已固化在 `el-theme/patterns/toolbar.scss`**，写上约定 class 即生效，**使用方不必也不应重写**：

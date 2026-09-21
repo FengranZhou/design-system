@@ -11,19 +11,19 @@
       </p>
 
       <div class="tab-bar-demo__stage">
-        <div class="iflyv-toolbar">
-          <div class="iflyv-toolbar__left">
+        <Toolbar>
+          <template #left>
             <TabBar
               v-model="active"
               :tabs="tabs"
               :level="configForm.level"
               :max-label-width="configForm.ellipsis ? 200 : 0"
             />
-          </div>
-          <div class="iflyv-toolbar__right">
+          </template>
+          <template #right>
             <el-button type="primary">图谱管理</el-button>
-          </div>
-        </div>
+          </template>
+        </Toolbar>
       </div>
 
       <p class="demo-tip">
@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import CopyToCC from '../CopyToCC.vue'
-import { TabBar } from '../../../../design-spec/components'
+import { TabBar, Toolbar } from '../../../../design-spec/components'
 
 const tabs = [
   '知识图谱',

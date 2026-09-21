@@ -2,11 +2,11 @@
   <section id="page-public-info" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右。
          全屏是「看 demo 的辅助手段」，不是页面本身的能力，故只做在本页。 -->
-    <div class="iflyv-toolbar public-info-demo__toolbar">
-      <div class="iflyv-toolbar__left">
+    <Toolbar class="public-info-demo__toolbar">
+      <template #left>
         <h2 class="demo-section__title">Public 公开信息设置</h2>
-      </div>
-      <div class="iflyv-toolbar__right">
+      </template>
+      <template #right>
         <!-- 次按钮（默认款）：带文字标签，不再是纯图标入口，故无需 tooltip 补全称 -->
         <el-button @click="toggleFullscreen">
           <template #icon>
@@ -15,8 +15,8 @@
           </template>
           {{ isFullscreen ? '退出全屏' : '全屏查看' }}
         </el-button>
-      </div>
-    </div>
+      </template>
+    </Toolbar>
 
     <!-- 承载舞台：固定高度模拟视口（同 PageFrameDemo 的看图辅助，纯本页排版）。
          全屏态 = fixed 铺满视口（浏览器界面维持原状），Esc 可退出。 -->
@@ -31,17 +31,15 @@
         <!-- 页面级 tab 工具栏放 #page-header：在滚动区之外、始终可见，
              滚动条轨道于是只覆盖下方真正会滚的内容。 -->
         <template #page-header>
-          <div class="iflyv-toolbar public-info__head">
-            <div class="iflyv-toolbar__left">
-              <el-tabs v-model="activeTab" class="tabs-page">
-                <el-tab-pane label="课程概述" name="overview" />
-                <el-tab-pane label="教学团队" name="team" />
-                <el-tab-pane label="课程框架" name="framework" />
-                <el-tab-pane label="课程图谱" name="graph" />
-                <el-tab-pane label="AI特色" name="ai" />
-              </el-tabs>
-            </div>
-          </div>
+          <Toolbar class="public-info__head">
+            <el-tabs v-model="activeTab" class="tabs-page">
+              <el-tab-pane label="课程概述" name="overview" />
+              <el-tab-pane label="教学团队" name="team" />
+              <el-tab-pane label="课程框架" name="framework" />
+              <el-tab-pane label="课程图谱" name="graph" />
+              <el-tab-pane label="AI特色" name="ai" />
+            </el-tabs>
+          </Toolbar>
         </template>
 
         <div class="public-info">
@@ -107,7 +105,7 @@ import { Maximize, Minimize, Info } from 'lucide-vue-next'
 import NavIcon from '../biz/NavIcon.vue'
 import aiSettingSvg from '../../assets/nav-icons/ai-setting.svg?raw'
 import aiSettingActiveSvg from '../../assets/nav-icons/ai-setting-active.svg?raw'
-import { PageFrame, type PageFrameMenuGroup, type PageFrameCourse } from '../../../../design-spec/components'
+import { PageFrame, Toolbar, type PageFrameMenuGroup, type PageFrameCourse } from '../../../../design-spec/components'
 import aiStar from '../../assets/pages/ai-star-3d.png'
 import noData from '../../../../design-spec/el-theme/assets/empty/no-data.png'
 import noDataDark from '../../../../design-spec/el-theme/assets/empty/dark/no-data.png'

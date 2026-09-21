@@ -1,11 +1,11 @@
 <template>
   <section id="page-course-dashboard" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右（同前两个典型页面） -->
-    <div class="iflyv-toolbar course-dashboard-demo__toolbar">
-      <div class="iflyv-toolbar__left">
+    <Toolbar class="course-dashboard-demo__toolbar">
+      <template #left>
         <h2 class="demo-section__title">Profile 课程画像</h2>
-      </div>
-      <div class="iflyv-toolbar__right">
+      </template>
+      <template #right>
         <el-button @click="toggleFullscreen">
           <template #icon>
             <Minimize v-if="isFullscreen" :size="16" :stroke-width="2" />
@@ -13,8 +13,8 @@
           </template>
           {{ isFullscreen ? '退出全屏' : '全屏查看' }}
         </el-button>
-      </div>
-    </div>
+      </template>
+    </Toolbar>
 
     <!-- 承载舞台：固定高度模拟视口；全屏态 fixed 铺满，Esc 退出（demo 看图辅助） -->
     <div class="course-dashboard-stage" :class="{ 'course-dashboard-stage--fullscreen': isFullscreen }">
@@ -29,8 +29,8 @@
              整条放 #page-header：在滚动区之外、始终可见（tab 与主操作不分离），
              滚动条轨道于是只覆盖下方真正会滚的内容。 -->
         <template #page-header>
-          <div class="iflyv-toolbar dashboard__head">
-            <div class="iflyv-toolbar__left">
+          <Toolbar class="dashboard__head">
+            <template #left>
               <el-tabs v-model="activeTab" class="tabs-page dashboard__tabs">
                 <el-tab-pane label="课程看板" name="board" />
                 <el-tab-pane label="AI+应用看板" name="ai" />
@@ -39,11 +39,11 @@
                 <el-tab-pane label="班级画像" name="class" />
                 <el-tab-pane label="成员画像" name="member" />
               </el-tabs>
-            </div>
-            <div class="iflyv-toolbar__right">
+            </template>
+            <template #right>
               <el-button type="primary">查看课程群画像</el-button>
-            </div>
-          </div>
+            </template>
+          </Toolbar>
         </template>
 
         <div class="dashboard">
@@ -105,7 +105,7 @@
 import { h, ref, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Maximize, Minimize } from 'lucide-vue-next'
-import { PageFrame, Chart, type PageFrameMenuGroup, type PageFrameCourse } from '../../../../design-spec/components'
+import { PageFrame, Chart, Toolbar, type PageFrameMenuGroup, type PageFrameCourse } from '../../../../design-spec/components'
 import { formatNumber } from '../../../../design-spec/utils/format-number'
 import NavIcon from '../biz/NavIcon.vue'
 import progressSvg from '../../assets/nav-icons/progress.svg?raw'

@@ -2,11 +2,11 @@
   <section id="page-frame" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右。
          全屏是「看 demo 的辅助手段」，不是 PageFrame 的能力，故只做在本页、不进组件源头。 -->
-    <div class="iflyv-toolbar page-frame-demo__toolbar">
-      <div class="iflyv-toolbar__left">
+    <Toolbar class="page-frame-demo__toolbar">
+      <template #left>
         <h2 class="demo-section__title">PageFrame 页面框架</h2>
-      </div>
-      <div class="iflyv-toolbar__right">
+      </template>
+      <template #right>
         <CopyToCC anchor="page-frame" :values="{ grouped, showMore, courseMenuEnabled, courseInfoCustom }" />
         <!-- 次按钮（默认款）：带文字标签，不再是纯图标入口，故无需 tooltip 补全称 -->
         <el-button @click="toggleFullscreen">
@@ -16,8 +16,8 @@
           </template>
           {{ isFullscreen ? '退出全屏' : '全屏查看' }}
         </el-button>
-      </div>
-    </div>
+      </template>
+    </Toolbar>
 
     <!-- 框架承载舞台：固定高度模拟视口，框架内部自适应铺满（纯本页排版）。
          框架自带 bg-page 灰底，不再套 bg-card 灰卡片，直接描边收边。
@@ -54,19 +54,19 @@
           <!-- 页面级工具栏（toolbar-pattern：仅标题，无操作按钮 ——
                「添加组」与「添加一级/二级导航」同为"在本层末尾追加一条"，
                统一放各层内容末尾，不占工具栏） -->
-          <div class="iflyv-toolbar nav-config__toolbar">
-            <div class="iflyv-toolbar__left">
+          <Toolbar class="nav-config__toolbar">
+            <template #left>
               <h3 class="iflyv-toolbar__title">配置项</h3>
-            </div>
-            <div class="iflyv-toolbar__right">
+            </template>
+            <template #right>
               <!-- 开关文字默认 active-text（右侧），字重/间距/取色全在源头 switch.scss。
-                   两个开关并排：间距由 .iflyv-toolbar__right 的 flex gap 给（源头 toolbar.scss） -->
+                   两个开关并排：间距由 Toolbar 右组（.iflyv-toolbar__right）的 flex gap 给（源头 toolbar.scss） -->
               <el-switch v-model="grouped" active-text="分组" />
               <el-switch v-model="showMore" active-text="更多" />
               <el-switch v-model="courseMenuEnabled" active-text="课程卡更多" />
               <el-switch v-model="courseInfoCustom" active-text="课程卡信息区自定义" />
-            </div>
-          </div>
+            </template>
+          </Toolbar>
 
           <div class="nav-config__groups">
             <!-- 不分组时 sections 已把各组合并成单个区块 → 只渲染一张卡、一个「添加一级导航」，
@@ -75,11 +75,11 @@
               <!-- 组标题行：模块级工具栏（标题加 --module 降字阶）。
                    不分组时整行不渲染 —— 导航已平铺成一条列表，「第 N 组」与
                    「删除该组」都失去了指代对象。 -->
-              <div v-if="grouped" class="iflyv-toolbar nav-group__toolbar">
-                <div class="iflyv-toolbar__left">
+              <Toolbar v-if="grouped" class="nav-group__toolbar">
+                <template #left>
                   <h4 class="iflyv-toolbar__title iflyv-toolbar__title--module">第 {{ gi + 1 }} 组</h4>
-                </div>
-                <div class="iflyv-toolbar__right">
+                </template>
+                <template #right>
                   <!-- 纯图标入口必须配 tooltip 给全称（否则语义靠猜），统一 show-after 300 -->
                   <el-tooltip content="删除该组" :show-after="300">
                     <el-button
@@ -90,8 +90,8 @@
                       <template #icon><Trash2 :size="16" :stroke-width="2" /></template>
                     </el-button>
                   </el-tooltip>
-                </div>
-              </div>
+                </template>
+              </Toolbar>
 
               <!-- 组内容卡片：该组的导航行整体包成一张卡，与组标题工具栏区分开 -->
               <div class="nav-group__body">
@@ -232,7 +232,7 @@ import CopyToCC from '../CopyToCC.vue'
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount, h } from 'vue'
 import { ElMessage } from 'element-plus'
 import { CirclePlus, Trash2, Maximize, Minimize, Pencil } from 'lucide-vue-next'
-import { PageFrame, type PageFrameMenuGroup, type PageFrameCourse, type PageFrameAvatarMenuItem } from '../../../../design-spec/components'
+import { PageFrame, Toolbar, type PageFrameMenuGroup, type PageFrameCourse, type PageFrameAvatarMenuItem } from '../../../../design-spec/components'
 import NavIcon from './NavIcon.vue'
 // 导航图标双态切图（?raw 内联，currentColor 才能生效——<img> 拿不到父级色）
 import establishSvg from '../../assets/nav-icons/establish.svg?raw'
