@@ -1,20 +1,20 @@
 <template>
   <section id="page-course-tools" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右（同「公开信息设置」页） -->
-    <div class="iflyv-toolbar course-tools-demo__toolbar">
-      <div class="iflyv-toolbar__left">
-        <h2 class="demo-section__title">Course Tools 课程工具</h2>
-      </div>
-      <div class="iflyv-toolbar__right">
-        <el-button @click="toggleFullscreen">
-          <template #icon>
-            <Minimize v-if="isFullscreen" :size="16" :stroke-width="2" />
-            <Maximize v-else :size="16" :stroke-width="2" />
-          </template>
-          {{ isFullscreen ? '退出全屏' : '全屏查看' }}
-        </el-button>
-      </div>
-    </div>
+    <Toolbar class="course-tools-demo__toolbar">
+      <template #left>
+      <h2 class="demo-section__title">Course Tools 课程工具</h2>
+      </template>
+      <template #right>
+      <el-button @click="toggleFullscreen">
+        <template #icon>
+          <Minimize v-if="isFullscreen" :size="16" :stroke-width="2" />
+          <Maximize v-else :size="16" :stroke-width="2" />
+        </template>
+        {{ isFullscreen ? '退出全屏' : '全屏查看' }}
+      </el-button>
+      </template>
+    </Toolbar>
 
     <!-- 承载舞台：固定高度模拟视口；全屏态 fixed 铺满，Esc 退出（demo 看图辅助） -->
     <div class="course-tools-stage" :class="{ 'course-tools-stage--fullscreen': isFullscreen }">
@@ -31,11 +31,9 @@
                tab 是「我在哪个分区」的定位信息、且要能就地切换，滚走会失去上下文；
                纯标题没有这层作用，跟着内容滚走才符合层级预期。
                字阶与上下左右内边距全在源头 .iflyv-toolbar，本页不写。 -->
-          <div class="iflyv-toolbar">
-            <div class="iflyv-toolbar__left">
-              <h3 class="iflyv-toolbar__title">课程工具</h3>
-            </div>
-          </div>
+          <Toolbar>
+            <h3 class="iflyv-toolbar__title">课程工具</h3>
+          </Toolbar>
 
           <section v-for="group in toolGroups" :key="group.title" class="tool-group">
             <h4 class="tool-group__title">{{ group.title }}</h4>
@@ -65,7 +63,7 @@
 import { h, ref, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Maximize, Minimize } from 'lucide-vue-next'
-import { PageFrame, type PageFrameMenuGroup, type PageFrameCourse } from '../../../../design-spec/components'
+import { PageFrame, Toolbar, type PageFrameMenuGroup, type PageFrameCourse } from '../../../../design-spec/components'
 import NavIcon from '../biz/NavIcon.vue'
 import establishSvg from '../../assets/nav-icons/establish.svg?raw'
 import establishActiveSvg from '../../assets/nav-icons/establish-active.svg?raw'

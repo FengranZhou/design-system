@@ -1,11 +1,11 @@
 <template>
   <section id="page-ai-quiz" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右（同其余典型页） -->
-    <div class="iflyv-toolbar ai-quiz-demo__toolbar">
-      <div class="iflyv-toolbar__left">
+    <Toolbar class="ai-quiz-demo__toolbar">
+      <template #left>
         <h2 class="demo-section__title">AI Quiz AI 出题</h2>
-      </div>
-      <div class="iflyv-toolbar__right">
+      </template>
+      <template #right>
         <el-button @click="toggleFullscreen">
           <template #icon>
             <Minimize v-if="isFullscreen" :size="16" :stroke-width="2" />
@@ -13,8 +13,8 @@
           </template>
           {{ isFullscreen ? '退出全屏' : '全屏查看' }}
         </el-button>
-      </div>
-    </div>
+      </template>
+    </Toolbar>
 
     <!-- 承载舞台：固定高度模拟视口；全屏态 fixed 铺满，Esc 退出（demo 看图辅助，勿抄进业务项目） -->
     <div class="ai-quiz-stage" :class="{ 'ai-quiz-stage--fullscreen': isFullscreen }">
@@ -210,7 +210,7 @@
 import { h, ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage, ElTooltip, type FormInstance, type FormRules } from 'element-plus'
 import { Maximize, Minimize, X, CirclePlus, Info } from 'lucide-vue-next'
-import { AiButton, OptionCard, PickedItem } from '../../../../design-spec/components'
+import { AiButton, OptionCard, PickedItem, Toolbar } from '../../../../design-spec/components'
 import noData from '../../../../design-spec/el-theme/assets/empty/no-data.png'
 import starIcon from '../../assets/pages/ai-quiz/star.png'
 // —— 题型图标：源项目原版切图（七款） ——

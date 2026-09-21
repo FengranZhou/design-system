@@ -1091,7 +1091,7 @@
     },
     {
       "id": "metric-strip-class",
-      "title": "指标条一律用源头约定 class .metric-strip / .metric-item，禁在使用方自拼",
+      "title": "指标条一律用源头约定 class .iflyv-metric-strip / .iflyv-metric-item，禁在使用方自拼",
       "designTitle": "一排指标卡应宽度等分、内容居中，各项不因文字长短而宽窄不齐",
       "level": "MUST",
       "cat": "组件用法",
@@ -1254,7 +1254,7 @@
     },
     {
       "id": "grid-no-el-row",
-      "title": "分栏用源头栅格类 .grid/.grid__col-*，禁用 el-row/el-col、禁自拼 flex",
+      "title": "分栏用源头栅格类 .iflyv-grid/.iflyv-grid__col-*，禁用 el-row/el-col、禁自拼 flex",
       "designTitle": "分栏宽度应落在标准档位上，各栏间距均匀一致",
       "level": "MUST",
       "cat": "布局与栅格",
@@ -1569,7 +1569,7 @@
     },
     {
       "id": "toolbar-sticky-page-tabs",
-      "title": "页面级 tab 必须放进 .toolbar（源头据此自动吸顶），禁裸放或手拼 flex",
+      "title": "页面级 tab 必须放进 .iflyv-toolbar（源头据此自动吸顶），禁裸放或手拼 flex",
       "designTitle": "页面级分区切换栏滚动时应始终停在顶部，不能随内容滚走",
       "level": "MUST",
       "cat": "设计模式",
@@ -1614,7 +1614,7 @@
     },
     {
       "id": "toolbar-convention-class",
-      "title": "工具栏一律用源头约定 class .toolbar/__left/__right/__title，禁在使用方复刻",
+      "title": "工具栏一律用源头约定 class .iflyv-toolbar/__left/__right/__title，禁在使用方复刻",
       "designTitle": "工具栏标题、筛选、按钮的间距与对齐应各页一致",
       "level": "MUST",
       "cat": "设计模式",

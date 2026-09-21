@@ -7,6 +7,7 @@
  *   import { SearchMini } from '<path>/design-spec/components'
  */
 export { SearchMini } from './SearchMini'
+export { Toolbar } from './Toolbar'
 export { UserAvatar, AVATAR_MAP, AVATAR_LABEL, type AvatarRole } from './UserAvatar'
 export { DataTable, type DataTableColumn, type DataTableAction, type ColumnKind } from './DataTable'
 export { Breadcrumb, type BreadcrumbItem } from './Breadcrumb'

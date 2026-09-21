@@ -77,8 +77,8 @@
       <!-- 工具栏：外层 space-between 分左右两组，组内 gap 12（均在源头）。
            每个元素按三分支 filterSide/actionSide 落在左组还是右组。
            内边距上下16左右24 由本页给出（源头不含内边距）。 -->
-      <div class="iflyv-toolbar">
-          <div class="iflyv-toolbar__left">
+      <Toolbar>
+          <template #left>
             <!-- 标题：4 选 1，仅在归左时渲染 -->
             <template v-if="titleSide === 'left'">
               <h3 v-if="titleType === 'page'" class="iflyv-toolbar__title">项目列表</h3>
@@ -110,9 +110,11 @@
                 新建项目
               </el-button>
             </template>
-          </div>
+          </template>
 
-          <div v-if="hasRight" class="iflyv-toolbar__right">
+          <!-- 分支③（无右组）时整个插槽不渲染：组件按「有无 #right 插槽内容」决定
+               是否渲染右组 div，故条件要挂在 template 上而非组件内部 -->
+          <template v-if="hasRight" #right>
             <!-- 筛选类（归右时） -->
             <template v-if="filterSide === 'right'">
               <el-tabs v-if="showTab" class="tabs-sub" v-model="view">
@@ -135,8 +137,8 @@
                 新建项目
               </el-button>
             </template>
-          </div>
-        </div>
+          </template>
+      </Toolbar>
     </div>
   </section>
 </template>
@@ -144,7 +146,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Plus } from 'lucide-vue-next'
-import { SearchMini } from '../../../../design-spec/components'
+import { SearchMini, Toolbar } from '../../../../design-spec/components'
 
 // —— 模式规则：三区拆解（标题区 / 筛选区 / 操作区，每区可放的元素类型）——
 const zones = [
