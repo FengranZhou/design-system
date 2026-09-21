@@ -768,43 +768,27 @@ import emptyImg from '<path>/design-spec/el-theme/assets/empty/${img}.png'`
   },
 
   // ── 导航 ──────────────────────────────────────────────────────────────────
-  {
-    id: 'toolbar',
-    anchor: 'toolbar',
-    name: 'Toolbar 工具栏',
-    group: 'nav',
-    desc: '页面头部操作条（标题 + 筛选 + 按钮）',
-    keywords: ['工具栏', 'toolbar', '页头', '操作条', '筛选'],
-    readRefs: ['references/patterns/toolbar-pattern.md'],
-    mustRules: [
-      '两种等价写法：① 业务组件 Toolbar（推荐，<Toolbar> + #left / #right 插槽）② 源头约定 class .iflyv-toolbar / __left / __right / __title；禁在使用方 scoped 复刻',
-      '固定顺序：标题→组件级 tab→下拉→搜索→次按钮→主按钮',
-      '左右分配三分支：有标题→标题左其余右 / 无标题有筛选→筛选左按钮右 / 都无→按钮左',
-      '过滤条件不超过两行，并列同义的条件必须合并',
-    ],
-    instanceFields: [
-      { key: 'title', label: '标题', type: 'text', placeholder: '留空则无标题', default: '' },
-      {
-        key: 'level',
-        label: '标题层级',
-        type: 'select',
-        default: 'page',
-        options: [
-          { value: 'page', label: '页面级' },
-          { value: 'module', label: '模块级' },
-        ],
-      },
-      { key: 'search', label: '带搜索', type: 'switch', default: false },
-      { key: 'primaryBtn', label: '主按钮文案', type: 'text', placeholder: '如：新建课程', default: '' },
-    ],
-    snippet: ({ title, level, search, primaryBtn }) => `<!-- import { Toolbar } from '<path>/design-spec/components' -->
-<Toolbar>
-  <template #left>${title ? `\n    <h3 class="iflyv-toolbar__title${level === 'module' ? ' iflyv-toolbar__title--module' : ''}">${title}</h3>` : ''}
-  </template>
-  <template #right>${search ? '\n    <SearchMini v-model="keyword" placeholder="搜索" />' : ''}${primaryBtn ? `\n    <el-button type="primary">${primaryBtn}</el-button>` : ''}
-  </template>
-</Toolbar>`,
-  },
+  // ── 导航 ──────────────────────────────────────────────────────────────────
+  //
+  // ⚠️ 这里曾有一个 toolbar 条目，已于 2026-09-21 删除 —— 它从未生效过。
+  //
+  // 原因：本表由 build-catalog.mjs 以 **demo 左侧导航** 为准逐项查找，而它
+  // **只扫 component / business / chart 三个顶部 tab**（见该文件 navComponents
+  // 的注释，是有意为之）。工具栏在 demo 里属「设计模式」tab（锚点 pattern-toolbar），
+  // 整个 tab 都不在扫描范围内，故那个条目永远匹配不上、被静默丢弃
+  // （实测 catalog.json 里从来没有它）。
+  //
+  // 为什么不是改 anchor 就能修：不是锚点写错，是 tab 不在范围内。改 anchor
+  // 没用；要让它生效得把 pattern tab 纳入扫描，并给该 tab 下 4 个模式
+  // （form-org / form / list-item / toolbar）都补条目与示意图。
+  //
+  // **决定：模式层不纳入「复制到 CC」插入面板**（2026-09-21 确认）。
+  // 模式层讲的是「怎么组织布局」的规则，与插入面板「插一个组件实例」的心智不同；
+  // 其规则由 references/patterns/*.md + CLAUDE.md 触发表承载，下游照样读得到。
+  // 工具栏的用法（业务组件 Toolbar / 约定 class 两种写法）见
+  // references/patterns/toolbar-pattern.md。
+  //
+  // 若将来改主意要纳入，按上面那段补齐，别只改 anchor。
 
   {
     id: 'tabs',
