@@ -18,7 +18,7 @@
       @back-platform="router.push('/')"
     >
       <template #page-header>                ← 不滚的页头（**仅**放含页面级 tab 的工具栏）
-        <div class="toolbar"><el-tabs class="tabs-page">…</el-tabs></div>
+        <div class="iflyv-toolbar"><el-tabs class="tabs-page">…</el-tabs></div>
       </template>
       <div class="my-page">页面内容（滚动区内，留白由本页自己给）</div>
     </PageFrame>
@@ -110,7 +110,7 @@
                   滚动条轨道把这段永远不滚的区域也算进去（观感不对）。
                   ⛔ **纯页面标题工具栏不要放这里**——它没有上述作用，应放默认插槽、
                   跟着内容一起滚走（分割线同理，源头已限定在 tab 档）。
-                  内边距由 `.toolbar` 页面级档自带（上下 16 / 左右 24），本插槽不再给。
+                  内边距由 `.iflyv-toolbar` 页面级档自带（上下 16 / 左右 24），本插槽不再给。
                   范本见 demo 的 CourseDashboardPageDemo / PublicInfoPageDemo。
     #course-card  整体替换侧边栏课程卡
     #course-info  只替换课程卡内的信息区（课程名 + 元信息），封面图 / 更多入口 / 蒙层
@@ -1588,7 +1588,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  color: var(--iflyv-icon-3);
+  color: var(--iflyv-icon-2);
   /* 选中态转 icon-1 时渐变过色，与导航项底板 hover 同档，不做突变 */
   transition: color var(--iflyv-duration-fast) var(--iflyv-ease-default);
 }
@@ -1687,7 +1687,7 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
    ⚠️ 展开态用 grid 等分而非 flex + space-between：几个入口宽度并不一致
    （头像 36 含左右留白 / 图标按钮 28），space-between 是按内容宽排布，
    会让间隔看起来一大一小。一律等分、内容在各自等分宽度内居中，
-   与 .metric-strip 是同一套口径（那里也踩过同一个坑）。
+   与 .iflyv-metric-strip 是同一套口径（那里也踩过同一个坑）。
    列数用 auto-flow + auto-columns 自适应，业务方从两个插槽追加入口时
    自动多出一列、仍保持均匀，不必改任何样式。 */
 .page-frame__userbar {
@@ -1838,10 +1838,10 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
 /* 页头段（#page-header）：在滚动容器之外，故始终可见、不参与滚动。
    放页面级 tab 工具栏这类「页面定位信息」——它本就该常驻，
    放在滚动区里则要靠 sticky 吸顶，且会让滚动条轨道把这段也算进去。
-   ⚠️ 不给内边距：留白归业务层（.toolbar 页面级档自带上下 16 / 左右 24）。 */
+   ⚠️ 不给内边距：留白归业务层（.iflyv-toolbar 页面级档自带上下 16 / 左右 24）。 */
 .page-frame__page-header {
   flex-shrink: 0;
-  /* 吃掉页面级 .toolbar 的出血负外边距（左右各 -24）：
+  /* 吃掉页面级 .iflyv-toolbar 的出血负外边距（左右各 -24）：
      那对负边距是给「工具栏在有内边距的页面容器里、吸顶时底色要铺满整宽」用的，
      这里页头本身就是整宽容器，不抵消的话工具栏会比页头宽 48、溢出被卡片圆角裁掉。
      用等量内边距抵消：视觉位置不变（左右仍 24），宽度回到与内容对齐。 */

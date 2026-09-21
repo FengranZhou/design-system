@@ -1,11 +1,11 @@
 <template>
   <section id="page-course-dashboard" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右（同前两个典型页面） -->
-    <div class="toolbar course-dashboard-demo__toolbar">
-      <div class="toolbar__left">
+    <div class="iflyv-toolbar course-dashboard-demo__toolbar">
+      <div class="iflyv-toolbar__left">
         <h2 class="demo-section__title">Profile 课程画像</h2>
       </div>
-      <div class="toolbar__right">
+      <div class="iflyv-toolbar__right">
         <el-button @click="toggleFullscreen">
           <template #icon>
             <Minimize v-if="isFullscreen" :size="16" :stroke-width="2" />
@@ -29,8 +29,8 @@
              整条放 #page-header：在滚动区之外、始终可见（tab 与主操作不分离），
              滚动条轨道于是只覆盖下方真正会滚的内容。 -->
         <template #page-header>
-          <div class="toolbar dashboard__head">
-            <div class="toolbar__left">
+          <div class="iflyv-toolbar dashboard__head">
+            <div class="iflyv-toolbar__left">
               <el-tabs v-model="activeTab" class="tabs-page dashboard__tabs">
                 <el-tab-pane label="课程看板" name="board" />
                 <el-tab-pane label="AI+应用看板" name="ai" />
@@ -40,7 +40,7 @@
                 <el-tab-pane label="成员画像" name="member" />
               </el-tabs>
             </div>
-            <div class="toolbar__right">
+            <div class="iflyv-toolbar__right">
               <el-button type="primary">查看课程群画像</el-button>
             </div>
           </div>
@@ -51,18 +51,18 @@
           <template v-if="activeTab === 'board'">
             <!-- 指标条：一律用源头约定 class（el-theme/patterns/metric-strip.scss）——
                  等分列宽 + 列内居中、卡片底与字阶全在源头，本页不写任何指标条样式 -->
-            <div class="metric-strip">
-              <div v-for="kpi in kpis" :key="kpi.label" class="metric-item">
-                <span class="metric-item__num">{{ formatNumber(kpi.value) }}<em class="metric-item__unit">{{ kpi.unit }}</em></span>
-                <span class="metric-item__label">{{ kpi.label }}</span>
+            <div class="iflyv-metric-strip">
+              <div v-for="kpi in kpis" :key="kpi.label" class="iflyv-metric-item">
+                <span class="iflyv-metric-item__num">{{ formatNumber(kpi.value) }}<em class="iflyv-metric-item__unit">{{ kpi.unit }}</em></span>
+                <span class="iflyv-metric-item__label">{{ kpi.label }}</span>
               </div>
             </div>
 
             <!-- 课程备课：两张环形图卡（占比构成 → donut，扇区 ≤5） -->
             <section class="board-group">
               <h4 class="board-group__title">课程备课</h4>
-              <div class="grid">
-                <div v-for="d in donuts" :key="d.title" class="grid__col-12 chart-card">
+              <div class="iflyv-grid">
+                <div v-for="d in donuts" :key="d.title" class="iflyv-grid__col-12 chart-card">
                   <Chart type="donut" :title="d.title" :data="d.data" :center-title="d.total" :center-label="d.centerLabel" :height="180" />
                 </div>
               </div>
@@ -71,8 +71,8 @@
             <!-- 课堂授课：三张柱状图卡（类目比大小 → bar） -->
             <section class="board-group">
               <h4 class="board-group__title">课堂授课</h4>
-              <div class="grid">
-                <div v-for="b in bars" :key="b.title" class="grid__col-8 chart-card">
+              <div class="iflyv-grid">
+                <div v-for="b in bars" :key="b.title" class="iflyv-grid__col-8 chart-card">
                   <Chart type="bar" :title="b.title" :data="b.data" :series-name="b.seriesName" :height="200" />
                 </div>
               </div>
@@ -247,20 +247,20 @@ onBeforeUnmount(() => {
   flex-direction: column;
   min-height: 100%;
   box-sizing: border-box;
-  /* 上下留白由源头 .toolbar 自带（页面级工具栏内边距归工具栏自己），
+  /* 上下留白由源头 .iflyv-toolbar 自带（页面级工具栏内边距归工具栏自己），
      容器只给左右与底部。⚠ 左右仍要给——页面内其它内容靠它对齐，
      工具栏会用负外边距出血撑回整宽 */
   padding: 0 var(--iflyv-spacing-6) var(--iflyv-spacing-6);
 }
 
 /* 标题层：页面级 tab 左、主操作贴右缘（主按钮贴边原则）；下方 = 页面级标题与其下方内容(16) */
-/* 纯本页排版留白：横向布局由源头 .toolbar 提供，此处只给与下方内容的间距 */
+/* 纯本页排版留白：横向布局由源头 .iflyv-toolbar 提供，此处只给与下方内容的间距 */
 .dashboard__tabs {
   flex: 1;
   min-width: 0;
 }
 
-/* 指标条样式已归源头 el-theme/patterns/metric-strip.scss（约定 class .metric-strip / .metric-item），
+/* 指标条样式已归源头 el-theme/patterns/metric-strip.scss（约定 class .iflyv-metric-strip / .iflyv-metric-item），
    本页只引用不复刻 */
 
 /* 模块分组：组与组 32（模块之间）；组标题下方 12（模块级标题与其下方内容）。

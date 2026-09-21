@@ -17,7 +17,7 @@
             :disabled="item.disabled"
           >
             <template #label>
-              <span class="tab-label-count">{{ item.label }}<span v-if="tabsShowCount" class="tab-count">{{ item.count }}</span></span>
+              <span class="iflyv-tab-label-count">{{ item.label }}<span v-if="tabsShowCount" class="iflyv-tab-count">{{ item.count }}</span></span>
             </template>
           </el-tab-pane>
         </el-tabs>

@@ -768,11 +768,11 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 
 **组合约定（全在源头，使用方只写约定 class，禁止在页面 scoped 里复刻 overflow/字重/offset）**：
 
-- **tab 带计数**（「全部 12 / 进行中 5」这类）：label 里包 `.tab-label-count`、数字用 `.tab-count`（数字色 text-4、选中变 text-3、与文字间距 4，均在源头）：
+- **tab 带计数**（「全部 12 / 进行中 5」这类）：label 里包 `.iflyv-tab-label-count`、数字用 `.iflyv-tab-count`（数字色 text-4、选中变 text-3、与文字间距 4，均在源头）：
 
   ```vue
   <el-tab-pane name="all">
-    <template #label><span class="tab-label-count">全部<span class="tab-count">12</span></span></template>
+    <template #label><span class="iflyv-tab-label-count">全部<span class="iflyv-tab-count">12</span></span></template>
   </el-tab-pane>
   ```
 
@@ -795,12 +795,12 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 **判据**：tab 文案是你写死的字面量（「全部 / 待批改 / 已批改」）→ 裸 `el-tabs` 即可；**文案来自数据** → 用 `TabBar`。
 
 ```vue
-<div class="toolbar">
-  <div class="toolbar__left">
+<div class="iflyv-toolbar">
+  <div class="iflyv-toolbar__left">
     <TabBar v-model="active" :tabs="graphNames" />          <!-- 默认页面级 -->
     <TabBar v-model="active" :tabs="graphNames" level="sub" />  <!-- 三档仍用 level 传 -->
   </div>
-  <div class="toolbar__right"><el-button type="primary">图谱管理</el-button></div>
+  <div class="iflyv-toolbar__right"><el-button type="primary">图谱管理</el-button></div>
 </div>
 ```
 
@@ -1520,7 +1520,7 @@ loading.close()
 | **`el-image` / `el-image-viewer` 图片与预览** | 未纳入。源头零适配 | 简单图片展示用原生 `<img>`（尺寸/圆角走令牌）；需要预览/懒加载等能力先评估 |
 | **`el-affix` 固钉** | 未纳入。⚠️ 与本系统的固定顶栏 + `--iflyv-z-sticky` 层级契约易冲突 | 吸顶需求先与设计负责人评估，不要自行 affix |
 | **`el-mention` 提及** | 未纳入。当前业务无场景，源头零适配 | 需要时先评估 |
-| **`el-splitter` 分栏面板** | 未纳入。⚠️ 与栅格系统（`.grid` 24 列固定水槽）的布局模型冲突 | 分栏用栅格 `.grid__col-*`（见 `efficiency-guide.md`） |
+| **`el-splitter` 分栏面板** | 未纳入。⚠️ 与栅格系统（`.iflyv-grid` 24 列固定水槽）的布局模型冲突 | 分栏用栅格 `.iflyv-grid__col-*`（见 `efficiency-guide.md`） |
 | **`el-check-tag` 可选标签** | 未纳入。与 Checkbox / Select 多选能力重复 | 多选用 `el-checkbox-group` 或 `el-select` 多选 |
 | **`el-tree-v2` 虚拟树** | 未纳入（独立树控件本就停用，见上方 `el-tree` 行） | 同 `el-tree` 行 |
 | **`el-space` 间距组件** | 未纳入。⚠️ **与「间距一律走令牌」纪律冲突**——它用 JS 计算间距，绕过 spacing 令牌 | 间距一律父容器 `flex + gap: var(--iflyv-spacing-*)` |

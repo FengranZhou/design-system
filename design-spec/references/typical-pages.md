@@ -56,7 +56,7 @@
 | 整页骨架 | 业务组件 `PageFrame` | 同上 |
 | 页面标题 | `title-page` 字阶 | 本页无 tab，标题独立成层；上距页面顶部、下距内容均走页面级标题锚点 |
 | 功能分组 | `title-module` 字阶 | 组 = 模块：标题下方走模块级标题锚点、组与组走「模块之间」 |
-| 分栏 | 源头栅格 `.grid` + `.grid__col-6` | **分栏一律走栅格约定类**（efficiency-guide 栅格系统，已有 @rule）；四列入口卡 = col-6 最小粒度，水槽与换行间距由 `--iflyv-grid-gutter` 提供，页面不写 gap |
+| 分栏 | 源头栅格 `.iflyv-grid` + `.iflyv-grid__col-6` | **分栏一律走栅格约定类**（efficiency-guide 栅格系统，已有 @rule）；四列入口卡 = col-6 最小粒度，水槽与换行间距由 `--iflyv-grid-gutter` 提供，页面不写 gap |
 | 入口卡 | `bg-card` + `radius-sm` | 小卡片档；图标与文字横向间距走「列表项内子元素·横向」锚点 |
 
 **易错点**：自拼 flex / `el-row` 分栏（栅格规则的反例）；不足一行的组把卡片拉伸铺满（应保持 col-6 留空，同参考页）。
@@ -77,7 +77,7 @@
 | 标题层 + 主操作 | `.tabs-page` + `el-button type="primary"` 贴右缘 | tab 充当页面标题层；主操作按「主按钮贴边原则」贴容器右缘 |
 | KPI 指标带 | `bg-card` 大卡片档 + `number-display-sm` | **单个数字不画图**（display-guide 选型表）；并列次级指标走 `-sm` 数字字阶；一行多指标是卡内条目排布（flex 均布），**不是**页面分栏、不走栅格（col-3 低于 6 列下限） |
 | 图表 | 业务组件 `Chart` | 选型按 display-guide 判据（构成→donut ≤5 扇区 / 比大小→bar / 走势→line）；取色/主题重绘/图形风格全在 Chart 源头，页面只传 `type + data` |
-| 图表卡分栏 | `.grid` + `.grid__col-12` / `.grid__col-8` | 双卡 12+12、三卡 8+8+8；水槽源头提供 |
+| 图表卡分栏 | `.iflyv-grid` + `.iflyv-grid__col-12` / `.iflyv-grid__col-8` | 双卡 12+12、三卡 8+8+8；水槽源头提供 |
 | 图表卡 | `bg-panel` + `border-subtle` + `radius-md` | 白底面板叠白内容区靠细描边分界；大卡片档内边距；卡标题 `title-regular`、下方走「常规标题与其下方内容」 |
 | 空 tab | `el-empty` + 插画 + `empty-page` | 同「公开信息设置」 |
 
@@ -99,7 +99,7 @@
 |---|---|---|
 | 页面底 | `--iflyv-bg-page` + 顶部 280 高渐变头图 | 底色是页面最外层灰底（gray-1 `#F2F5F7`），白面板浮其上构成纵深；顶部叠一张 **280px 高的 AI 渐变头图**（蓝→薄荷，向下自然过渡到灰底）点出 AI 场景。头图**横向拉伸铺满**用 `/ 100% 280px`，**不要用 `cover`**——cover 按比例裁切，宽屏下会把渐变裁飞 |
 | 页头 | 居中标题 + 四角星切图 + 关闭按钮 | 标题走 `title-module`；关闭按钮 `<el-button text>` 绝对定位贴右缘，使标题保持整行居中；必配 tooltip（纯图标入口） |
-| 双栏分栏 | `.grid` + `.grid__col-8` / `.grid__col-16` | **分栏一律走源头栅格**；左窄右宽（参数区固定、结果区是主体）。两栏 `align-items: stretch` 等高 |
+| 双栏分栏 | `.iflyv-grid` + `.iflyv-grid__col-8` / `.iflyv-grid__col-16` | **分栏一律走源头栅格**；左窄右宽（参数区固定、结果区是主体）。两栏 `align-items: stretch` 等高 |
 | 左栏参数表单 | `el-form` 平铺 + `el-scrollbar` | 字段数临界时按 form-pattern §8① 判——8 项仅超阈值 1 项且**起不出分组上位词**时平铺不分组（硬切属「为了分组而分组」）；字段说明用 `el-tooltip` + Info 图标，**每个必传 `:show-after="300"`** |
 | 多选型选择 | `el-checkbox-group` + grid 三列 | 图标+文字整体放 `el-checkbox` 内容区；**禁在 group 外再加 flex+gap**（Checkbox 段） |
 | 主操作 | 业务组件 `AiButton` | AI 主操作用 `type="primary"`，`loading` 时文案自定（「生成中...」）；**禁在 el-button 上自贴渐变复刻** |

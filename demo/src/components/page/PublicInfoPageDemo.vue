@@ -2,11 +2,11 @@
   <section id="page-public-info" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右。
          全屏是「看 demo 的辅助手段」，不是页面本身的能力，故只做在本页。 -->
-    <div class="toolbar public-info-demo__toolbar">
-      <div class="toolbar__left">
+    <div class="iflyv-toolbar public-info-demo__toolbar">
+      <div class="iflyv-toolbar__left">
         <h2 class="demo-section__title">Public 公开信息设置</h2>
       </div>
-      <div class="toolbar__right">
+      <div class="iflyv-toolbar__right">
         <!-- 次按钮（默认款）：带文字标签，不再是纯图标入口，故无需 tooltip 补全称 -->
         <el-button @click="toggleFullscreen">
           <template #icon>
@@ -31,8 +31,8 @@
         <!-- 页面级 tab 工具栏放 #page-header：在滚动区之外、始终可见，
              滚动条轨道于是只覆盖下方真正会滚的内容。 -->
         <template #page-header>
-          <div class="toolbar public-info__head">
-            <div class="toolbar__left">
+          <div class="iflyv-toolbar public-info__head">
+            <div class="iflyv-toolbar__left">
               <el-tabs v-model="activeTab" class="tabs-page">
                 <el-tab-pane label="课程概述" name="overview" />
                 <el-tab-pane label="教学团队" name="team" />
@@ -211,13 +211,13 @@ onBeforeUnmount(() => {
 /* 撑满 PageFrame 内容区，使不满一屏的内容（如整页空态）能拿到高度基准、
    在内容区内垂直居中；内容超出时照常向下撑开并滚动 */
 /* 内容块之间的间距。⚠ 两处限定各有原因：
-   · 「前一个不是工具栏」——工具栏与其下方内容的间距已由源头 .toolbar 的
+   · 「前一个不是工具栏」——工具栏与其下方内容的间距已由源头 .iflyv-toolbar 的
      padding-block-end 给出，此处再加会叠成双倍。
    · 「自己不是操作区」——操作区靠 margin-top: auto 推到底部，这里不能占用它的 margin。
      必须在**本选择器**排除，不能靠操作区自己写 margin 覆盖：本选择器特异性 (0,2,0)
-     （.public-info + :not(.toolbar)）高于 .public-info__actions 的 (0,1,0)，
+     （.public-info + :not(.iflyv-toolbar)）高于 .public-info__actions 的 (0,1,0)，
      scoped 属性给两者各加 1 后大小关系不变，写在那边会被静默忽略。 */
-.public-info > :not(.toolbar) + :not(.public-info__actions) {
+.public-info > :not(.iflyv-toolbar) + :not(.public-info__actions) {
   margin-top: var(--iflyv-spacing-4);
 }
 .public-info {
@@ -225,7 +225,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   min-height: 100%;
   box-sizing: border-box;
-  /* 上下留白由源头 .toolbar 自带（页面级工具栏内边距归工具栏自己），
+  /* 上下留白由源头 .iflyv-toolbar 自带（页面级工具栏内边距归工具栏自己），
      容器只给左右与底部。⚠ 不要在此写 gap——会与工具栏内边距叠加成双倍。 */
   padding: 0 var(--iflyv-spacing-6) var(--iflyv-spacing-6);
 }

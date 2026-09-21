@@ -2,9 +2,9 @@
    内容区 24 列栅格。规则全文见 references/efficiency-guide.md「栅格系统」。
 
    ── 接入方速查 ────────────────────────────────────────────────
-   <div class="grid">
-     <div class="grid__col-12">左半</div>
-     <div class="grid__col-12">右半</div>
+   <div class="iflyv-grid">
+     <div class="iflyv-grid__col-12">左半</div>
+     <div class="iflyv-grid__col-12">右半</div>
    </div>
 
    常用等分（列数必须 ≥6，即一行最多 4 等份）：
@@ -24,6 +24,11 @@
    @when-changed: 水槽取 spacing-4（16px）= 「卡片之间」同档，保证栅格并排的卡片
                   与非栅格场景的卡片间距一致。改水槽须同步 efficiency-guide.md 栅格表。 */
 
+/* ⚠️ 类名带 `iflyv-` 前缀（2026-09 起）：裸 `.grid` 是全网最易撞名的类之一，
+   作为全局样式发布会命中宿主项目/第三方库里任何同名 DOM。
+   旧类名 `.grid` / `.grid__col-*` 在过渡期内仍生效，见文件末说明。 */
+.iflyv-grid,
+/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
 .grid {
   display: grid;
   grid-template-columns: repeat(var(--iflyv-grid-columns), minmax(0, 1fr));
@@ -33,7 +38,22 @@
 /* 列宽跨度：只提供 ≥6 的档位——「模块宽度不得小于 6 列」是硬规则
    （见 foundations.md 禁止事项），不提供 col-1~5 从源头上杜绝违规。 */
 @each $span in (6, 8, 10, 12, 14, 16, 18, 20, 24) {
+  .iflyv-grid__col-#{$span},
+  /* ⏳ 旧类名过渡期，迁移完成后删除下行 */
   .grid__col-#{$span} {
     grid-column: span #{$span};
   }
 }
+
+/* ==================== ⏳ 旧类名过渡期（计划删除） ====================
+   裸 `.grid` / `.grid__col-*` 极易与宿主项目及第三方库撞名，故加 `iflyv-` 前缀。
+   上方标「⏳」的行让旧类名继续生效，与新类名并列在同一条规则上（非复制），
+   改源头两边同步变。
+
+     · 迁移做法：`class="grid"` → `class="iflyv-grid"`；
+       `grid__col-12` → `iflyv-grid__col-12`，全部只是加前缀。
+     · 删除时机：确认所有下游已迁移后，删掉标「⏳」的兼容行。
+     · 删除后表现：仍写旧类名处样式直接消失（不报错），问题立刻暴露、好定位。
+
+   ⚠️ 过渡期内撞名风险依然存在；新代码一律用带前缀的类名。
+   ==================================================================== */

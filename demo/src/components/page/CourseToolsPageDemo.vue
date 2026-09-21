@@ -1,11 +1,11 @@
 <template>
   <section id="page-course-tools" class="demo-section">
     <!-- 标题行按 toolbar-pattern 分支①：标题左、操作右（同「公开信息设置」页） -->
-    <div class="toolbar course-tools-demo__toolbar">
-      <div class="toolbar__left">
+    <div class="iflyv-toolbar course-tools-demo__toolbar">
+      <div class="iflyv-toolbar__left">
         <h2 class="demo-section__title">Course Tools 课程工具</h2>
       </div>
-      <div class="toolbar__right">
+      <div class="iflyv-toolbar__right">
         <el-button @click="toggleFullscreen">
           <template #icon>
             <Minimize v-if="isFullscreen" :size="16" :stroke-width="2" />
@@ -30,10 +30,10 @@
                ⚠ 放在滚动区内（不进 #page-header）——**只有页面级 tab 栏才常驻**：
                tab 是「我在哪个分区」的定位信息、且要能就地切换，滚走会失去上下文；
                纯标题没有这层作用，跟着内容滚走才符合层级预期。
-               字阶与上下左右内边距全在源头 .toolbar，本页不写。 -->
-          <div class="toolbar">
-            <div class="toolbar__left">
-              <h3 class="toolbar__title">课程工具</h3>
+               字阶与上下左右内边距全在源头 .iflyv-toolbar，本页不写。 -->
+          <div class="iflyv-toolbar">
+            <div class="iflyv-toolbar__left">
+              <h3 class="iflyv-toolbar__title">课程工具</h3>
             </div>
           </div>
 
@@ -41,8 +41,8 @@
             <h4 class="tool-group__title">{{ group.title }}</h4>
             <!-- 分栏走源头栅格约定类：24 列，col-6 = 四列数据卡（最小粒度），
                  水槽与换行间距由 --iflyv-grid-gutter 提供（=「卡片之间」同档） -->
-            <div class="grid">
-              <div v-for="tool in group.tools" :key="tool.label" class="grid__col-6 tool-card">
+            <div class="iflyv-grid">
+              <div v-for="tool in group.tools" :key="tool.label" class="iflyv-grid__col-6 tool-card">
                 <img class="tool-card__icon" :src="tool.icon" alt="" />
                 <span class="tool-card__label">{{ tool.label }}</span>
               </div>
@@ -58,7 +58,7 @@
 /**
  * 典型页面 —— 课程工具（参考讯飞小雅「教学内容 / 课程工具」页）。
  * 演示效率型「功能入口集合页」的组织：
- *   PageFrame 整页骨架 + 页面级标题 + 模块分组 + 源头栅格 .grid/.grid__col-6 四列卡。
+ *   PageFrame 整页骨架 + 页面级标题 + 模块分组 + 源头栅格 .iflyv-grid/.iflyv-grid__col-6 四列卡。
  * 工具图标以二级图标四款轮转占位（24px），正式切图到位后逐一替换即可。
  * 本页 scoped 只写排版留白，组件外观均在源头。
  */
@@ -178,7 +178,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 
 /* 页面内容区：顶 = 页面级标题与页面顶部(16)，左右/底 = 24 */
 .course-tools {
-  /* 上下留白由源头 .toolbar 自带（页面级工具栏内边距归工具栏自己），
+  /* 上下留白由源头 .iflyv-toolbar 自带（页面级工具栏内边距归工具栏自己），
      容器只给左右与底部 */
   padding: 0 var(--iflyv-spacing-6) var(--iflyv-spacing-6);
 }

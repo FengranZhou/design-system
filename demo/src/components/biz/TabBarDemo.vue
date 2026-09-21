@@ -11,8 +11,8 @@
       </p>
 
       <div class="tab-bar-demo__stage">
-        <div class="toolbar">
-          <div class="toolbar__left">
+        <div class="iflyv-toolbar">
+          <div class="iflyv-toolbar__left">
             <TabBar
               v-model="active"
               :tabs="tabs"
@@ -20,7 +20,7 @@
               :max-label-width="configForm.ellipsis ? 200 : 0"
             />
           </div>
-          <div class="toolbar__right">
+          <div class="iflyv-toolbar__right">
             <el-button type="primary">图谱管理</el-button>
           </div>
         </div>
