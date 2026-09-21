@@ -145,11 +145,31 @@ git ls-remote --tags iflytek | grep -o 'refs/tags/v[0-9][0-9.]*$' | sed 's|refs/
 | 位置 | 怎么保证 |
 |---|---|
 | **文件内容** | 双仓机制只写在**本节**与 `scripts/sanitize-for-iflytek.mjs`，两者都**只存在于 `main`**。在 `iflytek-sync-done` 上开发时根本碰不到它们 |
-| **提交说明** | **写 commit message 时就不要出现** GitHub / 个人仓 / 双仓 / `Claude-Session:` 字样。写了要么 `--amend` 改，要么事后重写历史，代价极大 |
+| **提交说明** | **写 commit message 时就不要出现**：① **直接词** GitHub / 个人仓 / 双仓 / `Claude-Session:`；② **间接词**（同样致命，见下）CI / Vercel / 部署 / 流水线 / 外网 / `build:ci`。写了要么 `--amend` 改，要么事后重写历史，代价极大 |
 | **tag 说明** | 内网 tag 单独写，删掉任何双仓表述 |
 
 ⚠️ **`Claude-Session:` 链接不得进内网**（`Co-Authored-By` 保留，那是业界惯例）。
 **2026-09-14 就差点把 6 个带链接的提交推进内网**，是临推前查提交说明才发现的。
+
+⚠️ **比关键词更容易漏的是「间接暴露」——2026-09-21 真实踩过。**
+
+内网**没有 CI、没有部署流水线**（那是外网侧才有的）。于是提交说明里任何
+「CI 校验失败 / 部署构建失败 / 本地没发现但 CI 发现了 / 跑 `build:ci` 才一致」
+之类的话，**本身就是在承认这套代码还在别处构建**——不含任何直接词，却等于泄露。
+
+真实翻车：修完外网构建失败后，提交说明里写了四行解释「为什么本地 build 没发现、
+CI 跑的是 check-rules」，推前按清单扫 `GitHub|个人仓|双仓|Claude-Session` **全绿**，
+因为这四个词一个都没出现。
+
+**判据**：写提交说明时问一句——「这句话解释的现象，在**只有内网**的世界里存在吗？」
+- 存在（如「校验脚本报不一致」「重新生成了产物」）→ 可以写。
+- 不存在（如「CI 失败」「部署没过」「本地和 CI 行为不同」）→ **换成中性措辞**：
+  只说**做了什么、为什么做**，不说**是谁发现的、在哪失败的**。
+  例：「重新生成 rules.generated.json，使其与 @rule 标记行号一致」——够了，
+  不必交代是外网构建报的错。
+
+⚠️ 注意力陷阱：这类话都是在**排查技术问题**时写的，当时脑子里全是技术因果，
+不在合规上。所以**扫描清单必须覆盖间接词**，不能只靠临场警觉。
 
 已在 `~/.claude/settings.json` 里配了 `"attribution": { "sessionUrl": false }` 关掉自动生成
 （配在**全局**而非项目 `.claude/settings.json`——后者会随仓库进内网）。
@@ -157,7 +177,18 @@ git ls-remote --tags iflytek | grep -o 'refs/tags/v[0-9][0-9.]*$' | sed 's|refs/
 **推送前仍要手工查一次**，别把这条保险完全交给配置：
 
 ```bash
-git log --format='%B' iflytek/master..HEAD | grep -i 'Claude-Session' || echo "✓ 干净"
+# 直接词 + 间接词一并扫（缺了间接词那组，2026-09-21 那次会照样漏过去）
+git log --format='%B' iflytek/master..HEAD \
+  | grep -inE 'Claude-Session|GitHub|个人仓|双仓|Vercel|部署|流水线|外网|build:ci|\bCI\b' \
+  || echo "✓ 干净"
+```
+
+⚠️ **tag 说明单独扫**（tag 不在 `git log` 的范围里，漏扫过）：
+
+```bash
+git tag -l 'v*-iflytek' --format='%(contents)' \
+  | grep -inE 'Claude-Session|GitHub|个人仓|双仓|Vercel|部署|流水线|外网|build:ci|\bCI\b' \
+  || echo "✓ 干净"
 ```
 
 ⚠️ **万一已经提交但还没推**，只重写未推送部分：
