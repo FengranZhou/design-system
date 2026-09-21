@@ -323,8 +323,8 @@
       <StepBarDemo />
       <AiButtonDemo />
       <PickedItemDemo />
-      <TabBarDemo />
       <OptionCardDemo />
+      <TabBarDemo />
       </div>
       <div v-show="currentTopTab === 'pattern'" class="no-title-divider">
       <PatternFormOrgDemo />
@@ -539,7 +539,7 @@ const sectionIds = [
   'input', 'select', 'date-picker', 'radio', 'checkbox', 'switch', 'slider', 'rate',
   'tag', 'table', 'badge', 'descriptions', 'avatar', 'empty',
   'dialog', 'drawer', 'message', 'message-box', 'alert', 'notification', 'popconfirm', 'tooltip', 'loading', 'skeleton', 'result',
-  'page-frame', 'step-bar', 'ai-button', 'picked-item', 'option-card',
+  'page-frame', 'step-bar', 'ai-button', 'picked-item', 'option-card', 'tab-bar',
   'pattern-form-org', 'pattern-form', 'pattern-list-item', 'pattern-toolbar',
   'page-public-info', 'page-course-tools', 'page-course-dashboard', 'page-ai-quiz',
   'copywriting-time',
