@@ -272,13 +272,13 @@ import { Toolbar } from '<path>/design-spec/components'
 | 层级 | 标题标签（字阶，源头） | 页面自写的下边距 |
 |---|---|---|
 | **页面级**（页面标题 / 页面级 tab 栏） | `<h3 class="iflyv-toolbar__title">` → `title-page` 26/48 | `spacing-4`（16） |
-| **模块级**（模块标题 / 模块级 tab 栏） | `<h4 class="iflyv-toolbar__title toolbar__title--module">` → `title-module` 18/36 | `spacing-3`（12） |
+| **模块级**（模块标题 / 模块级 tab 栏） | `<h4 class="iflyv-toolbar__title iflyv-toolbar__title--module">` → `title-module` 18/36 | `spacing-3`（12） |
 
 ```vue
 <!-- 模块级：标题加 --module 降字阶即可，无需额外类 -->
 <div class="iflyv-toolbar">
   <div class="iflyv-toolbar__left">
-    <h4 class="iflyv-toolbar__title toolbar__title--module">我的项目</h4>
+    <h4 class="iflyv-toolbar__title iflyv-toolbar__title--module">我的项目</h4>
   </div>
   <div class="iflyv-toolbar__right">…</div>
 </div>

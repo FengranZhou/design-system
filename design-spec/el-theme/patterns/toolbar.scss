@@ -39,7 +39,10 @@
    改外观：回本文件改，改一次所有引用方同步（勿在使用方 scoped 复刻）。
    @see: demo「设计模式 → Toolbar 工具栏布局」标准范例（配置项可实时切三分支）。
    ==================================================================== */
-.iflyv-toolbar, .toolbar {
+.iflyv-toolbar,
+/* ⏳ 旧类名过渡期（已收窄）：裸 .toolbar 须带本模式结构（直属 .toolbar__left）才命中，
+   宿主项目自己的 .toolbar（如富文本编辑器工具栏）不再被误伤。见文末「旧类名过渡期」段 */
+.toolbar:has(> .toolbar__left) {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -73,8 +76,8 @@
    @when-changed: 若使用方自行在工具栏外层套了带 overflow 的容器，吸顶会失效——
                   那是接入方式问题，不要在使用方补 :deep 覆盖，回来查外层 overflow。 */
 .iflyv-toolbar:has(.tabs-page),
-/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
-.toolbar:has(.tabs-page) {
+/* ⏳ 旧类名过渡期（已收窄），迁移完成后删除下行 */
+.toolbar:has(> .toolbar__left):has(.tabs-page) {
   position: sticky;
   top: 0;
   z-index: var(--iflyv-z-sticky);
@@ -137,8 +140,8 @@
    页面级 tab 是「我在哪个分区」的定位信息、且要能就地切换，故常驻；
    纯页面标题 / 模块级没有这层作用，应跟着内容一起滚走，**不要放进 #page-header**。 */
 .page-frame__page-header .iflyv-toolbar:has(.tabs-page),
-/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
-.page-frame__page-header .toolbar:has(.tabs-page) {
+/* ⏳ 旧类名过渡期（已收窄），迁移完成后删除下行 */
+.page-frame__page-header .toolbar:has(> .toolbar__left):has(.tabs-page) {
   position: relative;
 
   /* 分割线：默认不可见，内容一滚就显形（下方 @supports 驱动） */
@@ -158,7 +161,7 @@
 
 @supports (animation-timeline: --x) {
   .page-frame__page-header .iflyv-toolbar:has(.tabs-page)::after,
-  .page-frame__page-header .toolbar:has(.tabs-page)::after {
+  .page-frame__page-header .toolbar:has(> .toolbar__left):has(.tabs-page)::after {
     animation: toolbar-stuck-line linear both;
     animation-timeline: --page-scroll;
     animation-range: 0 1px;
@@ -166,8 +169,9 @@
 }
 
 /* 左右两组：组内相邻元素间距 12 */
-.iflyv-toolbar__left, .toolbar__left,
-.iflyv-toolbar__right, .toolbar__right {
+.iflyv-toolbar__left, .iflyv-toolbar__right,
+/* ⏳ 旧类名过渡期（已收窄）：须直属 .toolbar 之下才命中 */
+.toolbar > .toolbar__left, .toolbar > .toolbar__right {
   display: flex;
   align-items: center;
   gap: var(--iflyv-spacing-3);
@@ -190,15 +194,17 @@
    ⚠️ min-width 要**逐层传下去**，只给 __left 的话撑开的链路只是下移一层。
       tabs 自己那几层（.el-tabs / __header / __nav-wrap）归 **components/tabs.scss**
       —— 那是组件内部结构，任何把 tabs 放进 flex 容器的场景都需要，不是工具栏特有的。 */
-.iflyv-toolbar__left, .toolbar__left {
+.iflyv-toolbar__left, .toolbar > .toolbar__left {
   min-width: 0;
 }
-.iflyv-toolbar__right, .toolbar__right {
+.iflyv-toolbar__right, .toolbar > .toolbar__right {
   flex-shrink: 0;
 }
 
 /* 标题：默认页面级字阶；模块级加 --module 降一档 */
-.iflyv-toolbar__title, .toolbar__title {
+.iflyv-toolbar__title,
+/* ⏳ 旧类名过渡期（已收窄）：须在本模式结构（.toolbar > .toolbar__left）内才命中 */
+.toolbar > .toolbar__left .toolbar__title {
   margin: 0;
   color: var(--iflyv-text-1);
   font: var(--iflyv-font-title-page);
@@ -211,7 +217,8 @@
 
 /* tab 落在工具栏内时无内容面板，清掉 EP header 默认下边距，
    使其与同排下拉 / 搜索 / 按钮垂直居中对齐 */
-.iflyv-toolbar .el-tabs__header, .toolbar .el-tabs__header {
+.iflyv-toolbar .el-tabs__header,
+.toolbar:has(> .toolbar__left) .el-tabs__header {
   margin-bottom: 0;
 }
 
@@ -237,9 +244,9 @@
      （实测翻车过：容器 gap 16 + 本条 16 = 32）。 */
 .iflyv-toolbar:has(.tabs-page),
 .iflyv-toolbar:has(.iflyv-toolbar__title:not(.iflyv-toolbar__title--module)),
-/* ⏳ 旧类名过渡期（见文件末「旧类名过渡期」段），迁移完成后删除这两行 */
-.toolbar:has(.tabs-page),
-.toolbar:has(.toolbar__title:not(.toolbar__title--module)) {
+/* ⏳ 旧类名过渡期（已收窄，见文件末「旧类名过渡期」段），迁移完成后删除这两行 */
+.toolbar:has(> .toolbar__left):has(.tabs-page),
+.toolbar:has(> .toolbar__left):has(.toolbar__title:not(.toolbar__title--module)) {
   padding-block: var(--iflyv-spacing-4);
   margin-inline: calc(-1 * var(--iflyv-spacing-6));
   padding-inline: var(--iflyv-spacing-6);
@@ -255,7 +262,18 @@
    它们与新类名**并列在同一条规则上**（不是复制一份），因此改源头两边同步变，
    不存在新旧规则漂移。
 
-   ⚠️ 过渡期内污染问题**依然存在**（旧裸类名还在全局生效）——
+   ⭐ 兼容行已按结构**收窄**（2026-09-22，止血上述富文本编辑器误伤）：
+      裸 `.toolbar` 必须带本模式的结构特征——**直属子元素 `.toolbar__left`**——才命中
+      （`.toolbar:has(> .toolbar__left)`；`__left/__right/__title` 同理要求挂在该结构内）。
+      判据：三分支骨架与 Toolbar 组件的合法用法**必有 __left**，而宿主项目自己的
+      `.toolbar`（编辑器工具栏等）没有这个子结构，从此命不中。
+      · 残余边界：若宿主 DOM 恰好也是 `.toolbar > .toolbar__left` 结构，仍会撞——
+        这是裸类名的固有风险，收窄只是把误伤面从「任何 .toolbar」压到「同构 .toolbar」，
+        彻底隔离仍靠删兼容行。
+      · 收窄让兼容行特异性升到 (0,2,0)：与旧版 (0,1,0) 相比，使用方若曾用
+        `.xxx .toolbar` 覆盖本模式，现在打平靠源顺序（应用样式后加载，仍能覆盖）。
+
+   ⚠️ 过渡期内，与本模式**同构**的旧裸类名仍在全局生效——
       兼容行是临时措施，删掉它们隔离才真正完成。
 
      · 迁移做法：`class="toolbar"` → `class="iflyv-toolbar"`，
