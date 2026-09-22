@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 133,
-  "totalWeight": 378,
+  "total": 135,
+  "totalWeight": 384,
   "byLevel": {
-    "MUST": 112,
+    "MUST": 114,
     "SHOULD": 21,
     "MAY": 0
   },
   "byDetect": {
     "regex": 78,
     "ast": 7,
-    "manual": 48
+    "manual": 50
   },
   "byView": {
-    "design": 114,
-    "impl": 125
+    "design": 116,
+    "impl": 127
   },
   "categoryOrder": [
     "单一数据源",
@@ -1746,6 +1746,36 @@
       "weight": 3,
       "source": "design-spec/references/efficiency-guide.md",
       "line": 105
+    },
+    {
+      "id": "js-focus-exempt-needs-alt-indicator",
+      "title": "豁免 focus-visible 仅限「被 JS 主动 focus 且已有替代聚焦指示」的元素，且必须写进源头而非使用方",
+      "designTitle": "面板内某一项冒出的绿框可以去掉，但前提是该项本身已有底色或加粗等可看出焦点的指示",
+      "level": "MUST",
+      "cat": "状态设计",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 591
+    },
+    {
+      "id": "item-focus-matches-hover",
+      "title": "菜单/列表项的 :focus 与 :focus-visible 须与 :hover 给同一套反馈（语义相同），不得落回 EP 原生淡色",
+      "designTitle": "下拉菜单项在鼠标悬停和键盘聚焦时应是同一种效果，不能一会儿灰底一会儿文字变淡",
+      "level": "MUST",
+      "cat": "状态设计",
+      "detect": "manual",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 597
     },
     {
       "id": "blur-after-modal-exit",

@@ -570,3 +570,28 @@ const onKeydown = (e: KeyboardEvent) => {
 ```
 
 **判据**：该交互结束后，焦点**是否应当回到触发它的那个元素**？不应当 → `blur()`；应当（如关闭弹窗把焦点还给列表行）→ 保留，那圈框是正确的键盘指示。⛔ 不要为此去写 `outline: none`。<!-- @rule id=blur-after-modal-exit level=SHOULD cat=状态设计 detect=manual dtitle=按 Esc 关闭全屏或弹窗后，不该凭空出现一圈绿色焦点描边 title=Esc/模态切换类退出交互须主动 blur() 断掉残留焦点，不得改用 outline:none -->
+
+### ⚠️ 第四个坑：EP 用 JS 主动 focus，纯鼠标操作也会冒绿框（源头已治，下游不要动）
+
+**现象**：完全没碰键盘——鼠标 hover 出一个下拉菜单、或点一下 tab 切换——面板里某一项 / 那个 tab 上凭空套了一圈品牌绿框。tab 那处还表现为**「有些容易点出来、有些不容易」**，像偶发。
+
+**根因不是基线写错了，而是基线的前提被绕过**。基线分工（鼠标无框 / 键盘有框）依赖「`:focus-visible` 只在键盘交互时命中」，但这一条对**由 JS 调用的 `el.focus()` 不成立**：浏览器对程序化聚焦会按键盘模态处理。而 EP 多个弹出型组件会在面板打开 / 选项切换时主动聚焦：
+
+| 组件 | EP 源码里的主动聚焦 | 备注 |
+|---|---|---|
+| `el-dropdown` | `dropdown.vue`：面板一打开就 `contentRef.focus()`；hover 触发时另有 `contentEl.focus({preventScroll:true})` | 鼠标 hover 出菜单即触发 |
+| `el-tabs` | `tab-nav.mjs`：`await nextTick()` 后 `focus()` 当前 tab | **异步**，交互上下文已丢失 → 故"时有时无"，实为时序竞争而非偶发 |
+| `el-cascader` | `cascader.vue`：展开时 `firstNode.focus()` | |
+| `el-tree-select` | `select.mjs` / `tree.mjs`：聚焦当前节点 / 高亮项容器 | 独立 `el-tree` 已停用，见勿用清单 |
+
+**源头已按元素豁免，下游一行都不用写**：`base/focus.scss` 末段（cascader 节点 / tree 节点）、`components/dropdown.scss`（菜单项）、`components/tabs.scss`（tab 项）。
+
+- ⛔ **不要因为"又冒了一处绿框"就去删 `base/focus.scss` 顶部的基线** —— 那两条在挡 Windows 的 UA 黑框、并为全站可聚焦元素保住键盘反馈，删了是用「全站黑框 + 键盘用户失去焦点指示」换一处观感。<!-- @rule-skip dup 与 no-custom-focus-outline 同义（「焦点框不自写/不删基线」在 JS 主动 focus 场景的展开说明） -->
+- ⚠️ **`el-tabs` 必须压 `box-shadow` 而不是 `outline`**：EP 给 tab 的是 `box-shadow: 0 0 2px 2px var(--el-color-primary) inset`（内阴影，不是 outline），只压 outline 压不掉。两者都压才干净。
+- **发现新的同类问题时的判据（两问都为"是"才可豁免）**：① 该元素是否**真被 EP 用 JS 主动 focus**（去 EP 源码里 grep `.focus(` 确认，不要凭猜）？② 它是否**另有替代的聚焦指示**（hover 底色、选中加粗 / 下划线等）？两问都是 → 加进源头豁免名单；② 为否 → **必须留框**，否则键盘用户会失去焦点指示。<!-- @rule id=js-focus-exempt-needs-alt-indicator level=MUST cat=状态设计 detect=manual dtitle=面板内某一项冒出的绿框可以去掉，但前提是该项本身已有底色或加粗等可看出焦点的指示 title=豁免 focus-visible 仅限「被 JS 主动 focus 且已有替代聚焦指示」的元素，且必须写进源头而非使用方 -->
+
+### ⚠️ 顺带一条：菜单/列表项的 `:focus` 必须与 `:hover` 同色
+
+与上一条同一批问题里暴露的：`dropdown.scss` 曾只写了 `:hover` 的底色与文字色、没写 `:focus`，于是 JS 聚焦时落回 EP 原生的 `#f5f6f7` 底 + `#626a73` 文字——**文字比常态更淡**，业务看到的是「同一项时而 hover 色、时而 focus 色，两种效果来回跳」。
+
+**判据**：菜单项 / 列表项的 hover 与 focus **语义相同**（都表示"当前指向这一项"），故必须给同一套反馈。写 hover 态时顺手把 `:focus` / `:focus-visible` 并列进同一个选择器组。<!-- @rule id=item-focus-matches-hover level=MUST cat=状态设计 detect=manual dtitle=下拉菜单项在鼠标悬停和键盘聚焦时应是同一种效果，不能一会儿灰底一会儿文字变淡 title=菜单/列表项的 :focus 与 :focus-visible 须与 :hover 给同一套反馈（语义相同），不得落回 EP 原生淡色 -->
