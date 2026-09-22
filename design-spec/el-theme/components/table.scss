@@ -92,6 +92,12 @@
     line-height: var(--iflyv-line-height-24);
   }
 
+  /* 空数据占位块：EP 默认 min-height 60，空表塌成一条窄带、插画/文案挤在一起。
+     给 240 最小高度让空态有呼吸感（EP 自身已 flex 居中，内容随之垂直居中）。 */
+  .el-table__empty-block {
+    min-height: 240px;
+  }
+
   /* ==================== 选中行 Selected Row ====================
      仅在使用方显式开启 highlight-current-row 时才出现（做「点行→右侧联动详情」
      这类主从布局才该开；DataTable 默认不开，见其模板注释）。
