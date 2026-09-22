@@ -480,7 +480,7 @@
             @command="onAvatarCommand"
           >
             <div class="page-frame__avatar" @click="emit('avatar-click')">
-              <UserAvatar :role="avatarRole" :src="avatarSrc" :size="28" />
+              <UserAvatar class="page-frame__avatar-img" :role="avatarRole" :src="avatarSrc" :size="28" />
               <span v-if="userName" class="page-frame__user-name">{{ userName }}</span>
             </div>
             <template #dropdown>
@@ -503,7 +503,7 @@
             class="page-frame__avatar"
             @click="emit('avatar-click')"
           >
-            <UserAvatar :role="avatarRole" :src="avatarSrc" :size="28" />
+            <UserAvatar class="page-frame__avatar-img" :role="avatarRole" :src="avatarSrc" :size="28" />
             <span v-if="userName" class="page-frame__user-name">{{ userName }}</span>
           </div>
           <!-- 右侧功能图标组：帮助 / 消息。与左侧身份区（头像 + 名字）分列两端。
@@ -1797,6 +1797,13 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   .is-collapsed & {
     flex: none;
   }
+}
+
+/* 头像本体：flex 行里名字超长时，名字靠省略号收缩，但头像作为 flex 子项
+   默认 flex-shrink:1 会跟着一起被压扁成窄椭圆——头像是定形元素，禁止参与收缩，
+   收缩量全部由名字（有省略号兜底）承担。这条是本骨架的排布规则，不碰 el-avatar 外观。 */
+.page-frame__avatar-img {
+  flex-shrink: 0;
 }
 
 /* 用户名：次要正文档（比导航项低一档）——用户区是常驻的身份标示、不是要读的内容，
