@@ -1,6 +1,6 @@
 {
   "name": "@xiaoya/design-system",
-  "version": "1.0.2-bete2",
+  "version": "1.0.2-bete3",
   "description": "xiaoya3.0 设计系统 —— Element Plus 令牌 + 组件覆盖层 + 业务组件 + 规范文档",
   "type": "module",
   "publishConfig": {
