@@ -175,7 +175,8 @@
 
    做法：__container 恢复块级（取消 EP 的 flex 并排），status 绝对定位到 header 的标题位。
    定位基准是 .el-message-box（EP 已给它 position: relative）。
-   坐标 = header 的 padding（上 12 / 左 24），与标题文字同一条基线；
+   坐标：横向 = header 的 padding-left 24；纵向 = padding-top 12 再加图标在标题行高内的
+   居中偏移（详见下方 top 的注释），与标题文字垂直居中对齐；
    标题的 gap: 8 + 图标 20 宽，正好让文字从 24+20+8=52 处开始（与 Dialog 一致）。 */
 .el-message-box__container {
   display: block;
@@ -183,7 +184,10 @@
 
 .el-message-box__status {
   position: absolute;
-  top: 12px;
+  /* 垂直对中标题行：header padding-top 12 之外，还要补上图标(20)在标题行高(24)里的
+     居中偏移——Dialog 侧图标是 title 的 flex 子项由 align-items:center 自动对中，
+     这里绝对定位拿不到 flex 对中，只对齐 12px 会比文字高出 2px。 */
+  top: calc(12px + (var(--iflyv-line-height-24) - 20px) / 2);
   inset-inline-start: var(--iflyv-spacing-6);
   /* 底板 20×20，与 dialog.scss 的 ::before 同尺寸 */
   width: 20px;
@@ -324,17 +328,41 @@
      MessageBox 是应用层组合（调用 button），这里做符合依赖方向。
    ⚠ 为什么不要求下游传 confirmButtonClass：能在源头保证的观感不该依赖下游纪律，
      且 EP 默认值不报错、漏传静默拿到错误观感，正是源头规则要兜住的形态。
-   ⚠ warning / success / info 不改：它们配 primary 主按钮已是正确观感，不动。 */
+   ⚠ warning / success / info 不改：它们配 primary 主按钮已是正确观感，不动。
+   ⚠ 必须用直接属性声明、不能重映射 EP 的 --el-button-* 变量：本主题 button.scss 的
+     primary 三态本身就是直接声明（background-color: var(--iflyv-brand-primary) 等），
+     不读 EP 变量——只改变量会被那些直接声明压住，按钮保持绿色（真实翻过车）。
+     各态选择器结构照抄 button.scss 的 --primary 段，保证逐态都压得住。 */
 
-/* 有 error 图标时，btns 里的 primary 按钮外观改用 danger */
+/* 有 error 图标时，btns 里的 primary 按钮外观改用 danger（取值对齐 button.scss 的 --danger 段） */
 .el-message-box:has(.el-message-box-icon--error) .el-message-box__btns .el-button--primary {
-  /* 三态对齐 button.scss 的 el-button--danger */
-  --el-button-bg-color: var(--iflyv-danger-primary);
-  --el-button-border-color: var(--iflyv-danger-primary);
-  --el-button-text-color: var(--el-color-white);
-  --el-button-hover-bg-color: var(--iflyv-danger-hover);
-  --el-button-hover-border-color: var(--iflyv-danger-hover);
-  --el-button-hover-text-color: var(--el-color-white);
-  --el-button-active-bg-color: var(--iflyv-danger-active);
-  --el-button-active-border-color: var(--iflyv-danger-active);
+  background-color: var(--iflyv-danger-primary);
+  border-color: var(--iflyv-danger-primary);
+
+  /* 点击后按钮持焦：primary 段有同结构 focus 规则钉回绿色，这里同结构钉回红色 */
+  &:not(.is-text):not(.is-link):focus:not(:hover) {
+    background-color: var(--iflyv-danger-primary);
+    border-color: var(--iflyv-danger-primary);
+  }
+
+  &:hover {
+    background-color: var(--iflyv-danger-hover);
+    border-color: var(--iflyv-danger-hover);
+  }
+
+  &:active {
+    background-color: var(--iflyv-danger-pressed);
+    border-color: var(--iflyv-danger-pressed);
+  }
+
+  /* 键盘聚焦的焦点框也转 danger 语义色（对齐 button.scss 的 --danger:focus-visible） */
+  &:focus-visible {
+    outline-color: var(--iflyv-danger-primary);
+  }
+
+  /* beforeClose 场景 confirmButtonLoading 的加载态：对齐 danger 的"变淡"表达 */
+  &.is-loading:not(.is-disabled) {
+    background-color: var(--iflyv-danger-disabled);
+    border-color: var(--iflyv-danger-disabled);
+  }
 }

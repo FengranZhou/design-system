@@ -3,7 +3,8 @@
 /* ========================================================================== */
 
 /* ┌─ 接入方速查：一排横向并列的指标卡（KPI 条），直接复制即可 ─────────────┐
-   <div class="iflyv-metric-strip">
+   ⚠ 容器必须同时挂 iflyv-metric-strip + metric-strip 双类才激活（见文末警示段）
+   <div class="iflyv-metric-strip metric-strip">
      <div class="iflyv-metric-item">
        <span class="iflyv-metric-item__num">82<em class="iflyv-metric-item__unit">人</em></span>
        <span class="iflyv-metric-item__label">学生</span>
@@ -19,9 +20,7 @@
    ⚠️ 不用 flex + space-between —— 那是按内容宽度排布，长短不一的项会宽窄不齐、
       间隔也不匀（「访客人次」比「教师」宽一截）。等分是本模式的核心规则：
       无论 2 项还是 8 项一律等分撑满，宽度可预测、多页面并置时纵向对得齐。 */
-.iflyv-metric-strip,
-/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
-.metric-strip {
+.iflyv-metric-strip.metric-strip {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
@@ -33,9 +32,7 @@
 /* 每格：内容在等分宽度内水平居中；数字与说明是主信息/副信息的上下关系。
    gap 取 spacing-0_5（2px，紧贴元素微调档）—— number-display 系字阶行高已很宽裕，
    用常规的列表项子元素档（spacing-2）会让数字与说明散开、读不出主副一组 */
-.iflyv-metric-item,
-/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
-.metric-item {
+.iflyv-metric-strip.metric-strip > .iflyv-metric-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,17 +41,13 @@
 }
 
 /* 主数字：数字展示字阶（小号档） */
-.iflyv-metric-item__num,
-/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
-.metric-item__num {
+.iflyv-metric-strip.metric-strip .iflyv-metric-item__num {
   font: var(--iflyv-font-number-display-sm);
   color: var(--iflyv-text-1);
 }
 
 /* 单位：紧贴数字（控件内文字与其紧邻元素的微间距），弱化一档 */
-.iflyv-metric-item__unit,
-/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
-.metric-item__unit {
+.iflyv-metric-strip.metric-strip .iflyv-metric-item__unit {
   font: var(--iflyv-font-body-min);
   font-style: normal;
   color: var(--iflyv-text-3);
@@ -62,20 +55,20 @@
 }
 
 /* 说明文字：副信息 */
-.iflyv-metric-item__label,
-/* ⏳ 旧类名过渡期，迁移完成后删除下行 */
-.metric-item__label {
+.iflyv-metric-strip.metric-strip .iflyv-metric-item__label {
   font: var(--iflyv-font-body-sub);
   color: var(--iflyv-text-3);
 }
 
-/* ==================== ⏳ 旧类名过渡期（计划删除） ====================
-   `.metric-strip` / `.metric-item*` 为通用词，加 `iflyv-` 前缀做命名空间隔离。
-   上方标「⏳」的行让旧类名继续生效，与新类名并列在同一条规则上（非复制）。
+/* ==================== ⛔ 双类握手门槛（勿简化为单类） ====================
+   2026-09-22 起本文件所有规则以 `.iflyv-metric-strip.metric-strip` 双类复合
+   选择器为门槛（与 toolbar.scss 同批同机制）：容器同时挂两个类才激活，
+   单挂任何一个都不生效；子元素（metric-item 系）选择器全部挂在双类容器之下。
 
-     · 迁移做法：全部只是加 `iflyv-` 前缀。
-     · 删除时机：确认所有下游已迁移后，删掉标「⏳」的兼容行。
-     · 删除后表现：仍写旧类名处样式直接消失（不报错），问题立刻暴露。
+   为什么不能只写裸 `.metric-strip`：通用词作全局样式会命中宿主项目同名 DOM
+   （同 toolbar 的富文本编辑器翻车）。为什么单 `iflyv-` 也不生效：激活必须是
+   显式的双类 opt-in，杜绝任何一侧类名单独出现时的意外命中。
 
-   ⚠️ 新代码一律用带前缀的类名。
+   接入方唯一合法写法：`class="iflyv-metric-strip metric-strip"`。
+   发现样式不生效时先查容器是否两个类都在。
    ==================================================================== */

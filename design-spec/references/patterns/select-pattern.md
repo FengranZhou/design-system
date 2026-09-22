@@ -155,7 +155,14 @@ const QUESTION_TYPES: OptionCardItem[] = [
 - 有默认语义项时：`v-model` 有初始值，看不到 placeholder（本就该显示「全部类型」）。
 - 无默认值时：`v-model` 为空，靠 placeholder（如「请选择」）+ 外部 label 说明。
 
-### 4. 选项 `value` 必须唯一
+### 4. 下拉面板宽度已由源头限宽，超长选项自动省略
+
+面板最大宽度 **400px** 已固化在源头 `el-theme/components/select.scss`（EP 默认面板无 max-width、会被最长选项无限撑开），限宽后 EP 选项自带的省略号自动生效，`el-select-v2` 同规则。**使用方一律不覆盖面板宽度**（不自写 max-width / min-width、不为"修"超长在使用方动 `.el-select__popper`）。<!-- @rule id=select-popper-max-width level=MUST cat=组件用法 view=impl detect=regex dtitle=下拉面板不会被超长选项撑到全屏，超长项显示省略号 title=Select 下拉面板最大宽度 400px 已固化在源头（超长选项自动省略号），禁在使用方覆盖 .el-select__popper 的宽度 -->
+
+- 触发器本身宽于 400 时面板仍与触发器等宽（限宽只约束"内容撑开"，不会把面板压得比触发器窄）。
+- **截断后需要看全称的场景由业务侧自行处理**（如把关键编码拼进 label、或业务自定义 option 内容），源头不做 tooltip 补全。
+
+### 5. 选项 `value` 必须唯一
 
 同一组选项里 `value` 重复 → Vue 同 key 冲突 → 下拉项渲染错乱（重复项闪烁或消失），且**选中态映射出错**（选 A 高亮到 B）。数据来自后端时尤其要确认唯一性，别拿"名称"当 value（重名很常见），用 ID。
 
@@ -167,6 +174,7 @@ const QUESTION_TYPES: OptionCardItem[] = [
 - ❌ **给"未选=合法"的下拉不加 clearable** —— 用户选错了无法撤销回未选状态。
 - ❌ **凭"统一"给所有下拉一律加或一律不加 clearable** —— clearable 是按空状态语义决定的，不是统一开关。
 - ❌ **在使用方 scoped 里覆盖 select 外观**（`:deep(.el-select ...)` 改字号/边框/圆角等）—— 外观归 `el-theme/components/select.scss` 源头，手写即私货、不同步。
+- ❌ **在使用方给 `.el-select__popper` 自写宽度**（为"修"超长选项撑爆面板去写 max-width / min-width）—— 面板限宽 400 已在源头统一，超长自动省略；自写即私货且各处宽度不一。
 - ❌ **`remote-method` 不做节流** —— 连打三个字发三次请求，先发后到会用旧结果覆盖新结果（race condition），用户看到的候选项对不上输入。
 - ❌ **远程搜索不绑 `:loading`** —— "正在加载"与"确实没有"都显示空面板，用户不知道该等还是该改词。
 - ❌ **选项超过 200 仍用 `el-select`** —— 全量渲染真实 DOM，首次展开卡顿；应换 `el-select-v2`。

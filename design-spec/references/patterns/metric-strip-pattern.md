@@ -10,7 +10,7 @@
 
 ## 强制做法
 
-- **一律用源头约定 class**（样式在 `el-theme/patterns/metric-strip.scss`）：容器 `.iflyv-metric-strip`，每项 `.iflyv-metric-item`，项内 `.iflyv-metric-item__num` / `__unit` / `__label`。<!-- @rule id=metric-strip-class level=MUST cat=组件用法 detect=regex dtitle=一排指标卡应宽度等分、内容居中，各项不因文字长短而宽窄不齐 title=指标条一律用源头约定 class .iflyv-metric-strip / .iflyv-metric-item，禁在使用方自拼 -->
+- **一律用源头约定 class**（样式在 `el-theme/patterns/metric-strip.scss`）：容器双类 `class="iflyv-metric-strip metric-strip"`（**两个类同时挂才激活**，源头双类门槛，单挂任何一个全不生效），每项 `.iflyv-metric-item`，项内 `.iflyv-metric-item__num` / `__unit` / `__label`。<!-- @rule id=metric-strip-class level=MUST cat=组件用法 detect=regex dtitle=一排指标卡应宽度等分、内容居中，各项不因文字长短而宽窄不齐 title=指标条一律用源头约定 class .iflyv-metric-strip / .iflyv-metric-item，禁在使用方自拼 -->
 - **宽度按项数等分、内容在等分宽度内水平居中**——这是本模式的核心规则，由源头的 `grid-auto-columns: 1fr` 保证，**接入方不写任何宽度**。<!-- @rule id=metric-strip-equal-width level=MUST cat=布局与栅格 detect=manual dtitle=指标条各项宽度应均分，不能按内容长短自然排布 title=指标条按项数等分列宽、列内居中；禁用 flex + space-between 按内容宽度排布 -->
 - **一律等分，不因项数少而改规则**：2 项和 8 项都等分撑满。这样宽度可预测、多个页面的指标条并置时纵向对得齐。<!-- @rule-skip dup 同 metric-strip-equal-width，本行是该规则「项数少也不例外」的补充说明 -->
 - **不走栅格 `.iflyv-grid`**：指标条是**卡内条目排布**，不是页面分栏；且常见 8 项均分（col-3）低于栅格 6 列下限。
@@ -29,7 +29,7 @@
 
 ```vue
 <template>
-  <div class="iflyv-metric-strip">
+  <div class="iflyv-metric-strip metric-strip">
     <div v-for="m in metrics" :key="m.label" class="iflyv-metric-item">
       <span class="iflyv-metric-item__num">{{ formatNumber(m.value) }}<em class="iflyv-metric-item__unit">{{ m.unit }}</em></span>
       <span class="iflyv-metric-item__label">{{ m.label }}</span>

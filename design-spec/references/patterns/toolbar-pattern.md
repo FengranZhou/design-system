@@ -70,7 +70,8 @@ import { Toolbar } from '<path>/design-spec/components'
 - 分支③（只有操作按钮）→ **不写 `#right`**，内容直接放默认插槽即可。
 - 含页面级 tab 时照常自动吸顶（`:has()` 匹配后代，插槽内容仍是后代）。
 
-**也可继续手写约定 class**（`<div class="iflyv-toolbar">` + `__left` / `__right`），
+**也可继续手写约定 class**（`<div class="iflyv-toolbar toolbar">` + `__left` / `__right`）。
+⚠️ **容器必须同时挂 `iflyv-toolbar` 和 `toolbar` 两个类才激活**（源头的双类门槛，单挂任何一个整套样式全不生效；防裸 `.toolbar` 撞宿主项目同名 DOM）。业务组件 `Toolbar` 已内置双类输出，用组件即无感。
 两者产出的 DOM **完全一致**、样式来源同一份，已有代码无需改写。
 
 > **组件只是约定 class 的标签化封装**：它没有 props、没有 scoped 样式，
@@ -90,7 +91,7 @@ import { Toolbar } from '<path>/design-spec/components'
 
 #### 含页面级 tab 时整条吸顶（源头自动，使用方零成本） <!-- @rule id=toolbar-sticky-page-tabs level=MUST cat=设计模式 detect=manual dtitle=页面级分区切换栏滚动时应始终停在顶部，不能随内容滚走 title=页面级 tab 必须放进 .iflyv-toolbar（源头据此自动吸顶），禁裸放或手拼 flex -->
 
-**工具栏里放了 `.tabs-page` → 整条自动吸顶**，源头 `.iflyv-toolbar:has(.tabs-page)` 提供，
+**工具栏里放了 `.tabs-page` → 整条自动吸顶**，源头 `.iflyv-toolbar.toolbar:has(.tabs-page)` 提供，
 **使用方不写任何吸顶样式、也不必额外挂 class**。
 
 **为什么吸顶**：页面级 tab 充当页面标题层，是「我在哪个分区」的定位信息——
@@ -120,7 +121,7 @@ import { Toolbar } from '<path>/design-spec/components'
 ```vue
 <PageFrame …>
   <template #page-header>
-    <div class="iflyv-toolbar">…页面级 tab / 标题…</div>
+    <div class="iflyv-toolbar toolbar">…页面级 tab / 标题…</div>
   </template>
   <div class="my-page">页面内容</div>
 </PageFrame>
@@ -235,7 +236,7 @@ import { Toolbar } from '<path>/design-spec/components'
 ```vue
 <template>
   <!-- 分支①：有标题 —— 标题左，其余全右 -->
-  <div class="iflyv-toolbar">
+  <div class="iflyv-toolbar toolbar">
     <div class="iflyv-toolbar__left">
       <h3 class="iflyv-toolbar__title">页面标题</h3>
     </div>
@@ -250,13 +251,13 @@ import { Toolbar } from '<path>/design-spec/components'
   </div>
 
   <!-- 分支②：无标题、有筛选类 —— 筛选类左，操作按钮右 -->
-  <!-- <div class="iflyv-toolbar">
+  <!-- <div class="iflyv-toolbar toolbar">
     <div class="iflyv-toolbar__left"> 组件级 tab / 下拉 / 搜索 </div>
     <div class="iflyv-toolbar__right"> 次按钮 / 主按钮 </div>
   </div> -->
 
   <!-- 分支③：无标题、无筛选类 —— 只有操作按钮，靠左 -->
-  <!-- <div class="iflyv-toolbar">
+  <!-- <div class="iflyv-toolbar toolbar">
     <div class="iflyv-toolbar__left"> 次按钮 / 主按钮 </div>
   </div> -->
 </template>
@@ -272,13 +273,13 @@ import { Toolbar } from '<path>/design-spec/components'
 | 层级 | 标题标签（字阶，源头） | 页面自写的下边距 |
 |---|---|---|
 | **页面级**（页面标题 / 页面级 tab 栏） | `<h3 class="iflyv-toolbar__title">` → `title-page` 26/48 | `spacing-4`（16） |
-| **模块级**（模块标题 / 模块级 tab 栏） | `<h4 class="iflyv-toolbar__title toolbar__title--module">` → `title-module` 18/36 | `spacing-3`（12） |
+| **模块级**（模块标题 / 模块级 tab 栏） | `<h4 class="iflyv-toolbar__title iflyv-toolbar__title--module">` → `title-module` 18/36 | `spacing-3`（12） |
 
 ```vue
 <!-- 模块级：标题加 --module 降字阶即可，无需额外类 -->
-<div class="iflyv-toolbar">
+<div class="iflyv-toolbar toolbar">
   <div class="iflyv-toolbar__left">
-    <h4 class="iflyv-toolbar__title toolbar__title--module">我的项目</h4>
+    <h4 class="iflyv-toolbar__title iflyv-toolbar__title--module">我的项目</h4>
   </div>
   <div class="iflyv-toolbar__right">…</div>
 </div>

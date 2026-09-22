@@ -92,6 +92,12 @@
     line-height: var(--iflyv-line-height-24);
   }
 
+  /* 空数据占位块：EP 默认 min-height 60，空表塌成一条窄带、插画/文案挤在一起。
+     给 240 最小高度让空态有呼吸感（EP 自身已 flex 居中，内容随之垂直居中）。 */
+  .el-table__empty-block {
+    min-height: 240px;
+  }
+
   /* ==================== 选中行 Selected Row ====================
      仅在使用方显式开启 highlight-current-row 时才出现（做「点行→右侧联动详情」
      这类主从布局才该开；DataTable 默认不开，见其模板注释）。
@@ -208,9 +214,12 @@
     color: var(--iflyv-text-1);
     cursor: pointer;
 
-    /* hover：仅文字变品牌绿 */
+    /* hover：仅文字变品牌绿。
+       ⚠️ 键盘态用 :focus-visible 而非 :focus——鼠标点击后焦点会留在按钮上，
+       :focus 会让绿字在移开鼠标后残留（残留焦点问题，同 foundations.md 焦点框段），
+       :focus-visible 只在键盘 Tab 聚焦时命中，鼠标点完即恢复。 */
     &:hover,
-    &:focus {
+    &:focus-visible {
       color: var(--iflyv-brand-primary);
     }
   }
@@ -240,8 +249,9 @@
   color: var(--iflyv-text-1);
   cursor: pointer;
 
+  /* 同上：键盘态走 :focus-visible，避免点开/关闭下拉后 focus-trap 还焦点导致绿字残留 */
   &:hover,
-  &:focus {
+  &:focus-visible {
     color: var(--iflyv-brand-primary);
   }
 }

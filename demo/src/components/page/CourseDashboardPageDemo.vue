@@ -51,7 +51,8 @@
           <template v-if="activeTab === 'board'">
             <!-- 指标条：一律用源头约定 class（el-theme/patterns/metric-strip.scss）——
                  等分列宽 + 列内居中、卡片底与字阶全在源头，本页不写任何指标条样式 -->
-            <div class="iflyv-metric-strip">
+            <!-- 双类是源头 metric-strip.scss 的激活门槛：两个类同时在场才生效 -->
+            <div class="iflyv-metric-strip metric-strip">
               <div v-for="kpi in kpis" :key="kpi.label" class="iflyv-metric-item">
                 <span class="iflyv-metric-item__num">{{ formatNumber(kpi.value) }}<em class="iflyv-metric-item__unit">{{ kpi.unit }}</em></span>
                 <span class="iflyv-metric-item__label">{{ kpi.label }}</span>

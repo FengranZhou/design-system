@@ -1766,7 +1766,7 @@ const remove = (k) => { points.value = points.value.filter(p => p !== k) }`,
 
 <!-- 脚本 -->
 import { TabBar } from '<path>/design-spec/components'
-const tabs = ['知识图谱', '问题图谱', '能力图谱']   // 也可传 [{ label, name, disabled }]
+const tabs = ['知识图谱', '问题图谱', '能力图谱']   // 也可传 [{ name, value, disabled }]
 const active = ref('知识图谱')`,
   },
   {
