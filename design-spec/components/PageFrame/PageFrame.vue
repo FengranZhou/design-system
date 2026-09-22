@@ -1699,6 +1699,10 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
      用内边距而非外边距：分隔线以上是导航、以下是用户区，
      这段留白属于用户区自己的上下呼吸，跟着线走才不会在两侧长短不一。 */
   padding-block: var(--iflyv-spacing-4);
+  /* 身份区（触发器）flex:1 吃满剩余宽度后，space-between 不再产生间隔，
+     与右侧图标组的分隔改由 gap 保证；触发器 hover 底色经负 margin 外扩 spacing-1，
+     故视觉间隔 = gap - spacing-1，取 spacing-3 保住呼吸 */
+  gap: var(--iflyv-spacing-3);
   /* 左右内缩同其它子项（侧栏自身不给内边距，见 __sidebar 段注释），但必须走 margin 而非 padding：
      ⚠️ 分隔线是本元素的 border-top，border 在 **padding 之外**——内缩若给 padding，
      线仍会通栏铺到侧栏左右边缘（padding 只推内容、推不动线）。
@@ -1757,12 +1761,42 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   }
 }
 
+/* 头像触发器：hover / 聚焦给与右侧图标按钮同款的底色反馈。
+   这块底色同时是焦点的**替代指示**——关下拉面板时 focus-trap 的 stopTrap()
+   会把焦点 JS 还给本触发器，程序化 focus 命中 :focus-visible 会吃到基线绿框
+   （链路与 dropdown.scss「菜单项焦点态」段同族，只是发生在触发器一侧）。
+   豁免判据两问（见 base/focus.scss）：① 真被 JS focus ✔（focus-trap 还焦点）
+   ② 有替代指示 ✔（本底色）——故压掉 outline，键盘反馈由底色承担。
+   底色需要一圈呼吸：padding 外扩、负 margin 抵回，头像左缘仍与导航内容同缘、
+   行高不变（不把用户区撑高）。
+   flex:1：底色铺满左侧整段剩余宽度（到功能图标组之前），而不是紧包「头像+名字」——
+   触发器是用户区的"行"，反馈按整行给，与导航项 hover 通条底色同一套口径；
+   名字短时底色也不缩短。与图标组的最小间隔由 __userbar 的 gap 保证。 */
 .page-frame__avatar {
   display: flex;
   align-items: center;
   gap: var(--iflyv-spacing-2);
   cursor: pointer;
+  flex: 1;
   min-width: 0;
+  padding: var(--iflyv-spacing-1);
+  margin: calc(-1 * var(--iflyv-spacing-1));
+  border-radius: var(--iflyv-radius-xs);
+  transition: background var(--iflyv-duration-fast) var(--iflyv-ease-default);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--iflyv-border-subtle);
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  /* 收起态竖排（column-reverse）后主轴变纵向，flex:1 会把触发器拉高，归零 */
+  .is-collapsed & {
+    flex: none;
+  }
 }
 
 /* 用户名：次要正文档（比导航项低一档）——用户区是常驻的身份标示、不是要读的内容，
@@ -1789,6 +1823,14 @@ const onChildClick = (child: PageFrameMenuChild, _parent: PageFrameMenuItem) => 
   margin-top: 0;
   /* 允许被右侧图标组挤压，长名字才能落到省略号（flex 子项默认 min-width:auto 不收缩） */
   min-width: 0;
+  /* 外壳同样吃满左侧剩余宽度，内部触发器的 flex:1 才有空间可铺
+     （不然 el-dropdown 外壳按内容收缩，触发器的整行底色被壳截断） */
+  flex: 1;
+
+  /* 收起态竖排后主轴纵向，同触发器一并归零 */
+  .is-collapsed & {
+    flex: none;
+  }
 }
 
 /* 「更多」入口：EP 的 el-dropdown 外壳是 inline-block（按内容宽），

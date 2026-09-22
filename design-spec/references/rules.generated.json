@@ -1760,7 +1760,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 591
+      "line": 592
     },
     {
       "id": "item-focus-matches-hover",
@@ -1775,7 +1775,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 597
+      "line": 598
     },
     {
       "id": "blur-after-modal-exit",

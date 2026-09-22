@@ -53,6 +53,13 @@
                                             （异步 → 交互上下文已丢失，故"时有时无"）
      · el-cascader    cascader.vue          展开时 firstNode.focus()
      · el-tree-select select.mjs / tree.mjs 聚焦当前节点 / 高亮项容器
+     · focus-trap     focus-trap.vue        stopTrap() 在面板关闭时
+                                            tryFocus(打开前的活动元素)——焦点会被
+                                            还给**触发器**（点过触发器后它就是
+                                            activeElement），触发器一侧同样冒绿框。
+                                            已治：PageFrame 头像触发器（业务组件
+                                            自己的 DOM，豁免写在 PageFrame.vue，
+                                            替代指示 = hover/focus 同款底色）
 
    ⚠️ 为什么豁免是安全的、不牺牲无障碍：
       这些元素**都另有明确的聚焦/指向指示**——dropdown 项与树节点有 hover 底色，

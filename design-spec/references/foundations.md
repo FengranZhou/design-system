@@ -583,8 +583,9 @@ const onKeydown = (e: KeyboardEvent) => {
 | `el-tabs` | `tab-nav.mjs`：`await nextTick()` 后 `focus()` 当前 tab | **异步**，交互上下文已丢失 → 故"时有时无"，实为时序竞争而非偶发 |
 | `el-cascader` | `cascader.vue`：展开时 `firstNode.focus()` | |
 | `el-tree-select` | `select.mjs` / `tree.mjs`：聚焦当前节点 / 高亮项容器 | 独立 `el-tree` 已停用，见勿用清单 |
+| `focus-trap`（EP 内部） | `focus-trap.vue`：`stopTrap()` 在面板关闭时 `tryFocus(打开前的活动元素)` | ⚠️ 绿框冒在**触发器**一侧而非面板里：点过触发器（带 `tabindex` 即 mousedown 聚焦）再 hover 开合下拉，关面板时焦点被 JS 还给触发器 → 触发器套绿框。是否冒取决于此前点没点过 → "时有时无" |
 
-**源头已按元素豁免，下游一行都不用写**：`base/focus.scss` 末段（cascader 节点 / tree 节点）、`components/dropdown.scss`（菜单项）、`components/tabs.scss`（tab 项）。
+**源头已按元素豁免，下游一行都不用写**：`base/focus.scss` 末段（cascader 节点 / tree 节点）、`components/dropdown.scss`（菜单项）、`components/tabs.scss`（tab 项）、`components/PageFrame/PageFrame.vue`（头像下拉**触发器**——业务组件自己的 DOM，豁免写在组件内，替代指示 = 与右侧图标按钮同款的 hover/focus 底色）。
 
 - ⛔ **不要因为"又冒了一处绿框"就去删 `base/focus.scss` 顶部的基线** —— 那两条在挡 Windows 的 UA 黑框、并为全站可聚焦元素保住键盘反馈，删了是用「全站黑框 + 键盘用户失去焦点指示」换一处观感。<!-- @rule-skip dup 与 no-custom-focus-outline 同义（「焦点框不自写/不删基线」在 JS 主动 focus 场景的展开说明） -->
 - ⚠️ **`el-tabs` 必须压 `box-shadow` 而不是 `outline`**：EP 给 tab 的是 `box-shadow: 0 0 2px 2px var(--el-color-primary) inset`（内阴影，不是 outline），只压 outline 压不掉。两者都压才干净。
