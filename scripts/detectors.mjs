@@ -499,6 +499,14 @@ export const DETECTORS = {
     hint: '禁自写 :deep 传导 el-scrollbar 内部高度，给滚动区加约定 class scroll-fill（源头 scrollbar.scss 已处理）',
   },
 
+  'select-popper-max-width': {
+    scope: 'style',
+    // 面板被 teleport 到 body，使用方 scoped/:deep 都构不着，要覆盖只能写全局选择器
+    // ——故 style 段任何 .el-select__popper 选择器行都是越界信号（源头 select.scss 是裸 scss 文件，不在 SFC 扫描范围）。
+    find: /\.el-select__popper\b/,
+    hint: 'Select 下拉面板宽度已由源头限 400px（超长选项自动省略号），禁在使用方对 .el-select__popper 写宽度/样式',
+  },
+
   // —— 组件用法：禁用写法 ——
   'tooltip-no-native-title': {
     scope: 'template',
