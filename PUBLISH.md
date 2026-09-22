@@ -30,8 +30,8 @@ npm pack --dry-run
 
 # 预览发布内容（会生成 .tgz 文件）
 npm pack
-tar -tzf xiaoya-design-system-1.0.0.tgz
-rm xiaoya-design-system-1.0.0.tgz
+tar -tzf xiaoya-design-system-1.0.2-bete2.tgz
+rm xiaoya-design-system-1.0.2-bete2.tgz
 ```
 
 ### 2. 发布到内网 npm

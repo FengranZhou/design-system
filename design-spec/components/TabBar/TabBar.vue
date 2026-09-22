@@ -6,13 +6,14 @@
   引用：  import { TabBar } from '<path>/design-spec/components'
   用法：
     <TabBar v-model="active" :tabs="['知识图谱', '问题图谱']" />                    ← 最简：字符串数组
-    <TabBar v-model="active" :tabs="[{ label: '知识图谱', name: 'kg' }]" />        ← 需要自定义 value 时
+    <TabBar v-model="active" :tabs="[{ name: '知识图谱', value: 'kg' }]" />        ← 需要自定义 value 时
     <TabBar v-model="active" :tabs="tabs" level="module" />                        ← 模块级档
     <TabBar v-model="active" :tabs="tabs" :max-label-width="160" />                ← 自定宽度上限
 
   props：
-    modelValue     string|number  必填（v-model）。当前选中项的 name。
-    tabs           (string | { label, name?, disabled? })[]  必填。传字符串时 name 即 label。
+    modelValue     string|number  必填（v-model）。当前选中项的 value。
+    tabs           (string | { name, value?, disabled? })[]  必填。name 是显示文案、
+                   value 是标识（v-model 的值）；传字符串时 name/value 同为该字符串。
     level          'page'|'module'|'sub'  可选，默认 'page'。对应 tabs 三档
                    （page→.tabs-page / module→裸 el-tabs / sub→.tabs-sub，见 component-interaction.md）。
     maxLabelWidth  number  可选，默认 200。单项文案宽度上限（px），超出显示省略号 + hover 出 tooltip。
@@ -52,8 +53,8 @@
   >
     <el-tab-pane
       v-for="item in normalized"
-      :key="item.name"
-      :name="item.name"
+      :key="item.value"
+      :name="item.value"
       :disabled="item.disabled"
     >
       <template #label>
@@ -61,23 +62,23 @@
              el-tooltip 的延迟 300 是全站统一口径（见 component-interaction.md Tooltip 段），
              必须显式传——它是 JS prop，源头 scss 兜不住。 -->
         <el-tooltip
-          v-if="truncated[item.name]"
-          :content="item.label"
+          v-if="truncated[item.value]"
+          :content="item.name"
           :show-after="300"
           placement="bottom"
         >
           <span
-            :ref="(el) => setLabelRef(item.name, el)"
+            :ref="(el) => setLabelRef(item.value, el)"
             class="tab-bar__label"
             :style="labelStyle"
-          >{{ item.label }}</span>
+          >{{ item.name }}</span>
         </el-tooltip>
         <span
           v-else
-          :ref="(el) => setLabelRef(item.name, el)"
+          :ref="(el) => setLabelRef(item.value, el)"
           class="tab-bar__label"
           :style="labelStyle"
-        >{{ item.label }}</span>
+        >{{ item.name }}</span>
       </template>
     </el-tab-pane>
   </el-tabs>
@@ -87,8 +88,8 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, watch } from 'vue'
 
 export interface TabBarItem {
-  label: string
-  name?: string | number
+  name: string
+  value?: string | number
   disabled?: boolean
 }
 
@@ -107,19 +108,19 @@ const emit = defineEmits<{
   'tab-change': [value: string | number]
 }>()
 
-/** 归一后的内部形态：name 必定有值（字符串简写时以 label 兜底） */
+/** 归一后的内部形态：value 必定有值（字符串简写时以 name 兜底） */
 interface NormalizedTab {
-  label: string
-  name: string | number
+  name: string
+  value: string | number
   disabled: boolean
 }
 
-/** 字符串简写归一成对象；未给 name 时以 label 兜底 */
+/** 字符串简写归一成对象；未给 value 时以 name 兜底 */
 const normalized = computed<NormalizedTab[]>(() =>
   props.tabs.map((t) =>
     typeof t === 'string'
-      ? { label: t, name: t, disabled: false }
-      : { label: t.label, name: t.name ?? t.label, disabled: t.disabled ?? false },
+      ? { name: t, value: t, disabled: false }
+      : { name: t.name, value: t.value ?? t.name, disabled: t.disabled ?? false },
   ),
 )
 
@@ -136,9 +137,9 @@ const labelStyle = computed(() =>
 const labelRefs = new Map<string | number, HTMLElement>()
 const truncated = reactive<Record<string | number, boolean>>({})
 
-function setLabelRef(name: string | number, el: unknown) {
-  if (el instanceof HTMLElement) labelRefs.set(name, el)
-  else labelRefs.delete(name)
+function setLabelRef(value: string | number, el: unknown) {
+  if (el instanceof HTMLElement) labelRefs.set(value, el)
+  else labelRefs.delete(value)
 }
 
 /** scrollWidth > clientWidth 即内容被 ellipsis 截掉了。
@@ -148,8 +149,8 @@ function measure() {
     for (const k of Object.keys(truncated)) truncated[k] = false
     return
   }
-  for (const [name, el] of labelRefs) {
-    truncated[name] = el.scrollWidth > el.clientWidth + 1
+  for (const [value, el] of labelRefs) {
+    truncated[value] = el.scrollWidth > el.clientWidth + 1
   }
 }
 
