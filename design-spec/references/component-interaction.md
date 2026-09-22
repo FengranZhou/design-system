@@ -795,7 +795,7 @@ design-spec 已**全局清零** EP 原生的 `.el-button + .el-button { margin-l
 **判据**：tab 文案是你写死的字面量（「全部 / 待批改 / 已批改」）→ 裸 `el-tabs` 即可；**文案来自数据** → 用 `TabBar`。
 
 ```vue
-<div class="iflyv-toolbar">
+<div class="iflyv-toolbar toolbar">
   <div class="iflyv-toolbar__left">
     <TabBar v-model="active" :tabs="graphNames" />          <!-- 默认页面级 -->
     <TabBar v-model="active" :tabs="graphNames" level="sub" />  <!-- 三档仍用 level 传 -->

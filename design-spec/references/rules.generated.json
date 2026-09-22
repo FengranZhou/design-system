@@ -1580,7 +1580,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 91
+      "line": 92
     },
     {
       "id": "toolbar-page-level-padding",
@@ -1595,7 +1595,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 158
+      "line": 159
     },
     {
       "id": "toolbar-order",
@@ -1610,7 +1610,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 217
+      "line": 218
     },
     {
       "id": "toolbar-convention-class",
@@ -1625,7 +1625,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 231
+      "line": 232
     },
     {
       "id": "form-max-width",
@@ -1685,7 +1685,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/patterns/toolbar-pattern.md",
-      "line": 116
+      "line": 117
     },
     {
       "id": "empty-image-and-class",

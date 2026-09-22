@@ -61,7 +61,7 @@ updated: 2026-04-12
 | 层 | 是什么 | 用什么 |
 |---|---|---|
 | **页面框架侧栏** | 整页骨架的一部分：侧边导航 + 课程卡 + 底部用户区（头像 / 帮助 / 通知） | 业务组件 **`PageFrame`** 已内置，传 `:menus` / `:course` / `:notice-count` / `avatar-role` 即可，**不自己拼**。⚠️ **框架不提供顶栏**：层级返回（面包屑）归业务在内容区自行处理 |
-| **内容区操作条** | 内容区里某个区块的头部：标题 + tab + 筛选 + 搜索 + 操作按钮 | 源头约定类 **`.iflyv-toolbar`**，详见 `patterns/toolbar-pattern.md` |
+| **内容区操作条** | 内容区里某个区块的头部：标题 + tab + 筛选 + 搜索 + 操作按钮 | 源头约定类 **`class="iflyv-toolbar toolbar"`（双类同挂才激活）**，详见 `patterns/toolbar-pattern.md` |
 
 > 页面标题走 `.iflyv-toolbar__title`（页面级）或加 `--module`（模块级），字阶已在源头 `el-theme/patterns/toolbar.scss` 给定——**不要在此另写一套页头 div**，那会绕过源头（属最高铁律判定的「局部私货」）。
 

@@ -18,7 +18,7 @@
       @back-platform="router.push('/')"
     >
       <template #page-header>                ← 不滚的页头（**仅**放含页面级 tab 的工具栏）
-        <div class="iflyv-toolbar"><el-tabs class="tabs-page">…</el-tabs></div>
+        <div class="iflyv-toolbar toolbar"><el-tabs class="tabs-page">…</el-tabs></div>
       </template>
       <div class="my-page">页面内容（滚动区内，留白由本页自己给）</div>
     </PageFrame>

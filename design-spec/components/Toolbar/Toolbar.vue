@@ -38,12 +38,14 @@
   ⚠️ 布局 / 间距 / 标题字阶 / 吸顶 **全部在源头 el-theme/patterns/toolbar.scss**，
      本组件不重复定义、不带 scoped 样式——它只是把那几个约定 class 包装成标签，
      省掉使用方手写 div + 记类名。改外观一律回那个 scss，改一次所有引用方同步。
+     源头的激活门槛是**容器双类**（`iflyv-toolbar` + `toolbar` 同时在场），
+     本组件已内置双类输出，用组件即无感；手写约定 class 时两个都要挂。
 
   ⚠️ **标题仍由业务方自己写** `<h3 class="iflyv-toolbar__title">`（模块级加
      `iflyv-toolbar__title--module`）。不做成 title prop 的原因：标题有时是
      h3/h4、有时是 el-tabs、有时带业务标签，prop 化会立刻不够用。
 
-  ⚠️ **含页面级 tab 自动吸顶**靠源头的 `.iflyv-toolbar:has(.tabs-page)`。
+  ⚠️ **含页面级 tab 自动吸顶**靠源头的 `.iflyv-toolbar.toolbar:has(.tabs-page)`。
      `:has()` 匹配任意后代，插槽内容渲染进本组件的 div 后仍是其后代，故照常生效。
      用 PageFrame 时首选把本组件放进 `#page-header` 插槽（在滚动区之外）。
 
@@ -51,7 +53,9 @@
   references/patterns/toolbar-pattern.md。
 ============================================================================ -->
 <template>
-  <div class="iflyv-toolbar">
+  <!-- 双类是源头 toolbar.scss 的激活门槛：iflyv-toolbar + toolbar 同时在场才生效，
+       缺一个整套样式全不激活（防裸 .toolbar 撞宿主项目同名 DOM，详见源头文末警示段） -->
+  <div class="iflyv-toolbar toolbar">
     <div class="iflyv-toolbar__left">
       <slot name="left"><slot /></slot>
     </div>
