@@ -208,9 +208,12 @@
     color: var(--iflyv-text-1);
     cursor: pointer;
 
-    /* hover：仅文字变品牌绿 */
+    /* hover：仅文字变品牌绿。
+       ⚠️ 键盘态用 :focus-visible 而非 :focus——鼠标点击后焦点会留在按钮上，
+       :focus 会让绿字在移开鼠标后残留（残留焦点问题，同 foundations.md 焦点框段），
+       :focus-visible 只在键盘 Tab 聚焦时命中，鼠标点完即恢复。 */
     &:hover,
-    &:focus {
+    &:focus-visible {
       color: var(--iflyv-brand-primary);
     }
   }
@@ -240,8 +243,9 @@
   color: var(--iflyv-text-1);
   cursor: pointer;
 
+  /* 同上：键盘态走 :focus-visible，避免点开/关闭下拉后 focus-trap 还焦点导致绿字残留 */
   &:hover,
-  &:focus {
+  &:focus-visible {
     color: var(--iflyv-brand-primary);
   }
 }
