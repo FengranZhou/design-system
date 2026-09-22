@@ -348,3 +348,29 @@
      · 删除时机：确认下游已迁移后删掉兼容行；删除后旧类名样式直接消失（不报错）。
    ⚠️ 新代码一律用带前缀的类名。
    ==================================================================== */
+
+/* ==================== tab 项焦点态：压掉 JS 切换时误冒的绿框 ====================
+   业务现象：鼠标点 tab 切换后，该 tab 上留一圈/一层品牌绿描边，
+   且「有些容易点出来、有些不容易」——看着像偶发，其实是稳定的时序竞争。
+
+   根因：EP 的 tab-nav 在切换后会异步把焦点打到当前 tab
+       const focusActiveTab = async () => {
+         await nextTick()
+         tabRefsMap.value[props.currentName]?.focus({ preventScroll: true })
+       }
+   `await nextTick()` 之后浏览器已丢失「这一次是鼠标点的」交互上下文，
+   于是这次 JS focus 被按键盘模态处理 → 命中 `:focus-visible`。
+   命不命中取决于 nextTick 与浏览器交互模态判定的先后，故表现为"时有时无"。
+
+   ⚠️ 这里必须压 box-shadow、而不是（只）压 outline：
+      EP 原生规则是 `.el-tabs__item:focus-visible{ box-shadow:0 0 2px 2px var(--el-color-primary) inset }`，
+      用的是内阴影不是 outline，所以 base/focus.scss 的 outline 豁免对它无效。
+      两者都压才干净（outline 来自基线、box-shadow 来自 EP）。
+
+   ⚠️ 豁免不损无障碍：tab 的选中态本身有文字加粗 + 品牌色 + 下划线装饰，
+      键盘用户完全看得出焦点落在哪一项，符合「已有替代指示才豁免」判据
+      （同 input.scss / dropdown.scss 两处的口径）。 */
+.el-tabs__item:focus-visible {
+  outline: none;
+  box-shadow: none;
+}

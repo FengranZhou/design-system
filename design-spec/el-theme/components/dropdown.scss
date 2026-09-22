@@ -9,7 +9,19 @@
   height: 36px;
   line-height: 36px;
   color: var(--iflyv-text-1);
-  &:not(.is-disabled):hover { background-color: var(--iflyv-bg-inset); color: var(--iflyv-text-1); }
+
+  /* hover 与 focus 必须同一套反馈，见文件末「菜单项焦点态」段的两条原因 */
+  &:not(.is-disabled):hover,
+  &:not(.is-disabled):focus,
+  &:not(.is-disabled):focus-visible {
+    background-color: var(--iflyv-bg-inset);
+    color: var(--iflyv-text-1);
+  }
+
+  /* 面板打开即被 JS focus，绿框会误冒——故本元素不吃基线 outline，
+     焦点反馈由上面的底色承担（同 input.scss 的「已有替代指示才豁免」判据） */
+  &:focus-visible { outline: none; }
+
   &--divided { margin: 4px 0; }
 }
 
@@ -29,7 +41,8 @@
   color: var(--iflyv-danger-primary);
 
   &:not(.is-disabled):hover,
-  &:not(.is-disabled):focus {
+  &:not(.is-disabled):focus,
+  &:not(.is-disabled):focus-visible {
     color: var(--iflyv-danger-hover);
     background-color: var(--iflyv-bg-inset);
   }
@@ -98,3 +111,29 @@
 .dropdown-caret.is-expanded {
   transform: rotate(180deg);
 }
+
+/* ==================== 菜单项焦点态：为何 focus 要与 hover 同色、且不吃绿框 ====================
+   两个真实线上问题的合并解，改动前务必读完——这两条都不是「多余的保险」。
+
+   ① focus 必须与 hover 同一套反馈
+      源头此前只写了 hover 的底色与文字色，没写 focus。于是键盘/JS 聚焦时落回
+      EP 原生的 `#f5f6f7` 底 + `#626a73` 文字——**文字比常态更淡**。
+      业务实测的现象是「同一项时而 hover 色、时而 focus 色，两种效果来回跳」。
+      菜单项的 hover 与 focus 语义相同（都是"当前指向这一项"），故必须同色。
+
+   ② 本元素豁免基线的 focus-visible 绿框
+      el-dropdown 面板打开时，`dropdown.vue` 会无条件执行
+          contentRef.value?.focus()            // 点击/键盘展开都走这里
+          trigger.includes('hover') && contentEl?.focus({ preventScroll: true })
+      即**面板一出现，JS 就主动把焦点打进面板**，与用户用的是鼠标还是键盘无关。
+      而浏览器对「JS 调用的 focus」会按键盘模态处理 → 命中 `:focus-visible`
+      → 吃到 base/focus.scss 的 2px 品牌绿 outline。
+      于是纯鼠标 hover 出个头像菜单，某一项上就凭空套了一圈绿框。
+
+      ⚠️ 正解是在本层按元素豁免，**不是去删 base/focus.scss 的全局基线**——
+         那条基线在挡 Windows 的 UA 黑框、并为所有可聚焦元素保住键盘无障碍，
+         删了是用「全站黑框 + 键盘用户失去焦点指示」换这一处观感。
+      ⚠️ 豁免的前提是「已有替代的聚焦指示」：本元素 focus 时有 bg-inset 底色，
+         键盘用户仍看得清当前项，故可豁免。这与 input.scss 只豁免
+         `.el-input__inner` 等"外层已有边框指示"的元素是同一条判据。
+   ========================================================================== */

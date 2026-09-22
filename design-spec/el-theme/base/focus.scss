@@ -35,3 +35,43 @@
   outline: 2px solid var(--iflyv-brand-primary);
   outline-offset: 2px;
 }
+
+/* ==========================================================================
+   豁免名单：被 EP 用 JS 主动 focus 的「面板内列表项」
+   --------------------------------------------------------------------------
+   上面那对基线规则的分工是「鼠标点不留框、键盘 Tab 留框」，其前提是
+   :focus-visible 只在键盘交互时命中。但这个前提对**由 JS 调用的 focus**
+   不成立——EP 的多个弹出型组件在面板打开 / 选项切换时会主动执行
+   `el.focus()`，浏览器对这类程序化聚焦会按键盘模态处理，于是：
+
+       纯鼠标操作 → 面板里某一项凭空套一圈 2px 品牌绿框
+
+   已确认的 JS 主动聚焦点（EP 源码）：
+     · el-dropdown    dropdown.vue          面板一打开就 contentRef.focus()，
+                                            hover 触发时另有 contentEl.focus()
+     · el-tabs        tab-nav.mjs           切换后 await nextTick() 再 focus 当前 tab
+                                            （异步 → 交互上下文已丢失，故"时有时无"）
+     · el-cascader    cascader.vue          展开时 firstNode.focus()
+     · el-tree-select select.mjs / tree.mjs 聚焦当前节点 / 高亮项容器
+
+   ⚠️ 为什么豁免是安全的、不牺牲无障碍：
+      这些元素**都另有明确的聚焦/指向指示**——dropdown 项与树节点有 hover 底色，
+      tab 有加粗 + 品牌色 + 下划线。键盘用户仍然看得出焦点在哪一项。
+      这与 input.scss 只豁免「外层已有边框指示」的输入框是同一条判据：
+      **有替代指示才豁免，没有就必须留框。**
+
+   ⚠️ 不要因为"又冒了一处绿框"就去删本文件顶部的基线——
+      那两条在挡 Windows 的 UA 黑框、并为全站可聚焦元素保住键盘反馈。
+      正确做法是确认该元素是否真被 JS 主动 focus、是否已有替代指示，
+      然后加进下面这份名单（或在该组件 scss 内按元素豁免）。
+
+   ⚠️ el-tabs 需单独在 tabs.scss 处理：EP 给它的是
+      `box-shadow: … inset` 而非 outline，本层压 outline 压不掉，
+      详见 components/tabs.scss 末尾。
+   ========================================================================== */
+
+.el-cascader-node:focus-visible,
+.el-tree-node:focus-visible,
+.el-tree-node__content:focus-visible {
+  outline: none;
+}
