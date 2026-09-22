@@ -26,6 +26,16 @@
 .el-select__wrapper.is-disabled .el-select__caret:not(.is-show-close) { color: var(--el-disabled-text-color); }
 .el-cascader.is-disabled .icon-arrow-down { color: var(--el-disabled-text-color); }
 
+/* 下拉面板限宽：EP 默认面板只有 min-width（=触发器宽）、没有 max-width，
+   宽度随最长选项无限撑开——业务侧遇到超长选项名时面板被撑到近全屏。
+   源头统一限宽 400px 后，EP 选项自带的 text-overflow: ellipsis 自动生效（超长项省略号）。
+   - 触发器宽度 > 400 时，EP 的 inline min-width（=触发器宽）按 CSS 规则胜过 max-width，
+     面板仍与触发器等宽——限宽只约束「内容撑开」，不会把面板压得比触发器窄。
+   - el-select-v2 复用同一 popper class，自动同规则。
+   - 截断后需要看全称的场景由业务侧自行处理（本源头不做 tooltip 补全）。
+   @depends-on: 依赖 EP .el-select-dropdown__item 自带的 nowrap + hidden + ellipsis。 */
+.el-select__popper.el-popper { max-width: 400px; }
+
 /* 下拉菜单选项样式：列表容器加 spacing-1 内边距，选项独立圆角，避免选项贴顶/贴边。
    @depends-on: 依赖 EP .el-select-dropdown__list 容器 + .el-select-dropdown__item 选项结构。
                 选项 height: 36px 比 input 高度 32 略大——下拉项需要更宽松的点击热区。 */

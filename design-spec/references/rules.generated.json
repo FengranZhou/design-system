@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 135,
-  "totalWeight": 384,
+  "total": 136,
+  "totalWeight": 387,
   "byLevel": {
-    "MUST": 114,
+    "MUST": 115,
     "SHOULD": 21,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 78,
+    "regex": 79,
     "ast": 7,
     "manual": 50
   },
   "byView": {
-    "design": 116,
-    "impl": 127
+    "design": 117,
+    "impl": 128
   },
   "categoryOrder": [
     "单一数据源",
@@ -1118,6 +1118,21 @@
       "weight": 3,
       "source": "design-spec/references/patterns/select-pattern.md",
       "line": 58
+    },
+    {
+      "id": "select-popper-max-width",
+      "title": "Select 下拉面板最大宽度 400px 已固化在源头（超长选项自动省略号），禁在使用方覆盖 .el-select__popper 的宽度",
+      "designTitle": "下拉面板不会被超长选项撑到全屏，超长项显示省略号",
+      "level": "MUST",
+      "cat": "组件用法",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/patterns/select-pattern.md",
+      "line": 160
     },
     {
       "id": "timepicker-disabled-range",
