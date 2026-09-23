@@ -117,9 +117,12 @@
                   （我们 visibility: hidden 它，::after 自己画 X）。
      @when-changed: 升级 EP 大版本时，若结构变化（如 headerbtn 改名），mask 替换需要同步调整。 */
   .el-dialog__headerbtn {
-    top: 12px;
-    right: unset; /* 清除 EP right: 0，由逻辑属性接管 */
-    inset-inline-end: 24px;
+    /* EP 默认 position: absolute + 固定坐标，标题行高一变（全屏 / 多标题 / 换行）就对不齐。
+       改回文档流：header 已是 flex + align-items: center，按钮作为 flex 子项与左侧内容天然垂直居中；
+       relative 保留给 ::after 的 inset: 0 做定位锚点。 */
+    position: relative;
+    margin-inline-start: auto;
+    flex-shrink: 0;
     width: 24px;
     height: 24px;
     color: var(--iflyv-icon-3);
@@ -254,8 +257,9 @@
   font: var(--iflyv-font-body-sub);
 }
 
-/* RTL：覆盖 EP 硬编码物理 padding */
-.el-dialog__header.show-close { padding-right: unset; padding-inline-end: calc(var(--el-dialog-padding-primary) + var(--el-message-close-size, 16px)); }
+/* RTL：覆盖 EP 硬编码物理 padding。
+   关闭按钮已回文档流占位（见 headerbtn 段），EP 那份「calc 预留避让宽度」不再需要，收回常规 24。 */
+.el-dialog__header.show-close { padding-right: unset; padding-inline-end: var(--iflyv-spacing-6); }
 
 .el-dialog__footer { text-align: end; }
 
