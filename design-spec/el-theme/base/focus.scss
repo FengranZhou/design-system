@@ -57,9 +57,12 @@
                                             tryFocus(打开前的活动元素)——焦点会被
                                             还给**触发器**（点过触发器后它就是
                                             activeElement），触发器一侧同样冒绿框。
-                                            已治：PageFrame 头像触发器（业务组件
+                                            已治：① PageFrame 头像触发器（业务组件
                                             自己的 DOM，豁免写在 PageFrame.vue，
-                                            替代指示 = hover/focus 同款底色）
+                                            替代指示 = hover/focus 同款底色）；
+                                            ② el-dropdown 的 el-button 触发器
+                                            （button.scss「当 el-dropdown 触发器」段，
+                                            替代指示 = 各形态 hover 同款反馈）
 
    ⚠️ 为什么豁免是安全的、不牺牲无障碍：
       这些元素**都另有明确的聚焦/指向指示**——dropdown 项与树节点有 hover 底色，

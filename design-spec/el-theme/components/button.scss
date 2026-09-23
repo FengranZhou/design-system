@@ -60,6 +60,31 @@
     outline-color: var(--iflyv-danger-primary);
   }
 
+  /* ==================== 当 el-dropdown 触发器：焦点绿框豁免 ====================
+     纯鼠标操作也会在触发器上冒绿框（"时有时无"）：el-dropdown 面板打开时 EP 用 JS
+     把焦点打进面板（dropdown.vue: contentRef.focus()），面板关闭时 focus-trap 的
+     stopTrap() 又把焦点 JS 还给触发器（focus-trap.vue: tryFocus(lastFocusBeforeTrapped)）。
+     程序化 focus 被浏览器按键盘模态处理 → 命中 :focus-visible → 吃到绿框；
+     且只有点过触发器（mousedown 后它才是 activeElement、才轮得到被"还"）才会中——
+     "时有时无"实为此因，不是偶发。链路详见 references/foundations.md 焦点框第 ④ 坑。
+     豁免判据两问（见 base/focus.scss）：① 真被 JS focus ✔（上述 EP 源码两处）
+     ② 有替代指示 ✔——focus-visible 一律给 hover 同款反馈：次按钮走下面那条的
+        三枚 hover 变量；primary / danger / text 的 hover 是另一套形态，
+        在各自 hover 规则里就近并列了本场景选择器（改 hover 即一并改 focus，不散口径）。
+     同族先例：PageFrame.vue 头像触发器、dropdown.scss 菜单项、tabs.scss tab 项。
+     :not(.is-disabled) 兼顾语义与特异性——凑到 (0,4,0) 才压得过 EP 的
+     `.el-button.is-text:not(.is-disabled):focus-visible`（同 (0,4,0)，本层后于 EP 加载故生效）。 */
+  .el-dropdown &:not(.is-disabled):focus-visible {
+    outline: none;
+  }
+  /* 替代指示（次按钮）：hover 同款——三枚变量即下文「默认按钮交互态」定义的那三枚，
+     hover 改值这里自动跟随。text/link 无底、带类型按钮各有 hover 色，均不归此条（已排除）。 */
+  .el-dropdown &:not(.is-disabled):not(.is-text):not(.is-link):not([class*="--"]):focus-visible {
+    color: var(--el-button-hover-text-color);
+    background-color: var(--el-button-hover-bg-color);
+    border-color: var(--el-button-hover-border-color);
+  }
+
   /* 下拉/箭头按钮尾部的 ChevronDown（文字之后）：与文字保持一致小间距。
      hover 按钮时箭头旋转 180°（向上翻，暗示可展开），带过渡。
      vertical-align:middle 保证「前置图标 + 文字 + 后置箭头」三者同排时垂直居中对齐
@@ -174,7 +199,11 @@
       color: var(--iflyv-text-on-dark);
     }
 
-    &:hover {
+    /* 第二个选择器 = 当 dropdown 触发器的 focus-visible 替代指示（hover 同款，
+       缘由见上文「当 el-dropdown 触发器」段）。:not(.is-loading) 兼顾语义与特异性——
+       凑到 (0,5,0) 才压得过上面 `:focus:not(:hover)` 保持常态色那条（同 (0,5,0)，本条在后故生效）。 */
+    &:hover,
+    .el-dropdown &:not(.is-disabled):not(.is-loading):focus-visible {
       background-color: var(--iflyv-brand-hover);
       border-color: var(--iflyv-brand-hover);
       color: var(--iflyv-text-on-dark);
@@ -213,7 +242,9 @@
       color: var(--iflyv-text-on-dark);
     }
 
-    &:hover {
+    /* 第二个选择器同 Primary 段：dropdown 触发器 focus-visible 的 hover 同款替代指示 */
+    &:hover,
+    .el-dropdown &:not(.is-disabled):not(.is-loading):focus-visible {
       background-color: var(--iflyv-danger-hover);
       border-color: var(--iflyv-danger-hover);
       color: var(--iflyv-text-on-dark);
@@ -267,23 +298,31 @@
          文案则会渲染进 <span>——故"有图标无文案"即纯图标按钮。
          @depends-on: 使用方必须用 <template #icon> 插槽传图标（裸 svg 不匹配 .el-icon）。
          ⚠️ 仅限纯图标：带文案的 text 按钮仍走 EP 默认文字色，
-            文字色不该由 icon-* 令牌管（语义错位，将来调图标会误伤文字）。 */
-      &:has(.el-icon):not(:has(span)):not(:hover):not(:active) {
+            文字色不该由 icon-* 令牌管（语义错位，将来调图标会误伤文字）。
+         :not(:focus-visible) 与 :not(:hover) 同理：作 dropdown 触发器被豁免绿框后，
+         focus-visible 的替代指示就是下一条的品牌色变色，灰阶规则须让位，
+         否则纯图标触发器（紧凑操作列「⋯」）键盘聚焦时会毫无指示。 */
+      &:has(.el-icon):not(:has(span)):not(:hover):not(:active):not(:focus-visible) {
         --el-button-text-color: var(--iflyv-icon-2);
         color: var(--iflyv-icon-2);
       }
-      &:hover, &:active { --el-button-text-color: var(--iflyv-brand-text); color: var(--iflyv-brand-text); }
+      /* 第三个选择器 = 当 dropdown 触发器的 focus-visible 替代指示（hover 同款，
+         缘由见上文「当 el-dropdown 触发器」段），下两组 type 变体同 */
+      &:hover, &:active,
+      .el-dropdown &:focus-visible { --el-button-text-color: var(--iflyv-brand-text); color: var(--iflyv-brand-text); }
     }
 
     &.el-button--primary {
       --el-button-text-color: var(--iflyv-brand-text);
       color: var(--iflyv-brand-text);
-      &:hover, &:active { color: var(--iflyv-brand-hover); }
+      &:hover, &:active,
+      .el-dropdown &:focus-visible { color: var(--iflyv-brand-hover); }
     }
 
     &.el-button--danger {
       color: var(--iflyv-danger-primary);
-      &:hover, &:active { color: var(--iflyv-danger-hover); }
+      &:hover, &:active,
+      .el-dropdown &:focus-visible { color: var(--iflyv-danger-hover); }
     }
   }
 
