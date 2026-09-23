@@ -77,7 +77,6 @@
 .iflyv-toolbar.toolbar:has(.tabs-page) {
   position: sticky;
   top: 0;
-  z-index: var(--iflyv-z-sticky);
   /* 铺不透明底：否则下方内容会从工具栏背后透出来重叠 */
   background: var(--iflyv-bg-panel);
 
