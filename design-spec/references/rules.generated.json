@@ -1,20 +1,20 @@
 {
   "generatedBy": "scripts/extract-rules.mjs",
-  "total": 136,
-  "totalWeight": 387,
+  "total": 137,
+  "totalWeight": 390,
   "byLevel": {
-    "MUST": 115,
+    "MUST": 116,
     "SHOULD": 21,
     "MAY": 0
   },
   "byDetect": {
-    "regex": 79,
+    "regex": 80,
     "ast": 7,
     "manual": 50
   },
   "byView": {
-    "design": 117,
-    "impl": 128
+    "design": 118,
+    "impl": 129
   },
   "categoryOrder": [
     "单一数据源",
@@ -244,6 +244,21 @@
       "line": 39
     },
     {
+      "id": "mask-blur-single-switch",
+      "title": "关闭遮罩模糊只走 :root 覆盖 --iflyv-mask-blur（全局）或约定类 .overlay-no-blur（单实例），禁覆盖 .el-overlay/.el-loading-mask 的 backdrop-filter",
+      "designTitle": "弹窗遮罩与加载遮罩的模糊只用统一配置去关：全局一枚令牌，个例用约定类，不各处自改",
+      "level": "MUST",
+      "cat": "设计令牌",
+      "detect": "regex",
+      "views": [
+        "design",
+        "impl"
+      ],
+      "weight": 3,
+      "source": "design-spec/references/foundations.md",
+      "line": 147
+    },
+    {
       "id": "ai-gradient-token",
       "title": "AI 元素一律用现成 AI 渐变令牌，禁自拼渐变",
       "designTitle": "AI 相关元素的渐变应全站一致，不是各处自调的渐变",
@@ -256,7 +271,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 209
+      "line": 211
     },
     {
       "id": "title-hierarchy-chain",
@@ -271,7 +286,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 269
+      "line": 271
     },
     {
       "id": "number-display-gap-2",
@@ -286,7 +301,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 280
+      "line": 282
     },
     {
       "id": "no-custom-focus-outline",
@@ -301,7 +316,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 533
+      "line": 535
     },
     {
       "id": "no-bare-outline-none",
@@ -316,7 +331,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 537
+      "line": 539
     },
     {
       "id": "gradient-cross-hue",
@@ -331,7 +346,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/foundations.md",
-      "line": 210
+      "line": 212
     },
     {
       "id": "tag-not-form-value",
@@ -420,7 +435,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1487
+      "line": 1488
     },
     {
       "id": "chart-use-component",
@@ -509,7 +524,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1392
+      "line": 1393
     },
     {
       "id": "button-icon-color-source",
@@ -1027,7 +1042,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1356
+      "line": 1357
     },
     {
       "id": "dialog-body-flush",
@@ -1042,7 +1057,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1371
+      "line": 1372
     },
     {
       "id": "scrollbar-no-raw-overflow",
@@ -1057,7 +1072,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1434
+      "line": 1435
     },
     {
       "id": "avatar-transparent-bg",
@@ -1072,7 +1087,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1550
+      "line": 1551
     },
     {
       "id": "table-server-sort-custom",
@@ -1236,7 +1251,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1394
+      "line": 1395
     },
     {
       "id": "scrollbar-view-class",
@@ -1250,7 +1265,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1446
+      "line": 1447
     },
     {
       "id": "scrollbar-page-level-use-el-scrollbar",
@@ -1265,7 +1280,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1449
+      "line": 1450
     },
     {
       "id": "grid-no-el-row",
@@ -1775,7 +1790,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 592
+      "line": 594
     },
     {
       "id": "item-focus-matches-hover",
@@ -1790,7 +1805,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 598
+      "line": 600
     },
     {
       "id": "blur-after-modal-exit",
@@ -1805,7 +1820,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/foundations.md",
-      "line": 572
+      "line": 574
     },
     {
       "id": "dialog-title-specific",
@@ -1819,7 +1834,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/component-interaction.md",
-      "line": 1288
+      "line": 1289
     },
     {
       "id": "number-thousands-separator",
@@ -1966,7 +1981,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 204
+      "line": 206
     },
     {
       "id": "button-primary-edge",
@@ -1980,7 +1995,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 348
+      "line": 350
     },
     {
       "id": "gsap-display-only",
@@ -1994,7 +2009,7 @@
       ],
       "weight": 3,
       "source": "design-spec/references/foundations.md",
-      "line": 455
+      "line": 457
     },
     {
       "id": "chart-title-legend-inline",
@@ -2039,7 +2054,7 @@
       ],
       "weight": 2,
       "source": "design-spec/references/foundations.md",
-      "line": 402
+      "line": 404
     }
   ]
 }

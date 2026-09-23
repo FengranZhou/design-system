@@ -1512,6 +1512,30 @@ export const DETECTORS = {
     },
     hint: 'outline:none 不能单独写——键盘用户会彻底失去焦点指示。焦点框已由源头 base/focus.scss 统一提供，直接删掉这行即可；确需特化请配套写 :focus-visible。见 foundations.md 焦点框段',
   },
+
+  /**
+   * 遮罩背景模糊的开关只有一枚令牌（--iflyv-mask-blur，弹窗/抽屉/图片预览的
+   * 模态遮罩与 v-loading 加载遮罩共用）。在使用方样式里直接对
+   * .el-overlay / .el-loading-mask 写 backdrop-filter ＝ 绕过配置口改组件
+   * 外观（私货），而且只改得动一处、另一处遮罩照旧——观感当场不一致。
+   *
+   * 判定：该 <style> 段出现了这两个遮罩选择器，其中的 backdrop-filter 行即违规。
+   */
+  'mask-blur-single-switch': {
+    custom: (ctx) => {
+      if (!ctx.style) return []
+      if (!/\.el-(overlay|loading-mask)\b/.test(ctx.style)) return []
+      const hits = []
+      ctx.style.split('\n').forEach((line, i) => {
+        if (/^\s*(\/\/|\/\*|\*)/.test(line)) return          // 注释行
+        if (/backdrop-filter\s*:/.test(line)) {
+          hits.push({ line: i + 1 + (ctx.styleOffset || 0), text: line.trim().slice(0, 90) })
+        }
+      })
+      return hits
+    },
+    hint: '不要在使用方覆盖 .el-overlay / .el-loading-mask 的 backdrop-filter——关闭遮罩模糊只有两个合法口：全局覆盖 :root { --iflyv-mask-blur: 0px; }（两类遮罩一起关），或单实例挂源头约定类 .overlay-no-blur（弹窗/抽屉 modal-class、loading customClass）。见 foundations.md「其余令牌」段',
+  },
 }
 
 /** 有检测器且能真正执行的条目 id（find 为 null 表示暂未实现） */

@@ -143,6 +143,8 @@ green / red / orange / blue 在语义场景中含义固定，不因页面类型�
 > **判据**：这个颜色是用在**文字/图标**上，还是用作**填充块**（按钮底、进度条）？文字 → `brand-text`；块面 → `brand-primary`。四个语义色族没有 `-text` 变体，文字直接用 `-primary`。
 
 > **其余令牌**：`--iflyv-mask-primary` / `--iflyv-mask-on-dark`（遮罩层黑）、`--iflyv-scroller-*`（滚动条滑块，源头已统一、下游不碰）、`--iflyv-message-border-*`（Message 各语义描边）、`--iflyv-tag-gray-bg`（灰 Tag 底色）、`--iflyv-input-focus-ring` / `--iflyv-input-hover-border`（输入框聚焦环 / hover 边框）、`--iflyv-loading-path`——**都是组件源头内部使用的桥接变量，下游不直接引用**。
+>
+> **唯一开放为下游配置口的是 `--iflyv-mask-blur`**（遮罩背景模糊强度，模态遮罩「弹窗/抽屉/图片预览」与加载遮罩「v-loading/全屏加载」共用）。两级开关：**① 全局**——默认 `4px` 即毛玻璃效果，下游不想要模糊时，在三层样式**之后**加载的全局样式里覆盖 `:root { --iflyv-mask-blur: 0px; }`，两类遮罩一起关闭；**② 单实例**——只想关某一个时用源头约定类 `.overlay-no-blur`，通过 EP 自己的遮罩挂类入口传入：弹窗/抽屉 `modal-class="overlay-no-blur"`、区域加载 `element-loading-custom-class="overlay-no-blur"`、全屏加载 `ElLoading.service({ customClass: 'overlay-no-blur' })`（变量逐元素解析，只影响该实例；与全局开关正交——全局管默认、本类管个例）。⚠️ 图片预览器（属 `el-image`——该组件当前暂停启用，见勿用清单）没有遮罩挂类入口，单实例配置覆盖不到它（全局令牌仍有效）。**关闭只走这枚令牌或 `.overlay-no-blur`**，不得覆盖 `.el-overlay` / `.el-loading-mask` 的 `backdrop-filter`、不得自写等价类（组件外观私货）。<!-- @rule id=mask-blur-single-switch level=MUST cat=设计令牌 detect=regex dtitle=弹窗遮罩与加载遮罩的模糊只用统一配置去关：全局一枚令牌，个例用约定类，不各处自改 title=关闭遮罩模糊只走 :root 覆盖 --iflyv-mask-blur（全局）或约定类 .overlay-no-blur（单实例），禁覆盖 .el-overlay/.el-loading-mask 的 backdrop-filter -->
 
 ### 文本 / 图标色阶 → 用途（层级语义，选色阶时照此对号入座）
 

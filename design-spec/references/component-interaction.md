@@ -1094,7 +1094,7 @@ ElMessage({ message: '保存成功', type: 'success', showClose: true })
 
 - **一律用 `v-loading` 指令**（或 `ElLoading.service()` 做全屏） <!-- @rule id=loading-no-custom-spinner level=MUST cat=组件用法 detect=regex dtitle=加载动画应是设计系统的四圆点，不是自拼的转圈图标 title=区域加载一律用 v-loading 指令，禁自拼转圈图标/遮罩层 -->，**不要自己拼转圈图标 / 遮罩层**。本系统已把 EP 默认的转圈 spinner **整体替换为四圆点动画**（2×2 网格、透明度阶梯、整组旋转，颜色跟随 `--iflyv-brand-primary`），自己手写的加载态与全站观感完全不一致。
 - **加载文案用 `element-loading-text`**（源头已配好 `text-3` 色阶与 12px 间距），不要在遮罩里自己塞 `<p>`。
-- **遮罩带背景模糊**（`backdrop-filter`），无需也不要自己加半透明底色。
+- **遮罩带背景模糊**（`backdrop-filter`，取 `--iflyv-mask-blur`，默认 4px），无需也不要自己加半透明底色。**全局关闭**：在三层样式之后的全局样式里覆盖 `:root { --iflyv-mask-blur: 0px; }`——与弹窗/抽屉的模态遮罩共用一枚令牌，两类遮罩一起关闭；**只关这一处 loading**：区域加载在宿主元素上加 `element-loading-custom-class="overlay-no-blur"`，全屏加载传 `ElLoading.service({ customClass: 'overlay-no-blur' })`（源头约定类，只影响该实例）。规则与私货红线见 `foundations.md`「其余令牌」段。
 - **全屏加载自动反白**：`fullscreen` 时四圆点与文字自动切成白色系（源头已处理），使用方不必改色。
 
 ```vue
@@ -1231,6 +1231,7 @@ loading.close()
 
 - **判断入口**：先问「用户是要在这弹窗里*做一件事*（填表/编辑），还是系统要*提醒/打断*用户？」——做事 → 操作弹窗；提醒 → 提示弹窗。
 - 两类都用 `el-dialog`（下方语义变体、按钮个数等规则通用）；载体是否该用弹窗（vs 页面/抽屉）另见 `references/patterns/dialog-pattern.md` 的四维判据。
+- **模态遮罩自带背景模糊**（弹窗/抽屉/图片预览共用的 `.el-overlay`，源头已配 `blur(var(--iflyv-mask-blur))`，默认 4px）——下游无需任何配置。**全局关闭**：在三层样式之后的全局样式里覆盖 `:root { --iflyv-mask-blur: 0px; }`（与 v-loading 加载遮罩共用一枚令牌、两类一起关闭）；**只关这一个弹窗/抽屉**：传 EP 原生 `modal-class="overlay-no-blur"`（源头约定类，挂到该实例遮罩上，只影响它自己）。规则与私货红线见 `foundations.md`「其余令牌」段。
 
 ### Dialog 语义化标题（4 种变体）
 

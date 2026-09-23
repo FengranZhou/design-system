@@ -29,12 +29,23 @@
 /* 下拉面板限宽：EP 默认面板只有 min-width（=触发器宽）、没有 max-width，
    宽度随最长选项无限撑开——业务侧遇到超长选项名时面板被撑到近全屏。
    源头统一限宽 400px 后，EP 选项自带的 text-overflow: ellipsis 自动生效（超长项省略号）。
-   - 触发器宽度 > 400 时，EP 的 inline min-width（=触发器宽）按 CSS 规则胜过 max-width，
-     面板仍与触发器等宽——限宽只约束「内容撑开」，不会把面板压得比触发器窄。
-   - el-select-v2 复用同一 popper class，自动同规则。
+   ⚠️ 限宽必须挂在内层 .el-select-dropdown、且只挂给带内联 min-width 的默认形态，
+   不能挂在 .el-select__popper 外壳上（2026-09 业务反馈的错位 bug 即此）：
+   - EP 把「触发器宽度」以内联样式写在 .el-select-dropdown 上（默认是 min-width；
+     fit-input-width 时是 width，见 EP select-dropdown.vue）。max-width 若写在外壳，
+     与内层 min-width 不在同一元素，CSS「min-width 胜过 max-width」的裁决不会发生——
+     触发器 > 400 时外壳被压回 400、内层仍按触发器宽溢出边框。
+   - 挂在同一元素后：面板宽 = max(触发器宽, min(内容宽, 400))——触发器 ≤ 400 时
+     面板最宽 400、超长项省略号；触发器 > 400 时面板与触发器等宽，限宽只约束
+     「内容撑开」，不会把面板压得比触发器窄。
+   - fit-input-width / el-select-v2 的面板内联是 width:（宽度由 EP JS 算好：fit =
+     触发器宽；v2 = max(触发器, 最长选项)），不吃本条 cap——CSS 再截定宽面板只会
+     重现错位；v2 超长选项要限宽由业务侧传 fit-input-width。
    - 截断后需要看全称的场景由业务侧自行处理（本源头不做 tooltip 补全）。
-   @depends-on: 依赖 EP .el-select-dropdown__item 自带的 nowrap + hidden + ellipsis。 */
-.el-select__popper.el-popper { max-width: 400px; }
+   @depends-on: 依赖 EP 把内联 minWidth/width 写在 .el-select-dropdown 上
+                + .el-select-dropdown__item 自带的 nowrap + hidden + ellipsis。
+   @when-changed: 升级 EP 若把内联宽度改写到 popper 外壳或换属性，本规则需重估。 */
+.el-select__popper.el-popper .el-select-dropdown[style*="min-width"] { max-width: 400px; }
 
 /* 下拉菜单选项样式：列表容器加 spacing-1 内边距，选项独立圆角，避免选项贴顶/贴边。
    @depends-on: 依赖 EP .el-select-dropdown__list 容器 + .el-select-dropdown__item 选项结构。

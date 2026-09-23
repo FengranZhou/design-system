@@ -194,3 +194,21 @@
 .el-overlay {
   backdrop-filter: blur(var(--iflyv-mask-blur));
 }
+
+/* ==================== 单实例关闭遮罩模糊约定 .overlay-no-blur ====================
+   全局默认带模糊（--iflyv-mask-blur: 4px，全局关闭见 design-token/css/spacing.scss），
+   个别弹窗/抽屉/loading 不想要模糊时，用 EP 自己的「往遮罩元素挂 class」入口挂本类：
+
+     <el-dialog modal-class="overlay-no-blur">                 弹窗
+     <el-drawer modal-class="overlay-no-blur">                 抽屉
+     <div v-loading="..." element-loading-custom-class="overlay-no-blur">   区域加载
+     ElLoading.service({ customClass: 'overlay-no-blur' })     全屏加载
+
+   原理：blur 取的是 CSS 变量，变量逐元素解析——本类把变量在**该遮罩元素**上
+   覆盖为 0，只影响这一个实例；与全局令牌正交（全局管默认、本类管个例）。
+   ⚠️ el-image 的图片预览器没有 modal-class 类入口，本类覆盖不到（全局令牌仍有效）。
+   ⛔ 使用方不要自写等价类 / 直接覆盖 .el-overlay、.el-loading-mask 的
+      backdrop-filter——规则见 foundations.md「其余令牌」段。 */
+.overlay-no-blur {
+  --iflyv-mask-blur: 0px;
+}

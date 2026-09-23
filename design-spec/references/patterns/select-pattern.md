@@ -157,9 +157,10 @@ const QUESTION_TYPES: OptionCardItem[] = [
 
 ### 4. 下拉面板宽度已由源头限宽，超长选项自动省略
 
-面板最大宽度 **400px** 已固化在源头 `el-theme/components/select.scss`（EP 默认面板无 max-width、会被最长选项无限撑开），限宽后 EP 选项自带的省略号自动生效，`el-select-v2` 同规则。**使用方一律不覆盖面板宽度**（不自写 max-width / min-width、不为"修"超长在使用方动 `.el-select__popper`）。<!-- @rule id=select-popper-max-width level=MUST cat=组件用法 view=impl detect=regex dtitle=下拉面板不会被超长选项撑到全屏，超长项显示省略号 title=Select 下拉面板最大宽度 400px 已固化在源头（超长选项自动省略号），禁在使用方覆盖 .el-select__popper 的宽度 -->
+面板最大宽度 **400px** 已固化在源头 `el-theme/components/select.scss`（EP 默认面板无 max-width、会被最长选项无限撑开），限宽后 EP 选项自带的省略号自动生效。**使用方一律不覆盖面板宽度**（不自写 max-width / min-width、不为"修"超长在使用方动 `.el-select__popper`）。<!-- @rule id=select-popper-max-width level=MUST cat=组件用法 view=impl detect=regex dtitle=下拉面板不会被超长选项撑到全屏，超长项显示省略号 title=Select 下拉面板最大宽度 400px 已固化在源头（超长选项自动省略号），禁在使用方覆盖 .el-select__popper 的宽度 -->
 
-- 触发器本身宽于 400 时面板仍与触发器等宽（限宽只约束"内容撑开"，不会把面板压得比触发器窄）。
+- 触发器本身宽于 400 时面板仍与触发器等宽（限宽只约束"内容撑开"，不会把面板压得比触发器窄）——源头把 max-width 挂在带内联 `min-width` 的 `.el-select-dropdown` 上，靠 CSS「min-width 胜过 max-width」自动实现，不是挂在 `.el-select__popper` 外壳上（挂外壳会在触发器 > 400 时把面板压回 400、与输入框错位，2026-09 业务反馈的 bug 即此）。
+- **`fit-input-width` 与 `el-select-v2` 不吃这条限宽**：两者的面板宽由 EP JS 算好后以内联 `width:` 写死（fit = 触发器宽；v2 = 触发器与最长选项取大），面板恒跟随该值。v2 遇超长选项要限宽，由业务侧传 `fit-input-width`。
 - **截断后需要看全称的场景由业务侧自行处理**（如把关键编码拼进 label、或业务自定义 option 内容），源头不做 tooltip 补全。
 
 ### 5. 选项 `value` 必须唯一

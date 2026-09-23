@@ -2,6 +2,8 @@
 /* ======================== Loading 样式覆盖 ============================== */
 /* ======================================================================== */
 
+/* 模糊强度走全局令牌（默认 4px，全局关闭 / 单实例关闭的配置口
+   见 design-token/css/spacing.scss 与 var-mapping.scss 的 .overlay-no-blur） */
 .el-loading-mask {
   backdrop-filter: blur(var(--iflyv-mask-blur));
 }

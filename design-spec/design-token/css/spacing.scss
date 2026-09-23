@@ -46,5 +46,17 @@
   --iflyv-grid-gutter: var(--iflyv-spacing-4);
 
   /* ==================== 遮罩模糊 Mask Blur ==================== */
+  /* 模态遮罩（.el-overlay：弹窗/抽屉/图片预览，见 el-theme/var-mapping.scss）与
+     加载遮罩（.el-loading-mask：v-loading/全屏加载，见 el-theme/components/loading.scss）
+     共用的背景模糊强度——这也是它的**下游开关配置口**：
+       · 默认 4px：两类遮罩都带毛玻璃；
+       · 下游不想要模糊：在三层样式**之后**加载的全局样式里覆盖
+           :root { --iflyv-mask-blur: 0px; }
+         两类遮罩一起关闭（全局层面共用一枚令牌，一起开关）；
+       · 只想关**某一个**弹窗/抽屉/loading：用源头约定类 .overlay-no-blur
+         挂到该实例的遮罩上（三个入口的挂法见 el-theme/var-mapping.scss 该类注释）。
+     ⛔ 关闭只走此令牌（全局）或 .overlay-no-blur（单实例），不得覆盖
+        .el-overlay / .el-loading-mask 的 backdrop-filter——那是组件外观私货。
+        规则见 foundations.md「其余令牌」段。 */
   --iflyv-mask-blur: 4px;
 }
